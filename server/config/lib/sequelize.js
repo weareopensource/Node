@@ -10,40 +10,49 @@ const config = require('../config'),
 var orm = {};
 var sequelize;
 
-// Instantiate a sequelize connection to an SQL database based on configuration
-// from server/config/env/*
-try {
-  sequelize = new Sequelize(config.orm.dbname, config.orm.user, config.orm.pass, config.orm.options);
-} catch (e) {
-  throw new Error(e);
-}
+// Only read config.orm if it is defined, if not just return empty orm object
+if (config.orm) {
 
-// Instantiate sequelize models
-config.files.server.sequelizeModels.forEach(function (modelPath) {
+  // Instantiate a sequelize connection to an SQL database based on configuration
+  // from `server/config/env/*`
   try {
-    let model = sequelize.import(path.resolve(modelPath));
-    orm[model.name] = model;
+    sequelize = new Sequelize(config.orm.dbname, config.orm.user, config.orm.pass, config.orm.options);
   } catch (e) {
     throw new Error(e);
   }
-});
 
-// Once all models have been loaded, establish the associations between them
-Object.keys(orm).forEach(function(modelName) {
-  if (orm[modelName].associate) {
-    orm[modelName].associate(orm);
-  }
-});
+  // Instantiate sequelize models
+  config.files.server.sequelizeModels.forEach(function (modelPath) {
+    try {
+      let model = sequelize.import(path.resolve(modelPath));
+      orm[model.name] = model;
+    } catch (e) {
+      throw new Error(e);
+    }
+  });
 
-// Expose the instantiated sequelize connection object
-orm.sequelize = sequelize;
+  // Once all models have been loaded, establish the associations between them
+  Object.keys(orm).forEach(function (modelName) {
+    if (orm[modelName].associate) {
+      orm[modelName].associate(orm);
+    }
+  });
 
-// Expose the global Sequelize library
-orm.Sequelize = Sequelize;
+  // Expose the instantiated sequelize connection object
+  orm.sequelize = sequelize;
 
-orm.sync = function() {
-  return this.sequelize.sync();
-};
+  // Expose the global Sequelize library
+  orm.Sequelize = Sequelize;
+
+  orm.sync = function () {
+    // Sync makes sure the database tables are created if they don't exist
+    // and the `force` parameter will also drop the tables before re-creating them
+    return this.sequelize.sync({
+      force: (config.seedDB.reset || false)
+    });
+  };
+
+}
 
 // Export this ORM module
 module.exports = orm;
