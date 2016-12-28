@@ -11,13 +11,18 @@ var config = require('../config'),
 // Establish an SQL server connection, instantiating all models and schemas
 function startSequelize() {
   return new Promise(function (resolve, reject) {
-    let orm = null;
+    let orm = {};
     if (config.orm) {
-      orm = require('./sequelize');
-      orm.sync()
-        .then(function () {
-          resolve(orm);
-        });
+      try {
+        orm = require('./sequelize');
+        orm.sync().then(function () {
+            resolve(orm);
+          });
+      } catch (e) {
+        reject(e);
+      }
+    } else {
+      resolve();
     }
   });
 }
@@ -31,6 +36,9 @@ function startMongoose() {
       .then(function(dbConnection) {
         resolve(dbConnection);
       })
+      .catch(function(e) {
+        reject(e);
+      });
   });
 }
 
@@ -41,10 +49,17 @@ function startMongoose() {
  */
 function startExpress(db, orm) {
   return new Promise(function (resolve, reject) {
+
     // Initialize the ExpressJS web application server
-    const app = express.init(db, orm);
-    resolve(app);
-  })
+    let app;
+    try {
+      app = express.init(db, orm);
+    } catch(e) {
+      return reject(e);
+    }
+
+    return resolve(app);
+  });
 }
 
 
@@ -54,11 +69,22 @@ function startExpress(db, orm) {
  */
 function bootstrap () {
   return new Promise(async function (resolve, reject) {
-    const orm = await startSequelize();
-    const db = await startMongoose();
-    const app = await startExpress(db, orm);
+    let orm, db, app;
 
-    resolve({
+    try {
+      orm  = await startSequelize();
+    }  catch (e) {
+      orm = {};
+    }
+
+    try {
+      db = await startMongoose();
+      app = await startExpress(db, orm);
+    } catch (e) {
+      return reject(new Error('unable to initialize Mongoose or ExpressJS'));
+    }
+
+    return resolve({
       db: db,
       orm: orm,
       app: app
@@ -75,7 +101,13 @@ exports.bootstrap = bootstrap;
 exports.start = function start() {
   return new Promise(async function (resolve, reject) {
 
-    const { db, orm, app } = await bootstrap();
+    let db, orm, app;
+
+    try {
+      ({db, orm, app} = await bootstrap());
+    } catch (e) {
+      return reject(e);
+    }
 
     // Start the app by listening on <port> at <host>
     app.listen(config.port, config.host, function () {
@@ -96,7 +128,7 @@ exports.start = function start() {
 
       console.log('--');
 
-      resolve({
+      return resolve({
         db: db,
         orm: orm,
         app: app

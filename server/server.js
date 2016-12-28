@@ -3,5 +3,10 @@
 /**
  * Module dependencies.
  */
+
 var app = require('./config/lib/app');
-app.start();
+
+app.start().catch(function (e) {
+  console.log('server failed: ' + e.message);
+  throw (e);
+});
