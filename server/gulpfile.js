@@ -190,6 +190,30 @@ gulp.task('test', function (done) {
   runSequence('env:test', 'test:server', done);
 });
 
+gulp.task('server:bootstrap', function(done) {
+  const app = require('./config/lib/app');
+  app.start().then(function() {
+    done();
+  });
+});
+
+gulp.task('ava:test:integration', function() {
+  gulp.src(defaultAssets.server.test)
+    // gulp-ava needs filepaths so you can't have any plugins before it
+    .pipe(plugins.ava({verbose: true}))
+    .on('error', function(err) {
+      console.log(err.message);
+      process.exit(1);
+    })
+    .on('end', function() {
+      process.exit(0);
+    });
+});
+
+gulp.task('test:integration', function(done) {
+  runSequence('env:test', 'server:bootstrap', 'ava:test:integration', done);
+});
+
 gulp.task('test:server', function (done) {
   runSequence('env:test', 'lint', ['copyLocalEnvConfig', 'makeUploadsDir'], 'mocha', done);
 });

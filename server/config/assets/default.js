@@ -13,6 +13,7 @@ module.exports = {
     config: ['modules/*/server/config/*.js'],
     policies: 'modules/*/server/policies/*.js',
     tests: ['modules/*/tests/server/**/*.js'],
+    test: ['modules/*/test/server/**/*.js'],
     views: ['modules/*/server/views/*.html']
   }
 };

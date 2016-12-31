@@ -1603,6 +1603,12 @@ d@^0.1.1, d@~0.1.1:
   dependencies:
     es5-ext "~0.10.2"
 
+dargs@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/dargs/-/dargs-4.1.0.tgz#03a9dbb4b5c2f139bf14ae53f0b8a2a6a86f4e17"
+  dependencies:
+    number-is-nan "^1.0.0"
+
 dashdash@^1.12.0:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/dashdash/-/dashdash-1.14.1.tgz#853cfa0f7cbe2fed5de20326b8dd581035f6e2f0"
@@ -2744,6 +2750,16 @@ graceful-fs@~1.2.0:
 growl@1.9.2:
   version "1.9.2"
   resolved "https://registry.yarnpkg.com/growl/-/growl-1.9.2.tgz#0ea7743715db8d8de2c5ede1775e1b45ac85c02f"
+
+gulp-ava@^0.15.0:
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/gulp-ava/-/gulp-ava-0.15.0.tgz#8dc59e4a95d603a2ee1dfaad2993ea8d6cb510c2"
+  dependencies:
+    ava "^0.17.0"
+    dargs "^4.1.0"
+    gulp-util "^3.0.6"
+    resolve-cwd "^1.0.0"
+    through2 "^2.0.0"
 
 gulp-concat@~2.6.0:
   version "2.6.1"
