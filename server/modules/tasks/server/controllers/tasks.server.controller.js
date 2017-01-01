@@ -6,7 +6,6 @@
 var path = require('path'),
   orm = require(path.resolve('./config/lib/sequelize'));
 
-
 exports.getAllTasks = function (req, res) {
 
   orm.Task.findAll().then(function (tasks) {
@@ -29,7 +28,7 @@ exports.addTask = function (req, res) {
   // Coerce the title field to string
   let title = '' + req.body.title;
 
-  let username = req.session.user.username;
+  let username = req.user.username;
 
   orm.Task.create({
     title: title,
@@ -74,7 +73,7 @@ exports.getMyTasks = function (req, res) {
 
   orm.Task.findAll({
     where: {
-      username: req.session.user.username
+      username: req.user.username
     }
   }).then(function (tasks) {
     res.status(200).send(tasks);
@@ -88,7 +87,7 @@ exports.getMyTasks = function (req, res) {
 // Helper method to validate a valid session for dependent APIs
 exports.validateSessionUser = function (req, res, next) {
   // Reject the request if no user exists on the session
-  if (!res.session || !req.session.user) {
+  if (!req.user) {
     return res.status(401).send({
       message: 'No session user'
     });
