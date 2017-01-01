@@ -198,7 +198,7 @@ gulp.task('server:bootstrap', function(done) {
 });
 
 gulp.task('ava:test:integration', function() {
-  gulp.src(defaultAssets.server.test)
+  return gulp.src(defaultAssets.server.test)
     // gulp-ava needs filepaths so you can't have any plugins before it
     .pipe(plugins.ava({verbose: true}))
     .on('error', function(err) {
