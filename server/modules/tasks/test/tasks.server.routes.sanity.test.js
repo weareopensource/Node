@@ -1,77 +1,113 @@
 'use strict';
 
 import test from 'ava';
-import app from '../../../config/lib/app';
-import supertest from 'supertest';
+import request from 'request';
 
 /**
  * Pre-condition for this test is to run on a clean database setup with no records existing
  */
 
-// Bootstrap the application components (db, orm and express app)
-// Make the components available to tests through the shared object `t.context`
-var appComponents;
-function bootstrapTest() {
-  return app.bootstrap();
-}
 
-// Before all tests would run we will bootstrap the ExpressJS app server
-// and it's related components (Mongoose DB and Sequelize ORM)
-test.before('Bootstrapping App for Tasks Routes test', async t => {
+// Before each test we setup a request object with defaults
+// Making the request object available to tests through the shared object `t.context`
+test.beforeEach('Setting up test defaults', t => {
+  const requestObject = request.defaults({
 
-  appComponents = await bootstrapTest();
+    // Set the Base URL for all API requests
+    baseUrl: 'http://localhost:3001',
+    // Set data send/received to be JSON compatible
+    json: true,
+    // Set the cookie jar option to true which persists cookies
+    // between API requests made, which enables us to perform
+    // login and further API calls as a logged-in user.
+    jar: true
+  });
 
-  t.truthy(appComponents.db, 'bootstrapped with db property');
-  t.truthy(appComponents.orm, 'bootstrapped with orm property');
-  t.truthy(appComponents.app, 'bootstrapped with app property');
+  t.context.request = requestObject;
 });
 
-test('API: Get All Tasks for anonymous user', async t => {
-  let response = await supertest(appComponents.app)
-    .get('/api/tasks')
-    .expect(200);
+test('API: Get All Tasks as anonymous user', async t => {
+  let response = await new Promise(function (resolve, reject) {
+    t.context.request.get({
+      uri: '/api/tasks'
+    }, function (error, response, body) {
+      if (error) {
+        reject(error);
+      }
+      resolve(response);
+    });
+  });
 
-  t.is(200, response.statusCode, 'successful');
-  t.true(response.body.length === 0, 'returns empty results');
-
+  t.is(response.statusCode, 200, response.body.toString());
+  t.true(response.body.length === 0, response.body.toString());
 });
 
-test('API: Get My Tasks for anonymous user', async t => {
-  let response = await supertest(appComponents.app)
-    .get('/api/tasks/me')
-    .expect(401);
+test('API: Get My Tasks as anonymous user', async t => {
+  let response = await new Promise(function (resolve, reject) {
+    t.context.request.get({
+      uri: '/api/tasks/me'
+    }, function (error, response, body) {
+      if (error) {
+        reject(error);
+      }
+      resolve(response);
+    });
+  });
 
-  t.is(401, response.statusCode, 'successful');
-  t.true(response.body.message == 'No session user', 'No session user');
-
+  t.is(response.statusCode, 401, response.body.toString());
+  t.true(response.body.message === 'No session user', response.body.toString());
 });
 
-test('API: Create Task with anonymous user', async t => {
-  let response = await supertest(appComponents.app)
-    .post('/api/tasks')
-    .expect(401);
+test('API: Create Task as anonymous user', async t => {
+  let response = await new Promise(function (resolve, reject) {
+    t.context.request.post({
+      uri: '/api/tasks',
+      body: {
+        title: 'my test task'
+      }
+    }, function (error, response, body) {
+      if (error) {
+        reject(error);
+      }
+      resolve(response);
+    });
+  });
 
-  t.is(401, response.statusCode, 'successful');
-  t.true(response.body.message == 'No session user', 'No session user');
-
+  t.is(response.statusCode, 401, response.body.toString());
+  t.true(response.body.message === 'No session user', response.body.toString());
 });
 
-test('API: Update Task with anonymous user', async t => {
-  let response = await supertest(appComponents.app)
-    .put('/api/tasks')
-    .expect(401);
+test('API: Update Task as anonymous user', async t => {
+  let response = await new Promise(function (resolve, reject) {
+    t.context.request.put({
+      uri: '/api/tasks',
+      body: {
+        title: 'my test task'
+      }
+    }, function (error, response, body) {
+      if (error) {
+        reject(error);
+      }
+      resolve(response);
+    });
+  });
 
-  t.is(401, response.statusCode, 'successful');
-  t.true(response.body.message == 'No session user', 'No session user');
-
+  t.is(response.statusCode, 401, response.body.toString());
+  t.true(response.body.message === 'No session user', response.body.toString());
 });
 
-test('API: Delete Task with anonymous user', async t => {
-  let response = await supertest(appComponents.app)
-    .delete('/api/tasks')
-    .expect(401);
+test('API: Delete Task as anonymous user', async t => {
+  let response = await new Promise(function (resolve, reject) {
+    t.context.request.delete({
+      uri: '/api/tasks'
+    }, function (error, response, body) {
+      if (error) {
+        reject(error);
+      }
+      resolve(response);
+    });
+  });
 
-  t.is(401, response.statusCode, 'successful');
-  t.true(response.body.message == 'No session user', 'No session user');
-
+  t.is(response.statusCode, 401, response.body.toString());
+  t.true(response.body.message === 'No session user', response.body.toString());
 });
