@@ -13,7 +13,7 @@ module.exports = {
     debug: process.env.MONGODB_DEBUG || false
   },
   orm: {
-    dbname: 'meandev',
+    dbname: 'meantest',
     user: 'root',
     pass: 'root',
     options: {
