@@ -17,10 +17,6 @@ test.beforeEach('Setting up test defaults', t => {
     baseUrl: 'http://localhost:3001',
     // Set data send/received to be JSON compatible
     json: true,
-    // Set the cookie jar option to true which persists cookies
-    // between API requests made, which enables us to perform
-    // login and further API calls as a logged-in user.
-    jar: true
   });
 
   t.context.request = requestObject;
@@ -38,8 +34,8 @@ test('API: Get All Tasks as anonymous user', async t => {
     });
   });
 
-  t.is(response.statusCode, 200, response.body.toString());
-  t.true(response.body.length === 0, response.body.toString());
+  t.is(response.statusCode, 200, JSON.stringify(response.body));
+  t.true(response.body.length === 0, JSON.stringify(response.body));
 });
 
 test('API: Get My Tasks as anonymous user', async t => {
@@ -54,8 +50,8 @@ test('API: Get My Tasks as anonymous user', async t => {
     });
   });
 
-  t.is(response.statusCode, 401, response.body.toString());
-  t.true(response.body.message === 'No session user', response.body.toString());
+  t.is(response.statusCode, 401, JSON.stringify(response.body));
+  t.true(response.body.message === 'No session user', JSON.stringify(response.body));
 });
 
 test('API: Create Task as anonymous user', async t => {
@@ -73,8 +69,8 @@ test('API: Create Task as anonymous user', async t => {
     });
   });
 
-  t.is(response.statusCode, 401, response.body.toString());
-  t.true(response.body.message === 'No session user', response.body.toString());
+  t.is(response.statusCode, 401, JSON.stringify(response.body));
+  t.true(response.body.message === 'No session user', JSON.stringify(response.body));
 });
 
 test('API: Update Task as anonymous user', async t => {
@@ -92,8 +88,8 @@ test('API: Update Task as anonymous user', async t => {
     });
   });
 
-  t.is(response.statusCode, 401, response.body.toString());
-  t.true(response.body.message === 'No session user', response.body.toString());
+  t.is(response.statusCode, 401, JSON.stringify(response.body));
+  t.true(response.body.message === 'No session user', JSON.stringify(response.body));
 });
 
 test('API: Delete Task as anonymous user', async t => {
@@ -108,6 +104,6 @@ test('API: Delete Task as anonymous user', async t => {
     });
   });
 
-  t.is(response.statusCode, 401, response.body.toString());
-  t.true(response.body.message === 'No session user', response.body.toString());
+  t.is(response.statusCode, 401, JSON.stringify(response.body));
+  t.true(response.body.message === 'No session user', JSON.stringify(response.body));
 });
