@@ -210,6 +210,16 @@ gulp.task('ava:test:integration', function() {
     });
 });
 
+gulp.task('seed:mongoose', function(done) {
+  const mongoose = require('./config/lib/mongoose');
+
+  mongoose.connect()
+    .then(mongoose.seed)
+    .then(function() {
+      done();
+  });
+});
+
 gulp.task('test:integration', function(done) {
   runSequence('env:test', 'server:bootstrap', 'ava:test:integration', done);
 });

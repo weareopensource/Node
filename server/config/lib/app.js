@@ -32,7 +32,6 @@ function startMongoose() {
   return new Promise(function (resolve, reject) {
     mongoose.loadModels()
       .then(mongoose.connect)
-      .then(mongoose.seed)
       .then(function(dbConnection) {
         resolve(dbConnection);
       })

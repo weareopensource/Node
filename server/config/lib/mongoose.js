@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-var config = require('../config'),
+const config = require('../config'),
   chalk = require('chalk'),
   path = require('path'),
   mongoose = require('mongoose'),
@@ -21,7 +21,7 @@ module.exports.loadModels = function() {
 
     resolve();
   });
-}
+};
 
 /**
  * seed the database with default data
@@ -29,16 +29,20 @@ module.exports.loadModels = function() {
  */
 module.exports.seed = function(dbConnection) {
   return new Promise(function (resolve, reject) {
-    if (config.seedDB && config.seedDB.seed) {
-      console.log(chalk.bold.red('Warning:  Database seeding is turned on'));
-      seed.start().then(function() {
-        resolve(dbConnection);
-      });
-    } else {
-      resolve(dbConnection);
+
+    if (!dbConnection) {
+      reject(new Error('dbConnection parameter is falsey'));
     }
+
+    dbConnection.connection.db.dropDatabase(function (error, result) {
+      if (error) {
+        reject(error);
+      }
+
+      resolve();
+    });
   });
-}
+};
 
 /**
  * Connect to the MongoDB server
@@ -66,7 +70,7 @@ module.exports.connect = function() {
         reject(err);
       })
   });
-}
+};
 
 /**
  * Disconnect from the MongoDB server
