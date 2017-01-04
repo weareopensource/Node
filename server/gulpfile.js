@@ -220,6 +220,19 @@ gulp.task('seed:mongoose', function(done) {
   });
 });
 
+gulp.task('seed:sequelize', function(done) {
+  const sequelize = require('./config/lib/sequelize');
+
+  sequelize.seed()
+    .then(function() {
+      done();
+  });
+});
+
+gulp.task('test:seed', function(done) {
+  runSequence('seed:mongoose', 'seed:sequelize', done);
+});
+
 gulp.task('test:integration', function(done) {
   runSequence('env:test', 'server:bootstrap', 'ava:test:integration', done);
 });

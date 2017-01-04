@@ -46,10 +46,15 @@ if (config.orm) {
 
   orm.sync = function () {
     // Sync makes sure the database tables are created if they don't exist
-    // and the `force` parameter will also drop the tables before re-creating them
     return this.sequelize.sync({
       force: (config.seedDB.reset || false)
     });
+  };
+
+  orm.seed = function () {
+    // Sync makes sure the database tables are created if they don't exist
+    // and the `force` parameter will also drop the tables before re-creating them
+    return this.sequelize.sync({ force: true });
   };
 
 }
