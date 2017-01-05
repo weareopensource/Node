@@ -218,29 +218,36 @@ gulp.task('ava:test:integration', function() {
     });
 });
 
+// Connects to Mongoose based on environment settings and seeds the database, performing
+// a drop of the mongo database to clear it out
 gulp.task('seed:mongoose', function(done) {
   const mongoose = require('./config/lib/mongoose');
 
   mongoose.connect()
     .then(mongoose.seed)
+    .then(mongoose.disconnect)
     .then(function() {
       done();
   });
 });
 
+// Connects to an SQL database, drop and re-create the schemas
 gulp.task('seed:sequelize', function(done) {
   const sequelize = require('./config/lib/sequelize');
 
   sequelize.seed()
     .then(function() {
+      sequelize.sequelize.close();
       done();
-  });
+    });
 });
 
+// Performs database seeding, used in test environments and related tasks
 gulp.task('test:seed', function(done) {
   runSequence('seed:mongoose', 'seed:sequelize', done);
 });
 
+// Run Integration Tests
 gulp.task('test:integration', function(done) {
   runSequence('env:test', 'server:bootstrap', 'ava:test:integration', done);
 });
