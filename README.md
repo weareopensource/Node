@@ -4,6 +4,40 @@ Riess is a full stack JavaScript application framework.
 
 It's backend origins are from the [meanjs](https://github.com/meanjs/mean) JavaScript project team, and thus Riess serves as the next evolutionary phase of the MEAN.JS framework.
 
+# MEAN.JS 1 to Riess.js
+
+The following table summarizes enhancements and changes made in Riess.js to update the original MEAN.JS project with current Node.js and JavaScript technology tools.
+
+Already implemented:
+
+| Subject | MEAN.JS 1 | Riess.js
+| ------- | --------- | --------
+| **Testing:Tools** | supertest, mocha, should.js | request, ava 
+| **Testing:Tests Automation** | All tests run as one task | separates tasks to unit tests, integration tests
+| **Testing:ExpressJS** | supertest wraps expressjs `app` | gulp instantiates a real ExpressJS API service
+| **Testing:Seed** | seeds test | 
+| **Developer:Community** | commit guidelines advised in PR | uses `commitizen` to streamline commit guidelines
+| **Developer:Debug** | node-inspector (missing v7 support) | uses v7's builtin `debug` and `inspect` options
+| **Node.js** | v4 | v7 with --harmony
+| **Async Functionality** | Callbacks | Async/Await and native Node.js Promise
+| **SQL** | N/A | Sequelize ORM
+
+Planned:
+
+| Subject | MEAN.JS 1 | Riess.js
+| ------- | --------- | --------
+| **Documentation:API** | N/A | Swagger
+| **Documentation:Code** | N/A | Docco
+| **Developer:Lint** | MEAN.JS specific eslint rules | Standard JS
+
+Ideas:
+
+* RethinkDB or alternative?
+* Redis
+* JWT 
+* Replace existing implementation of social logins with Passport or consider integration with Auth0
+
+
 # Architecture
 
 ## Directory Structure
