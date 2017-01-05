@@ -15,7 +15,7 @@ Already implemented:
 | **Testing:Tools** | supertest, mocha, should.js | request, ava 
 | **Testing:Tests Automation** | All tests run as one task | separates tasks to unit tests, integration tests
 | **Testing:ExpressJS** | supertest wraps expressjs `app` | gulp instantiates a real ExpressJS API service
-| **Testing:Seed** | seeds test | 
+| **Testing:Seed** | seeds based on global seed.js file, only user and pass | seed tasks resets the db/models to clear data and is separated to own gulp task
 | **Developer:Community** | commit guidelines advised in PR | uses `commitizen` to streamline commit guidelines
 | **Developer:Debug** | node-inspector (missing v7 support) | uses v7's builtin `debug` and `inspect` options
 | **Node.js** | v4 | v7 with --harmony
