@@ -190,6 +190,8 @@ gulp.task('test', function (done) {
   runSequence('env:test', 'test:server', done);
 });
 
+// Bootstrap the server instance
+// Common use case is to run API tests on real instantiated models and db
 gulp.task('server:bootstrap', function(done) {
   const app = require('./config/lib/app');
   app.start().then(function() {
@@ -197,15 +199,21 @@ gulp.task('server:bootstrap', function(done) {
   });
 });
 
+// Launch Ava's integration tests
 gulp.task('ava:test:integration', function() {
   return gulp.src(defaultAssets.server.test)
     // gulp-ava needs filepaths so you can't have any plugins before it
     .pipe(plugins.ava({verbose: true}))
     .on('error', function(err) {
+      // On errors emitted by Ava we display them and exit with a non-zero error code
+      // to fail the build
       console.log(err.message);
       process.exit(1);
     })
     .on('end', function() {
+      // Because this test depends on `server:bootstrap` which opens an even listener
+      // for server connections, it is required to force an exit, otherwise the gulp
+      // process will stay open, waiting to process connections due to `server:bootstrap`
       process.exit(0);
     });
 });
