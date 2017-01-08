@@ -4,6 +4,14 @@ Riess is a full stack JavaScript application framework.
 
 It's backend origins are from the [meanjs](https://github.com/meanjs/mean) JavaScript project team, and thus Riess serves as the next evolutionary phase of the MEAN.JS framework.
 
+# Status Notice
+
+This repository and project status is very raw.
+
+Work on repository is fairly new and started only in December 2016 so many of the pushed functionality in the project could be half-baked, hanging for more commits to "finish" or better approach the code (expect many re-factoring).
+
+On the plus side, it means there's a room for contribution and ideas to be implemented.
+
 # MEAN.JS 1 to Riess.js
 
 The following table summarizes enhancements and changes made in Riess.js to update the original MEAN.JS project with current Node.js and JavaScript technology tools.
