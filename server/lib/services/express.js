@@ -55,16 +55,8 @@ module.exports.initMiddleware = function (app) {
     },
     level: 9
   }));
-  
-  app.use(expressLogger);
 
-  // Environment dependent middleware
-  if (process.env.NODE_ENV === 'development') {
-    // Disable views cache
-    app.set('view cache', false);
-  } else if (process.env.NODE_ENV === 'production') {
-    app.locals.cache = 'memory';
-  }
+  app.use(expressLogger);
 
   // Request body parsing middleware should be above methodOverride
   app.use(bodyParser.urlencoded({
@@ -75,17 +67,6 @@ module.exports.initMiddleware = function (app) {
 
   // Add the cookie parser and flash middleware
   app.use(cookieParser());
-};
-
-/**
- * Configure view engine
- */
-module.exports.initViewEngine = function (app) {
-  app.engine('server.view.html', hbs.express4({
-    extname: '.server.view.html'
-  }));
-  app.set('view engine', 'server.view.html');
-  app.set('views', path.resolve('./'));
 };
 
 /**
@@ -209,9 +190,6 @@ module.exports.init = function (db) {
 
   // Initialize Express middleware
   this.initMiddleware(app);
-
-  // Initialize Express view engine
-  this.initViewEngine(app);
 
   // Initialize Helmet security headers
   this.initHelmetHeaders(app);
