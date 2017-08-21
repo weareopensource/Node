@@ -11,10 +11,10 @@ var _ = require('lodash'),
   fs = require('fs'),
   mock = require('mock-fs'),
   request = require('supertest'),
-  config = require(path.resolve('./config/config')),
-  logger = require(path.resolve('./config/lib/logger')),
-  seed = require(path.resolve('./config/lib/seed')),
-  express = require(path.resolve('./config/lib/express'));
+  config = require(path.resolve('./lib/config')),
+  logger = require(path.resolve('./lib/services/logger')),
+  seed = require(path.resolve('./lib/services/seed')),
+  express = require(path.resolve('./lib/services/express'));
 
 /**
  * Globals
@@ -466,7 +466,7 @@ describe('Configuration Tests:', function () {
 
     it('should use the default log format of "combined" when an invalid format was provided', function () {
 
-      var _logger = require(path.resolve('./config/lib/logger'));
+      var _logger = require(path.resolve('./lib/services/logger'));
 
       // manually set the config log format to be invalid
       config.log = {

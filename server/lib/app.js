@@ -4,8 +4,8 @@
  * Module dependencies.
  */
 var config = require('../config'),
-  mongoose = require('./mongoose'),
-  express = require('./express'),
+  mongoose = require('./services/mongoose'),
+  express = require('./services/express'),
   chalk = require('chalk');
 
 // Establish an SQL server connection, instantiating all models and schemas
@@ -14,11 +14,12 @@ function startSequelize() {
     let orm = {};
     if (config.orm) {
       try {
-        orm = require('./sequelize');
+        orm = require('./services/sequelize');
         orm.sync().then(function () {
             resolve(orm);
           });
       } catch (e) {
+        console.log(e);
         reject(e);
       }
     } else {
@@ -36,6 +37,7 @@ function startMongoose() {
         resolve(dbConnection);
       })
       .catch(function(e) {
+        console.log(e);
         reject(e);
       });
   });
@@ -54,6 +56,7 @@ function startExpress(db, orm) {
     try {
       app = express.init(db, orm);
     } catch(e) {
+      console.log(e);
       return reject(e);
     }
 

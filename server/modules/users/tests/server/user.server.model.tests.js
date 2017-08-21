@@ -7,7 +7,7 @@ var should = require('should'),
   mongoose = require('mongoose'),
   User = mongoose.model('User'),
   path = require('path'),
-  config = require(path.resolve('./config/config'));
+  config = require(path.resolve('./lib/config'));
 
 /**
  * Globals

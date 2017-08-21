@@ -6,7 +6,7 @@
 var passport = require('passport'),
   User = require('mongoose').model('User'),
   path = require('path'),
-  config = require(path.resolve('./config/config'));
+  config = require(path.resolve('./lib/config'));
 
 /**
  * Module init function

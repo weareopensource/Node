@@ -5,7 +5,7 @@
  */
 var mongoose = require('mongoose'),
   path = require('path'),
-  config = require(path.resolve('./config/config')),
+  config = require(path.resolve('./lib/config')),
   Schema = mongoose.Schema,
   crypto = require('crypto'),
   validator = require('validator'),

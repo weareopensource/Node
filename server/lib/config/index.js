@@ -168,26 +168,27 @@ var initGlobalConfigFiles = function (config, assets) {
  */
 var initGlobalConfig = function () {
   // Validate NODE_ENV existence
-  validateEnvironmentVariable();
+  // validateEnvironmentVariable();
 
   // Get the default assets
-  var assets = require(path.join(process.cwd(), 'config/assets/default'));
+  var assets = require(path.join(process.cwd(), 'lib/config/assets/default'));
 
   // Get the default config
-  var defaultConfig = require(path.join(process.cwd(), 'config/env/default'));
+  // var defaultConfig = require(path.join(process.cwd(), 'config/env/default'));
 
   // Get the current config
-  var environmentConfig = require(path.join(process.cwd(), 'config/env/', process.env.NODE_ENV)) || {};
+  var environmentConfig = require(path.join(process.cwd(), 'config.js')) || {};
 
   // Merge config files
-  var config = _.merge(defaultConfig, environmentConfig);
+  // var config = _.merge(defaultConfig, environmentConfig);
+  var config = environmentConfig;
 
   // read package.json for MEAN.JS project information
   var pkg = require(path.resolve('./package.json'));
   config.meanjs = pkg;
 
   // Extend the config object with the local-NODE_ENV.js custom/local environment. This will override any settings present in the local configuration.
-  config = _.merge(config, (fs.existsSync(path.join(process.cwd(), 'config/env/local-' + process.env.NODE_ENV + '.js')) && require(path.join(process.cwd(), 'config/env/local-' + process.env.NODE_ENV + '.js'))) || {});
+  // config = _.merge(config, (fs.existsSync(path.join(process.cwd(), 'config/env/local-' + process.env.NODE_ENV + '.js')) && require(path.join(process.cwd(), 'config/env/local-' + process.env.NODE_ENV + '.js'))) || {});
 
   // Initialize global globbed files
   initGlobalConfigFiles(config, assets);

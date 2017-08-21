@@ -4,7 +4,7 @@
  * Module dependencies
  */
 var path = require('path'),
-  config = require(path.resolve('./config/config'));
+  config = require(path.resolve('./lib/config'));
 
 /**
  * Get unique error field name

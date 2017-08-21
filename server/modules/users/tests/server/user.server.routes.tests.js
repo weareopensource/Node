@@ -6,7 +6,7 @@ var semver = require('semver'),
   path = require('path'),
   mongoose = require('mongoose'),
   User = mongoose.model('User'),
-  express = require(path.resolve('./config/lib/express'));
+  express = require(path.resolve('./lib/services/express'));
 
 /**
  * Globals

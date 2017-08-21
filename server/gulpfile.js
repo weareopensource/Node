@@ -13,7 +13,7 @@ var _ = require('lodash'),
   path = require('path'),
   del = require('del');
 
-var defaultAssets = require('./config/assets/default');
+var defaultAssets = require('./lib/config/assets/default');
 var changedTestFiles = [];
 
 // Set NODE_ENV to 'test'
@@ -133,7 +133,7 @@ gulp.task('makeUploadsDir', function () {
 // Mocha tests task
 gulp.task('mocha', function (done) {
   // Open mongoose connections
-  var mongoose = require('./config/lib/mongoose.js');
+  var mongoose = require('./lib/services/mongoose.js');
   var testSuites = changedTestFiles.length ? changedTestFiles : defaultAssets.server.tests;
   var error;
 
@@ -221,7 +221,7 @@ gulp.task('ava:test:integration', function() {
 // Connects to Mongoose based on environment settings and seeds the database, performing
 // a drop of the mongo database to clear it out
 gulp.task('seed:mongoose', function(done) {
-  const mongoose = require('./config/lib/mongoose');
+  const mongoose = require('./lib/services/mongoose');
 
   mongoose.connect()
     .then(mongoose.seed)
@@ -233,7 +233,7 @@ gulp.task('seed:mongoose', function(done) {
 
 // Connects to an SQL database, drop and re-create the schemas
 gulp.task('seed:sequelize', function(done) {
-  const sequelize = require('./config/lib/sequelize');
+  const sequelize = require('./lib/services/sequelize');
 
   sequelize.seed()
     .then(function() {

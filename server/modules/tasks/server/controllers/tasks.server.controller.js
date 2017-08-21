@@ -4,7 +4,7 @@
  * Module dependencies
  */
 var path = require('path'),
-  orm = require(path.resolve('./config/lib/sequelize'));
+  orm = require(path.resolve('./lib/services/sequelize'));
 
 exports.getAllTasks = function (req, res) {
 

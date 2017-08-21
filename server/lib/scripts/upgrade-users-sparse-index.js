@@ -3,7 +3,7 @@
 process.env.NODE_ENV = 'development';
 
 var chalk = require('chalk'),
-  mongoose = require('../config/lib/mongoose');
+  mongoose = require('../lib/services/mongoose');
 
 mongoose.loadModels();
 

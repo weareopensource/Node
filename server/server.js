@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-var app = require('./config/lib/app');
+const app = require('./lib/app');
 
 app.start().catch(function (e) {
   console.log('server failed: ' + e.message);
