@@ -5,8 +5,8 @@
  */
 var config = require('../config'),
   express = require('express'),
-  morgan = require('morgan'),
-  logger = require('./logger'),
+  logger = require('./logger').log(),
+  expressLogger = require('./logger').logExpress(),
   bodyParser = require('body-parser'),
   session = require('express-session'),
   MongoStore = require('connect-mongo')(session),
@@ -55,11 +55,8 @@ module.exports.initMiddleware = function (app) {
     },
     level: 9
   }));
-
-  // Enable logger (morgan) if enabled in the configuration file
-  if (_.has(config, 'log.format')) {
-    app.use(morgan(logger.getLogFormat(), logger.getMorganOptions()));
-  }
+  
+  app.use(expressLogger);
 
   // Environment dependent middleware
   if (process.env.NODE_ENV === 'development') {
