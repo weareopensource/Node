@@ -163,7 +163,7 @@ module.exports.initErrorRoutes = function (app) {
     console.error(err.stack);
 
     // Redirect to error page
-    res.redirect('/server-error');
+    res.status(500).send();
   });
 };
 
