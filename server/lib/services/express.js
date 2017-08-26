@@ -5,7 +5,7 @@
  */
 var config = require('../config'),
   express = require('express'),
-  logger = require('./logger').log(),
+  log = require('./logger').log(),
   expressLogger = require('./logger').logExpress(),
   bodyParser = require('body-parser'),
   session = require('express-session'),

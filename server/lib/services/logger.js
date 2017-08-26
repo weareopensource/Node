@@ -6,10 +6,18 @@ const fs = require('fs');
 const winston = require('winston');
 const winstonExpress = require('express-winston');
 
+// maintain variables for singleton
+let logger;
+let loggerExpress;
+
 module.exports = class Logger {
   static log() {
+    if (logger) {
+      return logger;
+    }
+
     // Instantiating the default winston application logger with the Console transport
-    const logger = new winston.Logger({
+    logger = new winston.Logger({
       transports: [
         new winston.transports.Console({
           level: 'info',
@@ -72,7 +80,11 @@ module.exports = class Logger {
    * use with express logger
    */
   static logExpress() {
-    const logger = winstonExpress.logger({
+    if (loggerExpress) {
+      return loggerExpress;
+    }
+
+    loggerExpress = winstonExpress.logger({
       transports: [
         new winston.transports.Console({
           level: 'info',
@@ -85,6 +97,6 @@ module.exports = class Logger {
       colorize: true
     });
 
-    return logger;
+    return loggerExpress;
   }
 }
