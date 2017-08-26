@@ -53,7 +53,11 @@ module.exports.connect = function() {
     // Attach Node.js native Promises library implementation to Mongoose
     mongoose.Promise = config.db.promise;
 
-    mongoose.connect(config.db.uri, config.db.options)
+    // Requires as of 4.11.0 to opt-in to the new connect implementation
+    // see: http://mongoosejs.com/docs/connections.html#use-mongo-client
+    const mongoOptions = { ...config.db.options, useMongoClient: true }
+
+    mongoose.connect(config.db.uri, mongoOptions)
       .then(function() {
 
         // Enabling mongoose debug mode if required

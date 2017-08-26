@@ -11,22 +11,18 @@ module.exports = {
     promise: global.Promise,
     uri: process.env.MONGOHQ_URL || process.env.MONGODB_URI || 'mongodb://' + (process.env.DB_1_PORT_27017_TCP_ADDR || 'localhost') + '/mean-dev',
     options: {
-      user: '',
-      pass: '',
-      /**
-       * Uncomment to enable ssl certificate based authentication to mongodb
-       * servers. Adjust the settings below for your specific certificate
-       * setup.
-       server: {
-        ssl: true,
-        sslValidate: false,
-        checkServerIdentity: false,
-        sslCA: fs.readFileSync('./config/sslcerts/ssl-ca.pem'),
-        sslCert: fs.readFileSync('./config/sslcerts/ssl-cert.pem'),
-        sslKey: fs.readFileSync('./config/sslcerts/ssl-key.pem'),
-        sslPass: '1234'
-      }
-       */
+    /**
+     * Uncomment to enable ssl certificate based authentication to mongodb
+     * servers. Adjust the settings below for your specific certificate
+     * setup.
+     */
+      // ssl: true,
+      // sslValidate: false,
+      // checkServerIdentity: false,
+      // sslCA: fs.readFileSync('./config/sslcerts/ssl-ca.pem'),
+      // sslCert: fs.readFileSync('./config/sslcerts/ssl-cert.pem'),
+      // sslKey: fs.readFileSync('./config/sslcerts/ssl-key.pem'),
+      // sslPass: '1234'
     },
     // Enable mongoose debug mode
     debug: process.env.MONGODB_DEBUG || false
@@ -85,7 +81,9 @@ module.exports = {
   sessionSecret: process.env.SESSION_SECRET || 'MEAN',
   // sessionKey is the cookie session name
   sessionKey: 'sessionId',
-  sessionCollection: 'sessions',
+  sessionStore: {
+    sessionCollection: 'sessions',
+  },
   // Lusca config
   csrf: {
     csrf: false,

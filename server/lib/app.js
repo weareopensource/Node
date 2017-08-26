@@ -48,13 +48,13 @@ function startMongoose() {
  * @param {object} db a Mongoose DB
  * @param {object} orm an SQL DB
  */
-function startExpress(db, orm) {
+function startExpress() {
   return new Promise(function (resolve, reject) {
 
     // Initialize the ExpressJS web application server
     let app;
     try {
-      app = express.init(db, orm);
+      app = express.init();
     } catch(e) {
       console.log(e);
       return reject(e);
@@ -81,7 +81,7 @@ function bootstrap () {
 
     try {
       db = await startMongoose();
-      app = await startExpress(db, orm);
+      app = await startExpress();
     } catch (e) {
       return reject(new Error('unable to initialize Mongoose or ExpressJS'));
     }

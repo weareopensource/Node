@@ -72,7 +72,7 @@ module.exports.initMiddleware = function (app) {
 /**
  * Configure Express session
  */
-module.exports.initSession = function (app, db) {
+module.exports.initSession = function (app) {
   // Express MongoDB session storage
   app.use(session({
     saveUninitialized: true,
@@ -84,10 +84,14 @@ module.exports.initSession = function (app, db) {
       secure: config.sessionCookie.secure && config.secure.ssl
     },
     name: config.sessionKey,
-    store: new MongoStore({
-      mongooseConnection: db.connection,
-      collection: config.sessionCollection
-    })
+    store:
+      config.sessionStore
+      ? new MongoStore({
+        url: config.db.uri,
+        mongoOptions: config.db.options,
+        collection: config.sessionStore.sessionCollection
+      })
+      : undefined
   }));
 
   // Add Lusca CSRF Middleware
@@ -97,9 +101,9 @@ module.exports.initSession = function (app, db) {
 /**
  * Invoke modules server configuration
  */
-module.exports.initModulesConfiguration = function (app, db) {
+module.exports.initModulesConfiguration = function (app) {
   config.files.server.configs.forEach(function (configPath) {
-    require(path.resolve(configPath))(app, db);
+    require(path.resolve(configPath))(app);
   });
 };
 
@@ -170,9 +174,9 @@ module.exports.initErrorRoutes = function (app) {
 /**
  * Configure Socket.io
  */
-module.exports.configureSocketIO = function (app, db) {
+module.exports.configureSocketIO = function (app) {
   // Load the Socket.io configuration
-  var server = require('./socket.io')(app, db);
+  var server = require('./socket.io')(app);
 
   // Return server object
   return server;
@@ -181,7 +185,7 @@ module.exports.configureSocketIO = function (app, db) {
 /**
  * Initialize the Express application
  */
-module.exports.init = function (db) {
+module.exports.init = function () {
   // Initialize express app
   var app = express();
 
@@ -198,7 +202,7 @@ module.exports.init = function (db) {
   this.initModulesClientRoutes(app);
 
   // Initialize Express session
-  this.initSession(app, db);
+  this.initSession(app);
 
   // Initialize Modules configuration
   this.initModulesConfiguration(app);
@@ -213,7 +217,7 @@ module.exports.init = function (db) {
   this.initErrorRoutes(app);
 
   // Configure Socket.io
-  app = this.configureSocketIO(app, db);
+  app = this.configureSocketIO(app);
 
   return app;
 };
