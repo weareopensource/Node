@@ -30,6 +30,7 @@
   "dependencies": {
     "acl": "~0.4.9",
     "async": "~2.0.1",
+    "bcrypt": "^1.0.3",
     "body-parser": "~1.15.0",
     "bower": "~1.7.7",
     "chalk": "~1.1.1",

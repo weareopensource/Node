@@ -3,11 +3,13 @@
 /**
  * Module dependencies
  */
-var path = require('path'),
-  errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
-  mongoose = require('mongoose'),
-  passport = require('passport'),
-  User = mongoose.model('User');
+const path = require('path')
+const errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'))
+const mongoose = require('mongoose')
+const passport = require('passport')
+const User = mongoose.model('User')
+
+const UserService = require('../../services/user.service')
 
 // URLs for which user can't be redirected on signin
 var noReturnUrls = [
@@ -18,70 +20,29 @@ var noReturnUrls = [
 /**
  * Signup
  */
-exports.signup = function (req, res) {
-  // For security measurement we remove the roles from the req.body object
-  delete req.body.roles;
-
-  // Init user and add missing fields
-  var user = new User(req.body);
-  user.provider = 'local';
-  user.displayName = user.firstName + ' ' + user.lastName;
-
-  // Then save the user
-  user.save(function (err) {
-    if (err) {
-      return res.status(422).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      // Remove sensitive data before login
-      user.password = undefined;
-      user.salt = undefined;
-
-      req.login(user, function (err) {
-        if (err) {
-          res.status(400).send(err);
-        } else {
-          res.json(user);
-        }
-      });
-    }
-  });
-};
+exports.signup = async function (req, res) {
+  try {
+    const user = await UserService.signUp(req.body)
+    return res.json(user)
+  } catch (err) {
+    return res.status(500).send(err.message)
+  }
+}
 
 /**
  * Signin after passport authentication
  */
-exports.signin = function (req, res, next) {
-  passport.authenticate('local', function (err, user, info) {
-    if (err || !user) {
-      console.log(err);
-      console.log(user);
-      console.log(info);
-      res.status(422).send(info);
-    } else {
-      // Remove sensitive data before login
-      user.password = undefined;
-      user.salt = undefined;
-
-      req.login(user, function (err) {
-        if (err) {
-          res.status(400).send(err);
-        } else {
-          res.json(user);
-        }
-      });
-    }
-  })(req, res, next);
-};
+exports.signin = async function (req, res) {
+  return res.json(req.user)
+}
 
 /**
  * Signout
  */
 exports.signout = function (req, res) {
-  req.logout();
-  res.redirect('/');
-};
+  req.logout()
+  return res.status(200).send()
+}
 
 /**
  * OAuth provider call
