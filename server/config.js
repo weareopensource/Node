@@ -146,7 +146,7 @@ module.exports = {
     }
   },
   jwt: {
-    secret: process.env.FACEBOOK_ID || 'test'
+    secret: process.env.JWT_SECRET || 'test'
   },
   facebook: {
     clientID: process.env.FACEBOOK_ID || 'APP_ID',
