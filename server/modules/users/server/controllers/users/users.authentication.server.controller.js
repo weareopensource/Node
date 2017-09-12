@@ -4,9 +4,11 @@
  * Module dependencies
  */
 const path = require('path')
+const config = require(path.resolve('./lib/config'))
 const errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'))
 const mongoose = require('mongoose')
 const passport = require('passport')
+const jwt = require('jsonwebtoken')
 const User = mongoose.model('User')
 
 const UserService = require('../../services/user.service')
@@ -42,6 +44,33 @@ exports.signin = async function (req, res) {
 exports.signout = function (req, res) {
   req.logout()
   return res.status(200).send()
+}
+
+/**
+ * Jwt Token Auth
+ */
+exports.token = async function (req, res) {
+  try {
+    // Authenticate the user based on credentials
+    // @TODO be consistent with whether the login field for user identification
+    // is a username or an email
+    const username = req.body.email
+    const password = req.body.password
+    const user = await UserService.authenticate(username, password)
+
+    // Create the token and send
+    // @TODO properly create the token with all of its metadata
+    const payload = {
+      id: user.id
+    }
+    // @TODO properly sign the token, not with a shared secret (use pubkey instead),
+    // and specify proper expiration, issuer, algorithm, etc.
+    const token = jwt.sign(payload, config.jwt.secret)
+
+    res.status(200).json({token: token})
+  } catch (err) {
+    return res.status(500).send(err.message)
+  }
 }
 
 /**

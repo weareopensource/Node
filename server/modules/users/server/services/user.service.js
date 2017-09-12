@@ -15,6 +15,10 @@ const SALT_ROUNDS = 10
 
 class UserService {
   static deserialize (user) {
+    if (!user || typeof user !== 'object') {
+      return null
+    }
+
     return {
       id: user.id,
       displayName: user.displayName,

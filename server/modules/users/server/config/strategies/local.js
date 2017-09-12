@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 /**
  * Module dependencies
@@ -8,7 +8,7 @@ const LocalStrategy = require('passport-local').Strategy
 // const User = require('mongoose').model('User')
 const UserService = require('../../services/user.service')
 
-module.exports = function () {
+module.exports = function (config) {
   passport.use(new LocalStrategy({
     usernameField: 'usernameOrEmail',
     passwordField: 'password'

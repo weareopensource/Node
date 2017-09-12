@@ -16,6 +16,16 @@ module.exports = function (app) {
   app.route('/api/auth/signin').post(passport.authenticate('local'), users.signin)
   app.route('/api/auth/signout').post(users.signout)
 
+  // Jwt token
+  app.route('/api/auth/token').post(users.token)
+  // Jwt protected route example:
+  // app.route('/api/auth/secretPlace').get(passport.authenticate('jwt'), (req, res) => {
+  //   console.log(req.user)
+  //   console.log(req.session)
+  //   console.log(req.isAuthenticated())
+  //   res.status(200).send()
+  // })
+
   // Setting the facebook oauth routes
   app.route('/api/auth/facebook').get(users.oauthCall('facebook', {
     scope: ['email']

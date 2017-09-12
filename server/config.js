@@ -145,6 +145,9 @@ module.exports = {
       minOptionalTestsToPass: 4
     }
   },
+  jwt: {
+    secret: process.env.FACEBOOK_ID || 'test'
+  },
   facebook: {
     clientID: process.env.FACEBOOK_ID || 'APP_ID',
     clientSecret: process.env.FACEBOOK_SECRET || 'APP_SECRET',
