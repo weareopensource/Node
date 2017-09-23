@@ -5,6 +5,7 @@
  */
 const path = require('path')
 const config = require(path.resolve('./lib/config'))
+const ApiError = require(path.resolve('./lib/helpers/ApiError'))
 const errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'))
 const mongoose = require('mongoose')
 const passport = require('passport')
@@ -22,12 +23,12 @@ var noReturnUrls = [
 /**
  * Signup
  */
-exports.signup = async function (req, res) {
+exports.signup = async function (req, res, next) {
   try {
     const user = await UserService.signUp(req.body)
     return res.json(user)
   } catch (err) {
-    return res.status(500).send(err.message)
+    return next(new ApiError(err.message))
   }
 }
 
@@ -49,7 +50,7 @@ exports.signout = function (req, res) {
 /**
  * Jwt Token Auth
  */
-exports.token = async function (req, res) {
+exports.token = async function (req, res, next) {
   try {
     // Authenticate the user based on credentials
     // @TODO be consistent with whether the login field for user identification
@@ -69,7 +70,7 @@ exports.token = async function (req, res) {
 
     res.status(200).json({token: token})
   } catch (err) {
-    return res.status(500).send(err.message)
+    return next(new ApiError(err.message))
   }
 }
 
