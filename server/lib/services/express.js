@@ -166,8 +166,12 @@ module.exports.initErrorRoutes = function (app) {
     // Log it
     console.error(err.stack);
 
-    // Redirect to error page
-    res.status(500).send();
+    // Build an error response object and send it with the
+    // status in the error
+    res.status(err.status).send({
+      message: err.message,
+      code: err.code
+    });
   });
 };
 
