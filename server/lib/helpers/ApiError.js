@@ -8,9 +8,6 @@ class ApiError extends Error {
   constructor (message, {status, code} = {}) {
     super(message)
 
-    // Set Generic error message
-    this.message = message
-
     // Set HTTP status code
     this.status = status || 500
 
