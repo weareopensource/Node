@@ -5,6 +5,7 @@
  */
 const path = require('path')
 const config = require(path.resolve('./lib/config'))
+const configuration = require(path.resolve('./config'))
 const ApiError = require(path.resolve('./lib/helpers/ApiError'))
 const errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'))
 const mongoose = require('mongoose')
@@ -26,8 +27,13 @@ var noReturnUrls = [
 exports.signup = async function (req, res, next) {
   try {
     const user = await UserService.signUp(req.body)
-    return res.json(user)
-  } catch (err) {
+    const { _id, firstName, lastName, email, username } = user
+    const payload = { id: _id, firstName, lastName, email, username }
+    const token = jwt.sign(payload, config.jwt.secret)
+    return res.status(200)
+      .cookie('TOKEN', token, { maxAge: 900000, httpOnly: true })
+      .json({ user: payload, tokenExpiresIn: 101010010101 })
+  } catch(err) {
     return next(new ApiError(err.message))
   }
 }
@@ -36,8 +42,13 @@ exports.signup = async function (req, res, next) {
  * Signin after passport authentication
  */
 exports.signin = async function (req, res) {
-  return res.json(req.user)
-}
+  const { _id, firstName, lastName, email, username } = req.user;
+  const payload = { id: _id, firstName, lastName, email, username };
+  const token = jwt.sign(payload, configuration.jwt.secret);
+  return res.status(200)
+    .cookie('TOKEN', token)
+    .json({ user: payload, tokenExpiresIn: 10101010101 });
+};
 
 /**
  * Signout
@@ -68,7 +79,7 @@ exports.token = async function (req, res, next) {
     // and specify proper expiration, issuer, algorithm, etc.
     const token = jwt.sign(payload, config.jwt.secret)
 
-    res.status(200).json({token: token})
+    res.status(200).cookies('TOKEN', token)
   } catch (err) {
     return next(new ApiError(err.message))
   }

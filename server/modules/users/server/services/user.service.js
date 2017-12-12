@@ -57,7 +57,6 @@ class UserService {
 
     // For security measurement we remove the roles from the req.body object
     delete userObj.roles
-
     if (!UserValidationService.validateUsername(userObj)) {
       return Promise.resolve(false)
     }

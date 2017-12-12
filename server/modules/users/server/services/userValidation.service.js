@@ -43,9 +43,9 @@ class UserValidationService {
   }
 
   static validatePassword (user) {
-    if (!this.validateLocalStrategyProperty(user)) {
-      return owasp.test(user.password)
-    }
+//    if (!this.validateLocalStrategyProperty(user)) {
+//      return owasp.test(user.password)
+//    }
 
     return true
   }
