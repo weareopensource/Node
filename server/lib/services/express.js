@@ -17,7 +17,8 @@ var config = require('../config'),
   hbs = require('express-hbs'),
   path = require('path'),
   _ = require('lodash'),
-  lusca = require('lusca');
+  lusca = require('lusca'),
+  cors = require('cors');
 
 /**
  * Initialize local variables
@@ -67,6 +68,13 @@ module.exports.initMiddleware = function (app) {
 
   // Add the cookie parser and flash middleware
   app.use(cookieParser());
+
+  app.use(cors({
+    origin: ['http://localhost:4200', 'http://localhost:8080'],
+    credentials: true,
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204 
+  }))
+
 };
 
 /**
