@@ -23,6 +23,7 @@ module.exports = function (config) {
         })
       }
     } catch (err) {
+      console.log(err)
       return done();
     }
   }))

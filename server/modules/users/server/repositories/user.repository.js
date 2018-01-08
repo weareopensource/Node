@@ -18,7 +18,7 @@ class UserRepository {
 
   static getByEmail (email) {
     // @TODO change the user's model field to email to be consistent
-    return User.findOne({username: String(email)}).exec()
+    return User.findOne({email}).exec()
   }
 }
 
