@@ -27,6 +27,7 @@ class UserService {
       username: user.username,
       email: user.email,
       provider: user.provider,
+      roles: user.roles,
       created: user.created,
     }
   }
