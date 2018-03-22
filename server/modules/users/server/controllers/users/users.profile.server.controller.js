@@ -28,8 +28,7 @@ exports.update = function (req, res) {
 
     user.updated = Date.now();
     user.displayName = user.firstName + ' ' + user.lastName;
-
-    user.save(function (err) {
+    User.findByIdAndUpdate(user.id, user, function (err) {
       if (err) {
         return res.status(422).send({
           message: errorHandler.getErrorMessage(err)
