@@ -28,11 +28,13 @@ exports.addTask = function (req, res) {
 
   // Coerce the title field to string
   let title = '' + req.body.title;
+  let description = '' + req.body.description;
 
   let username = req.user.username;
 
   orm.Task.create({
     title: title,
+    description: description,
     username: username
   }).then(function (tasks) {
     res.status(200).send(tasks);
