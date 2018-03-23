@@ -11,6 +11,7 @@ exports.getAllTasks = function (req, res) {
   orm.Task.findAll().then(function (tasks) {
     res.status(200).send(tasks);
   }).catch(function (error) {
+    console.log(error)
     res.status(500).send(error);
   });
 
@@ -42,14 +43,14 @@ exports.addTask = function (req, res) {
 };
 
 exports.updateTask = function (req, res) {
-
-  orm.Task.update(req.body, {
-    where: {
-      id: req.body.id
-    }
-  }).then(function (tasks) {
-    res.status(200).send(tasks);
+  console.log('req.body', req.body);
+  orm.Task.update(
+    { description: req.body.description, title: req.body.title },
+    { where: { id: req.body.id }
+  }).then(function (task) {
+    res.status(200).send(req.body);
   }).catch(function (error) {
+    console.log(error)
     res.status(500).send(error);
   });
 
@@ -57,12 +58,14 @@ exports.updateTask = function (req, res) {
 
 exports.deleteTask = function (req, res) {
 
+  const taskId = req.params.id
+
   orm.Task.destroy({
     where: {
-      id: req.body.id
+      id: taskId
     }
   }).then(function (tasks) {
-    res.status(200).send(tasks);
+    res.status(200).send({ taskId });
   }).catch(function (error) {
     res.status(500).send(error);
   });

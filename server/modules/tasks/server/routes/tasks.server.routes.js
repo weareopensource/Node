@@ -12,6 +12,6 @@ module.exports = function (app) {
   // CRUD actions
   app.route('/api/tasks').post(tasks.validateSessionUser, tasks.addTask);
   app.route('/api/tasks').put(tasks.validateSessionUser, tasks.updateTask);
-  app.route('/api/tasks').delete(tasks.validateSessionUser, tasks.deleteTask);
+  app.route('/api/tasks/:id').delete(tasks.validateSessionUser, tasks.deleteTask);
 
 };
