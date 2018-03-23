@@ -12,6 +12,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       comment: 'The user who created and owns this task'
     },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      comment: 'Some descriptions'
+    },
   }, {
     classMethods: {
       associate: function (models) {
