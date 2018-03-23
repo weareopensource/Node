@@ -27,12 +27,12 @@ var noReturnUrls = [
 exports.signup = async function (req, res, next) {
   try {
     const user = await UserService.signUp(req.body)
-    const { _id, firstName, lastName, email, username } = user
-    const payload = { id: _id, firstName, lastName, email, username }
+    const { _id, firstName, lastName, email, username, roles } = user;
+    const payload = { id: _id, firstName, lastName, email, username, roles }
     const token = jwt.sign(payload, config.jwt.secret)
     return res.status(200)
       .cookie('TOKEN', token, { maxAge: 900000, httpOnly: true })
-      .json({ user: payload, tokenExpiresIn: 101010010101 })
+      .json({ user: payload, tokenExpiresIn: (new Date(Date.now() + 60 * 60 * 24 * 1000)).getTime() })
   } catch(err) {
     return next(new ApiError(err.message))
   }
@@ -42,12 +42,12 @@ exports.signup = async function (req, res, next) {
  * Signin after passport authentication
  */
 exports.signin = async function (req, res) {
-  const { _id, firstName, lastName, email, username } = req.user;
-  const payload = { id: _id, firstName, lastName, email, username };
+  const { _id, firstName, lastName, email, username, roles } = req.user;
+  const payload = { id: _id, firstName, lastName, email, username, roles };
   const token = jwt.sign(payload, configuration.jwt.secret);
   return res.status(200)
     .cookie('TOKEN', token)
-    .json({ user: payload, tokenExpiresIn: 10101010101 });
+    .json({ user: payload, tokenExpiresIn: (new Date(Date.now() + 60 * 60 * 24 * 1000)).getTime() });
 };
 
 /**
