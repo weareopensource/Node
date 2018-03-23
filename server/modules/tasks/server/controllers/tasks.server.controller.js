@@ -43,7 +43,6 @@ exports.addTask = function (req, res) {
 };
 
 exports.updateTask = function (req, res) {
-  console.log('req.body', req.body);
   orm.Task.update(
     { description: req.body.description, title: req.body.title },
     { where: { id: req.body.id }
