@@ -18,8 +18,8 @@ var config = require('../config'),
   path = require('path'),
   _ = require('lodash'),
   lusca = require('lusca'),
-  cors = require('cors');
-
+  cors = require('cors'),
+  cons = require('consolidate');
 /**
  * Initialize local variables
  */
@@ -72,7 +72,7 @@ module.exports.initMiddleware = function (app) {
   app.use(cors({
     origin: ['http://localhost:4200', 'http://localhost:8080'],
     credentials: true,
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204 
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
   }))
 
 };
@@ -195,6 +195,17 @@ module.exports.configureSocketIO = function (app) {
 };
 
 /**
+ * set rendering Engine
+ */
+module.exports.setEngine = function (app) {
+  app.engine('html', cons.swig)
+  app.set('view engine', 'html');
+  app.set('views', path.resolve('modules/users/server/templates'));
+
+};
+
+
+/**
  * Initialize the Express application
  */
 module.exports.init = function () {
@@ -227,6 +238,9 @@ module.exports.init = function () {
 
   // Initialize error routes
   this.initErrorRoutes(app);
+
+  // Set engine
+  this.setEngine(app);
 
   // Configure Socket.io
   app = this.configureSocketIO(app);

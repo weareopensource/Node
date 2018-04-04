@@ -47,7 +47,7 @@ exports.signin = async function (req, res) {
   const token = jwt.sign(payload, configuration.jwt.secret);
   return res.status(200)
     .cookie('TOKEN', token)
-    .json({ user: payload, tokenExpiresIn: (new Date(Date.now() + 60 * 60 * 24 * 1000)).getTime() });
+    .json({ user: payload, tokenExpiresIn: (new Date(Date.now() + 3600 * 24 * 1000)).getTime() });
 };
 
 /**
