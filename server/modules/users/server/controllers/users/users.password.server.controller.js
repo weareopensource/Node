@@ -43,8 +43,8 @@ exports.forgot = function (req, res, next) {
               message: 'It seems like you signed up using your ' + user.provider + ' account'
             });
           } else {
-            const payload = { tokenExpiresIn: Date.now() + 3600000 };
-            const token = jwt.sign(payload, configuration.jwt.secret);
+            const payload = { exp: Date.now() + 3600000 };
+            const token = jwt.sign(payload, configuration.jwt.secret, { algorithm: 'HS256' });
 
             user.resetPasswordToken = token;
             user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
@@ -67,7 +67,7 @@ exports.forgot = function (req, res, next) {
         httpTransport = 'https://';
       }
 //      var baseUrl = req.app.get('domain') || httpTransport + req.headers.host;
-      var baseUrl = httpTransport + config.host + '4200';
+      var baseUrl = httpTransport + config.host + ':4200';
       res.render('reset-password-email', {
         name: user.displayName,
         appName: config.app.title,
