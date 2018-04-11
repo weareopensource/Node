@@ -15,13 +15,7 @@ var path = require('path'),
   UserService = require('../../services/user.service'),
   crypto = require('crypto');
 
-var smtpTransport = nodemailer.createTransport({
-  ...config.mailer.options,
-  auth: {
-    user: 'waosmean2@gmail.com',
-    pass: 'LabDat<3'
-}
-});
+var smtpTransport = nodemailer.createTransport(config.mailer.options);
 
 /**
  * Forgot for reset password (forgot POST)
@@ -61,7 +55,6 @@ exports.forgot = function (req, res, next) {
       }
     },
     function (token, user, done) {
-
       var httpTransport = 'http://';
       if (config.secure && config.secure.ssl === true) {
         httpTransport = 'https://';
@@ -78,6 +71,7 @@ exports.forgot = function (req, res, next) {
     },
     // If valid email, send reset email using service
     function (emailHTML, user, done) {
+
       var mailOptions = {
         to: user.email,
         from: config.mailer.from,
