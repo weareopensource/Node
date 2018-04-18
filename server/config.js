@@ -61,7 +61,7 @@ module.exports = {
     }
   },
   port: process.env.PORT || 3000,
-  host: process.env.HOST || '0.0.0.0',
+  host: process.env.HOST || 'localhost',
   // DOMAIN config should be set to the fully qualified application accessible
   // URL. For example: https://www.myapp.com (including port if required).
   domain: process.env.DOMAIN || '',
