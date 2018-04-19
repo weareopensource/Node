@@ -25,6 +25,7 @@ exports.update = function (req, res) {
   user.firstName = req.body.firstName;
   user.lastName = req.body.lastName;
   user.displayName = user.firstName + ' ' + user.lastName;
+  user.username = req.body.username;
   user.roles = req.body.roles;
   user.email = req.body.email;
   user.profileImageURL = req.body.profileImageURL;
