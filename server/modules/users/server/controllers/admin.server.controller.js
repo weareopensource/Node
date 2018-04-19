@@ -28,6 +28,7 @@ exports.update = function (req, res) {
   user.username = req.body.username;
   user.roles = req.body.roles;
   user.email = req.body.email;
+  user.profileImageURL = req.body.profileImageURL;
 
   user.save(function (err) {
     if (err) {
