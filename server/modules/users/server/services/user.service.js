@@ -28,6 +28,7 @@ class UserService {
       email: user.email,
       provider: user.provider,
       roles: user.roles,
+      profileImageURL: user.profileImageURL,
       created: user.created,
     }
   }
@@ -39,7 +40,6 @@ class UserService {
 
   static async authenticate (email, password) {
     const user = await UserRepository.getByEmail(email)
-
     if (!user) {
       throw new Error('invalid user or password')
     }

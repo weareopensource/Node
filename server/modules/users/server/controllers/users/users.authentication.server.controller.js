@@ -42,8 +42,9 @@ exports.signup = async function (req, res, next) {
  * Signin after passport authentication
  */
 exports.signin = async function (req, res) {
-  const { _id, firstName, lastName, email, username, roles } = req.user;
-  const payload = { id: _id, firstName, lastName, email, username, roles };
+  console.log(req.user);
+  const { id, firstName, lastName, email, username, roles, profileImageURL } = req.user;
+  const payload = { id, firstName, lastName, email, username, roles, profileImageURL };
   const token = jwt.sign(payload, configuration.jwt.secret);
   return res.status(200)
     .cookie('TOKEN', token)
