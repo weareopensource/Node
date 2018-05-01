@@ -96,7 +96,7 @@ class UserService {
     // otherwise we return fields from the repository like mongo's __v field
     user.password = undefined;
     user.salt = undefined;
-
+    user.profileImageURL = '/assets/ic_profile.png'
     return Promise.resolve(user)
   }
 
