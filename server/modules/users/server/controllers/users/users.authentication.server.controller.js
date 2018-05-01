@@ -32,7 +32,7 @@ exports.signup = async function (req, res, next) {
     const token = jwt.sign(payload, config.jwt.secret)
     return res.status(200)
       .cookie('TOKEN', token, { httpOnly: true })
-      .json({ user: payload, tokenExpiresIn: Date.now() + 3600 * 24 })
+      .json({ user: payload, tokenExpiresIn: Date.now() + 3600 * 24 });
   } catch(err) {
     return next(new ApiError(err.message))
   }
