@@ -2,7 +2,7 @@
 
 module.exports = function (app) {
   // Tasks controller
-  var tasks = require('../controllers/tasks.server.controller');
+  var tasks = require('../controllers/sequelize/tasks.server.controller');
 
   // Setting up the models APIs profile api
   // Query actions
