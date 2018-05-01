@@ -124,6 +124,7 @@ exports.reset = function (req, res, next) {
   // Init Variables
   var newPassword = req.body.newPassword;
   var resetPasswordToken = req.body.token;
+
   async.waterfall([
     function(done) {
       UserService.hashPassword(newPassword)
