@@ -27,8 +27,8 @@ var noReturnUrls = [
 exports.signup = async function (req, res, next) {
   try {
     const user = await UserService.signUp(req.body)
-    const { _id, firstName, lastName, email, username, roles } = user;
-    const payload = { id: _id, firstName, lastName, email, username, roles }
+    const { _id, firstName, lastName, email, username, roles, profileImageURL } = user;
+    const payload = { id: _id, firstName, lastName, email, username, roles, profileImageURL }
     const token = jwt.sign(payload, config.jwt.secret)
     return res.status(200)
       .cookie('TOKEN', token, { httpOnly: true })
