@@ -31,8 +31,8 @@ exports.signup = async function (req, res, next) {
     const payload = { id: _id, firstName, lastName, email, username, roles }
     const token = jwt.sign(payload, config.jwt.secret)
     return res.status(200)
-      .cookie('TOKEN', token, { maxAge: 900000, httpOnly: true })
-      .json({ user: payload, tokenExpiresIn: (new Date(Date.now() + 60 * 60 * 24 * 1000)).getTime() })
+      .cookie('TOKEN', token, { httpOnly: true })
+      .json({ user: payload, tokenExpiresIn: Date.now() + 3600 * 24 })
   } catch(err) {
     return next(new ApiError(err.message))
   }
@@ -42,13 +42,12 @@ exports.signup = async function (req, res, next) {
  * Signin after passport authentication
  */
 exports.signin = async function (req, res) {
-  console.log(req.user);
   const { id, firstName, lastName, email, username, roles, profileImageURL } = req.user;
   const payload = { id, firstName, lastName, email, username, roles, profileImageURL };
   const token = jwt.sign(payload, configuration.jwt.secret);
   return res.status(200)
     .cookie('TOKEN', token)
-    .json({ user: payload, tokenExpiresIn: (new Date(Date.now() + 3600 * 24 * 1000)).getTime() });
+    .json({ user: payload, tokenExpiresIn: (Date.now() + 3600 * 24 * 1000) });
 };
 
 /**
