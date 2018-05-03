@@ -4,7 +4,8 @@
  * Module dependencies
  */
 var path = require('path'),
-  orm = require(path.resolve('./lib/services/sequelize')),
+  mongoose = require('mongoose'),
+  Task = mongoose.model('Task'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
 /**
@@ -20,17 +21,17 @@ exports.read = function(req, res) {
  * Create an task
  */
 exports.create = function(req, res) {
-  if (!req.user || !req.user.username) {
+  if (!req.user) {
     return res.status(404).send({
       message: 'User not defined'
     });
   }
 
-  var task = req.body;
-  task.user = req.user.username;
+  var task = new Task(req.body);
+  task.user = req.user;
 
-  orm.Task.create(task).then(function(task) {
-    res.status(200).send(task);
+  task.save().then(function(task) {
+    res.json(task);
   }).catch(function(err) {
     res.status(422).send({
       message: errorHandler.getErrorMessage(err)
@@ -46,15 +47,8 @@ exports.update = function(req, res) {
   task.title = req.body.title;
   task.description = req.body.description;
 
-  orm.Task.update({
-    description: task.description,
-    title: task.title
-  }, {
-    where: {
-      id: task.id
-    }
-  }).then(function(task) {
-    res.status(200).send(req.body);
+  task.save().then(function(task) {
+    res.json(task);
   }).catch(function(err) {
     res.status(422).send({
       message: errorHandler.getErrorMessage(err)
@@ -68,14 +62,8 @@ exports.update = function(req, res) {
 exports.delete = function(req, res) {
   var task = req.task;
 
-  orm.Task.destroy({
-    where: {
-      id: task.id
-    }
-  }).then(function(tasks) {
-    res.status(200).send({
-      taskId
-    });
+  task.remove().then(function(task) {
+    res.json(task);
   }).catch(function(err) {
     res.status(422).send({
       message: errorHandler.getErrorMessage(err)
@@ -87,8 +75,8 @@ exports.delete = function(req, res) {
  * List of Tasks
  */
 exports.list = function(req, res) {
-  orm.Task.findAll().then(function(tasks) {
-    res.status(200).send(tasks);
+  Task.find().sort('-created').populate('user', 'displayName').exec().then(function(tasks) {
+    res.json(tasks);
   }).catch(function(err) {
     res.status(422).send({
       message: errorHandler.getErrorMessage(err)
@@ -100,18 +88,16 @@ exports.list = function(req, res) {
  * List of Tasks for one username
  */
 exports.userList = function(req, res) {
-  if (!req.user || !req.user.username) {
+  if (!req.user) {
     return res.status(404).send({
       message: 'User not defined'
     });
   }
 
-  orm.Task.findAll({
-    where: {
-      user: req.user.username
-    }
-  }).then(function(tasks) {
-    res.status(200).send(tasks);
+  Task.find({
+    user: req.user
+  }).sort('-created').populate('user', 'displayName').exec().then(function(tasks) {
+    res.json(tasks);
   }).catch(function(err) {
     res.status(422).send({
       message: errorHandler.getErrorMessage(err)
@@ -123,9 +109,13 @@ exports.userList = function(req, res) {
  * Task middleware
  */
 exports.taskByID = function(req, res, next, id) {
-  // TODO Validate id format
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).send({
+      message: 'Task is invalid'
+    });
+  }
 
-  orm.Task.findById(id).then(function(task) {
+  Task.findById(id).populate('user', 'displayName').exec().then(function(task) {
     if (!task) {
       return res.status(404).send({
         message: 'No Task with that identifier has been found'

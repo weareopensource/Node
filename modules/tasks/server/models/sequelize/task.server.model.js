@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * Task Schema
+ */
 module.exports = function(sequelize, DataTypes) {
   const Task = sequelize.define('Task', {
     title: {
@@ -7,21 +10,15 @@ module.exports = function(sequelize, DataTypes) {
       comment: 'A title describing the task',
       allowNull: false
     },
-    username: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      comment: 'The user who created and owns this task'
-    },
     description: {
       type: DataTypes.STRING,
       allowNull: true,
       comment: 'Some descriptions'
     },
-  }, {
-    classMethods: {
-      associate: function (models) {
-        Task.hasMany(models.Comment);
-      }
+    user: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      comment: 'The user who created and owns this task'
     }
   });
 
