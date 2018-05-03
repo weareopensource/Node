@@ -1,9 +1,7 @@
-'use strict';
-
 /**
  * Task Schema
  */
-module.exports = function(sequelize, DataTypes) {
+module.exports = (sequelize, DataTypes) => {
   const Task = sequelize.define('Task', {
     title: {
       type: DataTypes.STRING,

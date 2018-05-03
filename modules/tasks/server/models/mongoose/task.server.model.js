@@ -1,15 +1,13 @@
-'use strict';
-
 /**
  * Module dependencies
  */
-var mongoose = require('mongoose'),
-  Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 /**
  * Task Schema
  */
-var TaskSchema = new Schema({
+const TaskSchema = new Schema({
   title: {
     type: String,
     default: '',

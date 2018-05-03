@@ -1,17 +1,14 @@
-'use strict';
-
 /**
  * Module dependencies
  */
-var acl = require('acl');
-
+let acl = require('acl');
 // Using the memory backend
 acl = new acl(new acl.memoryBackend());
 
 /**
  * Invoke Tasks Permissions
  */
-exports.invokeRolesPolicies = function () {
+exports.invokeRolesPolicies = () => {
   acl.allow([{
     roles: ['user'],
     allows: [{
@@ -39,8 +36,8 @@ exports.invokeRolesPolicies = function () {
 /**
  * Check If Tasks Policy Allows
  */
-exports.isAllowed = function (req, res, next) {
-  var roles = (req.user) ? req.user.roles : ['guest'];
+exports.isAllowed = (req, res, next) => {
+  const roles = (req.user) ? req.user.roles : ['guest'];
 
   // If an task is being processed and the current user created it then allow any manipulation
   if (req.task && req.user && req.task.user && req.task.user.id === req.user.id) {
@@ -48,7 +45,7 @@ exports.isAllowed = function (req, res, next) {
   }
 
   // Check for user roles
-  acl.areAnyRolesAllowed(roles, req.route.path, req.method.toLowerCase(), function (err, isAllowed) {
+  acl.areAnyRolesAllowed(roles, req.route.path, req.method.toLowerCase(), (err, isAllowed) => {
     if (err) {
       // An authorization error occurred
       return res.status(500).send('Unexpected authorization error');

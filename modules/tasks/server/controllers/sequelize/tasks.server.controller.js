@@ -1,37 +1,35 @@
-'use strict';
-
 /**
  * Module dependencies
  */
-var path = require('path'),
-  orm = require(path.resolve('./lib/services/sequelize')),
-  errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
+const path = require('path');
+const orm = require(path.resolve('./lib/services/sequelize'));
+const errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
 /**
  * Show the current task
  */
-exports.read = function(req, res) {
+exports.read = (req, res) => {
   // convert mongoose document to JSON
-  var task = req.task ? req.task.toJSON() : {};
+  const task = req.task ? req.task.toJSON() : {};
   res.json(task);
 };
 
 /**
  * Create an task
  */
-exports.create = function(req, res) {
+exports.create = (req, res) => {
   if (!req.user || !req.user.username) {
     return res.status(404).send({
       message: 'User not defined'
     });
   }
 
-  var task = req.body;
+  const task = req.body;
   task.user = req.user.username;
 
-  orm.Task.create(task).then(function(task) {
+  orm.Task.create(task).then(task => {
     res.status(200).send(task);
-  }).catch(function(err) {
+  }).catch(err => {
     res.status(422).send({
       message: errorHandler.getErrorMessage(err)
     });
@@ -41,8 +39,8 @@ exports.create = function(req, res) {
 /**
  * Update a task
  */
-exports.update = function(req, res) {
-  var task = req.task;
+exports.update = (req, res) => {
+  const task = req.task;
   task.title = req.body.title;
   task.description = req.body.description;
 
@@ -53,9 +51,9 @@ exports.update = function(req, res) {
     where: {
       id: task.id
     }
-  }).then(function(task) {
+  }).then(task => {
     res.status(200).send(req.body);
-  }).catch(function(err) {
+  }).catch(err => {
     res.status(422).send({
       message: errorHandler.getErrorMessage(err)
     });
@@ -65,18 +63,18 @@ exports.update = function(req, res) {
 /**
  * Delete a task
  */
-exports.delete = function(req, res) {
-  var task = req.task;
+exports.delete = (req, res) => {
+  const task = req.task;
 
   orm.Task.destroy({
     where: {
       id: task.id
     }
-  }).then(function(tasks) {
+  }).then(tasks => {
     res.status(200).send({
       taskId
     });
-  }).catch(function(err) {
+  }).catch(err => {
     res.status(422).send({
       message: errorHandler.getErrorMessage(err)
     });
@@ -86,10 +84,10 @@ exports.delete = function(req, res) {
 /**
  * List of Tasks
  */
-exports.list = function(req, res) {
-  orm.Task.findAll().then(function(tasks) {
+exports.list = (req, res) => {
+  orm.Task.findAll().then(tasks => {
     res.status(200).send(tasks);
-  }).catch(function(err) {
+  }).catch(err => {
     res.status(422).send({
       message: errorHandler.getErrorMessage(err)
     });
@@ -99,7 +97,7 @@ exports.list = function(req, res) {
 /**
  * List of Tasks for one username
  */
-exports.userList = function(req, res) {
+exports.userList = (req, res) => {
   if (!req.user || !req.user.username) {
     return res.status(404).send({
       message: 'User not defined'
@@ -110,9 +108,9 @@ exports.userList = function(req, res) {
     where: {
       user: req.user.username
     }
-  }).then(function(tasks) {
+  }).then(tasks => {
     res.status(200).send(tasks);
-  }).catch(function(err) {
+  }).catch(err => {
     res.status(422).send({
       message: errorHandler.getErrorMessage(err)
     });
@@ -122,10 +120,10 @@ exports.userList = function(req, res) {
 /**
  * Task middleware
  */
-exports.taskByID = function(req, res, next, id) {
+exports.taskByID = (req, res, next, id) => {
   // TODO Validate id format
 
-  orm.Task.findById(id).then(function(task) {
+  orm.Task.findById(id).then(task => {
     if (!task) {
       return res.status(404).send({
         message: 'No Task with that identifier has been found'
@@ -133,9 +131,7 @@ exports.taskByID = function(req, res, next, id) {
     }
     req.task = task;
     next();
-  }).catch(function(err) {
-    return next(err);
-  });
+  }).catch(err => next(err));
 };
 
 

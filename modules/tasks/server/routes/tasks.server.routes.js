@@ -1,12 +1,10 @@
-'use strict';
-
 /**
  * Module dependencies
  */
-var tasksPolicy = require('../policies/tasks.server.policy'),
-tasks = require('../controllers/mongoose/tasks.server.controller');
+const tasksPolicy = require('../policies/tasks.server.policy');
+const tasks = require('../controllers/mongoose/tasks.server.controller');
 
-module.exports = function (app) {
+module.exports = app => {
 
   // Tasks collection routes
   app.route('/api/tasks').all(tasksPolicy.isAllowed)
