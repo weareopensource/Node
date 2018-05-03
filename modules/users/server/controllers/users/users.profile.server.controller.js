@@ -13,7 +13,7 @@ var _ = require('lodash'),
   User = mongoose.model('User'),
   validator = require('validator');
 
-var whitelistedFields = ['firstName', 'lastName', 'email', 'username', 'profileImageURL'];
+var whitelistedFields = ['firstName', 'lastName', 'email', 'username', 'roles', 'profileImageURL'];
 
 /**
  * Update user details
@@ -147,7 +147,6 @@ exports.me = function (req, res) {
   if (req.user) {
     safeUserObject = {
       id: req.user.id,
-      displayName: validator.escape(req.user.displayName),
       provider: validator.escape(req.user.provider),
       username: validator.escape(req.user.username),
       created: req.user.created.toString(),
