@@ -1,5 +1,3 @@
-'use strict';
-
 import test from 'ava';
 import request from 'request';
 
@@ -41,11 +39,11 @@ test.serial('API: Create a task as a newly registered user', async t => {
     title: 'task title'
   };
 
-  let signupResponse = await new Promise(function (resolve, reject) {
+  let signupResponse = await new Promise((resolve, reject) => {
     t.context.request.post({
       uri: '/api/auth/signup',
       body: user
-    }, function (error, response, body) {
+    }, (error, response, body) => {
       if (error) {
         reject(error);
       }
@@ -54,14 +52,14 @@ test.serial('API: Create a task as a newly registered user', async t => {
   });
   t.is(signupResponse.statusCode, 200, JSON.stringify(signupResponse.body));
 
-  let signinResponse = await new Promise(function (resolve, reject) {
+  let signinResponse = await new Promise((resolve, reject) => {
     t.context.request.post({
       uri: '/api/auth/signin',
       body: {
         usernameOrEmail: user.email,
         password: user.password
       }
-    }, function (error, response, body) {
+    }, (error, response, body) => {
       if (error) {
         reject(error);
       }
@@ -70,13 +68,13 @@ test.serial('API: Create a task as a newly registered user', async t => {
   });
   t.is(signinResponse.statusCode, 200, JSON.stringify(signinResponse.body));
 
-  let tasksCreatedResponse = await new Promise(function (resolve, reject) {
+  let tasksCreatedResponse = await new Promise((resolve, reject) => {
     t.context.request.post({
       uri: '/api/tasks',
       body: {
         title: task.title
       }
-    }, function (error, response, body) {
+    }, (error, response, body) => {
       if (error) {
         reject(error);
       }

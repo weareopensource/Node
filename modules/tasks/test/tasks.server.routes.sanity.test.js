@@ -1,5 +1,3 @@
-'use strict';
-
 import test from 'ava';
 import request from 'request';
 
@@ -23,10 +21,10 @@ test.beforeEach('Setting up test defaults', t => {
 });
 
 test('API: Get All Tasks as anonymous user', async t => {
-  let response = await new Promise(function (resolve, reject) {
+  let response = await new Promise((resolve, reject) => {
     t.context.request.get({
       uri: '/api/tasks'
-    }, function (error, response, body) {
+    }, (error, response, body) => {
       if (error) {
         reject(error);
       }
@@ -39,10 +37,10 @@ test('API: Get All Tasks as anonymous user', async t => {
 });
 
 test('API: Get My Tasks as anonymous user', async t => {
-  let response = await new Promise(function (resolve, reject) {
+  let response = await new Promise((resolve, reject) => {
     t.context.request.get({
       uri: '/api/tasks/me'
-    }, function (error, response, body) {
+    }, (error, response, body) => {
       if (error) {
         reject(error);
       }
@@ -55,13 +53,13 @@ test('API: Get My Tasks as anonymous user', async t => {
 });
 
 test('API: Create Task as anonymous user', async t => {
-  let response = await new Promise(function (resolve, reject) {
+  let response = await new Promise((resolve, reject) => {
     t.context.request.post({
       uri: '/api/tasks',
       body: {
         title: 'my test task'
       }
-    }, function (error, response, body) {
+    }, (error, response, body) => {
       if (error) {
         reject(error);
       }
@@ -74,13 +72,13 @@ test('API: Create Task as anonymous user', async t => {
 });
 
 test('API: Update Task as anonymous user', async t => {
-  let response = await new Promise(function (resolve, reject) {
+  let response = await new Promise((resolve, reject) => {
     t.context.request.put({
       uri: '/api/tasks',
       body: {
         title: 'my test task'
       }
-    }, function (error, response, body) {
+    }, (error, response, body) => {
       if (error) {
         reject(error);
       }
@@ -93,10 +91,10 @@ test('API: Update Task as anonymous user', async t => {
 });
 
 test('API: Delete Task as anonymous user', async t => {
-  let response = await new Promise(function (resolve, reject) {
+  let response = await new Promise((resolve, reject) => {
     t.context.request.delete({
       uri: '/api/tasks'
-    }, function (error, response, body) {
+    }, (error, response, body) => {
       if (error) {
         reject(error);
       }
