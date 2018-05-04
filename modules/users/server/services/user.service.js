@@ -18,7 +18,6 @@ class UserService {
     if (!user || typeof user !== 'object') {
       return null
     }
-
     return {
       id: user.id,
       displayName: user.displayName,

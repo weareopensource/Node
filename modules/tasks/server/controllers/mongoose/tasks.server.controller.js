@@ -12,25 +12,28 @@ const errorHandler = require(path.resolve('./modules/core/server/controllers/err
 exports.read = (req, res) => {
   // convert mongoose document to JSON
   const task = req.task ? req.task.toJSON() : {};
-  res.json(task);
+  res.json(task.toObject({ getters: true }));
 };
 
 /**
  * Create an task
  */
 exports.create = (req, res) => {
-  if (!req.user) {
+  const user = req.user;
+
+  if (!user) {
     return res.status(404).send({
       message: 'User not defined'
     });
   }
-
   const task = new Task(req.body);
-  task.user = req.user;
+
+  task.user = req.user.id;
 
   task.save().then(task => {
-    res.json(task);
+    res.json(task.toObject({ getters: true }));
   }).catch(err => {
+    console.log(err)
     res.status(422).send({
       message: errorHandler.getErrorMessage(err)
     });
@@ -46,7 +49,7 @@ exports.update = (req, res) => {
   task.description = req.body.description;
 
   task.save().then(task => {
-    res.json(task);
+    res.json(task.toObject({ getters: true }));
   }).catch(err => {
     res.status(422).send({
       message: errorHandler.getErrorMessage(err)
@@ -61,7 +64,7 @@ exports.delete = (req, res) => {
   const task = req.task;
 
   task.remove().then(task => {
-    res.json(task);
+    res.json({taskId: task.id});
   }).catch(err => {
     res.status(422).send({
       message: errorHandler.getErrorMessage(err)
@@ -73,8 +76,8 @@ exports.delete = (req, res) => {
  * List of Tasks
  */
 exports.list = (req, res) => {
-  Task.find().sort('-created').populate('user', 'displayName').exec().then(tasks => {
-    res.json(tasks);
+  Task.find().sort('-created').exec().then(tasks => {
+    res.json(tasks.map(task => (task.toObject({ getters: true }))));
   }).catch(err => {
     res.status(422).send({
       message: errorHandler.getErrorMessage(err)
@@ -93,9 +96,9 @@ exports.userList = (req, res) => {
   }
 
   Task.find({
-    user: req.user
-  }).sort('-created').populate('user', 'displayName').exec().then(tasks => {
-    res.json(tasks);
+    user: req.user.id
+  }).sort('-created').exec().then(tasks => {
+    res.json(tasks.map(task => task.toObject({getters: true})));
   }).catch(err => {
     res.status(422).send({
       message: errorHandler.getErrorMessage(err)
@@ -113,7 +116,7 @@ exports.taskByID = (req, res, next, id) => {
     });
   }
 
-  Task.findById(id).populate('user', 'displayName').exec().then(task => {
+  Task.findById(id).exec().then(task => {
     if (!task) {
       return res.status(404).send({
         message: 'No Task with that identifier has been found'
