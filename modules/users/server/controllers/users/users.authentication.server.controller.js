@@ -29,7 +29,7 @@ exports.signup = async function (req, res, next) {
     const user = await UserService.signUp(req.body)
     const { _id, firstName, lastName, email, username, roles, profileImageURL } = user;
     const payload = { id: _id, firstName, lastName, email, username, roles, profileImageURL }
-    const token = jwt.sign(payload, config.jwt.secret)
+    const token = jwt.sign({ id: payload.id }, config.jwt.secret)
     return res.status(200)
       .cookie('TOKEN', token, { httpOnly: true })
       .json({ user: payload, tokenExpiresIn: Date.now() + 3600 * 24 * 1000 });
@@ -44,7 +44,7 @@ exports.signup = async function (req, res, next) {
 exports.signin = async function (req, res) {
   const { id, firstName, lastName, email, username, roles, profileImageURL } = req.user;
   const payload = { id, firstName, lastName, email, username, roles, profileImageURL };
-  const token = jwt.sign(payload, configuration.jwt.secret);
+  const token = jwt.sign({ id: payload.id }, configuration.jwt.secret);
   return res.status(200)
     .cookie('TOKEN', token, { httpOnly: true })
     .json({ user: payload, tokenExpiresIn: Date.now() + 3600 * 24 * 1000 });
