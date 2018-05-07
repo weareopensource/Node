@@ -37,7 +37,7 @@ exports.update = function (req, res) {
       });
     }
 
-    res.json(user);
+    res.json(user.toObject({ getters: true }));
   });
 };
 
@@ -54,7 +54,7 @@ exports.delete = function (req, res) {
       });
     }
 
-    res.json(user);
+    res.json(user.toObject({ getters: true }));
   });
 };
 
@@ -69,7 +69,7 @@ exports.list = function (req, res) {
       });
     }
 
-    res.json(users);
+    res.json(users.map(user => (user.toObject({ getters: true }))));
   });
 };
 
