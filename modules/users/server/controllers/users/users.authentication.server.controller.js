@@ -26,13 +26,12 @@ var noReturnUrls = [
  */
 exports.signup = async function (req, res, next) {
   try {
-    const user = await UserService.signUp(req.body)
-    const { _id, firstName, lastName, email, username, roles, profileImageURL } = user;
-    const payload = { id: _id, firstName, lastName, email, username, roles, profileImageURL }
-    const token = jwt.sign({ id: payload.id }, config.jwt.secret)
+    let user = await UserService.signUp(req.body);
+    user = user.toObject({getters: true})
+    const token = jwt.sign({ id: user.id }, config.jwt.secret)
     return res.status(200)
       .cookie('TOKEN', token, { httpOnly: true })
-      .json({ user: payload, tokenExpiresIn: Date.now() + 3600 * 24 * 1000 });
+      .json({ user, tokenExpiresIn: Date.now() + 3600 * 24 * 1000 });
   } catch(err) {
     return next(new ApiError(err.message))
   }
@@ -42,12 +41,11 @@ exports.signup = async function (req, res, next) {
  * Signin after passport authentication
  */
 exports.signin = async function (req, res) {
-  const { id, firstName, lastName, email, username, roles, profileImageURL } = req.user;
-  const payload = { id, firstName, lastName, email, username, roles, profileImageURL };
-  const token = jwt.sign({ id: payload.id }, configuration.jwt.secret);
+  const user = req.user;
+  const token = jwt.sign({ id: user.id }, configuration.jwt.secret);
   return res.status(200)
     .cookie('TOKEN', token, { httpOnly: true })
-    .json({ user: payload, tokenExpiresIn: Date.now() + 3600 * 24 * 1000 });
+    .json({ user, tokenExpiresIn: Date.now() + 3600 * 24 * 1000 });
 
 };
 
