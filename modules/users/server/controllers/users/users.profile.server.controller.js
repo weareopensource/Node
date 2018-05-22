@@ -11,7 +11,13 @@ var _ = require('lodash'),
   multer = require('multer'),
   config = require(path.resolve('./lib/config')),
   User = mongoose.model('User'),
-  validator = require('validator');
+  validator = require('validator'),
+  jwt = require('jsonwebtoken'),
+  configuration = require(path.resolve('./config')),
+  IdTokenVerifier = require('idtoken-verifier'),
+  rp = require('request-promise');
+
+
 
 var whitelistedFields = ['firstName', 'lastName', 'email', 'username', 'roles', 'profileImageURL'];
 
@@ -160,3 +166,94 @@ exports.me = function (req, res) {
   }
   res.json(safeUserObject || null);
 };
+
+
+
+
+const { OAuth2Client } = require('google-auth-library');
+
+const client = new OAuth2Client('307800239261-8ghk4lu2me211p9ucialjl6ujer8v10j.apps.googleusercontent.com');
+
+async function verifyGoogleToken(idToken) {
+  const ticket = await client.verifyIdToken({
+      idToken,
+      audience: '307800239261-8ghk4lu2me211p9ucialjl6ujer8v10j.apps.googleusercontent.com',  // Specify the CLIENT_ID of the app that accesses the backend
+  });
+  const payload = ticket.getPayload();
+  const user = {
+    sub: payload['sub'],
+    email: payload['email'],
+    firstName: payload['given_name'],
+    lastName: payload['family_name'],
+    profileImageURL: payload['picture'],
+  };
+  user.username = `${user.firstName} ${user.lastName}`;
+  user.provider = 'google';
+  // If request specified a G Suite domain:
+  //const domain = payload['hd'];
+  return user;
+}
+
+
+const microsoftValidator = rp.get('https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration')
+.then(res => JSON.parse(res))
+.then(infos => new IdTokenVerifier({
+  issuer: 'https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0',
+  jwksURI: infos.jwks_uri,
+  audience: '5707a45e-3a3b-40fc-9827-f51c697e6fdd'
+}));
+
+async function verifyMicrosoftToken(idToken) {
+  const validator = await microsoftValidator;
+  return new Promise((resolve, reject) => {
+    console.log('!!!!!!!!!!!!!')
+    validator.verify(idToken, validator.decode(idToken).payload.nonce, (err, { sub, name, preferred_username }) => {
+      if (err) {
+        return reject(err);
+      }
+      console.log({ sub, username: name, email: preferred_username, provider: 'microsoft' })
+      return resolve({ sub, username: name, email: preferred_username, provider: 'microsoft' });
+    });
+  })
+  .catch(console.log);
+}
+
+const addGoogleUser = function (idToken) {
+  return verifyGoogleToken(idToken)
+  .then(user => User.findOneOrCreate({ sub: user.sub }, user));
+
+}
+
+const addMicrosoftUser = function (idToken) {
+  return verifyMicrosoftToken(idToken)
+  .then(user => User.findOneOrCreate({ sub: user.sub }, user));
+}
+
+exports.addOAuthProviderUserProfile = function (req, res) {
+  const provider = req.body.provider;
+  switch (provider) {
+    case 'google':
+      addGoogleUser(req.body.idToken)
+      .catch(err => res.sendStatus(304))
+      .then(user => {
+        console.log('??', user)
+        const token = jwt.sign({ userId: user.id }, configuration.jwt.secret);
+        return res.status(200)
+          .cookie('TOKEN', token, { httpOnly: true })
+          .json({ user, tokenExpiresIn: Date.now() + 3600 * 24 * 1000 });
+      });
+      break;
+    case 'microsoft':
+      addMicrosoftUser(req.body.idToken)
+      .catch(err => res.sendStatus(304))
+      .then(user => {
+        console.log('??', user)
+        const token = jwt.sign({ userId: user.id }, configuration.jwt.secret);
+        return res.status(200)
+          .cookie('TOKEN', token, { httpOnly: true })
+          .json({ user, tokenExpiresIn: Date.now() + 3600 * 24 * 1000 });
+      });
+      break;
+    default: break;
+  }
+}
