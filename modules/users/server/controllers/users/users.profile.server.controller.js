@@ -167,9 +167,6 @@ exports.me = function (req, res) {
   res.json(safeUserObject || null);
 };
 
-
-
-
 const { OAuth2Client } = require('google-auth-library');
 
 const client = new OAuth2Client('307800239261-8ghk4lu2me211p9ucialjl6ujer8v10j.apps.googleusercontent.com');
