@@ -206,12 +206,10 @@ const microsoftValidator = rp.get('https://login.microsoftonline.com/common/v2.0
 async function verifyMicrosoftToken(idToken) {
   const validator = await microsoftValidator;
   return new Promise((resolve, reject) => {
-    console.log('!!!!!!!!!!!!!')
     validator.verify(idToken, validator.decode(idToken).payload.nonce, (err, { sub, name, preferred_username }) => {
       if (err) {
         return reject(err);
       }
-      console.log({ sub, username: name, email: preferred_username, provider: 'microsoft' })
       return resolve({ sub, username: name, email: preferred_username, provider: 'microsoft' });
     });
   })
@@ -236,7 +234,6 @@ exports.addOAuthProviderUserProfile = function (req, res) {
       addGoogleUser(req.body.idToken)
       .catch(err => res.sendStatus(304))
       .then(user => {
-        console.log('??', user)
         const token = jwt.sign({ userId: user.id }, configuration.jwt.secret);
         return res.status(200)
           .cookie('TOKEN', token, { httpOnly: true })
@@ -247,7 +244,6 @@ exports.addOAuthProviderUserProfile = function (req, res) {
       addMicrosoftUser(req.body.idToken)
       .catch(err => res.sendStatus(304))
       .then(user => {
-        console.log('??', user)
         const token = jwt.sign({ userId: user.id }, configuration.jwt.secret);
         return res.status(200)
           .cookie('TOKEN', token, { httpOnly: true })
