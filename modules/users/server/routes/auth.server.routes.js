@@ -21,7 +21,6 @@ module.exports = function (app) {
   // Jwt protected route example:
   // app.route('/api/auth/secretPlace').get(passport.authenticate('jwt'), (req, res) => {
   //   console.log(req.user)
-  //   console.log(req.session)
   //   console.log(req.isAuthenticated())
   //   res.status(200).send()
   // })

@@ -174,7 +174,7 @@ const client = new OAuth2Client('307800239261-8ghk4lu2me211p9ucialjl6ujer8v10j.a
 async function verifyGoogleToken(idToken) {
   const ticket = await client.verifyIdToken({
       idToken,
-      audience: '307800239261-8ghk4lu2me211p9ucialjl6ujer8v10j.apps.googleusercontent.com',  // Specify the CLIENT_ID of the app that accesses the backend
+      audience: '307800239261-8ghk4lu2me211p9ucialjl6ujer8v10j.apps.googleusercontent.com',
   });
   const payload = ticket.getPayload();
   const user = {
