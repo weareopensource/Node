@@ -131,6 +131,11 @@ module.exports = {
     secret: process.env.JWT_SECRET || 'test'
   },
   google: {
-    clientID: process.env.GOOGLE_ID || 'APP_ID',
+    clientId: process.env.GOOGLE_ID || 'APP_ID'
+  },
+  microsoft: {
+    clientId: process.env.MICROSOFT_ID || 'APP_ID',
+    issuer: process.env.MICROSOFT_ISSUER || 'ISSUER',
+    discovery: process.env.MICROSOFT_DISCOVERY || 'DISCOVERY'
   }
 };

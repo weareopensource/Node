@@ -15,7 +15,8 @@ var _ = require('lodash'),
   jwt = require('jsonwebtoken'),
   configuration = require(path.resolve('./config')),
   IdTokenVerifier = require('idtoken-verifier'),
-  rp = require('request-promise');
+  rp = require('request-promise'),
+  { OAuth2Client } = require('google-auth-library');
 
 
 
@@ -167,14 +168,12 @@ exports.me = function (req, res) {
   res.json(safeUserObject || null);
 };
 
-const { OAuth2Client } = require('google-auth-library');
 
-const client = new OAuth2Client('307800239261-8ghk4lu2me211p9ucialjl6ujer8v10j.apps.googleusercontent.com');
+const client = new OAuth2Client(config.google.clientId);
 
 async function verifyGoogleToken(idToken) {
   const ticket = await client.verifyIdToken({
-      idToken,
-      audience: '307800239261-8ghk4lu2me211p9ucialjl6ujer8v10j.apps.googleusercontent.com',
+      idToken
   });
   const payload = ticket.getPayload();
   const user = {
@@ -192,12 +191,12 @@ async function verifyGoogleToken(idToken) {
 }
 
 
-const microsoftValidator = rp.get('https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration')
+const microsoftValidator = rp.get(config.microsoft.discovery)
 .then(res => JSON.parse(res))
 .then(infos => new IdTokenVerifier({
-  issuer: 'https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0',
+  issuer: config.microsoft.issuer,
   jwksURI: infos.jwks_uri,
-  audience: '5707a45e-3a3b-40fc-9827-f51c697e6fdd'
+  audience: config.microsoft.clientId
 }));
 
 async function verifyMicrosoftToken(idToken) {
