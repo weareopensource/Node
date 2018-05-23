@@ -126,16 +126,3 @@ exports.taskByID = (req, res, next, id) => {
     next();
   }).catch(err => next(err));
 };
-
-
-// // Helper method to validate a valid session for dependent APIs
-// exports.validateSessionUser = function(req, res, next) {
-//   // Reject the request if no user exists on the session
-//   if (!req.user) {
-//     return res.status(401).send({
-//       message: 'No session user'
-//     });
-//   }
-//
-//   return next();
-// };

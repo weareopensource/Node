@@ -3,12 +3,18 @@
 /**
  * Module dependencies
  */
+
+
+
+
 var mongoose = require('mongoose'),
   path = require('path'),
   config = require(path.resolve('./lib/config')),
   Schema = mongoose.Schema,
-  crypto = require('crypto');
+  crypto = require('crypto'),
+  bluebird = require('bluebird');
   // validator = require('validator');
+  mongoose.Promise = Promise;
 
 /**
  * A Validation function for local strategy properties
@@ -45,6 +51,10 @@ var mongoose = require('mongoose'),
  * User Schema
  */
 var UserSchema = new Schema({
+  sub: {
+    type: String,
+    default: ''
+  },
   firstName: {
     type: String,
     trim: true,
@@ -74,7 +84,6 @@ var UserSchema = new Schema({
   },
   username: {
     type: String,
-    unique: 'Username already exists',
     required: 'Please fill in a username',
     // validate: [validateUsername, 'Please enter a valid username: 3+ characters long, non restricted word, characters "_-.", no consecutive dots, does not begin or end with dots, letters a-z and numbers 0-9.'],
     lowercase: true,
@@ -187,5 +196,11 @@ UserSchema.statics.findUniqueUsername = function (username, suffix, callback) {
     }
   });
 };
+
+UserSchema.static('findOneOrCreate', async function findOneOrCreate(condition, doc) {
+  const one = await this.findOne(condition);
+  console.log('one', condition, one)
+  return one || this.create(doc).then(doc => { console.log('docteur', doc); return doc; }).catch((err) => { console.log(err); return  Promise.resolve(doc) });
+});
 
 mongoose.model('User', UserSchema);
