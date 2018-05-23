@@ -135,7 +135,7 @@ module.exports = {
   },
   microsoft: {
     clientId: process.env.MICROSOFT_ID || 'APP_ID',
-    issuer: process.env.MICROSOFT_ISSUER || 'ISSUER',
-    discovery: process.env.MICROSOFT_DISCOVERY || 'DISCOVERY'
+    issuer: process.env.MICROSOFT_ISSUER || 'https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0',
+    discovery: process.env.MICROSOFT_DISCOVERY || 'https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration'
   }
 };
