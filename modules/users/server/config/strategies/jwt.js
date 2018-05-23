@@ -16,7 +16,8 @@ var cookieExtractor = function(req) {
 
 async function verifyCallback(jwtPayload, done) {
   try {
-    const user = await UserService.getUserDeserializedById(jwtPayload.id)
+    console.log(jwtPayload)
+    const user = await UserService.getUserDeserializedById(jwtPayload.userId)
     if (user) {
       return done(null, user)
     } else {

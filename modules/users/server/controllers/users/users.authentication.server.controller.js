@@ -28,7 +28,7 @@ exports.signup = async function (req, res, next) {
   try {
     let user = await UserService.signUp(req.body);
     user = user.toObject({getters: true})
-    const token = jwt.sign({ id: user.id }, config.jwt.secret)
+    const token = jwt.sign({ userId: user.id }, config.jwt.secret)
     return res.status(200)
       .cookie('TOKEN', token, { httpOnly: true })
       .json({ user, tokenExpiresIn: Date.now() + 3600 * 24 * 1000 });
@@ -42,7 +42,7 @@ exports.signup = async function (req, res, next) {
  */
 exports.signin = async function (req, res) {
   const user = req.user;
-  const token = jwt.sign({ id: user.id }, configuration.jwt.secret);
+  const token = jwt.sign({ userId: user.id }, configuration.jwt.secret);
   return res.status(200)
     .cookie('TOKEN', token, { httpOnly: true })
     .json({ user, tokenExpiresIn: Date.now() + 3600 * 24 * 1000 });

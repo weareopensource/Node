@@ -39,5 +39,4 @@ module.exports = function (app) {
 
   // Add passport's middleware
   app.use(passport.initialize())
-//  app.use(passport.session())
 };
