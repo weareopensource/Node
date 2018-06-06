@@ -226,13 +226,14 @@ exports.addOAuthProviderUserProfile = function (req, res) {
   const provider = req.body.provider;
   switch (provider) {
     case 'google':
+    console.log('sqkdqsdklqsd')
       addGoogleUser(req.body.idToken)
       .catch(err => res.sendStatus(304))
       .then(user => {
         const token = jwt.sign({ userId: user.toObject({ getters: true }).id }, configuration.jwt.secret);
         return res.status(200)
           .cookie('TOKEN', token, { httpOnly: true })
-          .json({ user: profile, tokenExpiresIn: Date.now() + 3600 * 24 * 1000 });
+          .json({ user: user.toObject({ getters: true }), tokenExpiresIn: Date.now() + 3600 * 24 * 1000 });
       });
       break;
     case 'microsoft':
