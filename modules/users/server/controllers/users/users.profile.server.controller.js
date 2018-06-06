@@ -232,7 +232,7 @@ exports.addOAuthProviderUserProfile = function (req, res) {
         const token = jwt.sign({ userId: user.toObject({ getters: true }).id }, configuration.jwt.secret);
         return res.status(200)
           .cookie('TOKEN', token, { httpOnly: true })
-          .json({ user: profile, tokenExpiresIn: Date.now() + 3600 * 24 * 1000 });
+          .json({ user: user.toObject({ getters: true }), tokenExpiresIn: Date.now() + 3600 * 24 * 1000 });
       });
       break;
     case 'microsoft':
