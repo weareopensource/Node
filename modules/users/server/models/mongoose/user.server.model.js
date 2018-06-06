@@ -199,7 +199,6 @@ UserSchema.statics.findUniqueUsername = function (username, suffix, callback) {
 
 UserSchema.static('findOneOrCreate', async function findOneOrCreate(condition, doc) {
   const one = await this.findOne(condition);
-  console.log('one', condition, one)
   return one || this.create(doc).then(doc => { console.log('docteur', doc); return doc; }).catch((err) => { console.log(err); return  Promise.resolve(doc) });
 });
 

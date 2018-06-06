@@ -17,7 +17,7 @@ module.exports = function (app) {
 
   // Single user routes
   app.route('/api/users/:userId')
-    .get(adminPolicy.isAllowed, admin.read)
+    .get(admin.read)
     .put(passport.authenticate('jwt'), adminPolicy.isAllowed, admin.update)
     .delete(passport.authenticate('jwt'), adminPolicy.isAllowed, admin.delete);
 

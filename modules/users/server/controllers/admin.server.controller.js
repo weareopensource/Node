@@ -12,7 +12,7 @@ var path = require('path'),
  * Show the current user
  */
 exports.read = function (req, res) {
-  res.json(req.model);
+  res.send(req.model.toObject({ getters: true }));
 };
 
 /**
