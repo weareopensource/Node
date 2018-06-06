@@ -226,7 +226,6 @@ exports.addOAuthProviderUserProfile = function (req, res) {
   const provider = req.body.provider;
   switch (provider) {
     case 'google':
-    console.log('sqkdqsdklqsd')
       addGoogleUser(req.body.idToken)
       .catch(err => res.sendStatus(304))
       .then(user => {
