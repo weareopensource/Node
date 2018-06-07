@@ -252,45 +252,21 @@ exports.addOAuthProviderUserProfile = function(req, res) {
       addGoogleUser(req.body.idToken)
         .catch(err => res.sendStatus(304))
         .then(user => {
-          const token = jwt.sign({
-            userId: user.toObject({
-              getters: true
-            })
-              .id
-          }, configuration.jwt.secret);
+          const token = jwt.sign({ userId: user.id }, configuration.jwt.secret);
           return res.status(200)
-            .cookie('TOKEN', token, {
-              httpOnly: true
-            })
-            .json({
-              user: user.toObject({
-                getters: true
-              }),
-              tokenExpiresIn: Date.now() + (3600 * 24 * 1000)
-            });
+            .cookie('TOKEN', token, { httpOnly: true })
+            .json({ user: user.toObject({ getters: true }), tokenExpiresIn: Date.now() + 3600 * 24 * 1000 });
         });
       break;
     case 'microsoft':
       addMicrosoftUser(req.body.idToken)
         .catch(err => res.sendStatus(304))
         .then(user => {
-          const token = jwt.sign(user.toObject({
-            getters: true
-          })
-            .id, configuration.jwt.secret);
+          const token = jwt.sign({ userId: user.id }, configuration.jwt.secret);
           return res.status(200)
-            .cookie('TOKEN', token, {
-              httpOnly: true
-            })
-            .json({
-              user: user.toObject({
-                getters: true
-              }),
-              tokenExpiresIn: Date.now() + (3600 * 24 * 1000)
-            });
+            .cookie('TOKEN', token, { httpOnly: true })
+            .json({ user: user.toObject({ getters: true }), tokenExpiresIn: Date.now() + 3600 * 24 * 1000 });
         });
-      break;
-    default:
       break;
   }
 };
