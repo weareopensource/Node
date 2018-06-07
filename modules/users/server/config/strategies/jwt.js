@@ -1,11 +1,11 @@
-'use strict'
+'use strict';
 
-const passport = require('passport')
-const passportJwt = require('passport-jwt')
-const UserService = require('../../services/user.service')
-const config = require('../../../../../config')
+const passport = require('passport');
+const passportJwt = require('passport-jwt');
+const UserService = require('../../services/user.service');
+const config = require('../../../../../config');
 
-const JwtStrategy = passportJwt.Strategy
+const JwtStrategy = passportJwt.Strategy;
 
 var cookieExtractor = function(req) {
   var token = null;
@@ -16,15 +16,15 @@ var cookieExtractor = function(req) {
 
 async function verifyCallback(jwtPayload, done) {
   try {
-    console.log(jwtPayload)
-    const user = await UserService.getUserDeserializedById(jwtPayload.userId)
+    console.log(jwtPayload);
+    const user = await UserService.getUserDeserializedById(jwtPayload.userId);
     if (user) {
-      return done(null, user)
+      return done(null, user);
     } else {
-      return done(null, false)
+      return done(null, false);
     }
   } catch (err) {
-    return done(err)
+    return done(err);
   }
 }
 
@@ -34,7 +34,7 @@ module.exports = function (config) {
   opts.jwtFromRequest = cookieExtractor;
   opts.secretOrKey = config.jwt.secret;
 
-  const strategy = new JwtStrategy(opts, verifyCallback)
+  const strategy = new JwtStrategy(opts, verifyCallback);
 
-  passport.use(strategy)
-}
+  passport.use(strategy);
+};

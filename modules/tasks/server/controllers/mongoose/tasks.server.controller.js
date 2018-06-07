@@ -33,7 +33,7 @@ exports.create = (req, res) => {
   task.save().then(task => {
     res.json(task.toObject({ getters: true }));
   }).catch(err => {
-    console.log(err)
+    console.log(err);
     res.status(422).send({
       message: errorHandler.getErrorMessage(err)
     });
@@ -64,7 +64,7 @@ exports.delete = (req, res) => {
   const task = req.task;
 
   task.remove().then(task => {
-    res.json({taskId: task.id});
+    res.json({ taskId: task.id });
   }).catch(err => {
     res.status(422).send({
       message: errorHandler.getErrorMessage(err)
@@ -78,11 +78,12 @@ exports.delete = (req, res) => {
 exports.list = (req, res) => {
   Task.find().sort('-created').exec().then(tasks => {
     res.json(tasks.map(task => (task.toObject({ getters: true }))));
-  }).catch(err => {
-    res.status(422).send({
-      message: errorHandler.getErrorMessage(err)
+  })
+    .catch(err => {
+      res.status(422).send({
+        message: errorHandler.getErrorMessage(err)
+      });
     });
-  });
 };
 
 /**
@@ -98,12 +99,13 @@ exports.userList = (req, res) => {
   Task.find({
     user: req.user.id
   }).sort('-created').exec().then(tasks => {
-    res.json(tasks.map(task => task.toObject({getters: true})));
-  }).catch(err => {
-    res.status(422).send({
-      message: errorHandler.getErrorMessage(err)
+    res.json(tasks.map(task => task.toObject({ getters: true })));
+  })
+    .catch(err => {
+      res.status(422).send({
+        message: errorHandler.getErrorMessage(err)
+      });
     });
-  });
 };
 
 /**

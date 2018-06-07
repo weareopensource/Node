@@ -1,6 +1,6 @@
-'use strict'
+'use strict';
 
-const passport = require('passport')
+const passport = require('passport');
 
 module.exports = function (app) {
   // User Routes
@@ -12,12 +12,12 @@ module.exports = function (app) {
   app.route('/api/auth/reset').post(users.reset);
 
   // Setting up the users authentication api
-  app.route('/api/auth/signup').post(users.signup)
-  app.route('/api/auth/signin').post(passport.authenticate('local'), users.signin)
-  app.route('/api/auth/signout').post(users.signout)
+  app.route('/api/auth/signup').post(users.signup);
+  app.route('/api/auth/signin').post(passport.authenticate('local'), users.signin);
+  app.route('/api/auth/signout').post(users.signout);
 
   // Jwt token
-  app.route('/api/auth/token').post(users.token)
+  app.route('/api/auth/token').post(users.token);
   // Jwt protected route example:
   // app.route('/api/auth/secretPlace').get(passport.authenticate('jwt'), (req, res) => {
   //   console.log(req.user)
@@ -26,6 +26,6 @@ module.exports = function (app) {
   // })
 
   // Setting the oauth routes
-  app.route('/api/auth/:strategy').get(users.oauthCall)
-  app.route('/api/auth/:strategy/callback').get(users.oauthCallback)
-}
+  app.route('/api/auth/:strategy').get(users.oauthCall);
+  app.route('/api/auth/:strategy/callback').get(users.oauthCallback);
+};
