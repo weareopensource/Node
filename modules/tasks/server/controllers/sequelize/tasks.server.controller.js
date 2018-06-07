@@ -70,10 +70,8 @@ exports.delete = (req, res) => {
     where: {
       id: task.id
     }
-  }).then(tasks => {
-    res.status(200).send({
-      taskId
-    });
+  }).then(task => {
+    res.status(200).send(task);
   }).catch(err => {
     res.status(422).send({
       message: errorHandler.getErrorMessage(err)

@@ -47,7 +47,8 @@ module.exports = {
     'quote-props': 0,
     quotes: [1, 'single'],
     'wrap-iife': [2, 'outside'],
-    'vars-on-top': 0
+    'vars-on-top': 0,
+    'global-require': 0
   },
   env: {
     node: true,
@@ -70,5 +71,8 @@ module.exports = {
     __TESTING__: true,
     _: false,
     ApplicationConfiguration: true
+  },
+  parserOptions: {
+    ecmaVersion: 2017
   }
 };

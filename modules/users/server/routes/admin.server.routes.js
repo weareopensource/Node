@@ -8,7 +8,7 @@ var adminPolicy = require('../policies/admin.server.policy'),
   passport = require('passport');
 
 module.exports = function (app) {
-  // User route registration first. Ref: #713
+  /* eslint global-require: 0 */
   require('./users.server.routes.js')(app);
 
   // Users collection routes
