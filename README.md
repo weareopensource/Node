@@ -5,7 +5,7 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/weareopensource/node/badge.svg)](https://snyk.io/test/github/weareopensource/node)
 
 
-# WAOS Node
+# [WeAreOpenSource](https://weareopensource.me) Node
 
 ### Node X / Express / Mongoose / Sequelize
 
