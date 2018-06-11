@@ -7,10 +7,34 @@
 
 # [WeAreOpenSource](https://weareopensource.me) Node
 
-### Node X / Express / Mongoose / Sequelize
+### Node / Express / Mongoose / Sequelize
 
 ## Presentation
 This project a stack Node that can be ran as a standalone application. Or in a fullstack, like this example, [MEANie](https://github.com/weareopensource/MEANie). We are actually in Beta.
+
+| Subject | Node
+| ------- | --------
+| **Node.js**  | v8
+| **DB: SQL**  | Sequelize ORM
+| **DB: Mongo**  | Mongoose
+| **Deliver**  | Docker & Docker-compose
+| **CI**  | Travis
+| **Testing: Tools** | request, ava
+| **Testing: Tests Automation** | separates tasks to unit tests, integration tests
+| **Testing: ExpressJS** | gulp instantiates a real ExpressJS API service
+| **Testing: Seed** | seed tasks resets the db/models to clear data and is separated to own gulp task
+| **Developer: Community**  | uses `commitizen` to streamline commit guidelines
+| **Developer: Debug**  | uses v8's builtin `debug` and `inspect` optionse
+
+Planned:
+
+| Subject  | Node
+| -------  | --------
+| **CI**  | Travis, Gitlab-ci
+| **Config** | dotenv, convict
+| **Documentation: API**  | Swagger
+| **Documentation: Code**  | Docco
+| **Developer: Lint** | Standard JS
 
 ## Prerequisites
 Make sure you have installed all of the following prerequisites on your development machine:
@@ -39,13 +63,13 @@ $ npm i
 Run `gulp  test:server`
 -->
 
-## Developper Guide
+## [Contribute](CONTRIBUTING.md)
 
+## History
 
-## Contributing
-We welcome pull requests from the community! Want to contribute ? It's simple as
-  * Forking the repository
-  * Making a PR
+This work is based on [MEAN.js](http://meanjs.org) and more precisely on a fork of the developers named [Riess.js](https://github.com/lirantal/Riess.js). The work being stopped we wished to take it back, we want to create updated stack with same mindset "simple", "easy to use". The toolbox needed to start projects.
+
+Today, we dreams to create Backs/Fronts, aligns on feats, in multiple languages, in order to allow anyone to compose fullstack on demand. Feel free to discuss, share other bricks, and invite whoever you want with this mindset to come help us.
 
 ## License
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE.md)
