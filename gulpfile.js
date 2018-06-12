@@ -13,7 +13,7 @@ var _ = require('lodash'),
   path = require('path'),
   del = require('del');
 
-var defaultAssets = require('./config/assets/default');
+var defaultAssets = require('./config/assets');
 var changedTestFiles = [];
 
 // Set NODE_ENV to 'test'
