@@ -36,18 +36,19 @@ exports.isAllowed = function (req, res, next) {
     if (err) {
       // An authorization error occurred
       return res.status(500).send('Unexpected authorization error');
+    } else if (isAllowed) {
+      // Access granted! Invoke next middleware
+      return next();
+    } else if (isAllowed) {
+      // Access granted! Invoke next middleware
+      return next();
     } else {
-      if (isAllowed) {
-        // Access granted! Invoke next middleware
+      if (req.user.id === req.body.id) {
         return next();
-      } else {
-        if (req.user.id === req.body.id) {
-          return next();
-        }
-        return res.status(403).json({
-          message: 'User is not authorized'
-        });
       }
+      return res.status(403).json({
+        message: 'User is not authorized'
+      });
     }
   });
 };

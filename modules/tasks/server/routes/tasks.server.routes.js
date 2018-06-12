@@ -12,7 +12,7 @@ module.exports = app => {
     .get(tasks.list)
     .post(tasks.create);
 
-app.route('/api/tasks/me').all(passport.authenticate('jwt'), tasksPolicy.isAllowed)
+  app.route('/api/tasks/me').all(passport.authenticate('jwt'), tasksPolicy.isAllowed)
     .get(tasks.userList);
 
   // Single task routes

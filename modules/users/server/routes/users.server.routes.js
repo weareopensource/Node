@@ -1,6 +1,6 @@
 'use strict';
 
-const passport = require('passport')
+const passport = require('passport');
 
 module.exports = function (app) {
   // User Routes

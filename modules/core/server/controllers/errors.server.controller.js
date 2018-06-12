@@ -60,6 +60,7 @@ exports.getErrorMessage = function (err) {
   } else if (err.message && !err.errors) {
     message = err.message;
   } else {
+    /* eslint no-restricted-syntax:0 */
     for (var errName in err.errors) {
       if (err.errors[errName].message) {
         message = err.errors[errName].message;
