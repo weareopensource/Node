@@ -4,7 +4,7 @@
  * Module dependencies
  */
 const path = require('path');
-const config = require(path.resolve('./lib/config'));
+const config = require(path.resolve('./config'));
 const configuration = require(path.resolve('./config'));
 const ApiError = require(path.resolve('./lib/helpers/ApiError'));
 const errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));

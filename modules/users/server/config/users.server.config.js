@@ -4,7 +4,7 @@
  * Module dependencies
  */
 const path = require('path');
-const config = require(path.resolve('./lib/config'));
+const config = require(path.resolve('./config'));
 const passport = require('passport');
 // const User = require('mongoose').model('User')
 

@@ -13,7 +13,7 @@ var _ = require('lodash'),
   path = require('path'),
   del = require('del');
 
-var defaultAssets = require('./lib/config/assets/default');
+var defaultAssets = require('./config/assets/default');
 var changedTestFiles = [];
 
 // Set NODE_ENV to 'test'
@@ -38,7 +38,7 @@ gulp.task('nodemon', function() {
     nodeArgs: ['--harmony'],
     ext: 'js,html',
     verbose: true,
-    watch: _.union(defaultAssets.server.views, defaultAssets.server.allJS, defaultAssets.server.config)
+    watch: _.union(defaultAssets.views, defaultAssets.allJS, defaultAssets.config)
   });
 });
 
@@ -48,7 +48,7 @@ gulp.task('nodemon-debug', function() {
     script: 'server.js',
     nodeArgs: ['--harmony', '--debug', '--inspect'],
     ext: 'js,html',
-    watch: _.union(defaultAssets.server.views, defaultAssets.server.allJS, defaultAssets.server.config)
+    watch: _.union(defaultAssets.views, defaultAssets.allJS, defaultAssets.config)
   });
 });
 
@@ -58,13 +58,13 @@ gulp.task('watch', function() {
   plugins.refresh.listen();
 
   // Add watch rules
-  gulp.watch(defaultAssets.server.views).on('change', plugins.refresh.changed);
-  gulp.watch(defaultAssets.server.allJS, ['lint']).on('change', plugins.refresh.changed);
+  gulp.watch(defaultAssets.views).on('change', plugins.refresh.changed);
+  gulp.watch(defaultAssets.allJS, ['lint']).on('change', plugins.refresh.changed);
 
   if (process.env.NODE_ENV === 'production') {
-    gulp.watch(defaultAssets.server.gulpConfig, ['lint']);
+    gulp.watch(defaultAssets.gulpConfig, ['lint']);
   } else {
-    gulp.watch(defaultAssets.server.gulpConfig, ['lint']);
+    gulp.watch(defaultAssets.gulpConfig, ['lint']);
   }
 });
 
@@ -74,11 +74,11 @@ gulp.task('watch:server:run-tests', function() {
   plugins.refresh.listen();
 
   // Add Server Test file rules
-  gulp.watch([defaultAssets.server.tests, defaultAssets.server.allJS], ['test:server']).on('change', function(file) {
+  gulp.watch([defaultAssets.tests, defaultAssets.allJS], ['test:server']).on('change', function(file) {
     changedTestFiles = [];
 
     // iterate through server test glob patterns
-    _.forEach(defaultAssets.server.tests, function(pattern) {
+    _.forEach(defaultAssets.tests, function(pattern) {
       // determine if the changed (watched) file is a server test
       _.forEach(glob.sync(pattern), function(f) {
         var filePath = path.resolve(f);
@@ -96,9 +96,9 @@ gulp.task('watch:server:run-tests', function() {
 // ESLint JS linting task
 gulp.task('eslint', function() {
   var assets = _.union(
-    defaultAssets.server.gulpConfig,
-    defaultAssets.server.allJS,
-    defaultAssets.server.tests
+    defaultAssets.gulpConfig,
+    defaultAssets.allJS,
+    defaultAssets.tests
   );
 
   return gulp.src(assets)
@@ -134,7 +134,7 @@ gulp.task('makeUploadsDir', function() {
 gulp.task('mocha', function(done) {
   // Open mongoose connections
   var mongoose = require('./lib/services/mongoose.js');
-  var testSuites = changedTestFiles.length ? changedTestFiles : defaultAssets.server.tests;
+  var testSuites = changedTestFiles.length ? changedTestFiles : defaultAssets.tests;
   var error;
 
   // Connect mongoose
@@ -163,7 +163,7 @@ gulp.task('mocha', function(done) {
 gulp.task('pre-test', function() {
 
   // Display coverage for all server JavaScript files
-  return gulp.src(defaultAssets.server.allJS)
+  return gulp.src(defaultAssets.allJS)
     // Covering files
     .pipe(plugins.istanbul())
     // Force `require` to return covered files
@@ -172,7 +172,7 @@ gulp.task('pre-test', function() {
 
 // Run istanbul test and write report
 gulp.task('mocha:coverage', ['pre-test', 'mocha'], function() {
-  var testSuites = changedTestFiles.length ? changedTestFiles : defaultAssets.server.tests;
+  var testSuites = changedTestFiles.length ? changedTestFiles : defaultAssets.tests;
 
   return gulp.src(testSuites)
     .pipe(plugins.istanbul.writeReports({
@@ -203,7 +203,7 @@ gulp.task('server:bootstrap', function(done) {
 
 // Launch Ava's integration tests
 gulp.task('ava:test:integration', function() {
-  return gulp.src(defaultAssets.server.testIntegration)
+  return gulp.src(defaultAssets.testIntegration)
     // gulp-ava needs filepaths so you can't have any plugins before it
     .pipe(plugins.ava({
       verbose: true

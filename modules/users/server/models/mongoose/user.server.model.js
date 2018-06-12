@@ -6,7 +6,7 @@
 
 var mongoose = require('mongoose'),
   path = require('path'),
-  config = require(path.resolve('./lib/config')),
+  config = require(path.resolve('./config')),
   Schema = mongoose.Schema,
   crypto = require('crypto'),
   bluebird = require('bluebird');
