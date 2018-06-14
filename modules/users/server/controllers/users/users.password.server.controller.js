@@ -4,7 +4,7 @@
  * Module dependencies
  */
 var path = require('path'),
-  config = require(path.resolve('./lib/config')),
+  config = require(path.resolve('./config')),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
   mongoose = require('mongoose'),
   User = mongoose.model('User'),
@@ -59,7 +59,7 @@ exports.forgot = function (req, res, next) {
       if (config.secure && config.secure.ssl === true) {
         httpTransport = 'https://';
       }
-//      var baseUrl = req.app.get('domain') || httpTransport + req.headers.host;
+      //      var baseUrl = req.app.get('domain') || httpTransport + req.headers.host;
       var baseUrl = httpTransport + config.host + ':4200';
       res.render('reset-password-email', {
         name: user.displayName,
@@ -128,13 +128,13 @@ exports.reset = function (req, res, next) {
   async.waterfall([
     function(done) {
       UserService.hashPassword(newPassword)
-      .then(function(password) {
-        done(null, password);
-      })
-      .catch(function(e) {
-        console.log(e);
-        done(e);
-      });
+        .then(function(password) {
+          done(null, password);
+        })
+        .catch(function(e) {
+          console.log(e);
+          done(e);
+        });
     },
     function (password, done) {
       User.findOne({
@@ -144,31 +144,31 @@ exports.reset = function (req, res, next) {
         }
       }, function (err, user) {
         if (!err && user) {
-            user.password = password;
-            user.resetPasswordToken = undefined;
-            user.resetPasswordExpires = undefined;
+          user.password = password;
+          user.resetPasswordToken = undefined;
+          user.resetPasswordExpires = undefined;
 
-            user.save(function (err) {
-              if (err) {
-                return res.status(422).send({
-                  message: errorHandler.getErrorMessage(err)
-                });
-              } else {
-                req.login(user, function (err) {
-                  if (err) {
-                    res.status(400).send(err);
-                  } else {
-                    // Remove sensitive data before return authenticated user
-                    user.password = undefined;
-                    user.salt = undefined;
+          user.save(function (err) {
+            if (err) {
+              return res.status(422).send({
+                message: errorHandler.getErrorMessage(err)
+              });
+            } else {
+              req.login(user, function (err) {
+                if (err) {
+                  res.status(400).send(err);
+                } else {
+                  // Remove sensitive data before return authenticated user
+                  user.password = undefined;
+                  user.salt = undefined;
 
-                    res.json(user);
+                  res.json(user);
 
-                    done(err, user);
-                  }
-                });
-              }
-            });
+                  done(err, user);
+                }
+              });
+            }
+          });
         } else {
           return res.status(400).send({
             message: 'Password reset token is invalid or has expired.'

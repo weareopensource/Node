@@ -3,17 +3,17 @@
 /**
  * Module dependencies
  */
-const path = require('path')
-const config = require(path.resolve('./lib/config'))
-const configuration = require(path.resolve('./config'))
-const ApiError = require(path.resolve('./lib/helpers/ApiError'))
-const errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'))
-const mongoose = require('mongoose')
-const passport = require('passport')
-const jwt = require('jsonwebtoken')
-const User = mongoose.model('User')
+const path = require('path');
+const config = require(path.resolve('./config'));
+const configuration = require(path.resolve('./config'));
+const ApiError = require(path.resolve('./lib/helpers/ApiError'));
+const errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
+const mongoose = require('mongoose');
+const passport = require('passport');
+const jwt = require('jsonwebtoken');
+const User = mongoose.model('User');
 
-const UserService = require('../../services/user.service')
+const UserService = require('../../services/user.service');
 
 // URLs for which user can't be redirected on signin
 var noReturnUrls = [
@@ -27,15 +27,15 @@ var noReturnUrls = [
 exports.signup = async function (req, res, next) {
   try {
     let user = await UserService.signUp(req.body);
-    user = user.toObject({getters: true})
-    const token = jwt.sign({ userId: user.id }, config.jwt.secret)
+    user = user.toObject({ getters: true });
+    const token = jwt.sign({ userId: user.id }, config.jwt.secret);
     return res.status(200)
       .cookie('TOKEN', token, { httpOnly: true })
-      .json({ user, tokenExpiresIn: Date.now() + 3600 * 24 * 1000 });
-  } catch(err) {
-    return next(new ApiError(err.message))
+      .json({ user, tokenExpiresIn: Date.now() + (3600 * 24 * 1000) });
+  } catch (err) {
+    return next(new ApiError(err.message));
   }
-}
+};
 
 /**
  * Signin after passport authentication
@@ -45,7 +45,7 @@ exports.signin = async function (req, res) {
   const token = jwt.sign({ userId: user.id }, configuration.jwt.secret);
   return res.status(200)
     .cookie('TOKEN', token, { httpOnly: true })
-    .json({ user, tokenExpiresIn: Date.now() + 3600 * 24 * 1000 });
+    .json({ user, tokenExpiresIn: Date.now() + (3600 * 24 * 1000) });
 
 };
 
@@ -53,9 +53,9 @@ exports.signin = async function (req, res) {
  * Signout
  */
 exports.signout = function (req, res) {
-  req.logout()
-  return res.status(200).send()
-}
+  req.logout();
+  return res.status(200).send();
+};
 
 /**
  * Jwt Token Auth
@@ -65,24 +65,24 @@ exports.token = async function (req, res, next) {
     // Authenticate the user based on credentials
     // @TODO be consistent with whether the login field for user identification
     // is a username or an email
-    const username = req.body.email
-    const password = req.body.password
-    const user = await UserService.authenticate(username, password)
+    const username = req.body.email;
+    const password = req.body.password;
+    const user = await UserService.authenticate(username, password);
 
     // Create the token and send
     // @TODO properly create the token with all of its metadata
     const payload = {
       id: user.id
-    }
+    };
     // @TODO properly sign the token, not with a shared secret (use pubkey instead),
     // and specify proper expiration, issuer, algorithm, etc.
-    const token = jwt.sign(payload, config.jwt.secret)
+    const token = jwt.sign(payload, config.jwt.secret);
 
-    res.status(200).cookies('TOKEN', token)
+    res.status(200).cookies('TOKEN', token);
   } catch (err) {
-    return next(new ApiError(err.message))
+    return next(new ApiError(err.message));
   }
-}
+};
 
 /**
  * OAuth provider call
@@ -151,34 +151,32 @@ exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
     User.findOne(searchQuery, function (err, user) {
       if (err) {
         return done(err);
-      } else {
-        if (!user) {
-          var possibleUsername = providerUserProfile.username || ((providerUserProfile.email) ? providerUserProfile.email.split('@')[0] : '');
+      } else if (!user) {
+        var possibleUsername = providerUserProfile.username || ((providerUserProfile.email) ? providerUserProfile.email.split('@')[0] : '');
 
-          User.findUniqueUsername(possibleUsername, null, function (availableUsername) {
-            user = new User({
-              firstName: providerUserProfile.firstName,
-              lastName: providerUserProfile.lastName,
-              username: availableUsername,
-              displayName: providerUserProfile.displayName,
-              profileImageURL: providerUserProfile.profileImageURL,
-              provider: providerUserProfile.provider,
-              providerData: providerUserProfile.providerData
-            });
-
-            // Email intentionally added later to allow defaults (sparse settings) to be applid.
-            // Handles case where no email is supplied.
-            // See comment: https://github.com/meanjs/mean/pull/1495#issuecomment-246090193
-            user.email = providerUserProfile.email;
-
-            // And save the user
-            user.save(function (err) {
-              return done(err, user, info);
-            });
+        User.findUniqueUsername(possibleUsername, null, function (availableUsername) {
+          user = new User({
+            firstName: providerUserProfile.firstName,
+            lastName: providerUserProfile.lastName,
+            username: availableUsername,
+            displayName: providerUserProfile.displayName,
+            profileImageURL: providerUserProfile.profileImageURL,
+            provider: providerUserProfile.provider,
+            providerData: providerUserProfile.providerData
           });
-        } else {
-          return done(err, user, info);
-        }
+
+          // Email intentionally added later to allow defaults (sparse settings) to be applid.
+          // Handles case where no email is supplied.
+          // See comment: https://github.com/meanjs/mean/pull/1495#issuecomment-246090193
+          user.email = providerUserProfile.email;
+
+          // And save the user
+          user.save(function (err) {
+            return done(err, user, info);
+          });
+        });
+      } else {
+        return done(err, user, info);
       }
     });
   } else {

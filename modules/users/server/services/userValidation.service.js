@@ -1,10 +1,10 @@
-'use strict'
+'use strict';
 
-const path = require('path')
-const config = require(path.resolve('./lib/config'))
+const path = require('path');
+const config = require(path.resolve('./config'));
 
-const validator = require('validator')
-const owasp = require('owasp-password-strength-test')
+const validator = require('validator');
+const owasp = require('owasp-password-strength-test');
 
 class UserValidationService {
   /**
@@ -17,45 +17,45 @@ class UserValidationService {
    * - not begin or end with "."
    */
   static validateUsername (user) {
-    const username = user.username
-    const usernameRegex = /^(?=[\w.-]+$)(?!.*[._-]{2})(?!\.)(?!.*\.$).{3,34}$/
+    const username = user.username;
+    const usernameRegex = /^(?=[\w.-]+$)(?!.*[._-]{2})(?!\.)(?!.*\.$).{3,34}$/;
     return (
       username.provider !== 'local' ||
       (username && usernameRegex.test(username) && config.illegalUsernames.indexOf(username) < 0)
-    )
+    );
   }
 
   /**
    * A Validation function for local strategy properties
    */
   static validateLocalStrategyProperty (user) {
-    return (user && user.provider && user.provider !== 'local')
+    return (user && user.provider && user.provider !== 'local');
   }
 
   static validateFirstName (user) {
     // @TODO fix validation to convert to string and check expected validity
-    return (this.validateLocalStrategyProperty(user) || user.firstName)
+    return (this.validateLocalStrategyProperty(user) || user.firstName);
   }
 
   static validateLastName (user) {
     // @TODO fix validation to convert to string and check expected validity
-    return (this.validateLocalStrategyProperty(user) || user.lastName)
+    return (this.validateLocalStrategyProperty(user) || user.lastName);
   }
 
   static validatePassword (user) {
-//    if (!this.validateLocalStrategyProperty(user)) {
-//      return owasp.test(user.password)
-//    }
+    //    if (!this.validateLocalStrategyProperty(user)) {
+    //      return owasp.test(user.password)
+    //    }
 
-    return true
+    return true;
   }
 
   /**
    * A Validation function for local strategy email
    */
   static validateEmail (user) {
-    return (this.validateLocalStrategyProperty(user) || validator.isEmail(user.email, { require_tld: false }))
+    return (this.validateLocalStrategyProperty(user) || validator.isEmail(user.email, { require_tld: false }));
   }
 }
 
-module.exports = UserValidationService
+module.exports = UserValidationService;

@@ -4,17 +4,14 @@
  * Module dependencies
  */
 
-
-
-
 var mongoose = require('mongoose'),
   path = require('path'),
-  config = require(path.resolve('./lib/config')),
+  config = require(path.resolve('./config')),
   Schema = mongoose.Schema,
   crypto = require('crypto'),
   bluebird = require('bluebird');
-  // validator = require('validator');
-  mongoose.Promise = Promise;
+// validator = require('validator');
+mongoose.Promise = Promise;
 
 /**
  * A Validation function for local strategy properties
@@ -58,13 +55,13 @@ var UserSchema = new Schema({
   firstName: {
     type: String,
     trim: true,
-    default: '',
+    default: ''
     // validate: [validateLocalStrategyProperty, 'Please fill in your first name']
   },
   lastName: {
     type: String,
     trim: true,
-    default: '',
+    default: ''
     // validate: [validateLocalStrategyProperty, 'Please fill in your last name']
   },
   displayName: {
@@ -79,7 +76,7 @@ var UserSchema = new Schema({
     },
     lowercase: true,
     trim: true,
-    default: '',
+    default: ''
     // validate: [validateLocalStrategyEmail, 'Please fill a valid email address']
   },
   username: {
@@ -171,20 +168,20 @@ var UserSchema = new Schema({
 /**
  * Create instance method for authenticating user
  */
-UserSchema.methods.authenticate = function (password) {
+UserSchema.methods.authenticate = function(password) {
   return this.password === this.hashPassword(password);
 };
 
 /**
  * Find possible not used username
  */
-UserSchema.statics.findUniqueUsername = function (username, suffix, callback) {
+UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
   var _this = this;
   var possibleUsername = username.toLowerCase() + (suffix || '');
 
   _this.findOne({
     username: possibleUsername
-  }, function (err, user) {
+  }, function(err, user) {
     if (!err) {
       if (!user) {
         callback(possibleUsername);
@@ -199,7 +196,13 @@ UserSchema.statics.findUniqueUsername = function (username, suffix, callback) {
 
 UserSchema.static('findOneOrCreate', async function findOneOrCreate(condition, doc) {
   const one = await this.findOne(condition);
-  return one || this.create(doc).then(doc => { console.log('docteur', doc); return doc; }).catch((err) => { console.log(err); return  Promise.resolve(doc) });
+  return one || this.create(doc).then(doc => {
+    console.log('docteur', doc);
+    return doc;
+  }).catch((err) => {
+    console.log(err);
+    return Promise.resolve(doc);
+  });
 });
 
 mongoose.model('User', UserSchema);

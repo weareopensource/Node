@@ -11,11 +11,11 @@ var _ = require('lodash'),
   fs = require('fs'),
   mock = require('mock-fs'),
   request = require('supertest'),
-  config = require(path.resolve('./lib/config')),
+  config = require(path.resolve('./config')),
   logger = require(path.resolve('./lib/services/logger')),
   seed = require(path.resolve('./lib/services/seed')),
-  express = require(path.resolve('./lib/services/express'));
-
+  express = require(path.resolve('./lib/services/express')),
+  loger = require(path.resolve('./lib/services/logger'));
 /**
  * Globals
  */
@@ -27,9 +27,9 @@ var app,
   adminFromSeedConfig,
   originalLogConfig;
 
-describe('Configuration Tests:', function () {
+describe('Configuration Tests:', function() {
 
-  describe('Testing default seedDB', function () {
+  describe('Testing default seedDB', function() {
     before(function(done) {
       User.remove(function(err) {
         should.not.exist(err);
@@ -82,7 +82,9 @@ describe('Configuration Tests:', function () {
     });
 
     it('should not be an admin user to begin with', function(done) {
-      User.find({ username: 'seedadmin' }, function(err, users) {
+      User.find({
+        username: 'seedadmin'
+      }, function(err, users) {
         should.not.exist(err);
         users.should.be.instanceof(Array).and.have.lengthOf(0);
         return done();
@@ -90,7 +92,9 @@ describe('Configuration Tests:', function () {
     });
 
     it('should not be a "regular" user to begin with', function(done) {
-      User.find({ username: 'seeduser' }, function(err, users) {
+      User.find({
+        username: 'seeduser'
+      }, function(err, users) {
         should.not.exist(err);
         users.should.be.instanceof(Array).and.have.lengthOf(0);
         return done();
@@ -104,16 +108,22 @@ describe('Configuration Tests:', function () {
       // Set node env ro production environment
       process.env.NODE_ENV = 'production';
 
-      User.find({ username: adminFromSeedConfig.username }, function(err, users) {
+      User.find({
+        username: adminFromSeedConfig.username
+      }, function(err, users) {
 
         // There shouldn't be any errors
         should.not.exist(err);
         users.should.be.instanceof(Array).and.have.lengthOf(0);
 
         seed
-          .start({ logResults: false })
+          .start({
+            logResults: false
+          })
           .then(function() {
-            User.find({ username: adminFromSeedConfig.username }, function(err, users) {
+            User.find({
+              username: adminFromSeedConfig.username
+            }, function(err, users) {
               should.not.exist(err);
               users.should.be.instanceof(Array).and.have.lengthOf(1);
 
@@ -139,23 +149,31 @@ describe('Configuration Tests:', function () {
       // Set node env ro production environment
       process.env.NODE_ENV = 'test';
 
-      User.find({ username: adminFromSeedConfig.username }, function(err, users) {
+      User.find({
+        username: adminFromSeedConfig.username
+      }, function(err, users) {
 
         // There shouldn't be any errors
         should.not.exist(err);
         users.should.be.instanceof(Array).and.have.lengthOf(0);
 
         seed
-          .start({ logResults: false })
+          .start({
+            logResults: false
+          })
           .then(function() {
-            User.find({ username: adminFromSeedConfig.username }, function(err, users) {
+            User.find({
+              username: adminFromSeedConfig.username
+            }, function(err, users) {
               should.not.exist(err);
               users.should.be.instanceof(Array).and.have.lengthOf(1);
 
               var _admin = users.pop();
               _admin.username.should.equal(adminFromSeedConfig.username);
 
-              User.find({ username: userFromSeedConfig.username }, function(err, users) {
+              User.find({
+                username: userFromSeedConfig.username
+              }, function(err, users) {
 
                 should.not.exist(err);
                 users.should.be.instanceof(Array).and.have.lengthOf(1);
@@ -176,7 +194,7 @@ describe('Configuration Tests:', function () {
       });
     });
 
-    it('should seed admin, and "regular" user accounts when NODE_ENV is set to "test" when they already exist', function (done) {
+    it('should seed admin, and "regular" user accounts when NODE_ENV is set to "test" when they already exist', function(done) {
 
       // Save original value
       var nodeEnv = process.env.NODE_ENV;
@@ -186,30 +204,40 @@ describe('Configuration Tests:', function () {
       var _user = new User(userFromSeedConfig);
       var _admin = new User(adminFromSeedConfig);
 
-      _admin.save(function (err) {
+      _admin.save(function(err) {
         // There shouldn't be any errors
         should.not.exist(err);
-        _user.save(function (err) {
+        _user.save(function(err) {
           // There shouldn't be any errors
           should.not.exist(err);
 
-          User.find({ username: { $in: [adminFromSeedConfig.username, userFromSeedConfig.username] } }, function (err, users) {
+          User.find({
+            username: {
+              $in: [adminFromSeedConfig.username, userFromSeedConfig.username]
+            }
+          }, function(err, users) {
 
             // There shouldn't be any errors
             should.not.exist(err);
             users.should.be.instanceof(Array).and.have.lengthOf(2);
 
             seed
-              .start({ logResults: false })
-              .then(function () {
-                User.find({ username: { $in: [adminFromSeedConfig.username, userFromSeedConfig.username] } }, function (err, users) {
+              .start({
+                logResults: false
+              })
+              .then(function() {
+                User.find({
+                  username: {
+                    $in: [adminFromSeedConfig.username, userFromSeedConfig.username]
+                  }
+                }, function(err, users) {
                   should.not.exist(err);
                   users.should.be.instanceof(Array).and.have.lengthOf(2);
 
                   // Restore original NODE_ENV environment variable
                   process.env.NODE_ENV = nodeEnv;
 
-                  User.remove(function (err) {
+                  User.remove(function(err) {
                     should.not.exist(err);
                     return done();
                   });
@@ -227,16 +255,23 @@ describe('Configuration Tests:', function () {
       // Set node env ro production environment
       process.env.NODE_ENV = 'production';
 
-      User.find({ username: admin1.username }, function(err, users) {
+      User.find({
+        username: admin1.username
+      }, function(err, users) {
 
         // There shouldn't be any errors
         should.not.exist(err);
         users.should.be.instanceof(Array).and.have.lengthOf(0);
 
         seed
-          .start({ logResults: false, seedAdmin: admin1 })
+          .start({
+            logResults: false,
+            seedAdmin: admin1
+          })
           .then(function() {
-            User.find({ username: admin1.username }, function(err, users) {
+            User.find({
+              username: admin1.username
+            }, function(err, users) {
               should.not.exist(err);
               users.should.be.instanceof(Array).and.have.lengthOf(1);
 
@@ -262,23 +297,33 @@ describe('Configuration Tests:', function () {
       // Set node env ro production environment
       process.env.NODE_ENV = 'test';
 
-      User.find({ username: admin1.username }, function(err, users) {
+      User.find({
+        username: admin1.username
+      }, function(err, users) {
 
         // There shouldn't be any errors
         should.not.exist(err);
         users.should.be.instanceof(Array).and.have.lengthOf(0);
 
         seed
-          .start({ logResults: false, seedAdmin: admin1, seedUser: user1 })
+          .start({
+            logResults: false,
+            seedAdmin: admin1,
+            seedUser: user1
+          })
           .then(function() {
-            User.find({ username: admin1.username }, function(err, users) {
+            User.find({
+              username: admin1.username
+            }, function(err, users) {
               should.not.exist(err);
               users.should.be.instanceof(Array).and.have.lengthOf(1);
 
               var _admin = users.pop();
               _admin.username.should.equal(admin1.username);
 
-              User.find({ username: user1.username }, function(err, users) {
+              User.find({
+                username: user1.username
+              }, function(err, users) {
 
                 should.not.exist(err);
                 users.should.be.instanceof(Array).and.have.lengthOf(1);
@@ -314,8 +359,10 @@ describe('Configuration Tests:', function () {
         user.username.should.equal(adminFromSeedConfig.username);
 
         seed
-          .start({ logResults: false })
-          .then(function () {
+          .start({
+            logResults: false
+          })
+          .then(function() {
             // we don't ever expect to make it here but we don't want to timeout
             User.remove(function(err) {
               should.not.exist(err);
@@ -327,7 +374,7 @@ describe('Configuration Tests:', function () {
               return done();
             });
           })
-          .catch(function (err) {
+          .catch(function(err) {
             should.exist(err);
             err.message.should.equal('Failed due to local account already exists: ' + adminFromSeedConfig.username);
 
@@ -343,7 +390,7 @@ describe('Configuration Tests:', function () {
       });
     });
 
-    it('should NOT seed "regular" user account if missing email when NODE_ENV set to "test"', function (done) {
+    it('should NOT seed "regular" user account if missing email when NODE_ENV set to "test"', function(done) {
 
       // Save original value
       var nodeEnv = process.env.NODE_ENV;
@@ -354,8 +401,11 @@ describe('Configuration Tests:', function () {
       _user.email = '';
 
       seed
-        .start({ logResults: false, seedUser: _user })
-        .then(function () {
+        .start({
+          logResults: false,
+          seedUser: _user
+        })
+        .then(function() {
           // we don't ever expect to make it here but we don't want to timeout
           User.remove(function(err) {
             // force this test to fail since we should never be here
@@ -366,7 +416,7 @@ describe('Configuration Tests:', function () {
             return done();
           });
         })
-        .catch(function (err) {
+        .catch(function(err) {
           should.exist(err);
           err.message.should.equal('Failed to add local ' + user1.username);
 
@@ -382,9 +432,11 @@ describe('Configuration Tests:', function () {
     });
   });
 
-  describe('Testing Session Secret Configuration', function () {
-    it('should warn if using default session secret when running in production', function (done) {
-      var conf = { sessionSecret: 'MEAN' };
+  describe('Testing Session Secret Configuration', function() {
+    it('should warn if using default session secret when running in production', function(done) {
+      var conf = {
+        sessionSecret: 'MEAN'
+      };
       // set env to production for this test
       process.env.NODE_ENV = 'production';
       config.utils.validateSessionSecret(conf, true).should.equal(false);
@@ -393,8 +445,10 @@ describe('Configuration Tests:', function () {
       return done();
     });
 
-    it('should accept non-default session secret when running in production', function () {
-      var conf = { sessionSecret: 'super amazing secret' };
+    it('should accept non-default session secret when running in production', function() {
+      var conf = {
+        sessionSecret: 'super amazing secret'
+      };
       // set env to production for this test
       process.env.NODE_ENV = 'production';
       config.utils.validateSessionSecret(conf, true).should.equal(true);
@@ -402,8 +456,10 @@ describe('Configuration Tests:', function () {
       process.env.NODE_ENV = 'test';
     });
 
-    it('should accept default session secret when running in development', function () {
-      var conf = { sessionSecret: 'MEAN' };
+    it('should accept default session secret when running in development', function() {
+      var conf = {
+        sessionSecret: 'MEAN'
+      };
       // set env to development for this test
       process.env.NODE_ENV = 'development';
       config.utils.validateSessionSecret(conf, true).should.equal(true);
@@ -411,25 +467,27 @@ describe('Configuration Tests:', function () {
       process.env.NODE_ENV = 'test';
     });
 
-    it('should accept default session secret when running in test', function () {
-      var conf = { sessionSecret: 'MEAN' };
+    it('should accept default session secret when running in test', function() {
+      var conf = {
+        sessionSecret: 'MEAN'
+      };
       config.utils.validateSessionSecret(conf, true).should.equal(true);
     });
   });
 
-  describe('Testing Logger Configuration', function () {
+  describe('Testing Logger Configuration', function() {
 
-    beforeEach(function () {
+    beforeEach(function() {
       originalLogConfig = _.clone(config.log, true);
       mock();
     });
 
-    afterEach(function () {
+    afterEach(function() {
       config.log = originalLogConfig;
       mock.restore();
     });
 
-    it('should retrieve the log format from the logger configuration', function () {
+    it('should retrieve the log format from the logger configuration', function() {
 
       config.log = {
         format: 'tiny'
@@ -439,7 +497,7 @@ describe('Configuration Tests:', function () {
       format.should.be.equal('tiny');
     });
 
-    it('should retrieve the log options from the logger configuration for a valid stream object', function () {
+    it('should retrieve the log options from the logger configuration for a valid stream object', function() {
 
       var options = logger.getMorganOptions();
 
@@ -448,7 +506,7 @@ describe('Configuration Tests:', function () {
 
     });
 
-    it('should verify that a file logger object was created using the logger configuration', function () {
+    it('should verify that a file logger object was created using the logger configuration', function() {
       var _dir = process.cwd();
       var _filename = 'unit-test-access.log';
 
@@ -464,9 +522,9 @@ describe('Configuration Tests:', function () {
       fileTransport.filename.should.equal(_dir + '/' + _filename);
     });
 
-    it('should use the default log format of "combined" when an invalid format was provided', function () {
+    it('should use the default log format of "combined" when an invalid format was provided', function() {
 
-      var _logger = require(path.resolve('./lib/services/logger'));
+      var _logger = logger;
 
       // manually set the config log format to be invalid
       config.log = {
@@ -477,7 +535,7 @@ describe('Configuration Tests:', function () {
       format.should.be.equal('combined');
     });
 
-    it('should not create a file transport object if critical options are missing: filename', function () {
+    it('should not create a file transport object if critical options are missing: filename', function() {
 
       // manually set the config stream fileName option to an empty string
       config.log = {
@@ -494,7 +552,7 @@ describe('Configuration Tests:', function () {
       fileTransport.should.be.false();
     });
 
-    it('should not create a file transport object if critical options are missing: directory', function () {
+    it('should not create a file transport object if critical options are missing: directory', function() {
 
       // manually set the config stream fileName option to an empty string
       config.log = {
