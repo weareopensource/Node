@@ -18,7 +18,7 @@ module.exports = {
     // Can specify one of 'combined', 'common', 'dev', 'short', 'tiny'
     format: 'combined'
   },
-  port: 8443,
+  port: 3000,
   host: '127.0.0.1',
   livereload: false
 };
