@@ -7,7 +7,9 @@ var _ = require('lodash'),
   chalk = require('chalk'),
   glob = require('glob'),
   fs = require('fs'),
-  path = require('path');
+  path = require('path'),
+  _ = require('lodash'),
+  objectPath = require('object-path');
 
 /**
  * Get files by glob patterns
@@ -97,48 +99,30 @@ var validateSecureMode = function (config) {
   }
 };
 
-
-/**
- * Initialize global configuration files
- */
-var initGlobalConfigFolders = function (config, assets) {
-  // Appending files
-  config.folders = {
-    server: {},
-    client: {}
-  };
-
-  // Setting globbed client paths
-  config.folders.client = process.cwd() + '/public/';
-};
-
 /**
  * Initialize global configuration files
  */
 var initGlobalConfigFiles = function (config, assets) {
   // Appending files
-  config.files = {
-    server: {},
-    client: {}
-  };
+  config.files = {};
 
   // Setting Globbed mongoose model files
-  config.files.server.mongooseModels = getGlobbedPaths(assets.server.mongooseModels);
+  config.files.mongooseModels = getGlobbedPaths(assets.mongooseModels);
 
   // Setting Globbed sequelize model files
-  config.files.server.sequelizeModels = getGlobbedPaths(assets.server.sequelizeModels);
+  config.files.sequelizeModels = getGlobbedPaths(assets.sequelizeModels);
 
   // Setting Globbed route files
-  config.files.server.routes = getGlobbedPaths(assets.server.routes);
+  config.files.routes = getGlobbedPaths(assets.routes);
 
   // Setting Globbed config files
-  config.files.server.configs = getGlobbedPaths(assets.server.config);
+  config.files.configs = getGlobbedPaths(assets.config);
 
   // Setting Globbed socket files
-  config.files.server.sockets = getGlobbedPaths(assets.server.sockets);
+  config.files.sockets = getGlobbedPaths(assets.sockets);
 
   // Setting Globbed policies files
-  config.files.server.policies = getGlobbedPaths(assets.server.policies);
+  config.files.policies = getGlobbedPaths(assets.policies);
 
 };
 
@@ -147,20 +131,28 @@ var initGlobalConfigFiles = function (config, assets) {
  */
 var initGlobalConfig = function () {
   // Validate NODE_ENV existence
-  validateEnvironmentVariable();
+////  validateEnvironmentVariable();
 
   // Get the default assets
-  var assets = require(path.join(process.cwd(), 'lib/config/assets/default'));
+  var assets = require(path.join(process.cwd(), './config/assets'));
 
   // Get the default config
-  // var defaultConfig = require(path.join(process.cwd(), 'config/env/default'));
+  var defaultConfig = require(path.join(process.cwd(), 'config/defaults/common'));
 
   // Get the current config
-  var environmentConfig = require(path.join(process.cwd(), 'config.js')) || {};
+  const currentEnv = process.env.NODE_ENV || 'developement';
+  var environmentConfig = require(path.join(process.cwd(), './config', 'defaults', currentEnv)) || {};
+
+  // Get the config from  process.env.WAOS_BACK_*
+  const environmentVars = _.mapKeys(
+    _.pickBy(process.env, (_value, key) => key.startsWith('WAOS_BACK_')),
+    (_v, k) => k.split('_').slice(2).join('.')
+  );
+  const environmentConfigVars = {};
+  _.forEach(environmentVars, (v, k) => objectPath.set(environmentConfigVars, k, v));
 
   // Merge config files
-  // var config = _.merge(defaultConfig, environmentConfig);
-  var config = environmentConfig;
+  var config = _.merge(defaultConfig, environmentConfig, environmentConfigVars);
 
   // read package.json for MEAN.JS project information
   var pkg = require(path.resolve('./package.json'));
@@ -171,9 +163,6 @@ var initGlobalConfig = function () {
 
   // Initialize global globbed files
   initGlobalConfigFiles(config, assets);
-
-  // Initialize global globbed folders
-  initGlobalConfigFolders(config, assets);
 
   // Validate Secure SSL mode can be used
   validateSecureMode(config);

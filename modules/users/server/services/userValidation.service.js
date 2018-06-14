@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const config = require(path.resolve('./lib/config'));
+const config = require(path.resolve('./config'));
 
 const validator = require('validator');
 const owasp = require('owasp-password-strength-test');
