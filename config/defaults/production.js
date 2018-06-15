@@ -1,9 +1,13 @@
 'use strict';
 
-var fs = require('fs');
+const defaultConfig = require('./development');
 
-module.exports = {
+module.exports = Object.assign(defaultConfig, {
+  app: {
+    title: 'MEAN.JS'
+  },
   db: {
+    uri: 'mongodb://localhost/riess',
     debug: false
   },
   secure: {
@@ -18,4 +22,4 @@ module.exports = {
     format: 'combined'
   },
   livereload: false
-};
+});
