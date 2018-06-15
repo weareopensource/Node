@@ -7,7 +7,10 @@ module.exports = {
     keywords: 'mongodb, express, angularjs, node.js, mongoose, passport',
     googleAnalyticsTrackingID: 'WAOS_BACK_app_googleAnalyticsTrackingID'
   },
+  port: 3000,
+  host: 'localhost',
   db: {
+    uri: 'mongodb://localhost/riess',
     options: {
       user: '',
       pass: ''

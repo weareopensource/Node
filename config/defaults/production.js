@@ -4,7 +4,6 @@ var fs = require('fs');
 
 module.exports = {
   db: {
-    uri: 'mongodb://localhost/riess',
     debug: false
   },
   secure: {
@@ -18,7 +17,5 @@ module.exports = {
     // Can specify one of 'combined', 'common', 'dev', 'short', 'tiny'
     format: 'combined'
   },
-  port: 3000,
-  host: '127.0.0.1',
   livereload: false
 };
