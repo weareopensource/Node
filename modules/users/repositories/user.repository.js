@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
+const errorHandler = require(path.resolve('./modules/core/controllers/errors.server.controller'));
 const mongoose = require('mongoose');
 const passport = require('passport');
 const User = mongoose.model('User');

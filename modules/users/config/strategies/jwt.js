@@ -3,7 +3,7 @@
 const passport = require('passport');
 const passportJwt = require('passport-jwt');
 const UserService = require('../../services/user.service');
-const config = require('../../../../../config');
+const config = require('../../../../config');
 
 const JwtStrategy = passportJwt.Strategy;
 
