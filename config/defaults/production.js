@@ -1,8 +1,12 @@
 'use strict';
 
-var fs = require('fs');
+const _ = require('lodash'),
+  defaultConfig = require('./development');
 
-module.exports = {
+module.exports = _.merge(defaultConfig, {
+  app: {
+    title: 'MEAN.JS'
+  },
   db: {
     uri: 'mongodb://localhost/riess',
     debug: false
@@ -18,7 +22,5 @@ module.exports = {
     // Can specify one of 'combined', 'common', 'dev', 'short', 'tiny'
     format: 'combined'
   },
-  port: 8443,
-  host: '127.0.0.1',
   livereload: false
-};
+});
