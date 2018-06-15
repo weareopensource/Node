@@ -7,6 +7,7 @@ module.exports = {
     title: defaultConfig.app.title + ' - Development Environment',
   },
   db: {
+    uri: defaultConfig.db.uri + '-dev',
     debug: true
   },
   secure: {
