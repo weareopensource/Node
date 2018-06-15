@@ -136,12 +136,9 @@ var initGlobalConfig = function () {
   // Get the default assets
   var assets = require(path.join(process.cwd(), './config/assets'));
 
-  // Get the default config
-  var defaultConfig = require(path.join(process.cwd(), 'config/defaults/common'));
-
   // Get the current config
   const currentEnv = process.env.NODE_ENV || 'developement';
-  var environmentConfig = require(path.join(process.cwd(), './config', 'defaults', currentEnv)) || {};
+  var defaultConfig = require(path.join(process.cwd(), './config', 'defaults', currentEnv)) || {};
 
   // Get the config from  process.env.WAOS_BACK_*
   const environmentVars = _.mapKeys(
@@ -152,7 +149,7 @@ var initGlobalConfig = function () {
   _.forEach(environmentVars, (v, k) => objectPath.set(environmentConfigVars, k, v));
 
   // Merge config files
-  var config = _.merge(defaultConfig, environmentConfig, environmentConfigVars);
+  var config = _.merge(defaultConfig, environmentConfigVars);
 
   // read package.json for MEAN.JS project information
   var pkg = require(path.resolve('./package.json'));
