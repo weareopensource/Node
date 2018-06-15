@@ -66,6 +66,9 @@ module.exports = {
     p3p: 'ABCDEF',
     xssProtection: true
   },
+  cors: {
+    url: 'http://localhost:4200'
+  },
   illegalUsernames: ['meanjs', 'administrator', 'password', 'admin', 'user',
     'unknown', 'anonymous', 'null', 'undefined', 'api'
   ],
