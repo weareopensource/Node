@@ -1,25 +1,15 @@
 'use strict';
 
-var defaultConfig = require('./common');
+const _ = require('lodash'),
+  defaultConfig = require('./development');
 
-module.exports = {
+module.exports = _.merge(defaultConfig, {
   app: {
-    title: defaultConfig.app.title + ' - Test Environment'
+    title: 'MEAN.JS - Test Environment'
   },
   db: {
     uri: 'mongodb://localhost/mean-test',
-    // Enable mongoose debug mode
     debug: false
   },
-  secure: {
-    ssl: false,
-  },
-  log: {
-    // logging with Morgan - https://github.com/expressjs/morgan
-    // Can specify one of 'combined', 'common', 'dev', 'short', 'tiny'
-    format: 'dev'
-  },
-  port: 3001
-  host: 'localhost',
   livereload: false
-};
+});
