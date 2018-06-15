@@ -1,8 +1,9 @@
 'use strict';
 
-const defaultConfig = require('./development');
+const _ = require('lodash'),
+  defaultConfig = require('./development');
 
-module.exports = Object.assign(defaultConfig, {
+module.exports = _.merge(defaultConfig, {
   app: {
     title: 'MEAN.JS'
   },
