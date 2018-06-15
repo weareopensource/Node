@@ -1005,7 +1005,7 @@ describe('User CRUD tests', function() {
         }
 
         agent.post('/api/users/picture')
-          .attach('newProfilePicture', './modules/users/tests/server/img/text-file.txt')
+          .attach('newProfilePicture', './modules/users/tests/img/text-file.txt')
           .send(credentials)
           .expect(422)
           .end(function(userInfoErr, userInfoRes) {
@@ -1025,7 +1025,7 @@ describe('User CRUD tests', function() {
         }
 
         agent.post('/api/users/picture')
-          .attach('newProfilePicture', './modules/users/tests/server/img/too-big-file.png')
+          .attach('newProfilePicture', './modules/users/tests/img/too-big-file.png')
           .send(credentials)
           .expect(422)
           .end(function(userInfoErr, userInfoRes) {

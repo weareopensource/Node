@@ -22,5 +22,8 @@ module.exports = _.merge(defaultConfig, {
     // Can specify one of 'combined', 'common', 'dev', 'short', 'tiny'
     format: 'combined'
   },
+  cors: {
+    url: 'http://localhost:3000'
+  },
   livereload: false
 });
