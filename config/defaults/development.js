@@ -7,7 +7,6 @@ module.exports = {
     title: defaultConfig.app.title + ' - Development Environment',
   },
   db: {
-    uri: 'mongodb://localhost/riessdev',
     debug: true
   },
   secure: {
@@ -18,7 +17,5 @@ module.exports = {
     // Can specify one of 'combined', 'common', 'dev', 'short', 'tiny'
     format: 'dev'
   },
-  port: 3000,
-  host: 'localhost',
   livereload: true
 };
