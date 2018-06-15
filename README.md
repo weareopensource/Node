@@ -51,12 +51,18 @@ $ npm i
 ## Running Your Application
 
 ### Development
-* Run `gulp` for a dev server. Available at `http://localhost:3000/`.
+* Run `npm start` for a dev server. Available at `http://localhost:3000/`.
 
 ### Production
-* Run `gulp prod` for a prod server. Available at `http://localhost:8443/`
+* Run `npm run prod` to run on production mode. Available at `http://localhost:3000/`.
 
-// TODO add config description
+### Configuration
+The running process takes into account all system environment variables defined under the form WAOS_BACK_<path_toVariable>. A pre-build npm script turns under the hood those system environment variables into an object, infering paths from the varialbles name, merged to the environment object defined on config/defaults/development.js, regardless of the production or developement mode.
+
+All configuration avalable on config/defaults/development.js file are overidable. You can for instance define the API server coordonates by defining those system environment variables:
+
+-  WAOS_BACK_host='my-server'
+-  WAOS_BACK_port=4000
 
 <!--
 ## Running unit tests
