@@ -3,7 +3,7 @@
 /**
  * Module dependencies
  */
-var path = require('path'),
+const path = require('path'),
   config = require(path.resolve('./config')),
   errorHandler = require(path.resolve('./modules/core/controllers/errors.server.controller')),
   mongoose = require('mongoose'),
@@ -15,7 +15,7 @@ var path = require('path'),
   UserService = require('../../services/user.service'),
   crypto = require('crypto');
 
-var smtpTransport = nodemailer.createTransport(config.mailer.options);
+const smtpTransport = nodemailer.createTransport(config.mailer.options);
 
 /**
  * Forgot for reset password (forgot POST)
@@ -55,12 +55,12 @@ exports.forgot = function (req, res, next) {
       }
     },
     function (token, user, done) {
-      var httpTransport = 'http://';
+      let httpTransport = 'http://';
       if (config.secure && config.secure.ssl === true) {
         httpTransport = 'https://';
       }
-      //      var baseUrl = req.app.get('domain') || httpTransport + req.headers.host;
-      var baseUrl = httpTransport + config.host + ':4200';
+      //      const baseUrl = req.app.get('domain') || httpTransport + req.headers.host;
+      const baseUrl = httpTransport + config.host + ':4200';
       res.render('reset-password-email', {
         name: user.displayName,
         appName: config.app.title,
@@ -72,7 +72,7 @@ exports.forgot = function (req, res, next) {
     // If valid email, send reset email using service
     function (emailHTML, user, done) {
 
-      var mailOptions = {
+      const mailOptions = {
         to: user.email,
         from: config.mailer.from,
         subject: 'Password Reset',
@@ -122,8 +122,8 @@ exports.validateResetToken = function (req, res) {
  */
 exports.reset = function (req, res, next) {
   // Init Variables
-  var newPassword = req.body.newPassword;
-  var resetPasswordToken = req.body.token;
+  const newPassword = req.body.newPassword;
+  const resetPasswordToken = req.body.token;
 
   async.waterfall([
     function(done) {
@@ -186,7 +186,7 @@ exports.reset = function (req, res, next) {
     },
     // If valid email, send reset email using service
     function (emailHTML, user, done) {
-      var mailOptions = {
+      const mailOptions = {
         to: user.email,
         from: config.mailer.from,
         subject: 'Your password has been changed',
@@ -209,7 +209,7 @@ exports.reset = function (req, res, next) {
  */
 exports.changePassword = function (req, res, next) {
   // Init Variables
-  var passwordDetails = req.body;
+  const passwordDetails = req.body;
 
   if (req.user) {
     if (passwordDetails.newPassword) {

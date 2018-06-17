@@ -3,7 +3,7 @@
 /**
  * Module dependencies
  */
-var _ = require('lodash'),
+const _ = require('lodash'),
   mongoose = require('mongoose'),
   User = mongoose.model('User');
 

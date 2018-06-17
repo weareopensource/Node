@@ -3,7 +3,7 @@
 /**
  * Module dependencies
  */
-var _ = require('lodash'),
+const _ = require('lodash'),
   fs = require('fs'),
   path = require('path'),
   errorHandler = require(path.resolve('./modules/core/controllers/errors.server.controller')),
@@ -22,14 +22,14 @@ var _ = require('lodash'),
     OAuth2Client
   } = require('google-auth-library');
 
-var whitelistedFields = ['firstName', 'lastName', 'email', 'username', 'roles', 'profileImageURL'];
+const whitelistedFields = ['firstName', 'lastName', 'email', 'username', 'roles', 'profileImageURL'];
 
 /**
  * Update user details
  */
 exports.update = function(req, res) {
   // Init Variables
-  var user = req.user;
+  let user = req.user;
 
   if (user) {
     // Update whitelisted fields only
@@ -66,13 +66,13 @@ exports.update = function(req, res) {
  * Update profile picture
  */
 exports.changeProfilePicture = function(req, res) {
-  var user = req.user;
-  var existingImageUrl;
+  const user = req.user;
+  let existingImageUrl;
 
   // Filtering to upload only images
-  var multerConfig = config.uploads.profile.image;
+  const multerConfig = config.uploads.profile.image;
   multerConfig.fileFilter = imageFileFilter;
-  var upload = multer(multerConfig)
+  const upload = multer(multerConfig)
     .single('newProfilePicture');
 
   if (user) {
@@ -160,7 +160,7 @@ exports.changeProfilePicture = function(req, res) {
 exports.me = function(req, res) {
   // Sanitize the user - short term solution. Copied from core.server.controller.js
   // TODO create proper passport mock: See https://gist.github.com/mweibel/5219403
-  var safeUserObject = null;
+  let safeUserObject = null;
   if (req.user) {
     safeUserObject = {
       id: req.user.id,
@@ -255,7 +255,7 @@ exports.addOAuthProviderUserProfile = function(req, res) {
           const token = jwt.sign({ userId: user.id }, configuration.jwt.secret);
           return res.status(200)
             .cookie('TOKEN', token, { httpOnly: true })
-            .json({ user: user.toObject({ getters: true }), tokenExpiresIn: Date.now() + 3600 * 24 * 1000 });
+            .json({ user: user.toObject({ getters: true }), tokenExpiresIn: Date.now() + (3600 * 24 * 1000) });
         });
       break;
     case 'microsoft':
@@ -265,7 +265,7 @@ exports.addOAuthProviderUserProfile = function(req, res) {
           const token = jwt.sign({ userId: user.id }, configuration.jwt.secret);
           return res.status(200)
             .cookie('TOKEN', token, { httpOnly: true })
-            .json({ user: user.toObject({ getters: true }), tokenExpiresIn: Date.now() + 3600 * 24 * 1000 });
+            .json({ user: user.toObject({ getters: true }), tokenExpiresIn: Date.now() + (3600 * 24 * 1000) });
         });
       break;
   }

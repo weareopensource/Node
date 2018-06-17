@@ -1,6 +1,6 @@
 'use strict';
 
-var semver = require('semver'),
+const semver = require('semver'),
   should = require('should'),
   request = require('supertest'),
   path = require('path'),
@@ -11,7 +11,7 @@ var semver = require('semver'),
 /**
  * Globals
  */
-var app,
+let app,
   agent,
   credentials,
   credentialsEmail,
@@ -260,7 +260,7 @@ describe('User CRUD tests', function() {
 
           // Get single user information from the database
 
-          var userUpdate = {
+          const userUpdate = {
             firstName: 'admin_update_first',
             lastName: 'admin_update_last',
             roles: ['admin']
@@ -341,7 +341,7 @@ describe('User CRUD tests', function() {
   });
 
   it('forgot password should return 400 for no username provided', function(done) {
-    var provider = 'facebook';
+    const provider = 'facebook';
     user.provider = provider;
     user.roles = ['user'];
 
@@ -365,7 +365,7 @@ describe('User CRUD tests', function() {
   });
 
   it('forgot password should return 400 for non-local provider set for the user object', function(done) {
-    var provider = 'facebook';
+    const provider = 'facebook';
     user.provider = provider;
     user.roles = ['user'];
 
@@ -471,7 +471,7 @@ describe('User CRUD tests', function() {
             return done(err);
           }
 
-          var invalidToken = 'someTOKEN1234567890';
+          const invalidToken = 'someTOKEN1234567890';
           agent.get('/api/auth/reset/' + invalidToken)
             .expect(302)
             .end(function(err, res) {
@@ -680,7 +680,7 @@ describe('User CRUD tests', function() {
             return done(signinErr);
           }
 
-          var userUpdate = {
+          const userUpdate = {
             firstName: 'user_update_first',
             lastName: 'user_update_last'
           };
@@ -721,7 +721,7 @@ describe('User CRUD tests', function() {
             return done(signinErr);
           }
 
-          var userUpdate = {
+          const userUpdate = {
             firstName: 'user_update_first',
             lastName: 'user_update_last',
             roles: ['user', 'admin']
@@ -751,12 +751,12 @@ describe('User CRUD tests', function() {
 
   it('should not be able to update own user details with existing username', function(done) {
 
-    var _user2 = _user;
+    const _user2 = _user;
 
     _user2.username = 'user2_username';
     _user2.email = 'user2_email@test.com';
 
-    var credentials2 = {
+    const credentials2 = {
       usernameOrEmail: 'username2',
       password: 'M3@n.jsI$Aw3$0m3'
     };
@@ -764,7 +764,7 @@ describe('User CRUD tests', function() {
     _user2.username = credentials2.usernameOrEmail;
     _user2.password = credentials2.password;
 
-    var user2 = new User(_user2);
+    const user2 = new User(_user2);
 
     user2.save(function(err) {
       should.not.exist(err);
@@ -778,7 +778,7 @@ describe('User CRUD tests', function() {
             return done(signinErr);
           }
 
-          var userUpdate = {
+          const userUpdate = {
             firstName: 'user_update_first',
             lastName: 'user_update_last',
             username: user.username
@@ -803,12 +803,12 @@ describe('User CRUD tests', function() {
 
   it('should not be able to update own user details with existing email', function(done) {
 
-    var _user2 = _user;
+    const _user2 = _user;
 
     _user2.username = 'user2_username';
     _user2.email = 'user2_email@test.com';
 
-    var credentials2 = {
+    const credentials2 = {
       usernameOrEmail: 'username2',
       password: 'M3@n.jsI$Aw3$0m3'
     };
@@ -816,7 +816,7 @@ describe('User CRUD tests', function() {
     _user2.username = credentials2.usernameOrEmail;
     _user2.password = credentials2.password;
 
-    var user2 = new User(_user2);
+    const user2 = new User(_user2);
 
     user2.save(function(err) {
       should.not.exist(err);
@@ -830,7 +830,7 @@ describe('User CRUD tests', function() {
             return done(signinErr);
           }
 
-          var userUpdate = {
+          const userUpdate = {
             firstName: 'user_update_first',
             lastName: 'user_update_last',
             email: user.email
@@ -854,7 +854,7 @@ describe('User CRUD tests', function() {
   });
 
   it('should not be able to update secure fields', function(done) {
-    var resetPasswordToken = 'password-reset-token';
+    const resetPasswordToken = 'password-reset-token';
     user.resetPasswordToken = resetPasswordToken;
 
     user.save(function(saveErr) {
@@ -869,7 +869,7 @@ describe('User CRUD tests', function() {
           if (signinErr) {
             return done(signinErr);
           }
-          var userUpdate = {
+          const userUpdate = {
             password: 'Aw3$0m3P@ssWord',
             salt: 'newsaltphrase',
             created: new Date(2000, 9, 9),
@@ -908,7 +908,7 @@ describe('User CRUD tests', function() {
 
       should.not.exist(err);
 
-      var userUpdate = {
+      const userUpdate = {
         firstName: 'user_update_first',
         lastName: 'user_update_last'
       };

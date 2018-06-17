@@ -33,7 +33,7 @@ module.exports = {
     promise: global.Promise
   },
   secure: {
-    ssl: false,
+    ssl: false
   },
   log: {
     format: 'dev',
@@ -118,8 +118,8 @@ module.exports = {
     clientId: 'WAOS_BACK_microsoft_clientId',
     issuer: 'https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0',
     discovery: 'https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration'
-//    issuer: 'WAOS_BACK_microsoft_issuer',
-//    discovery: 'WAOS_BACK_microsoft_discovery'
+    //    issuer: 'WAOS_BACK_microsoft_issuer',
+    //    discovery: 'WAOS_BACK_microsoft_discovery'
   },
   domain: '',
   seedDB: {

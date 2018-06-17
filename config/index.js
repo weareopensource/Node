@@ -1,25 +1,26 @@
+/* eslint-disable no-useless-escape */
+
 'use strict';
 
 /**
  * Module dependencies.
  */
-var _ = require('lodash'),
+const _ = require('lodash'),
   chalk = require('chalk'),
   glob = require('glob'),
   fs = require('fs'),
   path = require('path'),
-  _ = require('lodash'),
   objectPath = require('object-path');
 
 /**
  * Get files by glob patterns
  */
-var getGlobbedPaths = function (globPatterns, excludes) {
+const getGlobbedPaths = function (globPatterns, excludes) {
   // URL paths regex
-  var urlRegex = new RegExp('^(?:[a-z]+:)?\/\/', 'i');
+  const urlRegex = new RegExp('^(?:[a-z]+:)?\/\/', 'i');
 
   // The output array
-  var output = [];
+  let output = [];
 
   // If glob pattern is array then we use each pattern in a recursive way, otherwise we use glob
   if (_.isArray(globPatterns)) {
@@ -30,15 +31,13 @@ var getGlobbedPaths = function (globPatterns, excludes) {
     if (urlRegex.test(globPatterns)) {
       output.push(globPatterns);
     } else {
-      var files = glob.sync(globPatterns);
+      let files = glob.sync(globPatterns);
       if (excludes) {
         files = files.map(function (file) {
           if (_.isArray(excludes)) {
-            for (var i in excludes) {
-              if (excludes.hasOwnProperty(i)) {
-                file = file.replace(excludes[i], '');
-              }
-            }
+            excludes(exlude => {
+              file = file.replace(exlude, '');
+            });
           } else {
             file = file.replace(excludes, '');
           }
@@ -55,8 +54,8 @@ var getGlobbedPaths = function (globPatterns, excludes) {
 /**
  * Validate NODE_ENV existence
  */
-var validateEnvironmentVariable = function () {
-  var environmentFiles = glob.sync('./config/env/' + process.env.NODE_ENV + '.js');
+const validateEnvironmentVariable = function () {
+  const environmentFiles = glob.sync('./config/env/' + process.env.NODE_ENV + '.js');
   console.log();
   if (!environmentFiles.length) {
     if (process.env.NODE_ENV) {
@@ -72,7 +71,7 @@ var validateEnvironmentVariable = function () {
 
 /** Validate config.domain is set
  */
-var validateDomainIsSet = function (config) {
+const validateDomainIsSet = function (config) {
   if (!config.domain) {
     console.log(chalk.red('+ Important warning: config.domain is empty. It should be set to the fully qualified domain of the app.'));
   }
@@ -82,14 +81,14 @@ var validateDomainIsSet = function (config) {
  * Validate Secure=true parameter can actually be turned on
  * because it requires certs and key files to be available
  */
-var validateSecureMode = function (config) {
+const validateSecureMode = function (config) {
 
   if (!config.secure || config.secure.ssl !== true) {
     return true;
   }
 
-  var privateKey = fs.existsSync(path.resolve(config.secure.privateKey));
-  var certificate = fs.existsSync(path.resolve(config.secure.certificate));
+  const privateKey = fs.existsSync(path.resolve(config.secure.privateKey));
+  const certificate = fs.existsSync(path.resolve(config.secure.certificate));
 
   if (!privateKey || !certificate) {
     console.log(chalk.red('+ Error: Certificate file or key file is missing, falling back to non-SSL mode'));
@@ -102,7 +101,7 @@ var validateSecureMode = function (config) {
 /**
  * Initialize global configuration files
  */
-var initGlobalConfigFiles = function (config, assets) {
+const initGlobalConfigFiles = function (config, assets) {
   // Appending files
   config.files = {};
 
@@ -129,16 +128,16 @@ var initGlobalConfigFiles = function (config, assets) {
 /**
  * Initialize global configuration
  */
-var initGlobalConfig = function () {
+const initGlobalConfig = function () {
   // Validate NODE_ENV existence
-////  validateEnvironmentVariable();
+// //  validateEnvironmentVariable();
 
   // Get the default assets
-  var assets = require(path.join(process.cwd(), './config/assets'));
+  const assets = require(path.join(process.cwd(), './config/assets'));
 
   // Get the current config
   const currentEnv = process.env.NODE_ENV || 'developement';
-  var defaultConfig = require(path.join(process.cwd(), './config', 'defaults', currentEnv)) || {};
+  const defaultConfig = require(path.join(process.cwd(), './config', 'defaults', currentEnv)) || {};
 
   // Get the config from  process.env.WAOS_BACK_*
   const environmentVars = _.mapKeys(
@@ -149,10 +148,10 @@ var initGlobalConfig = function () {
   _.forEach(environmentVars, (v, k) => objectPath.set(environmentConfigVars, k, v));
 
   // Merge config files
-  var config = _.merge(defaultConfig, environmentConfigVars);
+  const config = _.merge(defaultConfig, environmentConfigVars);
 
   // read package.json for MEAN.JS project information
-  var pkg = require(path.resolve('./package.json'));
+  const pkg = require(path.resolve('./package.json'));
   config.meanjs = pkg;
 
   // Extend the config object with the local-NODE_ENV.js custom/local environment. This will override any settings present in the local configuration.
@@ -169,7 +168,7 @@ var initGlobalConfig = function () {
 
   // Expose configuration utilities
   config.utils = {
-    getGlobbedPaths: getGlobbedPaths,
+    getGlobbedPaths: getGlobbedPaths
   };
 
   return config;

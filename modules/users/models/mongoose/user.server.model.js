@@ -47,7 +47,7 @@ mongoose.Promise = Promise;
 /**
  * User Schema
  */
-var UserSchema = new Schema({
+const UserSchema = new Schema({
   sub: {
     type: String,
     default: ''
@@ -56,13 +56,11 @@ var UserSchema = new Schema({
     type: String,
     trim: true,
     default: ''
-    // validate: [validateLocalStrategyProperty, 'Please fill in your first name']
   },
   lastName: {
     type: String,
     trim: true,
     default: ''
-    // validate: [validateLocalStrategyProperty, 'Please fill in your last name']
   },
   displayName: {
     type: String,
@@ -77,12 +75,10 @@ var UserSchema = new Schema({
     lowercase: true,
     trim: true,
     default: ''
-    // validate: [validateLocalStrategyEmail, 'Please fill a valid email address']
   },
   username: {
     type: String,
     required: 'Please fill in a username',
-    // validate: [validateUsername, 'Please enter a valid username: 3+ characters long, non restricted word, characters "_-.", no consecutive dots, does not begin or end with dots, letters a-z and numbers 0-9.'],
     lowercase: true,
     trim: true
   },
@@ -168,16 +164,16 @@ var UserSchema = new Schema({
 /**
  * Create instance method for authenticating user
  */
-UserSchema.methods.authenticate = function(password) {
+UserSchema.methods.authenticate = (password) => {
   return this.password === this.hashPassword(password);
 };
 
 /**
  * Find possible not used username
  */
-UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
-  var _this = this;
-  var possibleUsername = username.toLowerCase() + (suffix || '');
+UserSchema.statics.findUniqueUsername = (username, suffix, callback) => {
+  const _this = this;
+  const possibleUsername = username.toLowerCase() + (suffix || '');
 
   _this.findOne({
     username: possibleUsername
@@ -194,7 +190,7 @@ UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
   });
 };
 
-UserSchema.static('findOneOrCreate', async function findOneOrCreate(condition, doc) {
+UserSchema.static('findOneOrCreate', async (condition, doc) => {
   const one = await this.findOne(condition);
   return one || this.create(doc).then(doc => {
     console.log('docteur', doc);

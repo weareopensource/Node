@@ -7,8 +7,8 @@ const config = require('../../../../config');
 
 const JwtStrategy = passportJwt.Strategy;
 
-var cookieExtractor = function(req) {
-  var token = null;
+const cookieExtractor = function(req) {
+  let token = null;
   if (req && req.cookies) token = req.cookies.TOKEN;
 
   return token;
@@ -30,7 +30,7 @@ async function verifyCallback(jwtPayload, done) {
 
 module.exports = function (config) {
 
-  var opts = {};
+  const opts = {};
   opts.jwtFromRequest = cookieExtractor;
   opts.secretOrKey = config.jwt.secret;
 

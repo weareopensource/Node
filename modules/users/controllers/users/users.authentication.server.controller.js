@@ -16,7 +16,7 @@ const User = mongoose.model('User');
 const UserService = require('../../services/user.service');
 
 // URLs for which user can't be redirected on signin
-var noReturnUrls = [
+const noReturnUrls = [
   '/authentication/signin',
   '/authentication/signup'
 ];
@@ -88,7 +88,7 @@ exports.token = async function (req, res, next) {
  * OAuth provider call
  */
 exports.oauthCall = function (req, res, next) {
-  var strategy = req.params.strategy;
+  const strategy = req.params.strategy;
   passport.authenticate(strategy)(req, res, next);
 };
 
@@ -96,7 +96,7 @@ exports.oauthCall = function (req, res, next) {
  * OAuth callback
  */
 exports.oauthCallback = function (req, res, next) {
-  var strategy = req.params.strategy;
+  const strategy = req.params.strategy;
 
   // info.redirect_to contains intended redirect path
   passport.authenticate(strategy, function (err, user, info) {
@@ -122,7 +122,7 @@ exports.oauthCallback = function (req, res, next) {
  */
 exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
   // Setup info object
-  var info = {};
+  const info = {};
 
   // Set redirection path on session.
   // Do not redirect to a signin or signup page
@@ -131,20 +131,20 @@ exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
 
   if (!req.user) {
     // Define a search query fields
-    var searchMainProviderIdentifierField = 'providerData.' + providerUserProfile.providerIdentifierField;
-    var searchAdditionalProviderIdentifierField = 'additionalProvidersData.' + providerUserProfile.provider + '.' + providerUserProfile.providerIdentifierField;
+    const searchMainProviderIdentifierField = 'providerData.' + providerUserProfile.providerIdentifierField;
+    const searchAdditionalProviderIdentifierField = 'additionalProvidersData.' + providerUserProfile.provider + '.' + providerUserProfile.providerIdentifierField;
 
     // Define main provider search query
-    var mainProviderSearchQuery = {};
+    const mainProviderSearchQuery = {};
     mainProviderSearchQuery.provider = providerUserProfile.provider;
     mainProviderSearchQuery[searchMainProviderIdentifierField] = providerUserProfile.providerData[providerUserProfile.providerIdentifierField];
 
     // Define additional provider search query
-    var additionalProviderSearchQuery = {};
+    const additionalProviderSearchQuery = {};
     additionalProviderSearchQuery[searchAdditionalProviderIdentifierField] = providerUserProfile.providerData[providerUserProfile.providerIdentifierField];
 
     // Define a search query to find existing user with current provider profile
-    var searchQuery = {
+    const searchQuery = {
       $or: [mainProviderSearchQuery, additionalProviderSearchQuery]
     };
 
@@ -152,7 +152,7 @@ exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
       if (err) {
         return done(err);
       } else if (!user) {
-        var possibleUsername = providerUserProfile.username || ((providerUserProfile.email) ? providerUserProfile.email.split('@')[0] : '');
+        const possibleUsername = providerUserProfile.username || ((providerUserProfile.email) ? providerUserProfile.email.split('@')[0] : '');
 
         User.findUniqueUsername(possibleUsername, null, function (availableUsername) {
           user = new User({
@@ -181,7 +181,7 @@ exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
     });
   } else {
     // User is already logged in, join the provider data to the existing user
-    var user = req.user;
+    const user = req.user;
 
     // Check if user exists, is not signed in using this provider, and doesn't have that provider data already configured
     if (user.provider !== providerUserProfile.provider && (!user.additionalProvidersData || !user.additionalProvidersData[providerUserProfile.provider])) {
@@ -209,8 +209,8 @@ exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
  * Remove OAuth provider
  */
 exports.removeOAuthProvider = function (req, res, next) {
-  var user = req.user;
-  var provider = req.query.provider;
+  const user = req.user;
+  const provider = req.query.provider;
 
   if (!user) {
     return res.status(401).json({

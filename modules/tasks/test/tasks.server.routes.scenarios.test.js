@@ -8,8 +8,7 @@ import request from 'request';
 // Before each test we setup a request object with defaults
 // Making the request object available to tests through the shared object `t.context`
 test.beforeEach('Setting up test defaults', t => {
-  const requestObject = request.defaults({
-
+  t.context.request = request.defaults({
     // Set the Base URL for all API requests
     baseUrl: 'http://localhost:3001',
     // Set data send/received to be JSON compatible
@@ -19,8 +18,6 @@ test.beforeEach('Setting up test defaults', t => {
     // login and further API calls as a logged-in user.
     jar: true
   });
-
-  t.context.request = requestObject;
 });
 
 test.serial('API: Create a task as a newly registered user', async t => {

@@ -114,8 +114,8 @@ class UserService {
    */
   static generateRandomPassphrase () {
     return new Promise((resolve, reject) => {
-      var password = '';
-      var repeatingCharacters = new RegExp('(.)\\1{2,}', 'g');
+      let password = '';
+      const repeatingCharacters = new RegExp('(.)\\1{2,}', 'g');
 
       // iterate until the we have a valid passphrase
       // NOTE: Should rarely iterate more than once, but we need this to ensure no repeating characters are present
