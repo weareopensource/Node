@@ -7,6 +7,7 @@ module.exports = _.merge(defaultConfig, {
   app: {
     title: 'MEAN.JS'
   },
+  host: '0.0.0.0',
   db: {
     uri: 'mongodb://localhost/riess',
     debug: false
