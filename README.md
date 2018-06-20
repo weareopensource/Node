@@ -36,6 +36,8 @@ Planned:
 | **Documentation: Code**  | Docco
 | **Developer: Lint** | Standard JS
 
+## [Demo](http://meanie.weareopensource.me)  (This Node stack is used for this demonstration of MEANie fullstack)
+
 ## Prerequisites
 Make sure you have installed all of the following prerequisites on your development machine:
 * Git - [Download & Install Git](https://git-scm.com/downloads)
@@ -51,12 +53,18 @@ $ npm i
 ## Running Your Application
 
 ### Development
-* Run `gulp` for a dev server. Available at `http://localhost:3000/`.
+* Run `npm start` for a dev server. Available at `http://localhost:3000/`.
 
 ### Production
-* Run `gulp prod` for a prod server. Available at `http://localhost:8443/`
+* Run `npm run prod` to run on production mode. Available at `http://localhost:3000/`.
 
-// TODO add config description
+### Configuration
+The running process takes into account all system environment variables defined under the form WAOS_BACK_<path_toVariable>. A pre-build npm script turns under the hood those system environment variables into an object, infering paths from the varialbles name, merged to the environment object defined on config/defaults/development.js, regardless of the production or developement mode.
+
+All configuration avalable on config/defaults/development.js file are overidable. You can for instance define the API server coordonates by defining those system environment variables:
+
+-  WAOS_BACK_host='my-server'
+-  WAOS_BACK_port=4000
 
 <!--
 ## Running unit tests
@@ -69,7 +77,9 @@ Run `gulp  test:server`
 
 This work is based on [MEAN.js](http://meanjs.org) and more precisely on a fork of the developers named [Riess.js](https://github.com/lirantal/Riess.js). The work being stopped we wished to take it back, we want to create updated stack with same mindset "simple", "easy to use". The toolbox needed to start projects.
 
-Today, we dreams to create Backs/Fronts, aligns on feats, in multiple languages, in order to allow anyone to compose fullstack on demand. Feel free to discuss, share other bricks, and invite whoever you want with this mindset to come help us.
+## [We Are Open Source, Who we are ?](https://weareopensource.me)
+Today, we dreams to create Backs/Fronts, aligns on feats, in multiple languages, in order to allow anyone to compose fullstack on demand (React, Angular, VusJS, Node, Nest, Swift, Go).
+Feel free to discuss, share other kind of bricks, and invite whoever you want with this mindset to come help us.
 
 ## License
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE.md)
