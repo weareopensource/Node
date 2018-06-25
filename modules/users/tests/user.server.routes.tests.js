@@ -16,15 +16,14 @@ let app,
   credentials,
   credentialsEmail,
   user,
-  _user,
-  admin;
+  _user;
 
 /**
  * User routes tests
  */
-describe('User CRUD tests', function() {
+describe('User CRUD tests', () => {
 
-  before(function(done) {
+  before(done => {
     // Get application
     app = express.init(mongoose);
     agent = request.agent(app);
@@ -32,7 +31,7 @@ describe('User CRUD tests', function() {
     done();
   });
 
-  beforeEach(function(done) {
+  beforeEach(done => {
     // Create user credentials with username
     credentials = {
       usernameOrEmail: 'username',
@@ -59,13 +58,13 @@ describe('User CRUD tests', function() {
     user = new User(_user);
 
     // Save a user to the test db and create new article
-    user.save(function(err) {
+    user.save(err => {
       should.not.exist(err);
       done();
     });
   });
 
-  it('should be able to register a new user', function(done) {
+  it('should be able to register a new user', done => {
 
     _user.username = 'register_new_user';
     _user.email = 'register_new_user_@test.com';
@@ -73,7 +72,7 @@ describe('User CRUD tests', function() {
     agent.post('/api/auth/signup')
       .send(_user)
       .expect(200)
-      .end(function(signupErr, signupRes) {
+      .end((signupErr, signupRes) => {
         // Handle signpu error
         if (signupErr) {
           return done(signupErr);
@@ -90,12 +89,12 @@ describe('User CRUD tests', function() {
       });
   });
 
-  it('should be able to login with username successfully and logout successfully', function(done) {
+  it('should be able to login with username successfully and logout successfully', done => {
     // Login with username
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
-      .end(function(signinErr, signinRes) {
+      .end((signinErr) => {
         // Handle signin error
         if (signinErr) {
           return done(signinErr);
@@ -104,7 +103,7 @@ describe('User CRUD tests', function() {
         // Logout
         agent.get('/api/auth/signout')
           .expect(302)
-          .end(function(signoutErr, signoutRes) {
+          .end((signoutErr, signoutRes) => {
             if (signoutErr) {
               return done(signoutErr);
             }
@@ -124,12 +123,12 @@ describe('User CRUD tests', function() {
       });
   });
 
-  it('should be able to login with email successfully and logout successfully', function(done) {
+  it('should be able to login with email successfully and logout successfully', done => {
     // Login with username
     agent.post('/api/auth/signin')
       .send(credentialsEmail)
       .expect(200)
-      .end(function(signinErr, signinRes) {
+      .end((signinErr) => {
         // Handle signin error
         if (signinErr) {
           return done(signinErr);
@@ -138,7 +137,7 @@ describe('User CRUD tests', function() {
         // Logout
         agent.get('/api/auth/signout')
           .expect(302)
-          .end(function(signoutErr, signoutRes) {
+          .end((signoutErr, signoutRes) => {
             if (signoutErr) {
               return done(signoutErr);
             }
@@ -158,11 +157,11 @@ describe('User CRUD tests', function() {
       });
   });
 
-  it('should not be able to retrieve a list of users if not admin', function(done) {
+  it('should not be able to retrieve a list of users if not admin', done => {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
-      .end(function(signinErr, signinRes) {
+      .end((signinErr) => {
         // Handle signin error
         if (signinErr) {
           return done(signinErr);
@@ -171,7 +170,7 @@ describe('User CRUD tests', function() {
         // Request list of users
         agent.get('/api/users')
           .expect(403)
-          .end(function(usersGetErr, usersGetRes) {
+          .end((usersGetErr) => {
             if (usersGetErr) {
               return done(usersGetErr);
             }
@@ -181,15 +180,15 @@ describe('User CRUD tests', function() {
       });
   });
 
-  it('should be able to retrieve a list of users if admin', function(done) {
+  it('should be able to retrieve a list of users if admin', done => {
     user.roles = ['user', 'admin'];
 
-    user.save(function(err) {
+    user.save(err => {
       should.not.exist(err);
       agent.post('/api/auth/signin')
         .send(credentials)
         .expect(200)
-        .end(function(signinErr, signinRes) {
+        .end((signinErr) => {
           // Handle signin error
           if (signinErr) {
             return done(signinErr);
@@ -198,7 +197,7 @@ describe('User CRUD tests', function() {
           // Request list of users
           agent.get('/api/users')
             .expect(200)
-            .end(function(usersGetErr, usersGetRes) {
+            .end((usersGetErr, usersGetRes) => {
               if (usersGetErr) {
                 return done(usersGetErr);
               }
@@ -212,15 +211,15 @@ describe('User CRUD tests', function() {
     });
   });
 
-  it('should be able to get a single user details if admin', function(done) {
+  it('should be able to get a single user details if admin', done => {
     user.roles = ['user', 'admin'];
 
-    user.save(function(err) {
+    user.save(err => {
       should.not.exist(err);
       agent.post('/api/auth/signin')
         .send(credentials)
         .expect(200)
-        .end(function(signinErr, signinRes) {
+        .end((signinErr) => {
           // Handle signin error
           if (signinErr) {
             return done(signinErr);
@@ -229,7 +228,7 @@ describe('User CRUD tests', function() {
           // Get single user information from the database
           agent.get('/api/users/' + user._id)
             .expect(200)
-            .end(function(userInfoErr, userInfoRes) {
+            .end((userInfoErr, userInfoRes) => {
               if (userInfoErr) {
                 return done(userInfoErr);
               }
@@ -244,15 +243,15 @@ describe('User CRUD tests', function() {
     });
   });
 
-  it('should be able to update a single user details if admin', function(done) {
+  it('should be able to update a single user details if admin', done => {
     user.roles = ['user', 'admin'];
 
-    user.save(function(err) {
+    user.save(err => {
       should.not.exist(err);
       agent.post('/api/auth/signin')
         .send(credentials)
         .expect(200)
-        .end(function(signinErr, signinRes) {
+        .end((signinErr) => {
           // Handle signin error
           if (signinErr) {
             return done(signinErr);
@@ -269,7 +268,7 @@ describe('User CRUD tests', function() {
           agent.put('/api/users/' + user._id)
             .send(userUpdate)
             .expect(200)
-            .end(function(userInfoErr, userInfoRes) {
+            .end((userInfoErr, userInfoRes) => {
               if (userInfoErr) {
                 return done(userInfoErr);
               }
@@ -287,15 +286,15 @@ describe('User CRUD tests', function() {
     });
   });
 
-  it('should be able to delete a single user if admin', function(done) {
+  it('should be able to delete a single user if admin', done => {
     user.roles = ['user', 'admin'];
 
-    user.save(function(err) {
+    user.save(err => {
       should.not.exist(err);
       agent.post('/api/auth/signin')
         .send(credentials)
         .expect(200)
-        .end(function(signinErr, signinRes) {
+        .end((signinErr) => {
           // Handle signin error
           if (signinErr) {
             return done(signinErr);
@@ -303,7 +302,7 @@ describe('User CRUD tests', function() {
 
           agent.delete('/api/users/' + user._id)
             .expect(200)
-            .end(function(userInfoErr, userInfoRes) {
+            .end((userInfoErr, userInfoRes) => {
               if (userInfoErr) {
                 return done(userInfoErr);
               }
@@ -318,17 +317,17 @@ describe('User CRUD tests', function() {
     });
   });
 
-  it('forgot password should return 400 for non-existent username', function(done) {
+  it('forgot password should return 400 for non-existent username', done => {
     user.roles = ['user'];
 
-    user.save(function(err) {
+    user.save(err => {
       should.not.exist(err);
       agent.post('/api/auth/forgot')
         .send({
           username: 'some_username_that_doesnt_exist'
         })
         .expect(400)
-        .end(function(err, res) {
+        .end((err, res) => {
           // Handle error
           if (err) {
             return done(err);
@@ -340,19 +339,19 @@ describe('User CRUD tests', function() {
     });
   });
 
-  it('forgot password should return 400 for no username provided', function(done) {
+  it('forgot password should return 400 for no username provided', done => {
     const provider = 'facebook';
     user.provider = provider;
     user.roles = ['user'];
 
-    user.save(function(err) {
+    user.save(err => {
       should.not.exist(err);
       agent.post('/api/auth/forgot')
         .send({
           username: ''
         })
         .expect(422)
-        .end(function(err, res) {
+        .end((err, res) => {
           // Handle error
           if (err) {
             return done(err);
@@ -364,19 +363,19 @@ describe('User CRUD tests', function() {
     });
   });
 
-  it('forgot password should return 400 for non-local provider set for the user object', function(done) {
+  it('forgot password should return 400 for non-local provider set for the user object', done => {
     const provider = 'facebook';
     user.provider = provider;
     user.roles = ['user'];
 
-    user.save(function(err) {
+    user.save(err => {
       should.not.exist(err);
       agent.post('/api/auth/forgot')
         .send({
           username: user.username
         })
         .expect(400)
-        .end(function(err, res) {
+        .end((err, res) => {
           // Handle error
           if (err) {
             return done(err);
@@ -388,17 +387,17 @@ describe('User CRUD tests', function() {
     });
   });
 
-  it('forgot password should be able to reset password for user password reset request', function(done) {
+  it('forgot password should be able to reset password for user password reset request', done => {
     user.roles = ['user'];
 
-    user.save(function(err) {
+    user.save(err => {
       should.not.exist(err);
       agent.post('/api/auth/forgot')
         .send({
           username: user.username
         })
         .expect(400)
-        .end(function(err, res) {
+        .end((err, res) => {
           // Handle error
           if (err) {
             return done(err);
@@ -406,7 +405,7 @@ describe('User CRUD tests', function() {
 
           User.findOne({
             username: user.username.toLowerCase()
-          }, function(err, userRes) {
+          }, (err, userRes) => {
             userRes.resetPasswordToken.should.not.be.empty();
             should.exist(userRes.resetPasswordExpires);
             res.body.message.should.be.equal('Failure sending email');
@@ -416,17 +415,17 @@ describe('User CRUD tests', function() {
     });
   });
 
-  it('forgot password should be able to reset the password using reset token', function(done) {
+  it('forgot password should be able to reset the password using reset token', done => {
     user.roles = ['user'];
 
-    user.save(function(err) {
+    user.save(err => {
       should.not.exist(err);
       agent.post('/api/auth/forgot')
         .send({
           username: user.username
         })
         .expect(400)
-        .end(function(err, res) {
+        .end((err) => {
           // Handle error
           if (err) {
             return done(err);
@@ -434,13 +433,13 @@ describe('User CRUD tests', function() {
 
           User.findOne({
             username: user.username.toLowerCase()
-          }, function(err, userRes) {
+          }, (err, userRes) => {
             userRes.resetPasswordToken.should.not.be.empty();
             should.exist(userRes.resetPasswordExpires);
 
             agent.get('/api/auth/reset/' + userRes.resetPasswordToken)
               .expect(302)
-              .end(function(err, res) {
+              .end((err, res) => {
                 // Handle error
                 if (err) {
                   return done(err);
@@ -455,17 +454,17 @@ describe('User CRUD tests', function() {
     });
   });
 
-  it('forgot password should return error when using invalid reset token', function(done) {
+  it('forgot password should return error when using invalid reset token', done => {
     user.roles = ['user'];
 
-    user.save(function(err) {
+    user.save(err => {
       should.not.exist(err);
       agent.post('/api/auth/forgot')
         .send({
           username: user.username
         })
         .expect(400)
-        .end(function(err, res) {
+        .end((err) => {
           // Handle error
           if (err) {
             return done(err);
@@ -474,7 +473,7 @@ describe('User CRUD tests', function() {
           const invalidToken = 'someTOKEN1234567890';
           agent.get('/api/auth/reset/' + invalidToken)
             .expect(302)
-            .end(function(err, res) {
+            .end((err, res) => {
               // Handle error
               if (err) {
                 return done(err);
@@ -488,11 +487,11 @@ describe('User CRUD tests', function() {
     });
   });
 
-  it('should be able to change user own password successfully', function(done) {
+  it('should be able to change user own password successfully', done => {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
-      .end(function(signinErr, signinRes) {
+      .end((signinErr) => {
         // Handle signin error
         if (signinErr) {
           return done(signinErr);
@@ -506,7 +505,7 @@ describe('User CRUD tests', function() {
             currentPassword: credentials.password
           })
           .expect(200)
-          .end(function(err, res) {
+          .end((err, res) => {
             if (err) {
               return done(err);
             }
@@ -517,11 +516,11 @@ describe('User CRUD tests', function() {
       });
   });
 
-  it('should not be able to change user own password if wrong verifyPassword is given', function(done) {
+  it('should not be able to change user own password if wrong verifyPassword is given', done => {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
-      .end(function(signinErr, signinRes) {
+      .end((signinErr) => {
         // Handle signin error
         if (signinErr) {
           return done(signinErr);
@@ -535,7 +534,7 @@ describe('User CRUD tests', function() {
             currentPassword: credentials.password
           })
           .expect(422)
-          .end(function(err, res) {
+          .end((err, res) => {
             if (err) {
               return done(err);
             }
@@ -546,11 +545,11 @@ describe('User CRUD tests', function() {
       });
   });
 
-  it('should not be able to change user own password if wrong currentPassword is given', function(done) {
+  it('should not be able to change user own password if wrong currentPassword is given', done => {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
-      .end(function(signinErr, signinRes) {
+      .end((signinErr) => {
         // Handle signin error
         if (signinErr) {
           return done(signinErr);
@@ -564,7 +563,7 @@ describe('User CRUD tests', function() {
             currentPassword: 'some_wrong_passwordAa$'
           })
           .expect(422)
-          .end(function(err, res) {
+          .end((err, res) => {
             if (err) {
               return done(err);
             }
@@ -575,11 +574,11 @@ describe('User CRUD tests', function() {
       });
   });
 
-  it('should not be able to change user own password if no new password is at all given', function(done) {
+  it('should not be able to change user own password if no new password is at all given', done => {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
-      .end(function(signinErr, signinRes) {
+      .end((signinErr) => {
         // Handle signin error
         if (signinErr) {
           return done(signinErr);
@@ -593,7 +592,7 @@ describe('User CRUD tests', function() {
             currentPassword: credentials.password
           })
           .expect(422)
-          .end(function(err, res) {
+          .end((err, res) => {
             if (err) {
               return done(err);
             }
@@ -604,7 +603,7 @@ describe('User CRUD tests', function() {
       });
   });
 
-  it('should not be able to change user own password if not signed in', function(done) {
+  it('should not be able to change user own password if not signed in', done => {
 
     // Change password
     agent.post('/api/users/password')
@@ -614,7 +613,7 @@ describe('User CRUD tests', function() {
         currentPassword: credentials.password
       })
       .expect(401)
-      .end(function(err, res) {
+      .end((err, res) => {
         if (err) {
           return done(err);
         }
@@ -624,11 +623,11 @@ describe('User CRUD tests', function() {
       });
   });
 
-  it('should be able to get own user details successfully', function(done) {
+  it('should be able to get own user details successfully', done => {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
-      .end(function(signinErr, signinRes) {
+      .end((signinErr) => {
         // Handle signin error
         if (signinErr) {
           return done(signinErr);
@@ -637,7 +636,7 @@ describe('User CRUD tests', function() {
         // Get own user details
         agent.get('/api/users/me')
           .expect(200)
-          .end(function(err, res) {
+          .end((err, res) => {
             if (err) {
               return done(err);
             }
@@ -652,11 +651,11 @@ describe('User CRUD tests', function() {
       });
   });
 
-  it('should not be able to get any user details if not logged in', function(done) {
+  it('should not be able to get any user details if not logged in', done => {
     // Get own user details
     agent.get('/api/users/me')
       .expect(200)
-      .end(function(err, res) {
+      .end((err, res) => {
         if (err) {
           return done(err);
         }
@@ -666,15 +665,15 @@ describe('User CRUD tests', function() {
       });
   });
 
-  it('should be able to update own user details', function(done) {
+  it('should be able to update own user details', done => {
     user.roles = ['user'];
 
-    user.save(function(err) {
+    user.save(err => {
       should.not.exist(err);
       agent.post('/api/auth/signin')
         .send(credentials)
         .expect(200)
-        .end(function(signinErr, signinRes) {
+        .end((signinErr) => {
           // Handle signin error
           if (signinErr) {
             return done(signinErr);
@@ -688,7 +687,7 @@ describe('User CRUD tests', function() {
           agent.put('/api/users')
             .send(userUpdate)
             .expect(200)
-            .end(function(userInfoErr, userInfoRes) {
+            .end((userInfoErr, userInfoRes) => {
               if (userInfoErr) {
                 return done(userInfoErr);
               }
@@ -707,15 +706,15 @@ describe('User CRUD tests', function() {
     });
   });
 
-  it('should not be able to update own user details and add roles if not admin', function(done) {
+  it('should not be able to update own user details and add roles if not admin', done => {
     user.roles = ['user'];
 
-    user.save(function(err) {
+    user.save(err => {
       should.not.exist(err);
       agent.post('/api/auth/signin')
         .send(credentials)
         .expect(200)
-        .end(function(signinErr, signinRes) {
+        .end((signinErr) => {
           // Handle signin error
           if (signinErr) {
             return done(signinErr);
@@ -730,7 +729,7 @@ describe('User CRUD tests', function() {
           agent.put('/api/users')
             .send(userUpdate)
             .expect(200)
-            .end(function(userInfoErr, userInfoRes) {
+            .end((userInfoErr, userInfoRes) => {
               if (userInfoErr) {
                 return done(userInfoErr);
               }
@@ -749,7 +748,7 @@ describe('User CRUD tests', function() {
     });
   });
 
-  it('should not be able to update own user details with existing username', function(done) {
+  it('should not be able to update own user details with existing username', done => {
 
     const _user2 = _user;
 
@@ -766,13 +765,13 @@ describe('User CRUD tests', function() {
 
     const user2 = new User(_user2);
 
-    user2.save(function(err) {
+    user2.save(err => {
       should.not.exist(err);
 
       agent.post('/api/auth/signin')
         .send(credentials2)
         .expect(200)
-        .end(function(signinErr, signinRes) {
+        .end((signinErr) => {
           // Handle signin error
           if (signinErr) {
             return done(signinErr);
@@ -787,7 +786,7 @@ describe('User CRUD tests', function() {
           agent.put('/api/users')
             .send(userUpdate)
             .expect(422)
-            .end(function(userInfoErr, userInfoRes) {
+            .end((userInfoErr, userInfoRes) => {
               if (userInfoErr) {
                 return done(userInfoErr);
               }
@@ -801,7 +800,7 @@ describe('User CRUD tests', function() {
     });
   });
 
-  it('should not be able to update own user details with existing email', function(done) {
+  it('should not be able to update own user details with existing email', done => {
 
     const _user2 = _user;
 
@@ -818,13 +817,13 @@ describe('User CRUD tests', function() {
 
     const user2 = new User(_user2);
 
-    user2.save(function(err) {
+    user2.save(err => {
       should.not.exist(err);
 
       agent.post('/api/auth/signin')
         .send(credentials2)
         .expect(200)
-        .end(function(signinErr, signinRes) {
+        .end((signinErr) => {
           // Handle signin error
           if (signinErr) {
             return done(signinErr);
@@ -839,7 +838,7 @@ describe('User CRUD tests', function() {
           agent.put('/api/users')
             .send(userUpdate)
             .expect(422)
-            .end(function(userInfoErr, userInfoRes) {
+            .end((userInfoErr, userInfoRes) => {
               if (userInfoErr) {
                 return done(userInfoErr);
               }
@@ -853,18 +852,18 @@ describe('User CRUD tests', function() {
     });
   });
 
-  it('should not be able to update secure fields', function(done) {
+  it('should not be able to update secure fields', done => {
     const resetPasswordToken = 'password-reset-token';
     user.resetPasswordToken = resetPasswordToken;
 
-    user.save(function(saveErr) {
+    user.save(saveErr => {
       if (saveErr) {
         return done(saveErr);
       }
       agent.post('/api/auth/signin')
         .send(credentials)
         .expect(200)
-        .end(function(signinErr, signinRes) {
+        .end((signinErr) => {
           // Handle signin error
           if (signinErr) {
             return done(signinErr);
@@ -880,12 +879,12 @@ describe('User CRUD tests', function() {
           agent.put('/api/users')
             .send(userUpdate)
             .expect(200)
-            .end(function(err, res) {
+            .end((err) => {
               if (err) {
                 return done(err);
               }
 
-              User.findById(user._id, function(dbErr, updatedUser) {
+              User.findById(user._id, (dbErr, updatedUser) => {
                 if (dbErr) {
                   return done(dbErr);
                 }
@@ -901,10 +900,10 @@ describe('User CRUD tests', function() {
     });
   });
 
-  it('should not be able to update own user details if not logged-in', function(done) {
+  it('should not be able to update own user details if not logged-in', done => {
     user.roles = ['user'];
 
-    user.save(function(err) {
+    user.save(err => {
 
       should.not.exist(err);
 
@@ -916,7 +915,7 @@ describe('User CRUD tests', function() {
       agent.put('/api/users')
         .send(userUpdate)
         .expect(401)
-        .end(function(userInfoErr, userInfoRes) {
+        .end((userInfoErr, userInfoRes) => {
           if (userInfoErr) {
             return done(userInfoErr);
           }
@@ -929,12 +928,12 @@ describe('User CRUD tests', function() {
     });
   });
 
-  it('should not be able to update own user profile picture without being logged-in', function(done) {
+  it('should not be able to update own user profile picture without being logged-in', done => {
 
     agent.post('/api/users/picture')
       .send({})
       .expect(401)
-      .end(function(userInfoErr, userInfoRes) {
+      .end((userInfoErr, userInfoRes) => {
         if (userInfoErr) {
           return done(userInfoErr);
         }
@@ -946,11 +945,11 @@ describe('User CRUD tests', function() {
       });
   });
 
-  it('should be able to change profile picture if signed in', function(done) {
+  it('should be able to change profile picture if signed in', done => {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
-      .end(function(signinErr, signinRes) {
+      .end((signinErr) => {
         // Handle signin error
         if (signinErr) {
           return done(signinErr);
@@ -959,7 +958,7 @@ describe('User CRUD tests', function() {
         agent.post('/api/users/picture')
           .attach('newProfilePicture', './modules/users/client/img/profile/default.png')
           .expect(200)
-          .end(function(userInfoErr, userInfoRes) {
+          .end((userInfoErr, userInfoRes) => {
             // Handle change profile picture error
             if (userInfoErr) {
               return done(userInfoErr);
@@ -974,11 +973,11 @@ describe('User CRUD tests', function() {
       });
   });
 
-  it('should not be able to change profile picture if attach a picture with a different field name', function(done) {
+  it('should not be able to change profile picture if attach a picture with a different field name', done => {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
-      .end(function(signinErr, signinRes) {
+      .end((signinErr) => {
         // Handle signin error
         if (signinErr) {
           return done(signinErr);
@@ -988,17 +987,17 @@ describe('User CRUD tests', function() {
           .attach('fieldThatDoesntWork', './modules/users/client/img/profile/default.png')
           .send(credentials)
           .expect(422)
-          .end(function(userInfoErr, userInfoRes) {
+          .end((userInfoErr) => {
             done(userInfoErr);
           });
       });
   });
 
-  it('should not be able to upload a non-image file as a profile picture', function(done) {
+  it('should not be able to upload a non-image file as a profile picture', done => {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
-      .end(function(signinErr, signinRes) {
+      .end((signinErr) => {
         // Handle signin error
         if (signinErr) {
           return done(signinErr);
@@ -1008,17 +1007,17 @@ describe('User CRUD tests', function() {
           .attach('newProfilePicture', './modules/users/tests/img/text-file.txt')
           .send(credentials)
           .expect(422)
-          .end(function(userInfoErr, userInfoRes) {
+          .end((userInfoErr) => {
             done(userInfoErr);
           });
       });
   });
 
-  it('should not be able to change profile picture to too big of a file', function(done) {
+  it('should not be able to change profile picture to too big of a file', done => {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
-      .end(function(signinErr) {
+      .end(signinErr => {
         // Handle signin error
         if (signinErr) {
           return done(signinErr);
@@ -1028,13 +1027,13 @@ describe('User CRUD tests', function() {
           .attach('newProfilePicture', './modules/users/tests/img/too-big-file.png')
           .send(credentials)
           .expect(422)
-          .end(function(userInfoErr, userInfoRes) {
+          .end((userInfoErr) => {
             done(userInfoErr);
           });
       });
   });
 
-  afterEach(function(done) {
+  afterEach(done => {
     User.remove().exec(done);
   });
 });

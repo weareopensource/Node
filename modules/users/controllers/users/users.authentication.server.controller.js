@@ -24,7 +24,7 @@ const noReturnUrls = [
 /**
  * Signup
  */
-exports.signup = async function (req, res, next) {
+exports.signup = async (req, res, next) => {
   try {
     let user = await UserService.signUp(req.body);
     user = user.toObject({ getters: true });
@@ -40,7 +40,7 @@ exports.signup = async function (req, res, next) {
 /**
  * Signin after passport authentication
  */
-exports.signin = async function (req, res) {
+exports.signin = async (req, res) => {
   const user = req.user;
   const token = jwt.sign({ userId: user.id }, configuration.jwt.secret);
   return res.status(200)
@@ -52,7 +52,7 @@ exports.signin = async function (req, res) {
 /**
  * Signout
  */
-exports.signout = function (req, res) {
+exports.signout = (req, res) => {
   req.logout();
   return res.status(200).send();
 };
@@ -60,7 +60,7 @@ exports.signout = function (req, res) {
 /**
  * Jwt Token Auth
  */
-exports.token = async function (req, res, next) {
+exports.token = async (req, res, next) => {
   try {
     // Authenticate the user based on credentials
     // @TODO be consistent with whether the login field for user identification
@@ -87,7 +87,7 @@ exports.token = async function (req, res, next) {
 /**
  * OAuth provider call
  */
-exports.oauthCall = function (req, res, next) {
+exports.oauthCall = (req, res, next) => {
   const strategy = req.params.strategy;
   passport.authenticate(strategy)(req, res, next);
 };
@@ -95,11 +95,11 @@ exports.oauthCall = function (req, res, next) {
 /**
  * OAuth callback
  */
-exports.oauthCallback = function (req, res, next) {
+exports.oauthCallback = (req, res, next) => {
   const strategy = req.params.strategy;
 
   // info.redirect_to contains intended redirect path
-  passport.authenticate(strategy, function (err, user, info) {
+  passport.authenticate(strategy, (err, user, info) => {
     if (err) {
       return res.redirect('/authentication/signin?err=' + encodeURIComponent(errorHandler.getErrorMessage(err)));
     }
@@ -107,7 +107,7 @@ exports.oauthCallback = function (req, res, next) {
       return res.redirect('/authentication/signin');
     }
 
-    req.login(user, function (err) {
+    req.login(user, err => {
       if (err) {
         return res.redirect('/authentication/signin');
       }
@@ -120,7 +120,7 @@ exports.oauthCallback = function (req, res, next) {
 /**
  * Helper function to save or update a OAuth user profile
  */
-exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
+exports.saveOAuthUserProfile = (req, providerUserProfile, done) => {
   // Setup info object
   const info = {};
 
@@ -148,13 +148,13 @@ exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
       $or: [mainProviderSearchQuery, additionalProviderSearchQuery]
     };
 
-    User.findOne(searchQuery, function (err, user) {
+    User.findOne(searchQuery, (err, user) => {
       if (err) {
         return done(err);
       } else if (!user) {
         const possibleUsername = providerUserProfile.username || ((providerUserProfile.email) ? providerUserProfile.email.split('@')[0] : '');
 
-        User.findUniqueUsername(possibleUsername, null, function (availableUsername) {
+        User.findUniqueUsername(possibleUsername, null, availableUsername => {
           user = new User({
             firstName: providerUserProfile.firstName,
             lastName: providerUserProfile.lastName,
@@ -171,9 +171,7 @@ exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
           user.email = providerUserProfile.email;
 
           // And save the user
-          user.save(function (err) {
-            return done(err, user, info);
-          });
+          user.save(err => done(err, user, info));
         });
       } else {
         return done(err, user, info);
@@ -196,9 +194,7 @@ exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
       user.markModified('additionalProvidersData');
 
       // And save the user
-      user.save(function (err) {
-        return done(err, user, info);
-      });
+      user.save(err => done(err, user, info));
     } else {
       return done(new Error('User is already connected using this provider'), user);
     }
@@ -208,7 +204,7 @@ exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
 /**
  * Remove OAuth provider
  */
-exports.removeOAuthProvider = function (req, res, next) {
+exports.removeOAuthProvider = (req, res) => {
   const user = req.user;
   const provider = req.query.provider;
 
@@ -228,13 +224,13 @@ exports.removeOAuthProvider = function (req, res, next) {
     user.markModified('additionalProvidersData');
   }
 
-  user.save(function (err) {
+  user.save(err => {
     if (err) {
       return res.status(422).send({
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      req.login(user, function (err) {
+      req.login(user, err => {
         if (err) {
           return res.status(400).send(err);
         } else {

@@ -11,14 +11,14 @@ const path = require('path'),
 /**
  * Show the current user
  */
-exports.read = function (req, res) {
+exports.read = (req, res) => {
   res.send(req.model.toObject({ getters: true }));
 };
 
 /**
  * Update a User
  */
-exports.update = function (req, res) {
+exports.update = (req, res) => {
   const user = req.model;
 
   // For security purposes only merge these parameters
@@ -30,7 +30,7 @@ exports.update = function (req, res) {
   user.email = req.body.email;
   user.profileImageURL = req.body.profileImageURL;
 
-  user.save(function (err) {
+  user.save(err => {
     if (err) {
       return res.status(422).send({
         message: errorHandler.getErrorMessage(err)
@@ -44,10 +44,10 @@ exports.update = function (req, res) {
 /**
  * Delete a user
  */
-exports.delete = function (req, res) {
+exports.delete = (req, res) => {
   const user = req.model;
 
-  user.remove(function (err) {
+  user.remove(err => {
     if (err) {
       return res.status(422).send({
         message: errorHandler.getErrorMessage(err)
@@ -61,8 +61,8 @@ exports.delete = function (req, res) {
 /**
  * List of Users
  */
-exports.list = function (req, res) {
-  User.find({}, '-salt -password -providerData').sort('-created').populate('user', 'displayName').exec(function (err, users) {
+exports.list = (req, res) => {
+  User.find({}, '-salt -password -providerData').sort('-created').populate('user', 'displayName').exec((err, users) => {
     if (err) {
       return res.status(422).send({
         message: errorHandler.getErrorMessage(err)
@@ -76,14 +76,14 @@ exports.list = function (req, res) {
 /**
  * User middleware
  */
-exports.userByID = function (req, res, next, id) {
+exports.userByID = (req, res, next, id) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).send({
       message: 'User is invalid'
     });
   }
 
-  User.findById(id, '-salt -password -providerData').exec(function (err, user) {
+  User.findById(id, '-salt -password -providerData').exec((err, user) => {
     if (err) {
       return next(err);
     } else if (!user) {

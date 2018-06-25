@@ -21,7 +21,7 @@ test('API: Get All Tasks as anonymous user', async t => {
   let response = await new Promise((resolve, reject) => {
     t.context.request.get({
       uri: '/api/tasks'
-    }, (error, response, body) => {
+    }, (error, response) => {
       if (error) {
         reject(error);
       }
@@ -37,7 +37,7 @@ test('API: Get My Tasks as anonymous user', async t => {
   let response = await new Promise((resolve, reject) => {
     t.context.request.get({
       uri: '/api/tasks/me'
-    }, (error, response, body) => {
+    }, (error, response) => {
       if (error) {
         reject(error);
       }
@@ -56,7 +56,7 @@ test('API: Create Task as anonymous user', async t => {
       body: {
         title: 'my test task'
       }
-    }, (error, response, body) => {
+    }, (error, response) => {
       if (error) {
         reject(error);
       }
@@ -75,7 +75,7 @@ test('API: Update Task as anonymous user', async t => {
       body: {
         title: 'my test task'
       }
-    }, (error, response, body) => {
+    }, (error, response) => {
       if (error) {
         reject(error);
       }
@@ -91,7 +91,7 @@ test('API: Delete Task as anonymous user', async t => {
   let response = await new Promise((resolve, reject) => {
     t.context.request.delete({
       uri: '/api/tasks'
-    }, (error, response, body) => {
+    }, (error, response) => {
       if (error) {
         reject(error);
       }

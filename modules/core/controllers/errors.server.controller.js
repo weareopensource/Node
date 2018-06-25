@@ -9,7 +9,7 @@ const path = require('path'),
 /**
  * Get unique error field name
  */
-const getUniqueErrorMessage = function (err) {
+const getUniqueErrorMessage = err => {
   let output;
 
   try {
@@ -36,7 +36,7 @@ const getUniqueErrorMessage = function (err) {
 /**
  * Get the error message from error object
  */
-exports.getErrorMessage = function (err) {
+exports.getErrorMessage = err => {
   let message = '';
 
   if (err.code) {

@@ -51,8 +51,8 @@ exports.update = (req, res) => {
     where: {
       id: task.id
     }
-  }).then(task => {
-    res.status(200).send(req.body);
+  }).then(() => {
+    res.status(200).send(req.body); // TODO: Do not send the body but the task from db or nothing
   }).catch(err => {
     res.status(422).send({
       message: errorHandler.getErrorMessage(err)

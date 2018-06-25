@@ -40,7 +40,7 @@ test.serial('API: Create a task as a newly registered user', async t => {
     t.context.request.post({
       uri: '/api/auth/signup',
       body: user
-    }, (error, response, body) => {
+    }, (error, response) => {
       if (error) {
         reject(error);
       }
@@ -56,7 +56,7 @@ test.serial('API: Create a task as a newly registered user', async t => {
         usernameOrEmail: user.email,
         password: user.password
       }
-    }, (error, response, body) => {
+    }, (error, response) => {
       if (error) {
         reject(error);
       }
@@ -71,7 +71,7 @@ test.serial('API: Create a task as a newly registered user', async t => {
       body: {
         title: task.title
       }
-    }, (error, response, body) => {
+    }, (error, response) => {
       if (error) {
         reject(error);
       }

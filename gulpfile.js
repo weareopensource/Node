@@ -3,18 +3,17 @@
 /**
  * Module dependencies.
  */
-var _ = require('lodash'),
+const _ = require('lodash'),
   fs = require('fs'),
   glob = require('glob'),
   gulp = require('gulp'),
   gulpLoadPlugins = require('gulp-load-plugins'),
   runSequence = require('run-sequence'),
   plugins = gulpLoadPlugins(),
-  path = require('path'),
-  del = require('del');
+  path = require('path');
 
-var defaultAssets = require('./config/assets');
-var changedTestFiles = [];
+const defaultAssets = require('./config/assets');
+let changedTestFiles = [];
 
 // Set NODE_ENV to 'test'
 gulp.task('env:test', function() {
@@ -81,7 +80,7 @@ gulp.task('watch:server:run-tests', function() {
     _.forEach(defaultAssets.tests, function(pattern) {
       // determine if the changed (watched) file is a server test
       _.forEach(glob.sync(pattern), function(f) {
-        var filePath = path.resolve(f);
+        const filePath = path.resolve(f);
 
         if (filePath === path.resolve(file.path)) {
           changedTestFiles.push(f);
@@ -95,7 +94,7 @@ gulp.task('watch:server:run-tests', function() {
 
 // ESLint JS linting task
 gulp.task('eslint', function() {
-  var assets = _.union(
+  const assets = _.union(
     defaultAssets.gulpConfig,
     defaultAssets.allJS,
     defaultAssets.tests
@@ -108,8 +107,8 @@ gulp.task('eslint', function() {
 
 // Copy local development environment config example
 gulp.task('copyLocalEnvConfig', function() {
-  var src = [];
-  var renameTo = 'local-development.js';
+  const src = [];
+  const renameTo = 'local-development.js';
 
   // only add the copy source if our destination file doesn't already exist
   if (!fs.existsSync('config/env/' + renameTo)) {
@@ -133,9 +132,9 @@ gulp.task('makeUploadsDir', function() {
 // Mocha tests task
 gulp.task('mocha', function(done) {
   // Open mongoose connections
-  var mongoose = require('./lib/services/mongoose.js');
-  var testSuites = changedTestFiles.length ? changedTestFiles : defaultAssets.tests;
-  var error;
+  const mongoose = require('./lib/services/mongoose.js');
+  const testSuites = changedTestFiles.length ? changedTestFiles : defaultAssets.tests;
+  let error;
 
   // Connect mongoose
   mongoose.connect(function() {
@@ -172,7 +171,7 @@ gulp.task('pre-test', function() {
 
 // Run istanbul test and write report
 gulp.task('mocha:coverage', ['pre-test', 'mocha'], function() {
-  var testSuites = changedTestFiles.length ? changedTestFiles : defaultAssets.tests;
+  const testSuites = changedTestFiles.length ? changedTestFiles : defaultAssets.tests;
 
   return gulp.src(testSuites)
     .pipe(plugins.istanbul.writeReports({

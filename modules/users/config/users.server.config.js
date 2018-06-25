@@ -13,7 +13,7 @@ const UserService = require('../services/user.service');
 /**
  * Module init function
  */
-module.exports = function (app) {
+module.exports = app => {
   // Serialize identifiable user's information to the session
   // so that it can be pulled back in another request
   passport.serializeUser((user, done) => {

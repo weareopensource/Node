@@ -27,7 +27,7 @@ const whitelistedFields = ['firstName', 'lastName', 'email', 'username', 'roles'
 /**
  * Update user details
  */
-exports.update = function(req, res) {
+exports.update = (req, res) => {
   // Init Variables
   let user = req.user;
 
@@ -37,14 +37,14 @@ exports.update = function(req, res) {
 
     user.updated = Date.now();
     user.displayName = user.firstName + ' ' + user.lastName;
-    User.findByIdAndUpdate(user.id, user, function(err) {
+    User.findByIdAndUpdate(user.id, user, err => {
       if (err) {
         return res.status(422)
           .send({
             message: errorHandler.getErrorMessage(err)
           });
       } else {
-        req.login(user, function(err) {
+        req.login(user, err => {
           if (err) {
             res.status(400)
               .send(err);
@@ -65,7 +65,7 @@ exports.update = function(req, res) {
 /**
  * Update profile picture
  */
-exports.changeProfilePicture = function(req, res) {
+exports.changeProfilePicture = (req, res) => {
   const user = req.user;
   let existingImageUrl;
 
@@ -81,10 +81,10 @@ exports.changeProfilePicture = function(req, res) {
       .then(updateUser)
       .then(deleteOldImage)
       .then(login)
-      .then(function() {
+      .then(() => {
         res.json(user);
       })
-      .catch(function(err) {
+      .catch(err => {
         res.status(422)
           .send(err);
       });
@@ -96,8 +96,8 @@ exports.changeProfilePicture = function(req, res) {
   }
 
   function uploadImage() {
-    return new Promise(function(resolve, reject) {
-      upload(req, res, function(uploadError) {
+    return new Promise((resolve, reject) => {
+      upload(req, res, uploadError => {
         if (uploadError) {
           reject(errorHandler.getErrorMessage(uploadError));
         } else {
@@ -108,9 +108,9 @@ exports.changeProfilePicture = function(req, res) {
   }
 
   function updateUser() {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
       user.profileImageURL = config.uploads.profile.image.dest + req.file.filename;
-      user.save(function(err, theuser) {
+      user.save((err) => {
         if (err) {
           reject(err);
         } else {
@@ -121,10 +121,10 @@ exports.changeProfilePicture = function(req, res) {
   }
 
   function deleteOldImage() {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
       if (existingImageUrl !== User.schema.path('profileImageURL')
         .defaultValue) {
-        fs.unlink(existingImageUrl, function(unlinkError) {
+        fs.unlink(existingImageUrl, unlinkError => {
           if (unlinkError) {
             console.log(unlinkError);
             reject(new Error({
@@ -141,8 +141,8 @@ exports.changeProfilePicture = function(req, res) {
   }
 
   function login() {
-    return new Promise(function(resolve, reject) {
-      req.login(user, function(err) {
+    return new Promise((resolve) => {
+      req.login(user, err => {
         if (err) {
           res.status(400)
             .send(err);
@@ -157,7 +157,7 @@ exports.changeProfilePicture = function(req, res) {
 /**
  * Send User
  */
-exports.me = function(req, res) {
+exports.me = (req, res) => {
   // Sanitize the user - short term solution. Copied from core.server.controller.js
   // TODO create proper passport mock: See https://gist.github.com/mweibel/5219403
   let safeUserObject = null;
@@ -231,26 +231,22 @@ async function verifyMicrosoftToken(idToken) {
   }).catch(console.log);
 }
 
-const addGoogleUser = function(idToken) {
-  return verifyGoogleToken(idToken)
-    .then(user => User.findOneOrCreate({
-      sub: user.sub
-    }, user));
-};
+const addGoogleUser = idToken => verifyGoogleToken(idToken)
+  .then(user => User.findOneOrCreate({
+    sub: user.sub
+  }, user));
 
-const addMicrosoftUser = function(idToken) {
-  return verifyMicrosoftToken(idToken)
-    .then(user => User.findOneOrCreate({
-      sub: user.sub
-    }, user));
-};
+const addMicrosoftUser = idToken => verifyMicrosoftToken(idToken)
+  .then(user => User.findOneOrCreate({
+    sub: user.sub
+  }, user));
 
-exports.addOAuthProviderUserProfile = function(req, res) {
+exports.addOAuthProviderUserProfile = (req, res) => {
   const provider = req.body.provider;
   switch (provider) {
     case 'google':
       addGoogleUser(req.body.idToken)
-        .catch(err => res.sendStatus(304))
+        .catch(() => res.sendStatus(304))
         .then(user => {
           const token = jwt.sign({ userId: user.id }, configuration.jwt.secret);
           return res.status(200)
@@ -260,7 +256,7 @@ exports.addOAuthProviderUserProfile = function(req, res) {
       break;
     case 'microsoft':
       addMicrosoftUser(req.body.idToken)
-        .catch(err => res.sendStatus(304))
+        .catch(() => res.sendStatus(304))
         .then(user => {
           const token = jwt.sign({ userId: user.id }, configuration.jwt.secret);
           return res.status(200)

@@ -3,11 +3,10 @@
 const passport = require('passport');
 const passportJwt = require('passport-jwt');
 const UserService = require('../../services/user.service');
-const config = require('../../../../config');
 
 const JwtStrategy = passportJwt.Strategy;
 
-const cookieExtractor = function(req) {
+const cookieExtractor = req => {
   let token = null;
   if (req && req.cookies) token = req.cookies.TOKEN;
 
@@ -28,7 +27,7 @@ async function verifyCallback(jwtPayload, done) {
   }
 }
 
-module.exports = function (config) {
+module.exports = config => {
 
   const opts = {};
   opts.jwtFromRequest = cookieExtractor;

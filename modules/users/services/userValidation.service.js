@@ -4,7 +4,6 @@ const path = require('path');
 const config = require(path.resolve('./config'));
 
 const validator = require('validator');
-const owasp = require('owasp-password-strength-test');
 
 class UserValidationService {
   /**
@@ -42,7 +41,7 @@ class UserValidationService {
     return (this.validateLocalStrategyProperty(user) || user.lastName);
   }
 
-  static validatePassword (user) {
+  static validatePassword () {
     //    if (!this.validateLocalStrategyProperty(user)) {
     //      return owasp.test(user.password)
     //    }

@@ -12,22 +12,20 @@ const path = require('path'),
   async = require('async'),
   jwt = require('jsonwebtoken'),
   configuration = require(path.resolve('./config')),
-  UserService = require('../../services/user.service'),
-  crypto = require('crypto');
+  UserService = require('../../services/user.service');
 
 const smtpTransport = nodemailer.createTransport(config.mailer.options);
 
 /**
  * Forgot for reset password (forgot POST)
  */
-exports.forgot = function (req, res, next) {
+exports.forgot = (req, res, next) => {
   async.waterfall([
-    // Lookup user by email
-    function (done) {
+    done => {
       if (req.body.email) {
         User.findOne({
           email: req.body.email
-        }, '-salt -password', function (err, user) {
+        }, '-salt -password', (err, user) => {
           if (err || !user) {
             return res.status(400).send({
               message: 'No account with that email has been found'
@@ -43,7 +41,7 @@ exports.forgot = function (req, res, next) {
             user.resetPasswordToken = token;
             user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
 
-            user.save(function (err) {
+            user.save(err => {
               done(err, token, user);
             });
           }
@@ -54,7 +52,7 @@ exports.forgot = function (req, res, next) {
         });
       }
     },
-    function (token, user, done) {
+    (token, user, done) => {
       let httpTransport = 'http://';
       if (config.secure && config.secure.ssl === true) {
         httpTransport = 'https://';
@@ -65,12 +63,11 @@ exports.forgot = function (req, res, next) {
         name: user.displayName,
         appName: config.app.title,
         url: baseUrl + '/auth/password-reset?token=' + token
-      }, function (err, emailHTML) {
+      }, (err, emailHTML) => {
         done(err, emailHTML, user);
       });
     },
-    // If valid email, send reset email using service
-    function (emailHTML, user, done) {
+    (emailHTML, user, done) => {
 
       const mailOptions = {
         to: user.email,
@@ -78,7 +75,7 @@ exports.forgot = function (req, res, next) {
         subject: 'Password Reset',
         html: emailHTML
       };
-      smtpTransport.sendMail(mailOptions, function (err) {
+      smtpTransport.sendMail(mailOptions, err => {
         if (!err) {
           res.send({
             message: 'An email has been sent to the provided email with further instructions.'
@@ -92,7 +89,7 @@ exports.forgot = function (req, res, next) {
         done(err);
       });
     }
-  ], function (err) {
+  ], err => {
     if (err) {
       return next(err);
     }
@@ -102,13 +99,13 @@ exports.forgot = function (req, res, next) {
 /**
  * Reset password GET from email token
  */
-exports.validateResetToken = function (req, res) {
+exports.validateResetToken = (req, res) => {
   User.findOne({
     resetPasswordToken: req.params.token,
     resetPasswordExpires: {
       $gt: Date.now()
     }
-  }, function (err, user) {
+  }, (err, user) => {
     if (err || !user) {
       return res.redirect('/password/reset/invalid');
     }
@@ -120,41 +117,41 @@ exports.validateResetToken = function (req, res) {
 /**
  * Reset password POST from email token
  */
-exports.reset = function (req, res, next) {
+exports.reset = (req, res, next) => {
   // Init Variables
   const newPassword = req.body.newPassword;
   const resetPasswordToken = req.body.token;
 
   async.waterfall([
-    function(done) {
+    done => {
       UserService.hashPassword(newPassword)
-        .then(function(password) {
+        .then(password => {
           done(null, password);
         })
-        .catch(function(e) {
+        .catch(e => {
           console.log(e);
           done(e);
         });
     },
-    function (password, done) {
+    (password, done) => {
       User.findOne({
-        resetPasswordToken: resetPasswordToken,
+        resetPasswordToken,
         resetPasswordExpires: {
           $gt: Date.now()
         }
-      }, function (err, user) {
+      }, (err, user) => {
         if (!err && user) {
           user.password = password;
           user.resetPasswordToken = undefined;
           user.resetPasswordExpires = undefined;
 
-          user.save(function (err) {
+          user.save(err => {
             if (err) {
               return res.status(422).send({
                 message: errorHandler.getErrorMessage(err)
               });
             } else {
-              req.login(user, function (err) {
+              req.login(user, err => {
                 if (err) {
                   res.status(400).send(err);
                 } else {
@@ -176,16 +173,15 @@ exports.reset = function (req, res, next) {
         }
       });
     },
-    function (user, done) {
+    (user, done) => {
       res.render('reset-password-confirm-email', {
         name: user.displayName,
         appName: config.app.title
-      }, function (err, emailHTML) {
+      }, (err, emailHTML) => {
         done(err, emailHTML, user);
       });
     },
-    // If valid email, send reset email using service
-    function (emailHTML, user, done) {
+    (emailHTML, user, done) => {
       const mailOptions = {
         to: user.email,
         from: config.mailer.from,
@@ -193,11 +189,11 @@ exports.reset = function (req, res, next) {
         html: emailHTML
       };
 
-      smtpTransport.sendMail(mailOptions, function (err) {
+      smtpTransport.sendMail(mailOptions, err => {
         done(err, 'done');
       });
     }
-  ], function (err) {
+  ], err => {
     if (err) {
       return next(err);
     }
@@ -207,25 +203,25 @@ exports.reset = function (req, res, next) {
 /**
  * Change Password
  */
-exports.changePassword = function (req, res, next) {
+exports.changePassword = (req, res) => {
   // Init Variables
   const passwordDetails = req.body;
 
   if (req.user) {
     if (passwordDetails.newPassword) {
-      User.findById(req.user.id, function (err, user) {
+      User.findById(req.user.id, (err, user) => {
         if (!err && user) {
           if (user.authenticate(passwordDetails.currentPassword)) {
             if (passwordDetails.newPassword === passwordDetails.verifyPassword) {
               user.password = passwordDetails.newPassword;
 
-              user.save(function (err) {
+              user.save(err => {
                 if (err) {
                   return res.status(422).send({
                     message: errorHandler.getErrorMessage(err)
                   });
                 } else {
-                  req.login(user, function (err) {
+                  req.login(user, err => {
                     if (err) {
                       res.status(400).send(err);
                     } else {
