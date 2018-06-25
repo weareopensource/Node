@@ -26,7 +26,8 @@
     "test:server": "gulp test:server",
     "test:server:watch": "gulp test:server:watch",
     "test:coverage": "gulp test:coverage",
-    "generate-ssl-certs": "lib/scripts/generate-ssl-certs.sh"
+    "generate-ssl-certs": "lib/scripts/generate-ssl-certs.sh",
+    "lint": "gulp lint"
   },
   "dependencies": {
     "acl": "~0.4.9",

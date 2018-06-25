@@ -36,6 +36,8 @@ Planned:
 | **Documentation: Code**  | Docco
 | **Developer: Lint** | Standard JS
 
+## [Demo](http://meanie.weareopensource.me)  (This Node stack is used for this demonstration of MEANie fullstack)
+
 ## Prerequisites
 Make sure you have installed all of the following prerequisites on your development machine:
 * Git - [Download & Install Git](https://git-scm.com/downloads)
@@ -75,7 +77,9 @@ Run `gulp  test:server`
 
 This work is based on [MEAN.js](http://meanjs.org) and more precisely on a fork of the developers named [Riess.js](https://github.com/lirantal/Riess.js). The work being stopped we wished to take it back, we want to create updated stack with same mindset "simple", "easy to use". The toolbox needed to start projects.
 
-Today, we dreams to create Backs/Fronts, aligns on feats, in multiple languages, in order to allow anyone to compose fullstack on demand. Feel free to discuss, share other bricks, and invite whoever you want with this mindset to come help us.
+## [We Are Open Source, Who we are ?](https://weareopensource.me)
+Today, we dreams to create Backs/Fronts, aligns on feats, in multiple languages, in order to allow anyone to compose fullstack on demand (React, Angular, VusJS, Node, Nest, Swift, Go).
+Feel free to discuss, share other kind of bricks, and invite whoever you want with this mindset to come help us.
 
 ## License
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE.md)
