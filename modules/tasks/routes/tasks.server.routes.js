@@ -1,12 +1,11 @@
 /**
  * Module dependencies
  */
+const passport = require('passport');
 const tasksPolicy = require('../policies/tasks.server.policy');
 const tasks = require('../controllers/mongoose/tasks.server.controller');
-const passport = require('passport');
 
-module.exports = app => {
-
+module.exports = (app) => {
   // Tasks collection routes
   app.route('/api/tasks').all(passport.authenticate('jwt'), tasksPolicy.isAllowed)
     .get(tasks.list)

@@ -1,6 +1,7 @@
-'use strict';
+
 
 const path = require('path');
+
 const config = require(path.resolve('./config'));
 const bcrypt = require('bcrypt');
 const generatePassword = require('generate-password');
@@ -13,7 +14,7 @@ owasp.config(config.shared.owasp);
 const SALT_ROUNDS = 10;
 
 class UserService {
-  static deserialize (user) {
+  static deserialize(user) {
     if (!user || typeof user !== 'object') {
       return null;
     }
@@ -27,7 +28,7 @@ class UserService {
       provider: user.provider,
       roles: user.roles,
       profileImageURL: user.profileImageURL,
-      created: user.created
+      created: user.created,
     };
   }
 
@@ -36,7 +37,7 @@ class UserService {
     return this.deserialize(user);
   }
 
-  static async authenticate (email, password) {
+  static async authenticate(email, password) {
     const user = await UserRepository.getByEmail(email);
     if (!user) {
       throw new Error('invalid user or password');
@@ -44,13 +45,11 @@ class UserService {
 
     if (await this.comparePassword(password, user.password)) {
       return this.deserialize(user);
-    } else {
-      throw new Error('invalid user or password');
     }
+    throw new Error('invalid user or password');
   }
 
-  static async signUp (userObj) {
-
+  static async signUp(userObj) {
     // Set provider to local
     userObj.provider = 'local';
 
@@ -98,11 +97,11 @@ class UserService {
     return Promise.resolve(user);
   }
 
-  static async comparePassword (userPassword, storedPassword) {
+  static async comparePassword(userPassword, storedPassword) {
     return bcrypt.compare(String(userPassword), String(storedPassword));
   }
 
-  static async hashPassword (password) {
+  static async hashPassword(password) {
     return bcrypt.hash(String(password), SALT_ROUNDS);
   }
 
@@ -111,7 +110,7 @@ class UserService {
    * Returns a promise that resolves with the generated passphrase, or rejects with an error if something goes wrong.
    * NOTE: Passphrases are only tested against the required owasp strength tests, and not the optional tests.
    */
-  static generateRandomPassphrase () {
+  static generateRandomPassphrase() {
     return new Promise((resolve, reject) => {
       let password = '';
       const repeatingCharacters = new RegExp('(.)\\1{2,}', 'g');
@@ -125,7 +124,7 @@ class UserService {
           numbers: true,
           symbols: false,
           uppercase: true,
-          excludeSimilarCharacters: true
+          excludeSimilarCharacters: true,
         });
 
         // check if we need to remove any repeating characters

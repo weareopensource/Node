@@ -1,6 +1,7 @@
-'use strict';
+
 
 const path = require('path');
+
 const config = require(path.resolve('./config'));
 
 const validator = require('validator');
@@ -15,33 +16,33 @@ class UserValidationService {
    * - no consecutive dots: "." ok, ".." nope
    * - not begin or end with "."
    */
-  static validateUsername (user) {
+  static validateUsername(user) {
     const username = user.username;
     const usernameRegex = /^(?=[\w.-]+$)(?!.*[._-]{2})(?!\.)(?!.*\.$).{3,34}$/;
     return (
-      username.provider !== 'local' ||
-      (username && usernameRegex.test(username) && config.illegalUsernames.indexOf(username) < 0)
+      username.provider !== 'local'
+      || (username && usernameRegex.test(username) && config.illegalUsernames.indexOf(username) < 0)
     );
   }
 
   /**
    * A Validation function for local strategy properties
    */
-  static validateLocalStrategyProperty (user) {
+  static validateLocalStrategyProperty(user) {
     return (user && user.provider && user.provider !== 'local');
   }
 
-  static validateFirstName (user) {
+  static validateFirstName(user) {
     // @TODO fix validation to convert to string and check expected validity
     return (this.validateLocalStrategyProperty(user) || user.firstName);
   }
 
-  static validateLastName (user) {
+  static validateLastName(user) {
     // @TODO fix validation to convert to string and check expected validity
     return (this.validateLocalStrategyProperty(user) || user.lastName);
   }
 
-  static validatePassword () {
+  static validatePassword() {
     //    if (!this.validateLocalStrategyProperty(user)) {
     //      return owasp.test(user.password)
     //    }
@@ -52,7 +53,7 @@ class UserValidationService {
   /**
    * A Validation function for local strategy email
    */
-  static validateEmail (user) {
+  static validateEmail(user) {
     return (this.validateLocalStrategyProperty(user) || validator.isEmail(user.email, { require_tld: false }));
   }
 }

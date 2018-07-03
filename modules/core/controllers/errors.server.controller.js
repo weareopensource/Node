@@ -1,4 +1,4 @@
-'use strict';
+
 
 /**
  * Module dependencies
@@ -9,7 +9,7 @@ const path = require('path'),
 /**
  * Get unique error field name
  */
-const getUniqueErrorMessage = err => {
+const getUniqueErrorMessage = (err) => {
   let output;
 
   try {
@@ -24,8 +24,7 @@ const getUniqueErrorMessage = err => {
       begin = err.errmsg.lastIndexOf('index: ') + 7;
     }
     const fieldName = err.errmsg.substring(begin, err.errmsg.lastIndexOf('_1'));
-    output = fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + ' already exists';
-
+    output = `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} already exists`;
   } catch (ex) {
     output = 'Unique field already exists';
   }
@@ -36,7 +35,7 @@ const getUniqueErrorMessage = err => {
 /**
  * Get the error message from error object
  */
-exports.getErrorMessage = err => {
+exports.getErrorMessage = (err) => {
   let message = '';
 
   if (err.code) {
@@ -49,7 +48,7 @@ exports.getErrorMessage = err => {
         message = 'Unsupported filetype';
         break;
       case 'LIMIT_FILE_SIZE':
-        message = 'Image file too large. Maximum size allowed is ' + (config.uploads.profile.image.limits.fileSize / (1024 * 1024)).toFixed(2) + ' Mb files.';
+        message = `Image file too large. Maximum size allowed is ${(config.uploads.profile.image.limits.fileSize / (1024 * 1024)).toFixed(2)} Mb files.`;
         break;
       case 'LIMIT_UNEXPECTED_FILE':
         message = 'Missing `newProfilePicture` field';
@@ -60,7 +59,7 @@ exports.getErrorMessage = err => {
   } else if (err.message && !err.errors) {
     message = err.message;
   } else {
-    err.errors.map(error => {
+    err.errors.map((error) => {
       if (error.message) {
         message = error.message;
       }

@@ -1,6 +1,6 @@
 module.exports = {
   extends: [
-    'eslint:recommended'
+    'airbnb-base'
   ],
   rules: {
     // camelcase: 0,
@@ -15,7 +15,7 @@ module.exports = {
     // indent: [2, 2, { SwitchCase: 1 }],
     // 'key-spacing': [2, { beforeColon: false, afterColon: true }],
     // 'keyword-spacing': [2, { before: true, after: true }],
-    // 'max-len': 0,
+    'max-len': 0,
     // 'new-cap': [2, { newIsCapExceptions: ['acl.memoryBackend', 'acl'] }],
     // 'no-bitwise': 0,
     // 'no-caller': 2,
@@ -48,7 +48,9 @@ module.exports = {
     // quotes: [1, 'single'],
     // 'wrap-iife': [2, 'outside'],
     // 'vars-on-top': 0,
-    // 'global-require': 0
+    'global-require': 0,
+    'prefer-destructuring': ['error', {'object': false, 'array': false}],
+    'import/no-dynamic-require': 0
   },
   env: {
     node: true,

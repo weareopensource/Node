@@ -1,4 +1,4 @@
-'use strict';
+
 
 /**
  * Module dependencies
@@ -7,7 +7,7 @@ const adminPolicy = require('../policies/admin.server.policy'),
   admin = require('../controllers/admin.server.controller'),
   passport = require('passport');
 
-module.exports = app => {
+module.exports = (app) => {
   /* eslint global-require: 0 */
   require('./users.server.routes.js')(app);
 

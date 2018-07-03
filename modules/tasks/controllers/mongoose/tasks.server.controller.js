@@ -3,6 +3,7 @@
  */
 const path = require('path');
 const mongoose = require('mongoose');
+
 const Task = mongoose.model('Task');
 const errorHandler = require(path.resolve('./modules/core/controllers/errors.server.controller'));
 
@@ -23,19 +24,19 @@ exports.create = (req, res) => {
 
   if (!user) {
     return res.status(404).send({
-      message: 'User not defined'
+      message: 'User not defined',
     });
   }
   const task = new Task(req.body);
 
   task.user = req.user.id;
 
-  task.save().then(task => {
+  task.save().then((task) => {
     res.json(task.toObject({ getters: true }));
-  }).catch(err => {
+  }).catch((err) => {
     console.log(err);
     res.status(422).send({
-      message: errorHandler.getErrorMessage(err)
+      message: errorHandler.getErrorMessage(err),
     });
   });
 };
@@ -48,11 +49,11 @@ exports.update = (req, res) => {
   task.title = req.body.title;
   task.description = req.body.description;
 
-  task.save().then(task => {
+  task.save().then((task) => {
     res.json(task.toObject({ getters: true }));
-  }).catch(err => {
+  }).catch((err) => {
     res.status(422).send({
-      message: errorHandler.getErrorMessage(err)
+      message: errorHandler.getErrorMessage(err),
     });
   });
 };
@@ -63,11 +64,11 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   const task = req.task;
 
-  task.remove().then(task => {
+  task.remove().then((task) => {
     res.json({ taskId: task.id });
-  }).catch(err => {
+  }).catch((err) => {
     res.status(422).send({
-      message: errorHandler.getErrorMessage(err)
+      message: errorHandler.getErrorMessage(err),
     });
   });
 };
@@ -76,12 +77,12 @@ exports.delete = (req, res) => {
  * List of Tasks
  */
 exports.list = (req, res) => {
-  Task.find().sort('-created').exec().then(tasks => {
+  Task.find().sort('-created').exec().then((tasks) => {
     res.json(tasks.map(task => (task.toObject({ getters: true }))));
   })
-    .catch(err => {
+    .catch((err) => {
       res.status(422).send({
-        message: errorHandler.getErrorMessage(err)
+        message: errorHandler.getErrorMessage(err),
       });
     });
 };
@@ -92,18 +93,18 @@ exports.list = (req, res) => {
 exports.userList = (req, res) => {
   if (!req.user) {
     return res.status(404).send({
-      message: 'User not defined'
+      message: 'User not defined',
     });
   }
 
   Task.find({
-    user: req.user.id
-  }).sort('-created').exec().then(tasks => {
+    user: req.user.id,
+  }).sort('-created').exec().then((tasks) => {
     res.json(tasks.map(task => task.toObject({ getters: true })));
   })
-    .catch(err => {
+    .catch((err) => {
       res.status(422).send({
-        message: errorHandler.getErrorMessage(err)
+        message: errorHandler.getErrorMessage(err),
       });
     });
 };
@@ -114,14 +115,14 @@ exports.userList = (req, res) => {
 exports.taskByID = (req, res, next, id) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).send({
-      message: 'Task is invalid'
+      message: 'Task is invalid',
     });
   }
 
-  Task.findById(id).exec().then(task => {
+  Task.findById(id).exec().then((task) => {
     if (!task) {
       return res.status(404).send({
-        message: 'No Task with that identifier has been found'
+        message: 'No Task with that identifier has been found',
       });
     }
     req.task = task;

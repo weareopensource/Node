@@ -1,4 +1,4 @@
-'use strict';
+
 
 /**
  * Module dependencies
@@ -12,17 +12,17 @@ const mongoose = require('mongoose'),
 exports.userByID = (req, res, next, id) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).send({
-      message: 'User is invalid'
+      message: 'User is invalid',
     });
   }
 
   User.findOne({
-    _id: id
+    _id: id,
   }).exec((err, user) => {
     if (err) {
       return next(err);
-    } else if (!user) {
-      return next(new Error('Failed to load User ' + id));
+    } if (!user) {
+      return next(new Error(`Failed to load User ${id}`));
     }
 
     req.profile = user;

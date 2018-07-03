@@ -1,4 +1,4 @@
-'use strict';
+
 
 /**
  * Module dependencies
@@ -16,39 +16,37 @@ exports.invokeRolesPolicies = () => {
     roles: ['admin'],
     allows: [{
       resources: '/api/users',
-      permissions: '*'
+      permissions: '*',
     }, {
       resources: '/api/users/:userId',
-      permissions: '*'
-    }]
+      permissions: '*',
+    }],
   }]);
 };
 
 /**
  * Check If Admin Policy Allows
  */
-exports.isAllowed = (req, res, next) => {
-
-  const roles = (req.user) ? req.user.roles : ['guest'];
+exports.isAllowed = ({user, route, method, body}, res, next) => {
+  const roles = (user) ? user.roles : ['guest'];
 
   // Check for user roles
-  acl.areAnyRolesAllowed(roles, req.route.path, req.method.toLowerCase(), (err, isAllowed) => {
+  acl.areAnyRolesAllowed(roles, route.path, method.toLowerCase(), (err, isAllowed) => {
     if (err) {
       // An authorization error occurred
       return res.status(500).send('Unexpected authorization error');
-    } else if (isAllowed) {
+    } if (isAllowed) {
       // Access granted! Invoke next middleware
       return next();
-    } else if (isAllowed) {
+    } if (isAllowed) {
       // Access granted! Invoke next middleware
       return next();
-    } else {
-      if (req.user.id === req.body.id) {
-        return next();
-      }
-      return res.status(403).json({
-        message: 'User is not authorized'
-      });
     }
+    if (user.id === body.id) {
+      return next();
+    }
+    return res.status(403).json({
+      message: 'User is not authorized',
+    });
   });
 };

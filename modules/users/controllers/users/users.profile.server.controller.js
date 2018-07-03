@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Module dependencies
  */
@@ -19,7 +17,7 @@ const _ = require('lodash'),
   imageFileFilter = require(path.resolve('./lib/services/multer'))
     .imageFileFilter,
   {
-    OAuth2Client
+    OAuth2Client,
   } = require('google-auth-library');
 
 const whitelistedFields = ['firstName', 'lastName', 'email', 'username', 'roles', 'profileImageURL'];
@@ -36,28 +34,27 @@ exports.update = (req, res) => {
     user = _.extend(user, _.pick(req.body, whitelistedFields));
 
     user.updated = Date.now();
-    user.displayName = user.firstName + ' ' + user.lastName;
-    User.findByIdAndUpdate(user.id, user, err => {
+    user.displayName = `${user.firstName} ${user.lastName}`;
+    User.findByIdAndUpdate(user.id, user, (err) => {
       if (err) {
         return res.status(422)
           .send({
-            message: errorHandler.getErrorMessage(err)
+            message: errorHandler.getErrorMessage(err),
           });
-      } else {
-        req.login(user, err => {
-          if (err) {
-            res.status(400)
-              .send(err);
-          } else {
-            res.json(user);
-          }
-        });
       }
+      req.login(user, (err) => {
+        if (err) {
+          res.status(400)
+            .send(err);
+        } else {
+          res.json(user);
+        }
+      });
     });
   } else {
     res.status(401)
       .send({
-        message: 'User is not signed in'
+        message: 'User is not signed in',
       });
   }
 };
@@ -84,20 +81,20 @@ exports.changeProfilePicture = (req, res) => {
       .then(() => {
         res.json(user);
       })
-      .catch(err => {
+      .catch((err) => {
         res.status(422)
           .send(err);
       });
   } else {
     res.status(401)
       .send({
-        message: 'User is not signed in'
+        message: 'User is not signed in',
       });
   }
 
   function uploadImage() {
     return new Promise((resolve, reject) => {
-      upload(req, res, uploadError => {
+      upload(req, res, (uploadError) => {
         if (uploadError) {
           reject(errorHandler.getErrorMessage(uploadError));
         } else {
@@ -124,11 +121,11 @@ exports.changeProfilePicture = (req, res) => {
     return new Promise((resolve, reject) => {
       if (existingImageUrl !== User.schema.path('profileImageURL')
         .defaultValue) {
-        fs.unlink(existingImageUrl, unlinkError => {
+        fs.unlink(existingImageUrl, (unlinkError) => {
           if (unlinkError) {
             console.log(unlinkError);
             reject(new Error({
-              message: 'Error occurred while deleting old profile picture'
+              message: 'Error occurred while deleting old profile picture',
             }));
           } else {
             resolve();
@@ -142,7 +139,7 @@ exports.changeProfilePicture = (req, res) => {
 
   function login() {
     return new Promise((resolve) => {
-      req.login(user, err => {
+      req.login(user, (err) => {
         if (err) {
           res.status(400)
             .send(err);
@@ -157,22 +154,22 @@ exports.changeProfilePicture = (req, res) => {
 /**
  * Send User
  */
-exports.me = (req, res) => {
+exports.me = ({ user }, res) => {
   // Sanitize the user - short term solution. Copied from core.server.controller.js
   // TODO create proper passport mock: See https://gist.github.com/mweibel/5219403
   let safeUserObject = null;
-  if (req.user) {
+  if (user) {
     safeUserObject = {
-      id: req.user.id,
-      provider: validator.escape(req.user.provider),
-      username: validator.escape(req.user.username),
-      created: req.user.created.toString(),
-      roles: req.user.roles,
-      profileImageURL: req.user.profileImageURL,
-      email: validator.escape(req.user.email),
-      lastName: validator.escape(req.user.lastName),
-      firstName: validator.escape(req.user.firstName),
-      additionalProvidersData: req.user.additionalProvidersData
+      id: user.id,
+      provider: validator.escape(user.provider),
+      username: validator.escape(user.username),
+      created: user.created.toString(),
+      roles: user.roles,
+      profileImageURL: user.profileImageURL,
+      email: validator.escape(user.email),
+      lastName: validator.escape(user.lastName),
+      firstName: validator.escape(user.firstName),
+      additionalProvidersData: user.additionalProvidersData,
     };
   }
   res.json(safeUserObject || null);
@@ -183,7 +180,7 @@ const client = new OAuth2Client(config.google.clientId);
 
 async function verifyGoogleToken(idToken) {
   const ticket = await client.verifyIdToken({
-    idToken
+    idToken,
   });
   const payload = ticket.getPayload();
   const user = {
@@ -191,7 +188,7 @@ async function verifyGoogleToken(idToken) {
     email: payload.email,
     firstName: payload.given_name,
     lastName: payload.family_name,
-    profileImageURL: payload.picture
+    profileImageURL: payload.picture,
   };
   user.username = `${user.firstName} ${user.lastName}`;
   user.provider = 'google';
@@ -203,10 +200,10 @@ async function verifyGoogleToken(idToken) {
 
 const microsoftValidator = rp.get(config.microsoft.discovery)
   .then(res => JSON.parse(res))
-  .then(infos => new IdTokenVerifier({
+  .then(({ jwks_uri }) => new IdTokenVerifier({
     issuer: config.microsoft.issuer,
-    jwksURI: infos.jwks_uri,
-    audience: config.microsoft.clientId
+    jwksURI: jwks_uri,
+    audience: config.microsoft.clientId,
   }));
 
 async function verifyMicrosoftToken(idToken) {
@@ -216,7 +213,7 @@ async function verifyMicrosoftToken(idToken) {
       .payload.nonce, (err, {
       sub,
       name,
-      preferred_username
+      preferred_username,
     }) => {
       if (err) {
         return reject(err);
@@ -225,7 +222,7 @@ async function verifyMicrosoftToken(idToken) {
         sub,
         username: name,
         email: preferred_username,
-        provider: 'microsoft'
+        provider: 'microsoft',
       });
     });
   }).catch(console.log);
@@ -233,21 +230,21 @@ async function verifyMicrosoftToken(idToken) {
 
 const addGoogleUser = idToken => verifyGoogleToken(idToken)
   .then(user => User.findOneOrCreate({
-    sub: user.sub
+    sub: user.sub,
   }, user));
 
 const addMicrosoftUser = idToken => verifyMicrosoftToken(idToken)
   .then(user => User.findOneOrCreate({
-    sub: user.sub
+    sub: user.sub,
   }, user));
 
-exports.addOAuthProviderUserProfile = (req, res) => {
-  const provider = req.body.provider;
+exports.addOAuthProviderUserProfile = ({ body }, res) => {
+  const provider = body.provider;
   switch (provider) {
     case 'google':
-      addGoogleUser(req.body.idToken)
+      addGoogleUser(body.idToken)
         .catch(() => res.sendStatus(304))
-        .then(user => {
+        .then((user) => {
           const token = jwt.sign({ userId: user.id }, configuration.jwt.secret);
           return res.status(200)
             .cookie('TOKEN', token, { httpOnly: true })
@@ -255,9 +252,9 @@ exports.addOAuthProviderUserProfile = (req, res) => {
         });
       break;
     case 'microsoft':
-      addMicrosoftUser(req.body.idToken)
+      addMicrosoftUser(body.idToken)
         .catch(() => res.sendStatus(304))
-        .then(user => {
+        .then((user) => {
           const token = jwt.sign({ userId: user.id }, configuration.jwt.secret);
           return res.status(200)
             .cookie('TOKEN', token, { httpOnly: true })

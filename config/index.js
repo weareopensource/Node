@@ -1,6 +1,5 @@
 /* eslint-disable no-useless-escape */
 
-'use strict';
 
 /**
  * Module dependencies.
@@ -24,7 +23,7 @@ const getGlobbedPaths = function (globPatterns, excludes) {
 
   // If glob pattern is array then we use each pattern in a recursive way, otherwise we use glob
   if (_.isArray(globPatterns)) {
-    globPatterns.forEach(function (globPattern) {
+    globPatterns.forEach((globPattern) => {
       output = _.union(output, getGlobbedPaths(globPattern, excludes));
     });
   } else if (_.isString(globPatterns)) {
@@ -33,9 +32,9 @@ const getGlobbedPaths = function (globPatterns, excludes) {
     } else {
       let files = glob.sync(globPatterns);
       if (excludes) {
-        files = files.map(function (file) {
+        files = files.map((file) => {
           if (_.isArray(excludes)) {
-            excludes(exlude => {
+            excludes((exlude) => {
               file = file.replace(exlude, '');
             });
           } else {
@@ -82,7 +81,6 @@ const validateDomainIsSet = function (config) {
  * because it requires certs and key files to be available
  */
 const validateSecureMode = function (config) {
-
   if (!config.secure || config.secure.ssl !== true) {
     return true;
   }
@@ -122,7 +120,6 @@ const initGlobalConfigFiles = function (config, assets) {
 
   // Setting Globbed policies files
   config.files.policies = getGlobbedPaths(assets.policies);
-
 };
 
 /**
@@ -142,7 +139,7 @@ const initGlobalConfig = function () {
   // Get the config from  process.env.WAOS_BACK_*
   const environmentVars = _.mapKeys(
     _.pickBy(process.env, (_value, key) => key.startsWith('WAOS_BACK_')),
-    (_v, k) => k.split('_').slice(2).join('.')
+    (_v, k) => k.split('_').slice(2).join('.'),
   );
   const environmentConfigVars = {};
   _.forEach(environmentVars, (v, k) => objectPath.set(environmentConfigVars, k, v));
@@ -168,7 +165,7 @@ const initGlobalConfig = function () {
 
   // Expose configuration utilities
   config.utils = {
-    getGlobbedPaths: getGlobbedPaths
+    getGlobbedPaths,
   };
 
   return config;

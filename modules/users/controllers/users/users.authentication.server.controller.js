@@ -1,9 +1,10 @@
-'use strict';
+
 
 /**
  * Module dependencies
  */
 const path = require('path');
+
 const config = require(path.resolve('./config'));
 const configuration = require(path.resolve('./config'));
 const ApiError = require(path.resolve('./lib/helpers/ApiError'));
@@ -11,6 +12,7 @@ const errorHandler = require(path.resolve('./modules/core/controllers/errors.ser
 const mongoose = require('mongoose');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
+
 const User = mongoose.model('User');
 
 const UserService = require('../../services/user.service');
@@ -18,15 +20,15 @@ const UserService = require('../../services/user.service');
 // URLs for which user can't be redirected on signin
 const noReturnUrls = [
   '/authentication/signin',
-  '/authentication/signup'
+  '/authentication/signup',
 ];
 
 /**
  * Signup
  */
-exports.signup = async (req, res, next) => {
+exports.signup = async ({ body }, res, next) => {
   try {
-    let user = await UserService.signUp(req.body);
+    let user = await UserService.signUp(body);
     user = user.toObject({ getters: true });
     const token = jwt.sign({ userId: user.id }, config.jwt.secret);
     return res.status(200)
@@ -46,7 +48,6 @@ exports.signin = async (req, res) => {
   return res.status(200)
     .cookie('TOKEN', token, { httpOnly: true })
     .json({ user, tokenExpiresIn: Date.now() + (3600 * 24 * 1000) });
-
 };
 
 /**
@@ -60,19 +61,19 @@ exports.signout = (req, res) => {
 /**
  * Jwt Token Auth
  */
-exports.token = async (req, res, next) => {
+exports.token = async ({ body }, res, next) => {
   try {
     // Authenticate the user based on credentials
     // @TODO be consistent with whether the login field for user identification
     // is a username or an email
-    const username = req.body.email;
-    const password = req.body.password;
+    const username = body.email;
+    const password = body.password;
     const user = await UserService.authenticate(username, password);
 
     // Create the token and send
     // @TODO properly create the token with all of its metadata
     const payload = {
-      id: user.id
+      id: user.id,
     };
     // @TODO properly sign the token, not with a shared secret (use pubkey instead),
     // and specify proper expiration, issuer, algorithm, etc.
@@ -99,20 +100,20 @@ exports.oauthCallback = (req, res, next) => {
   const strategy = req.params.strategy;
 
   // info.redirect_to contains intended redirect path
-  passport.authenticate(strategy, (err, user, info) => {
+  passport.authenticate(strategy, (err, user, { redirectTo }) => {
     if (err) {
-      return res.redirect('/authentication/signin?err=' + encodeURIComponent(errorHandler.getErrorMessage(err)));
+      return res.redirect(`/authentication/signin?err=${encodeURIComponent(errorHandler.getErrorMessage(err))}`);
     }
     if (!user) {
       return res.redirect('/authentication/signin');
     }
 
-    req.login(user, err => {
+    req.login(user, (err) => {
       if (err) {
         return res.redirect('/authentication/signin');
       }
 
-      return res.redirect(info.redirect_to || '/');
+      return res.redirect(redirectTo || '/');
     });
   })(req, res, next);
 };
@@ -126,13 +127,12 @@ exports.saveOAuthUserProfile = (req, providerUserProfile, done) => {
 
   // Set redirection path on session.
   // Do not redirect to a signin or signup page
-  if (noReturnUrls.indexOf(req.session.redirect_to) === -1)
-    info.redirect_to = req.session.redirect_to;
+  if (noReturnUrls.indexOf(req.session.redirect_to) === -1) info.redirect_to = req.session.redirect_to;
 
   if (!req.user) {
     // Define a search query fields
-    const searchMainProviderIdentifierField = 'providerData.' + providerUserProfile.providerIdentifierField;
-    const searchAdditionalProviderIdentifierField = 'additionalProvidersData.' + providerUserProfile.provider + '.' + providerUserProfile.providerIdentifierField;
+    const searchMainProviderIdentifierField = `providerData.${providerUserProfile.providerIdentifierField}`;
+    const searchAdditionalProviderIdentifierField = `additionalProvidersData.${providerUserProfile.provider}.${providerUserProfile.providerIdentifierField}`;
 
     // Define main provider search query
     const mainProviderSearchQuery = {};
@@ -145,16 +145,16 @@ exports.saveOAuthUserProfile = (req, providerUserProfile, done) => {
 
     // Define a search query to find existing user with current provider profile
     const searchQuery = {
-      $or: [mainProviderSearchQuery, additionalProviderSearchQuery]
+      $or: [mainProviderSearchQuery, additionalProviderSearchQuery],
     };
 
     User.findOne(searchQuery, (err, user) => {
       if (err) {
         return done(err);
-      } else if (!user) {
+      } if (!user) {
         const possibleUsername = providerUserProfile.username || ((providerUserProfile.email) ? providerUserProfile.email.split('@')[0] : '');
 
-        User.findUniqueUsername(possibleUsername, null, availableUsername => {
+        User.findUniqueUsername(possibleUsername, null, (availableUsername) => {
           user = new User({
             firstName: providerUserProfile.firstName,
             lastName: providerUserProfile.lastName,
@@ -162,7 +162,7 @@ exports.saveOAuthUserProfile = (req, providerUserProfile, done) => {
             displayName: providerUserProfile.displayName,
             profileImageURL: providerUserProfile.profileImageURL,
             provider: providerUserProfile.provider,
-            providerData: providerUserProfile.providerData
+            providerData: providerUserProfile.providerData,
           });
 
           // Email intentionally added later to allow defaults (sparse settings) to be applid.
@@ -210,9 +210,9 @@ exports.removeOAuthProvider = (req, res) => {
 
   if (!user) {
     return res.status(401).json({
-      message: 'User is not authenticated'
+      message: 'User is not authenticated',
     });
-  } else if (!provider) {
+  } if (!provider) {
     return res.status(400).send();
   }
 
@@ -224,19 +224,17 @@ exports.removeOAuthProvider = (req, res) => {
     user.markModified('additionalProvidersData');
   }
 
-  user.save(err => {
+  user.save((err) => {
     if (err) {
       return res.status(422).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      req.login(user, err => {
-        if (err) {
-          return res.status(400).send(err);
-        } else {
-          return res.json(user);
-        }
+        message: errorHandler.getErrorMessage(err),
       });
     }
+    req.login(user, (err) => {
+      if (err) {
+        return res.status(400).send(err);
+      }
+      return res.json(user);
+    });
   });
 };

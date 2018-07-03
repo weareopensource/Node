@@ -1,4 +1,4 @@
-'use strict';
+
 
 /**
  * Module dependencies
@@ -19,36 +19,35 @@ const smtpTransport = nodemailer.createTransport(config.mailer.options);
 /**
  * Forgot for reset password (forgot POST)
  */
-exports.forgot = (req, res, next) => {
+exports.forgot = ({body}, res, next) => {
   async.waterfall([
-    done => {
-      if (req.body.email) {
+    (done) => {
+      if (body.email) {
         User.findOne({
-          email: req.body.email
+          email: body.email,
         }, '-salt -password', (err, user) => {
           if (err || !user) {
             return res.status(400).send({
-              message: 'No account with that email has been found'
+              message: 'No account with that email has been found',
             });
-          } else if (user.provider !== 'local') {
+          } if (user.provider !== 'local') {
             return res.status(400).send({
-              message: 'It seems like you signed up using your ' + user.provider + ' account'
-            });
-          } else {
-            const payload = { exp: Date.now() + 3600000 };
-            const token = jwt.sign(payload, configuration.jwt.secret, { algorithm: 'HS256' });
-
-            user.resetPasswordToken = token;
-            user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-
-            user.save(err => {
-              done(err, token, user);
+              message: `It seems like you signed up using your ${user.provider} account`,
             });
           }
+          const payload = { exp: Date.now() + 3600000 };
+          const token = jwt.sign(payload, configuration.jwt.secret, { algorithm: 'HS256' });
+
+          user.resetPasswordToken = token;
+          user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+
+          user.save((err) => {
+            done(err, token, user);
+          });
         });
       } else {
         return res.status(422).send({
-          message: 'Username field must not be blank'
+          message: 'Username field must not be blank',
         });
       }
     },
@@ -58,38 +57,37 @@ exports.forgot = (req, res, next) => {
         httpTransport = 'https://';
       }
       //      const baseUrl = req.app.get('domain') || httpTransport + req.headers.host;
-      const baseUrl = httpTransport + config.host + ':4200';
+      const baseUrl = `${httpTransport + config.host}:4200`;
       res.render('reset-password-email', {
         name: user.displayName,
         appName: config.app.title,
-        url: baseUrl + '/auth/password-reset?token=' + token
+        url: `${baseUrl}/auth/password-reset?token=${token}`,
       }, (err, emailHTML) => {
         done(err, emailHTML, user);
       });
     },
-    (emailHTML, user, done) => {
-
+    (emailHTML, {email}, done) => {
       const mailOptions = {
-        to: user.email,
+        to: email,
         from: config.mailer.from,
         subject: 'Password Reset',
-        html: emailHTML
+        html: emailHTML,
       };
-      smtpTransport.sendMail(mailOptions, err => {
+      smtpTransport.sendMail(mailOptions, (err) => {
         if (!err) {
           res.send({
-            message: 'An email has been sent to the provided email with further instructions.'
+            message: 'An email has been sent to the provided email with further instructions.',
           });
         } else {
           return res.status(400).send({
-            message: 'Failure sending email'
+            message: 'Failure sending email',
           });
         }
 
         done(err);
       });
-    }
-  ], err => {
+    },
+  ], (err) => {
     if (err) {
       return next(err);
     }
@@ -99,18 +97,18 @@ exports.forgot = (req, res, next) => {
 /**
  * Reset password GET from email token
  */
-exports.validateResetToken = (req, res) => {
+exports.validateResetToken = ({params}, res) => {
   User.findOne({
-    resetPasswordToken: req.params.token,
+    resetPasswordToken: params.token,
     resetPasswordExpires: {
-      $gt: Date.now()
-    }
+      $gt: Date.now(),
+    },
   }, (err, user) => {
     if (err || !user) {
       return res.redirect('/password/reset/invalid');
     }
 
-    res.redirect('/password/reset/' + req.params.token);
+    res.redirect(`/password/reset/${params.token}`);
   });
 };
 
@@ -123,12 +121,12 @@ exports.reset = (req, res, next) => {
   const resetPasswordToken = req.body.token;
 
   async.waterfall([
-    done => {
+    (done) => {
       UserService.hashPassword(newPassword)
-        .then(password => {
+        .then((password) => {
           done(null, password);
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e);
           done(e);
         });
@@ -137,38 +135,37 @@ exports.reset = (req, res, next) => {
       User.findOne({
         resetPasswordToken,
         resetPasswordExpires: {
-          $gt: Date.now()
-        }
+          $gt: Date.now(),
+        },
       }, (err, user) => {
         if (!err && user) {
           user.password = password;
           user.resetPasswordToken = undefined;
           user.resetPasswordExpires = undefined;
 
-          user.save(err => {
+          user.save((err) => {
             if (err) {
               return res.status(422).send({
-                message: errorHandler.getErrorMessage(err)
-              });
-            } else {
-              req.login(user, err => {
-                if (err) {
-                  res.status(400).send(err);
-                } else {
-                  // Remove sensitive data before return authenticated user
-                  user.password = undefined;
-                  user.salt = undefined;
-
-                  res.json(user);
-
-                  done(err, user);
-                }
+                message: errorHandler.getErrorMessage(err),
               });
             }
+            req.login(user, (err) => {
+              if (err) {
+                res.status(400).send(err);
+              } else {
+                // Remove sensitive data before return authenticated user
+                user.password = undefined;
+                user.salt = undefined;
+
+                res.json(user);
+
+                done(err, user);
+              }
+            });
           });
         } else {
           return res.status(400).send({
-            message: 'Password reset token is invalid or has expired.'
+            message: 'Password reset token is invalid or has expired.',
           });
         }
       });
@@ -176,24 +173,24 @@ exports.reset = (req, res, next) => {
     (user, done) => {
       res.render('reset-password-confirm-email', {
         name: user.displayName,
-        appName: config.app.title
+        appName: config.app.title,
       }, (err, emailHTML) => {
         done(err, emailHTML, user);
       });
     },
-    (emailHTML, user, done) => {
+    (emailHTML, {email}, done) => {
       const mailOptions = {
-        to: user.email,
+        to: email,
         from: config.mailer.from,
         subject: 'Your password has been changed',
-        html: emailHTML
+        html: emailHTML,
       };
 
-      smtpTransport.sendMail(mailOptions, err => {
+      smtpTransport.sendMail(mailOptions, (err) => {
         done(err, 'done');
       });
-    }
-  ], err => {
+    },
+  ], (err) => {
     if (err) {
       return next(err);
     }
@@ -215,47 +212,46 @@ exports.changePassword = (req, res) => {
             if (passwordDetails.newPassword === passwordDetails.verifyPassword) {
               user.password = passwordDetails.newPassword;
 
-              user.save(err => {
+              user.save((err) => {
                 if (err) {
                   return res.status(422).send({
-                    message: errorHandler.getErrorMessage(err)
-                  });
-                } else {
-                  req.login(user, err => {
-                    if (err) {
-                      res.status(400).send(err);
-                    } else {
-                      res.send({
-                        message: 'Password changed successfully'
-                      });
-                    }
+                    message: errorHandler.getErrorMessage(err),
                   });
                 }
+                req.login(user, (err) => {
+                  if (err) {
+                    res.status(400).send(err);
+                  } else {
+                    res.send({
+                      message: 'Password changed successfully',
+                    });
+                  }
+                });
               });
             } else {
               res.status(422).send({
-                message: 'Passwords do not match'
+                message: 'Passwords do not match',
               });
             }
           } else {
             res.status(422).send({
-              message: 'Current password is incorrect'
+              message: 'Current password is incorrect',
             });
           }
         } else {
           res.status(400).send({
-            message: 'User is not found'
+            message: 'User is not found',
           });
         }
       });
     } else {
       res.status(422).send({
-        message: 'Please provide a new password'
+        message: 'Please provide a new password',
       });
     }
   } else {
     res.status(401).send({
-      message: 'User is not signed in'
+      message: 'User is not signed in',
     });
   }
 };

@@ -1,4 +1,4 @@
-'use strict';
+
 
 /**
  * Module dependencies.
@@ -22,10 +22,9 @@ let user1,
   originalLogConfig;
 
 describe('Configuration Tests:', () => {
-
   describe('Testing default seedDB', () => {
-    before(done => {
-      User.remove(err => {
+    before((done) => {
+      User.remove((err) => {
         should.not.exist(err);
 
         user1 = {
@@ -35,7 +34,7 @@ describe('Configuration Tests:', () => {
           firstName: 'User',
           lastName: 'Local',
           displayName: 'User Local',
-          roles: ['user']
+          roles: ['user'],
         };
 
         admin1 = {
@@ -45,19 +44,18 @@ describe('Configuration Tests:', () => {
           firstName: 'Admin',
           lastName: 'Local',
           displayName: 'Admin Local',
-          roles: ['user', 'admin']
+          roles: ['user', 'admin'],
         };
 
         userFromSeedConfig = config.seedDB.options.seedUser;
         adminFromSeedConfig = config.seedDB.options.seedAdmin;
 
         return done();
-
       });
     });
 
-    after(done => {
-      User.remove(err => {
+    after((done) => {
+      User.remove((err) => {
         should.not.exist(err);
         return done();
       });
@@ -75,9 +73,9 @@ describe('Configuration Tests:', () => {
       should.exist(adminFromSeedConfig.email);
     });
 
-    it('should not be an admin user to begin with', done => {
+    it('should not be an admin user to begin with', (done) => {
       User.find({
-        username: 'seedadmin'
+        username: 'seedadmin',
       }, (err, users) => {
         should.not.exist(err);
         users.should.be.instanceof(Array).and.have.lengthOf(0);
@@ -85,9 +83,9 @@ describe('Configuration Tests:', () => {
       });
     });
 
-    it('should not be a "regular" user to begin with', done => {
+    it('should not be a "regular" user to begin with', (done) => {
       User.find({
-        username: 'seeduser'
+        username: 'seeduser',
       }, (err, users) => {
         should.not.exist(err);
         users.should.be.instanceof(Array).and.have.lengthOf(0);
@@ -95,28 +93,26 @@ describe('Configuration Tests:', () => {
       });
     });
 
-    it('should seed ONLY the admin user account when NODE_ENV is set to "production"', done => {
-
+    it('should seed ONLY the admin user account when NODE_ENV is set to "production"', (done) => {
       // Save original value
       const nodeEnv = process.env.NODE_ENV;
       // Set node env ro production environment
       process.env.NODE_ENV = 'production';
 
       User.find({
-        username: adminFromSeedConfig.username
+        username: adminFromSeedConfig.username,
       }, (err, users) => {
-
         // There shouldn't be any errors
         should.not.exist(err);
         users.should.be.instanceof(Array).and.have.lengthOf(0);
 
         seed
           .start({
-            logResults: false
+            logResults: false,
           })
           .then(() => {
             User.find({
-              username: adminFromSeedConfig.username
+              username: adminFromSeedConfig.username,
             }, (err, users) => {
               should.not.exist(err);
               users.should.be.instanceof(Array).and.have.lengthOf(1);
@@ -127,7 +123,7 @@ describe('Configuration Tests:', () => {
               // Restore original NODE_ENV environment variable
               process.env.NODE_ENV = nodeEnv;
 
-              User.remove(err => {
+              User.remove((err) => {
                 should.not.exist(err);
                 return done();
               });
@@ -136,28 +132,26 @@ describe('Configuration Tests:', () => {
       });
     });
 
-    it('should seed admin, and "regular" user accounts when NODE_ENV is set to "test"', done => {
-
+    it('should seed admin, and "regular" user accounts when NODE_ENV is set to "test"', (done) => {
       // Save original value
       const nodeEnv = process.env.NODE_ENV;
       // Set node env ro production environment
       process.env.NODE_ENV = 'test';
 
       User.find({
-        username: adminFromSeedConfig.username
+        username: adminFromSeedConfig.username,
       }, (err, users) => {
-
         // There shouldn't be any errors
         should.not.exist(err);
         users.should.be.instanceof(Array).and.have.lengthOf(0);
 
         seed
           .start({
-            logResults: false
+            logResults: false,
           })
           .then(() => {
             User.find({
-              username: adminFromSeedConfig.username
+              username: adminFromSeedConfig.username,
             }, (err, users) => {
               should.not.exist(err);
               users.should.be.instanceof(Array).and.have.lengthOf(1);
@@ -166,9 +160,8 @@ describe('Configuration Tests:', () => {
               _admin.username.should.equal(adminFromSeedConfig.username);
 
               User.find({
-                username: userFromSeedConfig.username
+                username: userFromSeedConfig.username,
               }, (err, users) => {
-
                 should.not.exist(err);
                 users.should.be.instanceof(Array).and.have.lengthOf(1);
 
@@ -178,7 +171,7 @@ describe('Configuration Tests:', () => {
                 // Restore original NODE_ENV environment variable
                 process.env.NODE_ENV = nodeEnv;
 
-                User.remove(err => {
+                User.remove((err) => {
                   should.not.exist(err);
                   return done();
                 });
@@ -188,8 +181,7 @@ describe('Configuration Tests:', () => {
       });
     });
 
-    it('should seed admin, and "regular" user accounts when NODE_ENV is set to "test" when they already exist', done => {
-
+    it('should seed admin, and "regular" user accounts when NODE_ENV is set to "test" when they already exist', (done) => {
       // Save original value
       const nodeEnv = process.env.NODE_ENV;
       // Set node env ro production environment
@@ -198,32 +190,31 @@ describe('Configuration Tests:', () => {
       const _user = new User(userFromSeedConfig);
       const _admin = new User(adminFromSeedConfig);
 
-      _admin.save(err => {
+      _admin.save((err) => {
         // There shouldn't be any errors
         should.not.exist(err);
-        _user.save(err => {
+        _user.save((err) => {
           // There shouldn't be any errors
           should.not.exist(err);
 
           User.find({
             username: {
-              $in: [adminFromSeedConfig.username, userFromSeedConfig.username]
-            }
+              $in: [adminFromSeedConfig.username, userFromSeedConfig.username],
+            },
           }, (err, users) => {
-
             // There shouldn't be any errors
             should.not.exist(err);
             users.should.be.instanceof(Array).and.have.lengthOf(2);
 
             seed
               .start({
-                logResults: false
+                logResults: false,
               })
               .then(() => {
                 User.find({
                   username: {
-                    $in: [adminFromSeedConfig.username, userFromSeedConfig.username]
-                  }
+                    $in: [adminFromSeedConfig.username, userFromSeedConfig.username],
+                  },
                 }, (err, users) => {
                   should.not.exist(err);
                   users.should.be.instanceof(Array).and.have.lengthOf(2);
@@ -231,7 +222,7 @@ describe('Configuration Tests:', () => {
                   // Restore original NODE_ENV environment variable
                   process.env.NODE_ENV = nodeEnv;
 
-                  User.remove(err => {
+                  User.remove((err) => {
                     should.not.exist(err);
                     return done();
                   });
@@ -242,17 +233,15 @@ describe('Configuration Tests:', () => {
       });
     });
 
-    it('should ONLY seed admin user account when NODE_ENV is set to "production" with custom admin', done => {
-
+    it('should ONLY seed admin user account when NODE_ENV is set to "production" with custom admin', (done) => {
       // Save original value
       const nodeEnv = process.env.NODE_ENV;
       // Set node env ro production environment
       process.env.NODE_ENV = 'production';
 
       User.find({
-        username: admin1.username
+        username: admin1.username,
       }, (err, users) => {
-
         // There shouldn't be any errors
         should.not.exist(err);
         users.should.be.instanceof(Array).and.have.lengthOf(0);
@@ -260,11 +249,11 @@ describe('Configuration Tests:', () => {
         seed
           .start({
             logResults: false,
-            seedAdmin: admin1
+            seedAdmin: admin1,
           })
           .then(() => {
             User.find({
-              username: admin1.username
+              username: admin1.username,
             }, (err, users) => {
               should.not.exist(err);
               users.should.be.instanceof(Array).and.have.lengthOf(1);
@@ -275,7 +264,7 @@ describe('Configuration Tests:', () => {
               // Restore original NODE_ENV environment variable
               process.env.NODE_ENV = nodeEnv;
 
-              User.remove(err => {
+              User.remove((err) => {
                 should.not.exist(err);
                 return done();
               });
@@ -284,17 +273,15 @@ describe('Configuration Tests:', () => {
       });
     });
 
-    it('should seed admin, and "regular" user accounts when NODE_ENV is set to "test" with custom options', done => {
-
+    it('should seed admin, and "regular" user accounts when NODE_ENV is set to "test" with custom options', (done) => {
       // Save original value
       const nodeEnv = process.env.NODE_ENV;
       // Set node env ro production environment
       process.env.NODE_ENV = 'test';
 
       User.find({
-        username: admin1.username
+        username: admin1.username,
       }, (err, users) => {
-
         // There shouldn't be any errors
         should.not.exist(err);
         users.should.be.instanceof(Array).and.have.lengthOf(0);
@@ -303,11 +290,11 @@ describe('Configuration Tests:', () => {
           .start({
             logResults: false,
             seedAdmin: admin1,
-            seedUser: user1
+            seedUser: user1,
           })
           .then(() => {
             User.find({
-              username: admin1.username
+              username: admin1.username,
             }, (err, users) => {
               should.not.exist(err);
               users.should.be.instanceof(Array).and.have.lengthOf(1);
@@ -316,9 +303,8 @@ describe('Configuration Tests:', () => {
               _admin.username.should.equal(admin1.username);
 
               User.find({
-                username: user1.username
+                username: user1.username,
               }, (err, users) => {
-
                 should.not.exist(err);
                 users.should.be.instanceof(Array).and.have.lengthOf(1);
 
@@ -328,7 +314,7 @@ describe('Configuration Tests:', () => {
                 // Restore original NODE_ENV environment variable
                 process.env.NODE_ENV = nodeEnv;
 
-                User.remove(err => {
+                User.remove((err) => {
                   should.not.exist(err);
                   return done();
                 });
@@ -338,8 +324,7 @@ describe('Configuration Tests:', () => {
       });
     });
 
-    it('should NOT seed admin user account if it already exists when NODE_ENV is set to "production"', done => {
-
+    it('should NOT seed admin user account if it already exists when NODE_ENV is set to "production"', (done) => {
       // Save original value
       const nodeEnv = process.env.NODE_ENV;
       // Set node env ro production environment
@@ -354,11 +339,11 @@ describe('Configuration Tests:', () => {
 
         seed
           .start({
-            logResults: false
+            logResults: false,
           })
           .then(() => {
             // we don't ever expect to make it here but we don't want to timeout
-            User.remove(err => {
+            User.remove((err) => {
               should.not.exist(err);
               // force this test to fail since we should never be here
               should.exist(undefined);
@@ -368,14 +353,14 @@ describe('Configuration Tests:', () => {
               return done();
             });
           })
-          .catch(err => {
+          .catch((err) => {
             should.exist(err);
-            err.message.should.equal('Failed due to local account already exists: ' + adminFromSeedConfig.username);
+            err.message.should.equal(`Failed due to local account already exists: ${adminFromSeedConfig.username}`);
 
             // Restore original NODE_ENV environment variable
             process.env.NODE_ENV = nodeEnv;
 
-            User.remove(removeErr => {
+            User.remove((removeErr) => {
               should.not.exist(removeErr);
 
               return done();
@@ -384,8 +369,7 @@ describe('Configuration Tests:', () => {
       });
     });
 
-    it('should NOT seed "regular" user account if missing email when NODE_ENV set to "test"', done => {
-
+    it('should NOT seed "regular" user account if missing email when NODE_ENV set to "test"', (done) => {
       // Save original value
       const nodeEnv = process.env.NODE_ENV;
       // Set node env ro test environment
@@ -397,7 +381,7 @@ describe('Configuration Tests:', () => {
       seed
         .start({
           logResults: false,
-          seedUser: _user
+          seedUser: _user,
         })
         .then(() => {
           // we don't ever expect to make it here but we don't want to timeout
@@ -410,14 +394,14 @@ describe('Configuration Tests:', () => {
             return done();
           });
         })
-        .catch(err => {
+        .catch((err) => {
           should.exist(err);
-          err.message.should.equal('Failed to add local ' + user1.username);
+          err.message.should.equal(`Failed to add local ${user1.username}`);
 
           // Restore original NODE_ENV environment variable
           process.env.NODE_ENV = nodeEnv;
 
-          User.remove(removeErr => {
+          User.remove((removeErr) => {
             should.not.exist(removeErr);
 
             return done();
@@ -427,9 +411,9 @@ describe('Configuration Tests:', () => {
   });
 
   describe('Testing Session Secret Configuration', () => {
-    it('should warn if using default session secret when running in production', done => {
+    it('should warn if using default session secret when running in production', (done) => {
       const conf = {
-        sessionSecret: 'MEAN'
+        sessionSecret: 'MEAN',
       };
       // set env to production for this test
       process.env.NODE_ENV = 'production';
@@ -441,7 +425,7 @@ describe('Configuration Tests:', () => {
 
     it('should accept non-default session secret when running in production', () => {
       const conf = {
-        sessionSecret: 'super amazing secret'
+        sessionSecret: 'super amazing secret',
       };
       // set env to production for this test
       process.env.NODE_ENV = 'production';
@@ -452,7 +436,7 @@ describe('Configuration Tests:', () => {
 
     it('should accept default session secret when running in development', () => {
       const conf = {
-        sessionSecret: 'MEAN'
+        sessionSecret: 'MEAN',
       };
       // set env to development for this test
       process.env.NODE_ENV = 'development';
@@ -463,14 +447,13 @@ describe('Configuration Tests:', () => {
 
     it('should accept default session secret when running in test', () => {
       const conf = {
-        sessionSecret: 'MEAN'
+        sessionSecret: 'MEAN',
       };
       config.utils.validateSessionSecret(conf, true).should.equal(true);
     });
   });
 
   describe('Testing Logger Configuration', () => {
-
     beforeEach(() => {
       originalLogConfig = _.clone(config.log, true);
       mock();
@@ -482,9 +465,8 @@ describe('Configuration Tests:', () => {
     });
 
     it('should retrieve the log format from the logger configuration', () => {
-
       config.log = {
-        format: 'tiny'
+        format: 'tiny',
       };
 
       const format = logger.getLogFormat();
@@ -492,12 +474,10 @@ describe('Configuration Tests:', () => {
     });
 
     it('should retrieve the log options from the logger configuration for a valid stream object', () => {
-
       const options = logger.getMorganOptions();
 
       options.should.be.instanceof(Object);
       options.should.have.property('stream');
-
     });
 
     it('should verify that a file logger object was created using the logger configuration', () => {
@@ -507,22 +487,21 @@ describe('Configuration Tests:', () => {
       config.log = {
         fileLogger: {
           directoryPath: _dir,
-          fileName: _filename
-        }
+          fileName: _filename,
+        },
       };
 
       const fileTransport = logger.getLogOptions(config);
       fileTransport.should.be.instanceof(Object);
-      fileTransport.filename.should.equal(_dir + '/' + _filename);
+      fileTransport.filename.should.equal(`${_dir}/${_filename}`);
     });
 
     it('should use the default log format of "combined" when an invalid format was provided', () => {
-
       const _logger = logger;
 
       // manually set the config log format to be invalid
       config.log = {
-        format: '_some_invalid_format_'
+        format: '_some_invalid_format_',
       };
 
       const format = _logger.getLogFormat();
@@ -530,16 +509,15 @@ describe('Configuration Tests:', () => {
     });
 
     it('should not create a file transport object if critical options are missing: filename', () => {
-
       // manually set the config stream fileName option to an empty string
       config.log = {
         format: 'combined',
         options: {
           stream: {
             directoryPath: process.cwd(),
-            fileName: ''
-          }
-        }
+            fileName: '',
+          },
+        },
       };
 
       const fileTransport = logger.getLogOptions(config);
@@ -547,21 +525,19 @@ describe('Configuration Tests:', () => {
     });
 
     it('should not create a file transport object if critical options are missing: directory', () => {
-
       // manually set the config stream fileName option to an empty string
       config.log = {
         format: 'combined',
         options: {
           stream: {
             directoryPath: '',
-            fileName: 'app.log'
-          }
-        }
+            fileName: 'app.log',
+          },
+        },
       };
 
       const fileTransport = logger.getLogOptions(config);
       fileTransport.should.be.false();
     });
   });
-
 });

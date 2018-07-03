@@ -2,6 +2,7 @@
  * Module dependencies
  */
 const path = require('path');
+
 const orm = require(path.resolve('./lib/services/sequelize'));
 const errorHandler = require(path.resolve('./modules/core/controllers/errors.server.controller'));
 
@@ -19,21 +20,19 @@ exports.read = (req, res) => {
  */
 exports.create = (req, res) => {
   if (!req.user || !req.user.username) {
-    return res.status(404).send({
-      message: 'User not defined'
+    res.status(404).send({
+      message: 'User not defined',
     });
+  } else {
+    const newTask = req.body;
+    newTask.user = req.user.username;
+
+    orm.Task.create(newTask)
+      .then(task => res.status(201).send(task))
+      .catch(err => res.status(422).send({
+        message: errorHandler.getErrorMessage(err),
+      }));
   }
-
-  const task = req.body;
-  task.user = req.user.username;
-
-  orm.Task.create(task).then(task => {
-    res.status(200).send(task);
-  }).catch(err => {
-    res.status(422).send({
-      message: errorHandler.getErrorMessage(err)
-    });
-  });
 };
 
 /**
@@ -46,16 +45,16 @@ exports.update = (req, res) => {
 
   orm.Task.update({
     description: task.description,
-    title: task.title
+    title: task.title,
   }, {
     where: {
-      id: task.id
-    }
+      id: task.id,
+    },
   }).then(() => {
     res.status(200).send(req.body); // TODO: Do not send the body but the task from db or nothing
-  }).catch(err => {
+  }).catch((err) => {
     res.status(422).send({
-      message: errorHandler.getErrorMessage(err)
+      message: errorHandler.getErrorMessage(err),
     });
   });
 };
@@ -64,17 +63,17 @@ exports.update = (req, res) => {
  * Delete a task
  */
 exports.delete = (req, res) => {
-  const task = req.task;
+  const taskId = req.task.id;
 
   orm.Task.destroy({
     where: {
-      id: task.id
-    }
-  }).then(task => {
+      id: taskId,
+    },
+  }).then((task) => {
     res.status(200).send(task);
-  }).catch(err => {
+  }).catch((err) => {
     res.status(422).send({
-      message: errorHandler.getErrorMessage(err)
+      message: errorHandler.getErrorMessage(err),
     });
   });
 };
@@ -83,11 +82,11 @@ exports.delete = (req, res) => {
  * List of Tasks
  */
 exports.list = (req, res) => {
-  orm.Task.findAll().then(tasks => {
+  orm.Task.findAll().then((tasks) => {
     res.status(200).send(tasks);
-  }).catch(err => {
+  }).catch((err) => {
     res.status(422).send({
-      message: errorHandler.getErrorMessage(err)
+      message: errorHandler.getErrorMessage(err),
     });
   });
 };
@@ -97,22 +96,22 @@ exports.list = (req, res) => {
  */
 exports.userList = (req, res) => {
   if (!req.user || !req.user.username) {
-    return res.status(404).send({
-      message: 'User not defined'
+    res.status(404).send({
+      message: 'User not defined',
+    });
+  } else {
+    orm.Task.findAll({
+      where: {
+        user: req.user.username,
+      },
+    }).then((tasks) => {
+      res.status(200).send(tasks);
+    }).catch((err) => {
+      res.status(422).send({
+        message: errorHandler.getErrorMessage(err),
+      });
     });
   }
-
-  orm.Task.findAll({
-    where: {
-      user: req.user.username
-    }
-  }).then(tasks => {
-    res.status(200).send(tasks);
-  }).catch(err => {
-    res.status(422).send({
-      message: errorHandler.getErrorMessage(err)
-    });
-  });
 };
 
 /**
@@ -121,13 +120,14 @@ exports.userList = (req, res) => {
 exports.taskByID = (req, res, next, id) => {
   // TODO Validate id format
 
-  orm.Task.findById(id).then(task => {
+  orm.Task.findById(id).then((task) => {
     if (!task) {
-      return res.status(404).send({
-        message: 'No Task with that identifier has been found'
+      res.status(404).send({
+        message: 'No Task with that identifier has been found',
       });
+    } else {
+      req.task = task;
+      next();
     }
-    req.task = task;
-    next();
   }).catch(err => next(err));
 };

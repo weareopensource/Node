@@ -1,7 +1,6 @@
-'use strict';
+const mongoose = require('mongoose');
 
-const mongoose = require('mongoose'),
-  Schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 // validator = require('validator');
 mongoose.Promise = Promise;
 
@@ -11,101 +10,99 @@ mongoose.Promise = Promise;
 const UserSchema = new Schema({
   sub: {
     type: String,
-    default: ''
+    default: '',
   },
   firstName: {
     type: String,
     trim: true,
-    default: ''
+    default: '',
   },
   lastName: {
     type: String,
     trim: true,
-    default: ''
+    default: '',
   },
   displayName: {
     type: String,
-    trim: true
+    trim: true,
   },
   email: {
     type: String,
     index: {
       unique: true,
-      sparse: true // For this to work on a previously indexed field, the index must be dropped & the application restarted.
+      sparse: true,
     },
     lowercase: true,
     trim: true,
-    default: ''
+    default: '',
   },
   username: {
     type: String,
     required: 'Please fill in a username',
     lowercase: true,
-    trim: true
+    trim: true,
   },
   password: {
     type: String,
-    default: ''
+    default: '',
   },
   salt: {
-    type: String
+    type: String,
   },
   profileImageURL: {
     type: String,
-    default: 'assets/ic_profile.png'
+    default: 'assets/ic_profile.png',
   },
   provider: {
     type: String,
-    required: 'Provider is required'
+    required: 'Provider is required',
   },
   providerData: {},
   additionalProvidersData: {},
   roles: {
     type: [{
       type: String,
-      enum: ['user', 'admin']
+      enum: ['user', 'admin'],
     }],
     default: ['user'],
-    required: 'Please provide at least one role'
+    required: 'Please provide at least one role',
   },
   updated: {
-    type: Date
+    type: Date,
   },
   created: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   /* For reset password */
   resetPasswordToken: {
-    type: String
+    type: String,
   },
   resetPasswordExpires: {
-    type: Date
-  }
+    type: Date,
+  },
 });
 
 /**
  * Create instance method for authenticating user
  */
-UserSchema.methods.authenticate = (password) => {
-  return this.password === this.hashPassword(password);
-};
+UserSchema.methods.authenticate = password => this.password === this.hashPassword(password);
 
 /**
  * Find possible not used username
  */
 UserSchema.statics.findUniqueUsername = (username, suffix, callback) => {
-  const _this = this;
+  const that = this;
   const possibleUsername = username.toLowerCase() + (suffix || '');
 
-  _this.findOne({
-    username: possibleUsername
+  that.findOne({
+    username: possibleUsername,
   }, (err, user) => {
     if (!err) {
       if (!user) {
         callback(possibleUsername);
       } else {
-        return _this.findUniqueUsername(username, (suffix || 0) + 1, callback);
+        return that.findUniqueUsername(username, (suffix || 0) + 1, callback);
       }
     } else {
       callback(null);
@@ -115,9 +112,9 @@ UserSchema.statics.findUniqueUsername = (username, suffix, callback) => {
 
 UserSchema.static('findOneOrCreate', async (condition, doc) => {
   const one = await this.findOne(condition);
-  return one || this.create(doc).then(doc => {
-    console.log('docteur', doc);
-    return doc;
+  return one || this.create(doc).then((document) => {
+    console.log('docteur', document);
+    return document;
   }).catch((err) => {
     console.log(err);
     return Promise.resolve(doc);

@@ -1,4 +1,4 @@
-'use strict';
+
 
 /**
  * Module dependencies
@@ -11,29 +11,29 @@ const path = require('path'),
 /**
  * Show the current user
  */
-exports.read = (req, res) => {
-  res.send(req.model.toObject({ getters: true }));
+exports.read = ({model}, res) => {
+  res.send(model.toObject({ getters: true }));
 };
 
 /**
  * Update a User
  */
-exports.update = (req, res) => {
-  const user = req.model;
+exports.update = ({model, body}, res) => {
+  const user = model;
 
   // For security purposes only merge these parameters
-  user.firstName = req.body.firstName;
-  user.lastName = req.body.lastName;
-  user.displayName = user.firstName + ' ' + user.lastName;
-  user.username = req.body.username;
-  user.roles = req.body.roles;
-  user.email = req.body.email;
-  user.profileImageURL = req.body.profileImageURL;
+  user.firstName = body.firstName;
+  user.lastName = body.lastName;
+  user.displayName = `${user.firstName} ${user.lastName}`;
+  user.username = body.username;
+  user.roles = body.roles;
+  user.email = body.email;
+  user.profileImageURL = body.profileImageURL;
 
-  user.save(err => {
+  user.save((err) => {
     if (err) {
       return res.status(422).send({
-        message: errorHandler.getErrorMessage(err)
+        message: errorHandler.getErrorMessage(err),
       });
     }
 
@@ -44,13 +44,13 @@ exports.update = (req, res) => {
 /**
  * Delete a user
  */
-exports.delete = (req, res) => {
-  const user = req.model;
+exports.delete = ({model}, res) => {
+  const user = model;
 
-  user.remove(err => {
+  user.remove((err) => {
     if (err) {
       return res.status(422).send({
-        message: errorHandler.getErrorMessage(err)
+        message: errorHandler.getErrorMessage(err),
       });
     }
 
@@ -65,7 +65,7 @@ exports.list = (req, res) => {
   User.find({}, '-salt -password -providerData').sort('-created').populate('user', 'displayName').exec((err, users) => {
     if (err) {
       return res.status(422).send({
-        message: errorHandler.getErrorMessage(err)
+        message: errorHandler.getErrorMessage(err),
       });
     }
 
@@ -79,15 +79,15 @@ exports.list = (req, res) => {
 exports.userByID = (req, res, next, id) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).send({
-      message: 'User is invalid'
+      message: 'User is invalid',
     });
   }
 
   User.findById(id, '-salt -password -providerData').exec((err, user) => {
     if (err) {
       return next(err);
-    } else if (!user) {
-      return next(new Error('Failed to load user ' + id));
+    } if (!user) {
+      return next(new Error(`Failed to load user ${id}`));
     }
 
     req.model = user;

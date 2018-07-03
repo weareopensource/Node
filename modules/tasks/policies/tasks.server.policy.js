@@ -13,23 +13,23 @@ exports.invokeRolesPolicies = () => {
     roles: ['user'],
     allows: [{
       resources: '/api/tasks',
-      permissions: '*'
+      permissions: '*',
     }, {
       resources: '/api/tasks/me',
-      permissions: ['get']
+      permissions: ['get'],
     }, {
       resources: '/api/tasks/:taskId',
-      permissions: '*'
-    }]
+      permissions: '*',
+    }],
   }, {
     roles: ['guest'],
     allows: [{
       resources: '/api/tasks',
-      permissions: ['get']
+      permissions: ['get'],
     }, {
       resources: '/api/tasks/:taskId',
-      permissions: ['get']
-    }]
+      permissions: ['get'],
+    }],
   }]);
 };
 
@@ -49,13 +49,12 @@ exports.isAllowed = (req, res, next) => {
     if (err) {
       // An authorization error occurred
       return res.status(500).send('Unexpected authorization error');
-    } else if (isAllowed) {
+    } if (isAllowed) {
       // Access granted! Invoke next middleware
       return next();
-    } else {
-      return res.status(403).json({
-        message: 'User is not authorized'
-      });
     }
+    return res.status(403).json({
+      message: 'User is not authorized',
+    });
   });
 };
