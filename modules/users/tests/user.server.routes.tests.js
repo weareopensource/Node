@@ -16,7 +16,7 @@ let app,
   credentials,
   credentialsEmail,
   user,
-  _user;
+  newUser;
 
 /**
  * User routes tests
@@ -44,7 +44,7 @@ describe('User CRUD tests', () => {
     };
 
     // Create a new user
-    _user = {
+    newUser = {
       firstName: 'Full',
       lastName: 'Name',
       displayName: 'Full Name',
@@ -54,7 +54,7 @@ describe('User CRUD tests', () => {
       provider: 'local',
     };
 
-    user = new User(_user);
+    user = new User(newUser);
 
     // Save a user to the test db and create new article
     user.save((err) => {
@@ -64,20 +64,20 @@ describe('User CRUD tests', () => {
   });
 
   it('should be able to register a new user', (done) => {
-    _user.username = 'register_new_user';
-    _user.email = 'register_new_user_@test.com';
+    newUser.username = 'register_new_user';
+    newUser.email = 'register_new_user_@test.com';
 
     agent.post('/api/auth/signup')
-      .send(_user)
+      .send(newUser)
       .expect(200)
-      .end((signupErr, {body}) => {
+      .end((signupErr, { body }) => {
         // Handle signpu error
         if (signupErr) {
           return done(signupErr);
         }
 
-        body.username.should.equal(_user.username);
-        body.email.should.equal(_user.email);
+        body.username.should.equal(newUser.username);
+        body.email.should.equal(newUser.email);
         // Assert a proper profile image has been set, even if by default
         body.profileImageURL.should.not.be.empty();
         // Assert we have just the default 'user' role
@@ -101,7 +101,7 @@ describe('User CRUD tests', () => {
         // Logout
         agent.get('/api/auth/signout')
           .expect(302)
-          .end((signoutErr, {redirect, text}) => {
+          .end((signoutErr, { redirect, text }) => {
             if (signoutErr) {
               return done(signoutErr);
             }
@@ -135,7 +135,7 @@ describe('User CRUD tests', () => {
         // Logout
         agent.get('/api/auth/signout')
           .expect(302)
-          .end((signoutErr, {redirect, text}) => {
+          .end((signoutErr, { redirect, text }) => {
             if (signoutErr) {
               return done(signoutErr);
             }
@@ -195,7 +195,7 @@ describe('User CRUD tests', () => {
           // Request list of users
           agent.get('/api/users')
             .expect(200)
-            .end((usersGetErr, {body}) => {
+            .end((usersGetErr, { body }) => {
               if (usersGetErr) {
                 return done(usersGetErr);
               }
@@ -226,7 +226,7 @@ describe('User CRUD tests', () => {
           // Get single user information from the database
           agent.get(`/api/users/${user._id}`)
             .expect(200)
-            .end((userInfoErr, {body}) => {
+            .end((userInfoErr, { body }) => {
               if (userInfoErr) {
                 return done(userInfoErr);
               }
@@ -266,7 +266,7 @@ describe('User CRUD tests', () => {
           agent.put(`/api/users/${user._id}`)
             .send(userUpdate)
             .expect(200)
-            .end((userInfoErr, {body}) => {
+            .end((userInfoErr, { body }) => {
               if (userInfoErr) {
                 return done(userInfoErr);
               }
@@ -300,7 +300,7 @@ describe('User CRUD tests', () => {
 
           agent.delete(`/api/users/${user._id}`)
             .expect(200)
-            .end((userInfoErr, {body}) => {
+            .end((userInfoErr, { body }) => {
               if (userInfoErr) {
                 return done(userInfoErr);
               }
@@ -325,7 +325,7 @@ describe('User CRUD tests', () => {
           username: 'some_username_that_doesnt_exist',
         })
         .expect(400)
-        .end((err, {body}) => {
+        .end((err, { body }) => {
           // Handle error
           if (err) {
             return done(err);
@@ -349,7 +349,7 @@ describe('User CRUD tests', () => {
           username: '',
         })
         .expect(422)
-        .end((err, {body}) => {
+        .end((err, { body }) => {
           // Handle error
           if (err) {
             return done(err);
@@ -373,7 +373,7 @@ describe('User CRUD tests', () => {
           username: user.username,
         })
         .expect(400)
-        .end((err, {body}) => {
+        .end((err, { body }) => {
           // Handle error
           if (err) {
             return done(err);
@@ -395,7 +395,7 @@ describe('User CRUD tests', () => {
           username: user.username,
         })
         .expect(400)
-        .end((err, {body}) => {
+        .end((err, { body }) => {
           // Handle error
           if (err) {
             return done(err);
@@ -403,7 +403,7 @@ describe('User CRUD tests', () => {
 
           User.findOne({
             username: user.username.toLowerCase(),
-          }, (err, {resetPasswordToken, resetPasswordExpires}) => {
+          }, (err, { resetPasswordToken, resetPasswordExpires }) => {
             resetPasswordToken.should.not.be.empty();
             should.exist(resetPasswordExpires);
             body.message.should.be.equal('Failure sending email');
@@ -431,13 +431,13 @@ describe('User CRUD tests', () => {
 
           User.findOne({
             username: user.username.toLowerCase(),
-          }, (err, {resetPasswordToken, resetPasswordExpires}) => {
+          }, (err, { resetPasswordToken, resetPasswordExpires }) => {
             resetPasswordToken.should.not.be.empty();
             should.exist(resetPasswordExpires);
 
             agent.get(`/api/auth/reset/${resetPasswordToken}`)
               .expect(302)
-              .end((err, {headers}) => {
+              .end((err, { headers }) => {
                 // Handle error
                 if (err) {
                   return done(err);
@@ -471,7 +471,7 @@ describe('User CRUD tests', () => {
           const invalidToken = 'someTOKEN1234567890';
           agent.get(`/api/auth/reset/${invalidToken}`)
             .expect(302)
-            .end((err, {headers}) => {
+            .end((err, { headers }) => {
               // Handle error
               if (err) {
                 return done(err);
@@ -503,7 +503,7 @@ describe('User CRUD tests', () => {
             currentPassword: credentials.password,
           })
           .expect(200)
-          .end((err, {body}) => {
+          .end((err, { body }) => {
             if (err) {
               return done(err);
             }
@@ -532,7 +532,7 @@ describe('User CRUD tests', () => {
             currentPassword: credentials.password,
           })
           .expect(422)
-          .end((err, {body}) => {
+          .end((err, { body }) => {
             if (err) {
               return done(err);
             }
@@ -561,7 +561,7 @@ describe('User CRUD tests', () => {
             currentPassword: 'some_wrong_passwordAa$',
           })
           .expect(422)
-          .end((err, {body}) => {
+          .end((err, { body }) => {
             if (err) {
               return done(err);
             }
@@ -590,7 +590,7 @@ describe('User CRUD tests', () => {
             currentPassword: credentials.password,
           })
           .expect(422)
-          .end((err, {body}) => {
+          .end((err, { body }) => {
             if (err) {
               return done(err);
             }
@@ -610,7 +610,7 @@ describe('User CRUD tests', () => {
         currentPassword: credentials.password,
       })
       .expect(401)
-      .end((err, {body}) => {
+      .end((err, { body }) => {
         if (err) {
           return done(err);
         }
@@ -633,7 +633,7 @@ describe('User CRUD tests', () => {
         // Get own user details
         agent.get('/api/users/me')
           .expect(200)
-          .end((err, {body}) => {
+          .end((err, { body }) => {
             if (err) {
               return done(err);
             }
@@ -652,7 +652,7 @@ describe('User CRUD tests', () => {
     // Get own user details
     agent.get('/api/users/me')
       .expect(200)
-      .end((err, {body}) => {
+      .end((err, { body }) => {
         if (err) {
           return done(err);
         }
@@ -684,7 +684,7 @@ describe('User CRUD tests', () => {
           agent.put('/api/users')
             .send(userUpdate)
             .expect(200)
-            .end((userInfoErr, {body}) => {
+            .end((userInfoErr, { body }) => {
               if (userInfoErr) {
                 return done(userInfoErr);
               }
@@ -726,7 +726,7 @@ describe('User CRUD tests', () => {
           agent.put('/api/users')
             .send(userUpdate)
             .expect(200)
-            .end((userInfoErr, {body}) => {
+            .end((userInfoErr, { body }) => {
               if (userInfoErr) {
                 return done(userInfoErr);
               }
@@ -746,7 +746,7 @@ describe('User CRUD tests', () => {
   });
 
   it('should not be able to update own user details with existing username', (done) => {
-    const _user2 = _user;
+    const _user2 = newUser;
 
     _user2.username = 'user2_username';
     _user2.email = 'user2_email@test.com';
@@ -782,7 +782,7 @@ describe('User CRUD tests', () => {
           agent.put('/api/users')
             .send(userUpdate)
             .expect(422)
-            .end((userInfoErr, {body}) => {
+            .end((userInfoErr, { body }) => {
               if (userInfoErr) {
                 return done(userInfoErr);
               }
@@ -797,7 +797,7 @@ describe('User CRUD tests', () => {
   });
 
   it('should not be able to update own user details with existing email', (done) => {
-    const _user2 = _user;
+    const _user2 = newUser;
 
     _user2.username = 'user2_username';
     _user2.email = 'user2_email@test.com';
@@ -833,7 +833,7 @@ describe('User CRUD tests', () => {
           agent.put('/api/users')
             .send(userUpdate)
             .expect(422)
-            .end((userInfoErr, {body}) => {
+            .end((userInfoErr, { body }) => {
               if (userInfoErr) {
                 return done(userInfoErr);
               }
@@ -909,7 +909,7 @@ describe('User CRUD tests', () => {
       agent.put('/api/users')
         .send(userUpdate)
         .expect(401)
-        .end((userInfoErr, {body}) => {
+        .end((userInfoErr, { body }) => {
           if (userInfoErr) {
             return done(userInfoErr);
           }
@@ -926,7 +926,7 @@ describe('User CRUD tests', () => {
     agent.post('/api/users/picture')
       .send({})
       .expect(401)
-      .end((userInfoErr, {body}) => {
+      .end((userInfoErr, { body }) => {
         if (userInfoErr) {
           return done(userInfoErr);
         }
@@ -951,7 +951,7 @@ describe('User CRUD tests', () => {
         agent.post('/api/users/picture')
           .attach('newProfilePicture', './modules/users/client/img/profile/default.png')
           .expect(200)
-          .end((userInfoErr, {body}) => {
+          .end((userInfoErr, { body }) => {
             // Handle change profile picture error
             if (userInfoErr) {
               return done(userInfoErr);

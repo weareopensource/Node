@@ -9,7 +9,7 @@ const _ = require('lodash'),
   multer = require('multer'),
   config = require(path.resolve('./config')),
   User = mongoose.model('User'),
-  validator = require('validator'),
+  validatorLib = require('validator'),
   jwt = require('jsonwebtoken'),
   configuration = require(path.resolve('./config')),
   IdTokenVerifier = require('idtoken-verifier'),
@@ -37,19 +37,20 @@ exports.update = (req, res) => {
     user.displayName = `${user.firstName} ${user.lastName}`;
     User.findByIdAndUpdate(user.id, user, (err) => {
       if (err) {
-        return res.status(422)
+        res.status(422)
           .send({
             message: errorHandler.getErrorMessage(err),
           });
+      } else {
+        req.login(user, (errLogin) => {
+          if (errLogin) {
+            res.status(400)
+              .send(errLogin);
+          } else {
+            res.json(user);
+          }
+        });
       }
-      req.login(user, (err) => {
-        if (err) {
-          res.status(400)
-            .send(err);
-        } else {
-          res.json(user);
-        }
-      });
     });
   } else {
     res.status(401)
@@ -71,27 +72,6 @@ exports.changeProfilePicture = (req, res) => {
   multerConfig.fileFilter = imageFileFilter;
   const upload = multer(multerConfig)
     .single('newProfilePicture');
-
-  if (user) {
-    existingImageUrl = user.profileImageURL;
-    uploadImage()
-      .then(updateUser)
-      .then(deleteOldImage)
-      .then(login)
-      .then(() => {
-        res.json(user);
-      })
-      .catch((err) => {
-        res.status(422)
-          .send(err);
-      });
-  } else {
-    res.status(401)
-      .send({
-        message: 'User is not signed in',
-      });
-  }
-
   function uploadImage() {
     return new Promise((resolve, reject) => {
       upload(req, res, (uploadError) => {
@@ -149,6 +129,26 @@ exports.changeProfilePicture = (req, res) => {
       });
     });
   }
+
+  if (user) {
+    existingImageUrl = user.profileImageURL;
+    uploadImage()
+      .then(updateUser)
+      .then(deleteOldImage)
+      .then(login)
+      .then(() => {
+        res.json(user);
+      })
+      .catch((err) => {
+        res.status(422)
+          .send(err);
+      });
+  } else {
+    res.status(401)
+      .send({
+        message: 'User is not signed in',
+      });
+  }
 };
 
 /**
@@ -161,14 +161,14 @@ exports.me = ({ user }, res) => {
   if (user) {
     safeUserObject = {
       id: user.id,
-      provider: validator.escape(user.provider),
-      username: validator.escape(user.username),
+      provider: validatorLib.escape(user.provider),
+      username: validatorLib.escape(user.username),
       created: user.created.toString(),
       roles: user.roles,
       profileImageURL: user.profileImageURL,
-      email: validator.escape(user.email),
-      lastName: validator.escape(user.lastName),
-      firstName: validator.escape(user.firstName),
+      email: validatorLib.escape(user.email),
+      lastName: validatorLib.escape(user.lastName),
+      firstName: validatorLib.escape(user.firstName),
       additionalProvidersData: user.additionalProvidersData,
     };
   }
@@ -200,9 +200,9 @@ async function verifyGoogleToken(idToken) {
 
 const microsoftValidator = rp.get(config.microsoft.discovery)
   .then(res => JSON.parse(res))
-  .then(({ jwks_uri }) => new IdTokenVerifier({
+  .then(({ jwks_uri: jwksUri }) => new IdTokenVerifier({
     issuer: config.microsoft.issuer,
-    jwksURI: jwks_uri,
+    jwksURI: jwksUri,
     audience: config.microsoft.clientId,
   }));
 
@@ -213,7 +213,7 @@ async function verifyMicrosoftToken(idToken) {
       .payload.nonce, (err, {
       sub,
       name,
-      preferred_username,
+      preferred_username: preferredUsername,
     }) => {
       if (err) {
         return reject(err);
@@ -221,7 +221,7 @@ async function verifyMicrosoftToken(idToken) {
       return resolve({
         sub,
         username: name,
-        email: preferred_username,
+        email: preferredUsername,
         provider: 'microsoft',
       });
     });
@@ -246,7 +246,7 @@ exports.addOAuthProviderUserProfile = ({ body }, res) => {
         .catch(() => res.sendStatus(304))
         .then((user) => {
           const token = jwt.sign({ userId: user.id }, configuration.jwt.secret);
-          return res.status(200)
+          res.status(200)
             .cookie('TOKEN', token, { httpOnly: true })
             .json({ user: user.toObject({ getters: true }), tokenExpiresIn: Date.now() + (3600 * 24 * 1000) });
         });
@@ -256,10 +256,12 @@ exports.addOAuthProviderUserProfile = ({ body }, res) => {
         .catch(() => res.sendStatus(304))
         .then((user) => {
           const token = jwt.sign({ userId: user.id }, configuration.jwt.secret);
-          return res.status(200)
+          res.status(200)
             .cookie('TOKEN', token, { httpOnly: true })
             .json({ user: user.toObject({ getters: true }), tokenExpiresIn: Date.now() + (3600 * 24 * 1000) });
         });
       break;
+    default:
+      res.status(404).send('No Oauth found'); // TODO: Change this into something else
   }
 };

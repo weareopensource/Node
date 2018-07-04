@@ -81,7 +81,7 @@ exports.token = async ({ body }, res, next) => {
 
     res.status(200).cookies('TOKEN', token);
   } catch (err) {
-    return next(new ApiError(err.message));
+    next(new ApiError(err.message));
   }
 };
 
@@ -102,19 +102,19 @@ exports.oauthCallback = (req, res, next) => {
   // info.redirect_to contains intended redirect path
   passport.authenticate(strategy, (err, user, { redirectTo }) => {
     if (err) {
-      return res.redirect(`/authentication/signin?err=${encodeURIComponent(errorHandler.getErrorMessage(err))}`);
+      res.redirect(`/authentication/signin?err=${encodeURIComponent(errorHandler.getErrorMessage(err))}`);
     }
     if (!user) {
-      return res.redirect('/authentication/signin');
+      res.redirect('/authentication/signin');
+    } else {
+      req.login(user, (errLogin) => {
+        if (errLogin) {
+          return res.redirect('/authentication/signin');
+        }
+
+        return res.redirect(redirectTo || '/');
+      });
     }
-
-    req.login(user, (err) => {
-      if (err) {
-        return res.redirect('/authentication/signin');
-      }
-
-      return res.redirect(redirectTo || '/');
-    });
   })(req, res, next);
 };
 
@@ -150,7 +150,7 @@ exports.saveOAuthUserProfile = (req, providerUserProfile, done) => {
 
     User.findOne(searchQuery, (err, user) => {
       if (err) {
-        return done(err);
+        done(err);
       } if (!user) {
         const possibleUsername = providerUserProfile.username || ((providerUserProfile.email) ? providerUserProfile.email.split('@')[0] : '');
 
@@ -171,10 +171,10 @@ exports.saveOAuthUserProfile = (req, providerUserProfile, done) => {
           user.email = providerUserProfile.email;
 
           // And save the user
-          user.save(err => done(err, user, info));
+          user.save(errSave => done(errSave, user, info));
         });
       } else {
-        return done(err, user, info);
+        done(err, user, info);
       }
     });
   } else {
@@ -196,7 +196,7 @@ exports.saveOAuthUserProfile = (req, providerUserProfile, done) => {
       // And save the user
       user.save(err => done(err, user, info));
     } else {
-      return done(new Error('User is already connected using this provider'), user);
+      done(new Error('User is already connected using this provider'), user);
     }
   }
 };
@@ -209,11 +209,11 @@ exports.removeOAuthProvider = (req, res) => {
   const provider = req.query.provider;
 
   if (!user) {
-    return res.status(401).json({
+    res.status(401).json({
       message: 'User is not authenticated',
     });
   } if (!provider) {
-    return res.status(400).send();
+    res.status(400).send();
   }
 
   // Delete the additional provider
@@ -226,15 +226,17 @@ exports.removeOAuthProvider = (req, res) => {
 
   user.save((err) => {
     if (err) {
-      return res.status(422).send({
+      res.status(422).send({
         message: errorHandler.getErrorMessage(err),
       });
+    } else {
+      req.login(user, (errLogin) => {
+        if (errLogin) {
+          res.status(400).send(errLogin);
+        } else {
+          res.json(user);
+        }
+      });
     }
-    req.login(user, (err) => {
-      if (err) {
-        return res.status(400).send(err);
-      }
-      return res.json(user);
-    });
   });
 };

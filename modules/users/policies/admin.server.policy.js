@@ -3,16 +3,16 @@
 /**
  * Module dependencies
  */
-let acl = require('acl');
+let Acl = require('acl');
 
 // Using the memory backend
-acl = new acl(new acl.memoryBackend());
+Acl = new Acl(new Acl.memoryBackend());
 
 /**
  * Invoke Admin Permissions
  */
 exports.invokeRolesPolicies = () => {
-  acl.allow([{
+  Acl.allow([{
     roles: ['admin'],
     allows: [{
       resources: '/api/users',
@@ -27,11 +27,13 @@ exports.invokeRolesPolicies = () => {
 /**
  * Check If Admin Policy Allows
  */
-exports.isAllowed = ({user, route, method, body}, res, next) => {
+exports.isAllowed = ({
+  user, route, method, body,
+}, res, next) => {
   const roles = (user) ? user.roles : ['guest'];
 
   // Check for user roles
-  acl.areAnyRolesAllowed(roles, route.path, method.toLowerCase(), (err, isAllowed) => {
+  Acl.areAnyRolesAllowed(roles, route.path, method.toLowerCase(), (err, isAllowed) => {
     if (err) {
       // An authorization error occurred
       return res.status(500).send('Unexpected authorization error');

@@ -81,19 +81,18 @@ const validateDomainIsSet = function (config) {
  * because it requires certs and key files to be available
  */
 const validateSecureMode = function (config) {
-  if (!config.secure || config.secure.ssl !== true) {
-    return true;
+  if (!(!config.secure || config.secure.ssl !== true)) {
+    const privateKey = fs.existsSync(path.resolve(config.secure.privateKey));
+    const certificate = fs.existsSync(path.resolve(config.secure.certificate));
+    if (!privateKey || !certificate) {
+      console.log(chalk.red('+ Error: Certificate file or key file is missing, falling back to non-SSL mode'));
+      console.log(chalk.red('  To create them, simply run the following from your shell: sh ./scripts/generate-ssl-certs.sh'));
+      console.log();
+      config.secure.ssl = false;
+    }
+    return false;
   }
-
-  const privateKey = fs.existsSync(path.resolve(config.secure.privateKey));
-  const certificate = fs.existsSync(path.resolve(config.secure.certificate));
-
-  if (!privateKey || !certificate) {
-    console.log(chalk.red('+ Error: Certificate file or key file is missing, falling back to non-SSL mode'));
-    console.log(chalk.red('  To create them, simply run the following from your shell: sh ./scripts/generate-ssl-certs.sh'));
-    console.log();
-    config.secure.ssl = false;
-  }
+  return true;
 };
 
 /**

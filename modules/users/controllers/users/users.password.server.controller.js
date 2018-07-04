@@ -19,7 +19,7 @@ const smtpTransport = nodemailer.createTransport(config.mailer.options);
 /**
  * Forgot for reset password (forgot POST)
  */
-exports.forgot = ({body}, res, next) => {
+exports.forgot = ({ body }, res, next) => {
   async.waterfall([
     (done) => {
       if (body.email) {
@@ -66,7 +66,7 @@ exports.forgot = ({body}, res, next) => {
         done(err, emailHTML, user);
       });
     },
-    (emailHTML, {email}, done) => {
+    (emailHTML, { email }, done) => {
       const mailOptions = {
         to: email,
         from: config.mailer.from,
@@ -97,7 +97,7 @@ exports.forgot = ({body}, res, next) => {
 /**
  * Reset password GET from email token
  */
-exports.validateResetToken = ({params}, res) => {
+exports.validateResetToken = ({ params }, res) => {
   User.findOne({
     resetPasswordToken: params.token,
     resetPasswordExpires: {
@@ -178,7 +178,7 @@ exports.reset = (req, res, next) => {
         done(err, emailHTML, user);
       });
     },
-    (emailHTML, {email}, done) => {
+    (emailHTML, { email }, done) => {
       const mailOptions = {
         to: email,
         from: config.mailer.from,

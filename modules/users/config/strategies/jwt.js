@@ -26,7 +26,7 @@ async function verifyCallback(jwtPayload, done) {
   }
 }
 
-module.exports = ({jwt}) => {
+module.exports = ({ jwt }) => {
   const opts = {};
   opts.jwtFromRequest = cookieExtractor;
   opts.secretOrKey = jwt.secret;

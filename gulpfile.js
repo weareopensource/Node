@@ -185,7 +185,7 @@ gulp.task('test', (done) => {
 // Bootstrap the server instance
 // Common use case is to run API tests on real instantiated models and db
 gulp.task('server:bootstrap', (done) => {
-  const app = require('./config/lib/app');
+  const app = require('./lib/app');
   app.start().then(() => {
     done();
   });

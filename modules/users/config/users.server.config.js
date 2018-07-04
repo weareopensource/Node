@@ -17,7 +17,7 @@ const UserService = require('../services/user.service');
 module.exports = (app) => {
   // Serialize identifiable user's information to the session
   // so that it can be pulled back in another request
-  passport.serializeUser(({id}, done) => {
+  passport.serializeUser(({ id }, done) => {
     done(null, id);
   });
 

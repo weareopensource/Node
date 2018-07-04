@@ -1,11 +1,10 @@
-
-
 /**
  * Module dependencies
  */
+const passport = require('passport');
 const adminPolicy = require('../policies/admin.server.policy'),
-  admin = require('../controllers/admin.server.controller'),
-  passport = require('passport');
+  admin = require('../controllers/admin.server.controller');
+
 
 module.exports = (app) => {
   /* eslint global-require: 0 */

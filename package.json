@@ -78,8 +78,11 @@
     "request": "^2.87.0",
     "request-promise": "^4.2.2",
     "sequelize": "^4.37.10",
+    "semver": "~5.5.0",
     "serve-favicon": "^2.5.0",
+    "should": "~13.2.1",
     "socket.io": "^2.1.1",
+    "supertest": "^3.1.0",
     "swig": "^1.4.2",
     "validator": "~10.3.0",
     "winston": "^2.4.2"
@@ -106,10 +109,7 @@
     "istanbul": "~0.4.2",
     "lcov-result-merger": "~3.0.0",
     "mock-fs": "~4.5.0",
-    "run-sequence": "~2.2.1",
-    "semver": "~5.5.0",
-    "should": "~13.2.1",
-    "supertest": "^3.1.0"
+    "run-sequence": "~2.2.1"
   },
   "ava": {
     "require": [
