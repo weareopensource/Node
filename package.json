@@ -20,13 +20,14 @@
     "reinstall": "npm cache clean && npm run clean && npm install",
     "start": "cross-env NODE_ENV=development node server.js",
     "start:debug": "cross-env NODE_ENV=development nodemon --inspect server.js",
-    "prod": "cross-env NODE_ENV=production node server.js ",
+    "prod": "cross-env NODE_ENV=production pm2 start server.js --name=meanie",
     "test": "gulp test",
     "ava": "cross-env NODE_ENV=development node --harmony server.js & sleep 5 && ava",
     "test:server": "gulp test:server",
     "test:server:watch": "gulp test:server:watch",
     "test:coverage": "gulp test:coverage",
-    "generate-ssl-certs": "lib/scripts/generate-ssl-certs.sh"
+    "generate-ssl-certs": "lib/scripts/generate-ssl-certs.sh",
+    "lint": "gulp lint"
   },
   "dependencies": {
     "acl": "~0.4.9",
@@ -73,7 +74,8 @@
     "passport-jwt": "^4.0.0",
     "passport-linkedin": "~1.0.0",
     "passport-local": "~1.0.0",
-    "pg": "^7.4.3",
+    "pg": "7.4.3",
+    "pm2": "^2.10.4",
     "pug": "^2.0.3",
     "request": "^2.87.0",
     "request-promise": "^4.2.2",
