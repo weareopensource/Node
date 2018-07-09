@@ -1,21 +1,20 @@
-/* eslint-disable no-useless-escape */
-
-
 /**
  * Module dependencies.
  */
-const _ = require('lodash'),
-  chalk = require('chalk'),
-  glob = require('glob'),
-  fs = require('fs'),
-  path = require('path'),
-  objectPath = require('object-path');
+const _ = require('lodash');
+
+const chalk = require('chalk');
+const glob = require('glob');
+const fs = require('fs');
+const path = require('path');
+const objectPath = require('object-path');
 
 /**
  * Get files by glob patterns
  */
-const getGlobbedPaths = function (globPatterns, excludes) {
+const getGlobbedPaths = (globPatterns, excludes) => {
   // URL paths regex
+  /* eslint no-useless-escape:0 */
   const urlRegex = new RegExp('^(?:[a-z]+:)?\/\/', 'i');
 
   // The output array
@@ -70,7 +69,7 @@ const getGlobbedPaths = function (globPatterns, excludes) {
 
 /** Validate config.domain is set
  */
-const validateDomainIsSet = function (config) {
+const validateDomainIsSet = (config) => {
   if (!config.domain) {
     console.log(chalk.red('+ Important warning: config.domain is empty. It should be set to the fully qualified domain of the app.'));
   }
@@ -80,7 +79,7 @@ const validateDomainIsSet = function (config) {
  * Validate Secure=true parameter can actually be turned on
  * because it requires certs and key files to be available
  */
-const validateSecureMode = function (config) {
+const validateSecureMode = (config) => {
   if (!(!config.secure || config.secure.ssl !== true)) {
     const privateKey = fs.existsSync(path.resolve(config.secure.privateKey));
     const certificate = fs.existsSync(path.resolve(config.secure.certificate));
@@ -98,7 +97,7 @@ const validateSecureMode = function (config) {
 /**
  * Initialize global configuration files
  */
-const initGlobalConfigFiles = function (config, assets) {
+const initGlobalConfigFiles = (config, assets) => {
   // Appending files
   config.files = {};
 
@@ -124,7 +123,7 @@ const initGlobalConfigFiles = function (config, assets) {
 /**
  * Initialize global configuration
  */
-const initGlobalConfig = function () {
+const initGlobalConfig = () => {
   // Validate NODE_ENV existence
 // //  validateEnvironmentVariable();
 

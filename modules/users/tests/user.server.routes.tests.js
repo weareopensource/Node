@@ -1,22 +1,25 @@
+/**
+ * Module dependencies.
+ */
+const semver = require('semver');
+const should = require('should');
+const request = require('supertest');
+const path = require('path');
+const mongoose = require('mongoose');
 
-
-const semver = require('semver'),
-  should = require('should'),
-  request = require('supertest'),
-  path = require('path'),
-  mongoose = require('mongoose'),
-  User = mongoose.model('User'),
-  express = require(path.resolve('./lib/services/express'));
+const User = mongoose.model('User');
+const express = require(path.resolve('./lib/services/express'));
 
 /**
  * Globals
  */
-let app,
-  agent,
-  credentials,
-  credentialsEmail,
-  user,
-  newUser;
+let app;
+
+let agent;
+let credentials;
+let credentialsEmail;
+let user;
+let newUser;
 
 /**
  * User routes tests

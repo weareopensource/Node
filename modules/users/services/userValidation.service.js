@@ -1,10 +1,10 @@
-
-
+/**
+ * Module dependencies
+ */
 const path = require('path');
+const validator = require('validator');
 
 const config = require(path.resolve('./config'));
-
-const validator = require('validator');
 
 class UserValidationService {
   /**

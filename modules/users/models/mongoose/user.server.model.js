@@ -1,7 +1,9 @@
+/**
+ * Module dependencies
+ */
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
-// validator = require('validator');
 mongoose.Promise = Promise;
 
 /**
@@ -100,13 +102,11 @@ UserSchema.statics.findUniqueUsername = (username, suffix, callback) => {
   }, (err, user) => {
     if (!err) {
       if (!user) {
-        callback(possibleUsername);
-      } else {
-        return that.findUniqueUsername(username, (suffix || 0) + 1, callback);
+        return callback(possibleUsername);
       }
-    } else {
-      callback(null);
+      return that.findUniqueUsername(username, (suffix || 0) + 1, callback);
     }
+    return callback(null);
   });
 };
 

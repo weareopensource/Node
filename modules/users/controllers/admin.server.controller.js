@@ -1,12 +1,11 @@
-
-
 /**
  * Module dependencies
  */
-const path = require('path'),
-  mongoose = require('mongoose'),
-  User = mongoose.model('User'),
-  errorHandler = require(path.resolve('./modules/core/controllers/errors.server.controller'));
+const path = require('path');
+const mongoose = require('mongoose');
+
+const User = mongoose.model('User');
+const errorHandler = require(path.resolve('./modules/core/controllers/errors.server.controller'));
 
 /**
  * Show the current user

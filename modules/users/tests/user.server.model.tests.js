@@ -1,20 +1,20 @@
-
-
 /**
  * Module dependencies.
  */
-const should = require('should'),
-  mongoose = require('mongoose'),
-  User = mongoose.model('User'),
-  path = require('path'),
-  config = require(path.resolve('./config'));
+const should = require('should');
+const mongoose = require('mongoose');
+const path = require('path');
+
+const User = mongoose.model('User');
+const config = require(path.resolve('./config'));
 
 /**
  * Globals
  */
-let user1,
-  user2,
-  user3;
+let user1;
+
+let user2;
+let user3;
 
 /**
  * Unit tests
@@ -173,7 +173,7 @@ describe('User Model Unit Tests:', () => {
       });
     });
 
-    it('should not be able to save another user with the same email address', function (done) {
+    it('should not be able to save another user with the same email address', (done) => {
       // Test may take some time to complete due to db operations
       this.timeout(10000);
 
@@ -354,9 +354,9 @@ describe('User Model Unit Tests:', () => {
       _user1.email = '123';
       _user1.save((err) => {
         if (!err) {
-          _user1.remove((err_remove) => {
+          _user1.remove((errRemove) => {
             should.exist(err);
-            should.not.exist(err_remove);
+            should.not.exist(errRemove);
             done();
           });
         } else {
@@ -372,9 +372,9 @@ describe('User Model Unit Tests:', () => {
       _user1.email = '123@123@123';
       _user1.save((err) => {
         if (!err) {
-          _user1.remove((err_remove) => {
+          _user1.remove((errRemove) => {
             should.exist(err);
-            should.not.exist(err_remove);
+            should.not.exist(errRemove);
             done();
           });
         } else {
@@ -390,9 +390,9 @@ describe('User Model Unit Tests:', () => {
       _user1.email = '123@123';
       _user1.save((err) => {
         if (!err) {
-          _user1.remove((err_remove) => {
+          _user1.remove((errRemove) => {
             should.not.exist(err);
-            should.not.exist(err_remove);
+            should.not.exist(errRemove);
             done();
           });
         } else {
@@ -408,9 +408,9 @@ describe('User Model Unit Tests:', () => {
       _user1.email = '123.com';
       _user1.save((err) => {
         if (!err) {
-          _user1.remove((err_remove) => {
+          _user1.remove((errRemove) => {
             should.exist(err);
-            should.not.exist(err_remove);
+            should.not.exist(errRemove);
             done();
           });
         } else {
@@ -426,9 +426,9 @@ describe('User Model Unit Tests:', () => {
       _user1.email = '@123.com';
       _user1.save((err) => {
         if (!err) {
-          _user1.remove((err_remove) => {
+          _user1.remove((errRemove) => {
             should.exist(err);
-            should.not.exist(err_remove);
+            should.not.exist(errRemove);
             done();
           });
         } else {
@@ -444,9 +444,9 @@ describe('User Model Unit Tests:', () => {
       _user1.email = 'abc@abc@abc.com';
       _user1.save((err) => {
         if (!err) {
-          _user1.remove((err_remove) => {
+          _user1.remove((errRemove) => {
             should.exist(err);
-            should.not.exist(err_remove);
+            should.not.exist(errRemove);
             done();
           });
         } else {
@@ -462,9 +462,9 @@ describe('User Model Unit Tests:', () => {
       _user1.email = 'abc~@#$%^&*()ef=@abc.com';
       _user1.save((err) => {
         if (!err) {
-          _user1.remove((err_remove) => {
+          _user1.remove((errRemove) => {
             should.exist(err);
-            should.not.exist(err_remove);
+            should.not.exist(errRemove);
             done();
           });
         } else {
@@ -480,9 +480,9 @@ describe('User Model Unit Tests:', () => {
       _user1.email = 'abc def@abc.com';
       _user1.save((err) => {
         if (!err) {
-          _user1.remove((err_remove) => {
+          _user1.remove((errRemove) => {
             should.exist(err);
-            should.not.exist(err_remove);
+            should.not.exist(errRemove);
             done();
           });
         } else {
@@ -499,9 +499,9 @@ describe('User Model Unit Tests:', () => {
       _user1.email = 'abc\"def@abc.com';
       _user1.save((err) => {
         if (err) {
-          _user1.remove((err_remove) => {
+          _user1.remove((errRemove) => {
             should.exist(err);
-            should.not.exist(err_remove);
+            should.not.exist(errRemove);
             done();
           });
         } else {
@@ -517,9 +517,9 @@ describe('User Model Unit Tests:', () => {
       _user1.email = 'abcdef@abc..com';
       _user1.save((err) => {
         if (err) {
-          _user1.remove((err_remove) => {
+          _user1.remove((errRemove) => {
             should.exist(err);
-            should.not.exist(err_remove);
+            should.not.exist(errRemove);
             done();
           });
         } else {
@@ -535,9 +535,9 @@ describe('User Model Unit Tests:', () => {
       _user1.email = 'abc\'def@abc.com';
       _user1.save((err) => {
         if (!err) {
-          _user1.remove((err_remove) => {
+          _user1.remove((errRemove) => {
             should.not.exist(err);
-            should.not.exist(err_remove);
+            should.not.exist(errRemove);
             done();
           });
         } else {
@@ -553,9 +553,9 @@ describe('User Model Unit Tests:', () => {
       _user1.email = 'abc@abc.com';
       _user1.save((err) => {
         if (!err) {
-          _user1.remove((err_remove) => {
+          _user1.remove((errRemove) => {
             should.not.exist(err);
-            should.not.exist(err_remove);
+            should.not.exist(errRemove);
             done();
           });
         } else {
@@ -571,9 +571,9 @@ describe('User Model Unit Tests:', () => {
       _user1.email = 'abc+def@abc.com';
       _user1.save((err) => {
         if (!err) {
-          _user1.remove((err_remove) => {
+          _user1.remove((errRemove) => {
             should.not.exist(err);
-            should.not.exist(err_remove);
+            should.not.exist(errRemove);
             done();
           });
         } else {
@@ -589,9 +589,9 @@ describe('User Model Unit Tests:', () => {
       _user1.email = 'abc.def@abc.com';
       _user1.save((err) => {
         if (!err) {
-          _user1.remove((err_remove) => {
+          _user1.remove((errRemove) => {
             should.not.exist(err);
-            should.not.exist(err_remove);
+            should.not.exist(errRemove);
             done();
           });
         } else {
@@ -607,9 +607,9 @@ describe('User Model Unit Tests:', () => {
       _user1.email = 'abc.def@abc.def.com';
       _user1.save((err) => {
         if (!err) {
-          _user1.remove((err_remove) => {
+          _user1.remove((errRemove) => {
             should.not.exist(err);
-            should.not.exist(err_remove);
+            should.not.exist(errRemove);
             done();
           });
         } else {
@@ -626,8 +626,8 @@ describe('User Model Unit Tests:', () => {
       _user1.save((err) => {
         should.not.exist(err);
         if (!err) {
-          _user1.remove((err_remove) => {
-            should.not.exist(err_remove);
+          _user1.remove((errRemove) => {
+            should.not.exist(errRemove);
             done();
           });
         } else {

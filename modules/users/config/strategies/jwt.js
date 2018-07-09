@@ -1,11 +1,11 @@
-
-
+/**
+ * Module dependencies
+ */
 const passport = require('passport');
 const passportJwt = require('passport-jwt');
 const UserService = require('../../services/user.service');
 
 const JwtStrategy = passportJwt.Strategy;
-
 const cookieExtractor = (req) => {
   let token = null;
   if (req && req.cookies) token = req.cookies.TOKEN;
