@@ -1,11 +1,11 @@
-'use strict';
+
 
 module.exports = {
   app: {
     title: 'MEAN.JS - Development Environment',
     description: 'Full-Stack JavaScript with MongoDB, Express, AngularJS, and Node.js',
     keywords: 'mongodb, express, angularjs, node.js, mongoose, passport',
-    googleAnalyticsTrackingID: 'WAOS_BACK_app_googleAnalyticsTrackingID'
+    googleAnalyticsTrackingID: 'WAOS_BACK_app_googleAnalyticsTrackingID',
   },
   port: 3000,
   host: 'localhost',
@@ -14,7 +14,7 @@ module.exports = {
     debug: true,
     options: {
       user: '',
-      pass: ''
+      pass: '',
       /**
         * Uncomment to enable ssl certificate based authentication to mongodb
         * servers. Adjust the settings below for your specific certificate
@@ -30,7 +30,7 @@ module.exports = {
       }
       */
     },
-    promise: global.Promise
+    promise: global.Promise,
   },
   secure: {
     ssl: false,
@@ -42,8 +42,8 @@ module.exports = {
       fileName: 'app.log',
       maxsize: 10485760,
       maxFiles: 2,
-      json: false
-    }
+      json: false,
+    },
   },
   livereload: true,
   // orm: {
@@ -64,13 +64,13 @@ module.exports = {
     csp: false,
     xframe: 'SAMEORIGIN',
     p3p: 'ABCDEF',
-    xssProtection: true
+    xssProtection: true,
   },
   cors: {
-    url: 'http://localhost:4200'
+    url: 'http://localhost:4200',
   },
   illegalUsernames: ['meanjs', 'administrator', 'password', 'admin', 'user',
-    'unknown', 'anonymous', 'null', 'undefined', 'api'
+    'unknown', 'anonymous', 'null', 'undefined', 'api',
   ],
   // secure: {
   //   ssl: true,
@@ -84,10 +84,10 @@ module.exports = {
       image: {
         dest: './uploads',
         limits: {
-          fileSize: 1 * 1024 * 1024 // Max file size in bytes (1 MB)
-        }
-      }
-    }
+          fileSize: 1 * 1024 * 1024, // Max file size in bytes (1 MB)
+        },
+      },
+    },
   },
   shared: {
     owasp: {
@@ -95,11 +95,11 @@ module.exports = {
       maxLength: 128,
       minLength: 10,
       minPhraseLength: 20,
-      minOptionalTestsToPass: 4
-    }
+      minOptionalTestsToPass: 4,
+    },
   },
   jwt: {
-    secret: 'test'
+    secret: 'test',
   },
   mailer: {
     from: 'WAOS_BACK_mailer_from',
@@ -107,19 +107,19 @@ module.exports = {
       service: 'WAOS_BACK_mailer_options_service',
       auth: {
         user: 'WAOS_BACK_mailer_options_auth_user',
-        pass: 'WAOS_BACK_mailer_options_auth_pass'
-      }
-    }
+        pass: 'WAOS_BACK_mailer_options_auth_pass',
+      },
+    },
   },
   google: {
-    clientId: 'WAOS_BACK_google_clientId'
+    clientId: 'WAOS_BACK_google_clientId',
   },
   microsoft: {
     clientId: 'WAOS_BACK_microsoft_clientId',
     issuer: 'https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0',
-    discovery: 'https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration'
-//    issuer: 'WAOS_BACK_microsoft_issuer',
-//    discovery: 'WAOS_BACK_microsoft_discovery'
+    discovery: 'https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration',
+    //    issuer: 'WAOS_BACK_microsoft_issuer',
+    //    discovery: 'WAOS_BACK_microsoft_discovery'
   },
   domain: '',
   seedDB: {
@@ -133,7 +133,7 @@ module.exports = {
         firstName: 'User',
         lastName: 'Local',
         displayName: 'User Local',
-        roles: ['user']
+        roles: ['user'],
       },
       seedAdmin: {
         username: 'seedadmin',
@@ -142,8 +142,8 @@ module.exports = {
         firstName: 'Admin',
         lastName: 'Local',
         displayName: 'Admin Local',
-        roles: ['user', 'admin']
-      }
-    }
-  }
+        roles: ['user', 'admin'],
+      },
+    },
+  },
 };
