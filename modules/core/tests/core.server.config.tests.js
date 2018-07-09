@@ -1,25 +1,26 @@
-
-
 /**
  * Module dependencies.
  */
-const _ = require('lodash'),
-  should = require('should'),
-  mongoose = require('mongoose'),
-  User = mongoose.model('User'),
-  path = require('path'),
-  mock = require('mock-fs'),
-  config = require(path.resolve('./config')),
-  logger = require(path.resolve('./lib/services/logger')),
-  seed = require(path.resolve('./lib/services/seed'));
+const _ = require('lodash');
+const should = require('should');
+const mongoose = require('mongoose');
+const path = require('path');
+const mock = require('mock-fs');
+
+const User = mongoose.model('User');
+const config = require(path.resolve('./config'));
+const logger = require(path.resolve('./lib/services/logger'));
+const seed = require(path.resolve('./lib/services/seed'));
+
 /**
  * Globals
  */
-let user1,
-  admin1,
-  userFromSeedConfig,
-  adminFromSeedConfig,
-  originalLogConfig;
+let user1;
+
+let admin1;
+let userFromSeedConfig;
+let adminFromSeedConfig;
+let originalLogConfig;
 
 describe('Configuration Tests:', () => {
   describe('Testing default seedDB', () => {

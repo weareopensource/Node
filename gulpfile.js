@@ -1,17 +1,15 @@
-
-
 /**
  * Module dependencies.
  */
-const _ = require('lodash'),
-  fs = require('fs'),
-  glob = require('glob'),
-  gulp = require('gulp'),
-  gulpLoadPlugins = require('gulp-load-plugins'),
-  runSequence = require('run-sequence'),
-  plugins = gulpLoadPlugins(),
-  path = require('path');
+const _ = require('lodash');
+const fs = require('fs');
+const glob = require('glob');
+const gulp = require('gulp');
+const gulpLoadPlugins = require('gulp-load-plugins');
+const runSequence = require('run-sequence');
+const path = require('path');
 
+const plugins = gulpLoadPlugins();
 const defaultAssets = require('./config/assets');
 
 let changedTestFiles = [];

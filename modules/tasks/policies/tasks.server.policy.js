@@ -1,9 +1,11 @@
 /**
  * Module dependencies
  */
-let Acl = require('acl');
+const ACL = require('acl');
+
 // Using the memory backend
-Acl = new Acl(new Acl.memoryBackend());
+/* eslint new-cap: 0 */
+const Acl = new ACL(new ACL.memoryBackend());
 
 /**
  * Invoke Tasks Permissions

@@ -1,5 +1,6 @@
-
-
+/**
+ * Module dependencies
+ */
 const passport = require('passport');
 
 module.exports = (app) => {

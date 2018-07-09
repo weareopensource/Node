@@ -1,26 +1,25 @@
 /**
  * Module dependencies
  */
-const _ = require('lodash'),
-  fs = require('fs'),
-  path = require('path'),
-  errorHandler = require(path.resolve('./modules/core/controllers/errors.server.controller')),
-  mongoose = require('mongoose'),
-  multer = require('multer'),
-  config = require(path.resolve('./config')),
-  User = mongoose.model('User'),
-  validatorLib = require('validator'),
-  jwt = require('jsonwebtoken'),
-  configuration = require(path.resolve('./config')),
-  IdTokenVerifier = require('idtoken-verifier'),
-  rp = require('request-promise'),
-  imageFileFilter = require(path.resolve('./lib/services/multer'))
-    .imageFileFilter,
-  {
-    OAuth2Client,
-  } = require('google-auth-library');
+const _ = require('lodash');
+const fs = require('fs');
+const path = require('path');
+const mongoose = require('mongoose');
+const multer = require('multer');
+const validatorLib = require('validator');
+const jwt = require('jsonwebtoken');
+const IdTokenVerifier = require('idtoken-verifier');
+const rp = require('request-promise');
 
+const User = mongoose.model('User');
+const errorHandler = require(path.resolve('./modules/core/controllers/errors.server.controller'));
+const config = require(path.resolve('./config'));
+const configuration = require(path.resolve('./config'));
+const imageFileFilter = require(path.resolve('./lib/services/multer')).imageFileFilter;
 const whitelistedFields = ['firstName', 'lastName', 'email', 'username', 'roles', 'profileImageURL'];
+const {
+  OAuth2Client,
+} = require('google-auth-library');
 
 /**
  * Update user details

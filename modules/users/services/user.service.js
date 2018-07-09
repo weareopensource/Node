@@ -1,12 +1,12 @@
-
-
+/**
+ * Module dependencies
+ */
 const path = require('path');
-
-const config = require(path.resolve('./config'));
 const bcrypt = require('bcrypt');
 const generatePassword = require('generate-password');
 const owasp = require('owasp-password-strength-test');
 
+const config = require(path.resolve('./config'));
 const UserRepository = require('../repositories/user.repository');
 const UserValidationService = require('./userValidation.service');
 

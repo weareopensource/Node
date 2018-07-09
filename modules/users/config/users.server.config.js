@@ -1,14 +1,10 @@
-
-
 /**
  * Module dependencies
  */
 const path = require('path');
+const passport = require('passport');
 
 const config = require(path.resolve('./config'));
-const passport = require('passport');
-// const User = require('mongoose').model('User')
-
 const UserService = require('../services/user.service');
 
 /**

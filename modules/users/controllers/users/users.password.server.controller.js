@@ -1,19 +1,18 @@
-
-
 /**
  * Module dependencies
  */
-const path = require('path'),
-  config = require(path.resolve('./config')),
-  errorHandler = require(path.resolve('./modules/core/controllers/errors.server.controller')),
-  mongoose = require('mongoose'),
-  User = mongoose.model('User'),
-  nodemailer = require('nodemailer'),
-  async = require('async'),
-  jwt = require('jsonwebtoken'),
-  configuration = require(path.resolve('./config')),
-  UserService = require('../../services/user.service');
+const path = require('path');
 
+const mongoose = require('mongoose');
+const nodemailer = require('nodemailer');
+const async = require('async');
+const jwt = require('jsonwebtoken');
+const UserService = require('../../services/user.service');
+
+const errorHandler = require(path.resolve('./modules/core/controllers/errors.server.controller'));
+const configuration = require(path.resolve('./config'));
+const config = require(path.resolve('./config'));
+const User = mongoose.model('User');
 const smtpTransport = nodemailer.createTransport(config.mailer.options);
 
 /**
@@ -30,7 +29,8 @@ exports.forgot = ({ body }, res, next) => {
             return res.status(400).send({
               message: 'No account with that email has been found',
             });
-          } if (user.provider !== 'local') {
+          }
+          if (user.provider !== 'local') {
             return res.status(400).send({
               message: `It seems like you signed up using your ${user.provider} account`,
             });

@@ -1,10 +1,9 @@
-
-
 /**
  * Module dependencies
  */
-const path = require('path'),
-  config = require(path.resolve('./config'));
+const path = require('path');
+
+const config = require(path.resolve('./config'));
 
 /**
  * Get unique error field name
