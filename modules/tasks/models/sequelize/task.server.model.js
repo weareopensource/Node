@@ -6,18 +6,18 @@ module.exports = (sequelize, DataTypes) => {
     title: {
       type: DataTypes.STRING,
       comment: 'A title describing the task',
-      allowNull: false
+      allowNull: false,
     },
     description: {
       type: DataTypes.STRING,
       allowNull: true,
-      comment: 'Some descriptions'
+      comment: 'Some descriptions',
     },
     user: {
       type: DataTypes.STRING,
       allowNull: false,
-      comment: 'The user who created and owns this task'
-    }
+      comment: 'The user who created and owns this task',
+    },
   });
 
   return Task;

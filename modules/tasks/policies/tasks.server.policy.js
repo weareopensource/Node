@@ -1,35 +1,35 @@
 /**
  * Module dependencies
  */
-let acl = require('acl');
+let Acl = require('acl');
 // Using the memory backend
-acl = new acl(new acl.memoryBackend());
+Acl = new Acl(new Acl.memoryBackend());
 
 /**
  * Invoke Tasks Permissions
  */
 exports.invokeRolesPolicies = () => {
-  acl.allow([{
+  Acl.allow([{
     roles: ['user'],
     allows: [{
       resources: '/api/tasks',
-      permissions: '*'
+      permissions: '*',
     }, {
       resources: '/api/tasks/me',
-      permissions: ['get']
+      permissions: ['get'],
     }, {
       resources: '/api/tasks/:taskId',
-      permissions: '*'
-    }]
+      permissions: '*',
+    }],
   }, {
     roles: ['guest'],
     allows: [{
       resources: '/api/tasks',
-      permissions: ['get']
+      permissions: ['get'],
     }, {
       resources: '/api/tasks/:taskId',
-      permissions: ['get']
-    }]
+      permissions: ['get'],
+    }],
   }]);
 };
 
@@ -41,21 +41,20 @@ exports.isAllowed = (req, res, next) => {
 
   // If an task is being processed and the current user created it then allow any manipulation
   if (req.task && req.user && req.task.user && req.task.user.id === req.user.id) {
-    return next();
-  }
-
-  // Check for user roles
-  acl.areAnyRolesAllowed(roles, req.route.path, req.method.toLowerCase(), (err, isAllowed) => {
-    if (err) {
-      // An authorization error occurred
-      return res.status(500).send('Unexpected authorization error');
-    } else if (isAllowed) {
-      // Access granted! Invoke next middleware
-      return next();
-    } else {
+    next();
+  } else {
+    // Check for user roles
+    Acl.areAnyRolesAllowed(roles, req.route.path, req.method.toLowerCase(), (err, isAllowed) => {
+      if (err) {
+        // An authorization error occurred
+        return res.status(500).send('Unexpected authorization error');
+      } if (isAllowed) {
+        // Access granted! Invoke next middleware
+        return next();
+      }
       return res.status(403).json({
-        message: 'User is not authorized'
+        message: 'User is not authorized',
       });
-    }
-  });
+    });
+  }
 };
