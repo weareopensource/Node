@@ -51,7 +51,7 @@
     "generate-password": "~1.2.0",
     "glob": "~7.1.0",
     "google-auth-library": "^1.6.1",
-    "gulp-ava": "^0.15.0",
+    "gulp-ava": "^1.0.0",
     "helmet": "~2.3.0",
     "idtoken-verifier": "^1.2.0",
     "jasmine-core": "~2.5.0",
