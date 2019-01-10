@@ -1,33 +1,29 @@
-'use strict';
-
 /**
  * Module dependencies
  */
 const path = require('path');
+const mongoose = require('mongoose');
+const passport = require('passport');
+const jwt = require('jsonwebtoken');
+
+const User = mongoose.model('User');
 const config = require(path.resolve('./config'));
 const configuration = require(path.resolve('./config'));
 const ApiError = require(path.resolve('./lib/helpers/ApiError'));
 const errorHandler = require(path.resolve('./modules/core/controllers/errors.server.controller'));
-const mongoose = require('mongoose');
-const passport = require('passport');
-const jwt = require('jsonwebtoken');
-const User = mongoose.model('User');
-
 const UserService = require('../../services/user.service');
-
 // URLs for which user can't be redirected on signin
-var noReturnUrls = [
+const noReturnUrls = [
   '/authentication/signin',
-  '/authentication/signup'
+  '/authentication/signup',
 ];
 
 /**
  * Signup
  */
-exports.signup = async function (req, res, next) {
+exports.signup = async ({ body }, res, next) => {
   try {
-    let user = await UserService.signUp(req.body);
-    user = user.toObject({ getters: true });
+    const user = await UserService.save(body);
     const token = jwt.sign({ userId: user.id }, config.jwt.secret);
     return res.status(200)
       .cookie('TOKEN', token, { httpOnly: true })
@@ -40,39 +36,30 @@ exports.signup = async function (req, res, next) {
 /**
  * Signin after passport authentication
  */
-exports.signin = async function (req, res) {
+exports.signin = async (req, res) => {
   const user = req.user;
   const token = jwt.sign({ userId: user.id }, configuration.jwt.secret);
   return res.status(200)
     .cookie('TOKEN', token, { httpOnly: true })
     .json({ user, tokenExpiresIn: Date.now() + (3600 * 24 * 1000) });
-
-};
-
-/**
- * Signout
- */
-exports.signout = function (req, res) {
-  req.logout();
-  return res.status(200).send();
 };
 
 /**
  * Jwt Token Auth
  */
-exports.token = async function (req, res, next) {
+exports.token = async ({ body }, res, next) => {
   try {
     // Authenticate the user based on credentials
     // @TODO be consistent with whether the login field for user identification
     // is a username or an email
-    const username = req.body.email;
-    const password = req.body.password;
+    const username = body.email;
+    const password = body.password;
     const user = await UserService.authenticate(username, password);
 
     // Create the token and send
     // @TODO properly create the token with all of its metadata
     const payload = {
-      id: user.id
+      id: user.id,
     };
     // @TODO properly sign the token, not with a shared secret (use pubkey instead),
     // and specify proper expiration, issuer, algorithm, etc.
@@ -80,81 +67,80 @@ exports.token = async function (req, res, next) {
 
     res.status(200).cookies('TOKEN', token);
   } catch (err) {
-    return next(new ApiError(err.message));
+    next(new ApiError(err.message));
   }
 };
 
 /**
  * OAuth provider call
  */
-exports.oauthCall = function (req, res, next) {
-  var strategy = req.params.strategy;
+exports.oauthCall = (req, res, next) => {
+  const strategy = req.params.strategy;
   passport.authenticate(strategy)(req, res, next);
 };
 
 /**
  * OAuth callback
  */
-exports.oauthCallback = function (req, res, next) {
-  var strategy = req.params.strategy;
+exports.oauthCallback = (req, res, next) => {
+  const strategy = req.params.strategy;
 
   // info.redirect_to contains intended redirect path
-  passport.authenticate(strategy, function (err, user, info) {
+  passport.authenticate(strategy, (err, user, { redirectTo }) => {
     if (err) {
-      return res.redirect('/authentication/signin?err=' + encodeURIComponent(errorHandler.getErrorMessage(err)));
+      res.redirect(`/authentication/signin?err=${encodeURIComponent(errorHandler.getErrorMessage(err))}`);
     }
     if (!user) {
-      return res.redirect('/authentication/signin');
+      res.redirect('/authentication/signin');
+    } else {
+      req.login(user, (errLogin) => {
+        if (errLogin) {
+          return res.redirect('/authentication/signin');
+        }
+
+        return res.redirect(redirectTo || '/');
+      });
     }
-
-    req.login(user, function (err) {
-      if (err) {
-        return res.redirect('/authentication/signin');
-      }
-
-      return res.redirect(info.redirect_to || '/');
-    });
   })(req, res, next);
 };
 
 /**
  * Helper function to save or update a OAuth user profile
  */
-exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
+exports.saveOAuthUserProfile = (req, providerUserProfile, done) => {
   // Setup info object
-  var info = {};
+  const info = {};
 
   // Set redirection path on session.
   // Do not redirect to a signin or signup page
-  if (noReturnUrls.indexOf(req.session.redirect_to) === -1)
-    info.redirect_to = req.session.redirect_to;
+  if (noReturnUrls.indexOf(req.session.redirect_to) === -1) info.redirect_to = req.session.redirect_to;
 
   if (!req.user) {
     // Define a search query fields
-    var searchMainProviderIdentifierField = 'providerData.' + providerUserProfile.providerIdentifierField;
-    var searchAdditionalProviderIdentifierField = 'additionalProvidersData.' + providerUserProfile.provider + '.' + providerUserProfile.providerIdentifierField;
+    const searchMainProviderIdentifierField = `providerData.${providerUserProfile.providerIdentifierField}`;
+    const searchAdditionalProviderIdentifierField = `additionalProvidersData.${providerUserProfile.provider}.${providerUserProfile.providerIdentifierField}`;
 
     // Define main provider search query
-    var mainProviderSearchQuery = {};
+    const mainProviderSearchQuery = {};
     mainProviderSearchQuery.provider = providerUserProfile.provider;
     mainProviderSearchQuery[searchMainProviderIdentifierField] = providerUserProfile.providerData[providerUserProfile.providerIdentifierField];
 
     // Define additional provider search query
-    var additionalProviderSearchQuery = {};
+    const additionalProviderSearchQuery = {};
     additionalProviderSearchQuery[searchAdditionalProviderIdentifierField] = providerUserProfile.providerData[providerUserProfile.providerIdentifierField];
 
     // Define a search query to find existing user with current provider profile
-    var searchQuery = {
-      $or: [mainProviderSearchQuery, additionalProviderSearchQuery]
+    const searchQuery = {
+      $or: [mainProviderSearchQuery, additionalProviderSearchQuery],
     };
 
-    User.findOne(searchQuery, function (err, user) {
+    User.findOne(searchQuery, (err, user) => {
       if (err) {
-        return done(err);
-      } else if (!user) {
-        var possibleUsername = providerUserProfile.username || ((providerUserProfile.email) ? providerUserProfile.email.split('@')[0] : '');
+        done(err);
+      } if (!user) {
+        const possibleUsername = providerUserProfile.username || ((providerUserProfile.email) ? providerUserProfile.email.split('@')[0] : '');
 
-        User.findUniqueUsername(possibleUsername, null, function (availableUsername) {
+        User.findUniqueUsername(possibleUsername, null, (availableUsername) => {
           user = new User({
             firstName: providerUserProfile.firstName,
             lastName: providerUserProfile.lastName,
@@ -162,7 +148,7 @@ exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
             displayName: providerUserProfile.displayName,
             profileImageURL: providerUserProfile.profileImageURL,
             provider: providerUserProfile.provider,
-            providerData: providerUserProfile.providerData
+            providerData: providerUserProfile.providerData,
           });
 
           // Email intentionally added later to allow defaults (sparse settings) to be applid.
@@ -171,17 +157,15 @@ exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
           user.email = providerUserProfile.email;
 
           // And save the user
-          user.save(function (err) {
-            return done(err, user, info);
-          });
+          user.save(errSave => done(errSave, user, info));
         });
       } else {
-        return done(err, user, info);
+        done(err, user, info);
       }
     });
   } else {
     // User is already logged in, join the provider data to the existing user
-    var user = req.user;
+    const user = req.user;
 
     // Check if user exists, is not signed in using this provider, and doesn't have that provider data already configured
     if (user.provider !== providerUserProfile.provider && (!user.additionalProvidersData || !user.additionalProvidersData[providerUserProfile.provider])) {
@@ -196,11 +180,9 @@ exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
       user.markModified('additionalProvidersData');
 
       // And save the user
-      user.save(function (err) {
-        return done(err, user, info);
-      });
+      user.save(err => done(err, user, info));
     } else {
-      return done(new Error('User is already connected using this provider'), user);
+      done(new Error('User is already connected using this provider'), user);
     }
   }
 };
@@ -208,16 +190,16 @@ exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
 /**
  * Remove OAuth provider
  */
-exports.removeOAuthProvider = function (req, res, next) {
-  var user = req.user;
-  var provider = req.query.provider;
+exports.removeOAuthProvider = (req, res) => {
+  const user = req.user;
+  const provider = req.query.provider;
 
   if (!user) {
-    return res.status(401).json({
-      message: 'User is not authenticated'
+    res.status(401).json({
+      message: 'User is not authenticated',
     });
-  } else if (!provider) {
-    return res.status(400).send();
+  } if (!provider) {
+    res.status(400).send();
   }
 
   // Delete the additional provider
@@ -228,17 +210,17 @@ exports.removeOAuthProvider = function (req, res, next) {
     user.markModified('additionalProvidersData');
   }
 
-  user.save(function (err) {
+  user.save((err) => {
     if (err) {
-      return res.status(422).send({
-        message: errorHandler.getErrorMessage(err)
+      res.status(422).send({
+        message: errorHandler.getErrorMessage(err),
       });
     } else {
-      req.login(user, function (err) {
-        if (err) {
-          return res.status(400).send(err);
+      req.login(user, (errLogin) => {
+        if (errLogin) {
+          res.status(400).send(errLogin);
         } else {
-          return res.json(user);
+          res.json(user);
         }
       });
     }

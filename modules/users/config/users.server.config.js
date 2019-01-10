@@ -1,23 +1,20 @@
-'use strict';
-
 /**
  * Module dependencies
  */
 const path = require('path');
-const config = require(path.resolve('./config'));
 const passport = require('passport');
-// const User = require('mongoose').model('User')
 
+const config = require(path.resolve('./config'));
 const UserService = require('../services/user.service');
 
 /**
  * Module init function
  */
-module.exports = function (app) {
+module.exports = (app) => {
   // Serialize identifiable user's information to the session
   // so that it can be pulled back in another request
-  passport.serializeUser((user, done) => {
-    done(null, user.id);
+  passport.serializeUser(({ id }, done) => {
+    done(null, id);
   });
 
   // Deserialize get the user identifying information that we saved

@@ -1,20 +1,18 @@
-'use strict';
-
 module.exports = {
   app: {
     title: 'MEAN.JS - Development Environment',
     description: 'Full-Stack JavaScript with MongoDB, Express, AngularJS, and Node.js',
     keywords: 'mongodb, express, angularjs, node.js, mongoose, passport',
-    googleAnalyticsTrackingID: 'WAOS_BACK_app_googleAnalyticsTrackingID'
+    googleAnalyticsTrackingID: 'WAOS_BACK_app_googleAnalyticsTrackingID',
   },
   port: 3000,
   host: 'localhost',
   db: {
-    uri: 'mongodb://localhost/riess-dev',
+    uri: 'mongodb://localhost/WaosNodeDev',
     debug: true,
     options: {
       user: '',
-      pass: ''
+      pass: '',
       /**
         * Uncomment to enable ssl certificate based authentication to mongodb
         * servers. Adjust the settings below for your specific certificate
@@ -30,24 +28,23 @@ module.exports = {
       }
       */
     },
-    promise: global.Promise
+    promise: global.Promise,
   },
   secure: {
     ssl: false,
   },
   log: {
-    format: 'dev',
     fileLogger: {
       directoryPath: process.cwd(),
       fileName: 'app.log',
       maxsize: 10485760,
       maxFiles: 2,
-      json: false
-    }
+      json: false,
+    },
   },
   livereload: true,
   // orm: {
-  //    dbname: 'riessdev',
+  //    dbname: 'WaosNodeDev',
   //    user: '',
   //    pass: '',
   //    options: {
@@ -57,49 +54,41 @@ module.exports = {
   //      port: ''
   //    }
   //  },
-
   // Lusca config
   csrf: {
     csrf: false,
     csp: false,
     xframe: 'SAMEORIGIN',
     p3p: 'ABCDEF',
-    xssProtection: true
+    xssProtection: true,
   },
   cors: {
-    url: 'http://localhost:4200'
+    url: 'http://localhost:4200',
   },
-  illegalUsernames: ['meanjs', 'administrator', 'password', 'admin', 'user',
-    'unknown', 'anonymous', 'null', 'undefined', 'api'
-  ],
+  illegalUsernames: ['waos', 'weareopensource', 'administrator', 'password', 'admin', 'user', 'unknown', 'anonymous', 'null', 'undefined', 'api'],
+  roles: ['user', 'admin'],
   // secure: {
   //   ssl: true,
   //   privateKey: './config/sslcerts/key.pem',
   //   certificate: './config/sslcerts/cert.pem',
   //   caBundle: './config/sslcerts/cabundle.crt'
   // },
-
   uploads: {
     profile: {
       image: {
         dest: './uploads',
         limits: {
-          fileSize: 1 * 1024 * 1024 // Max file size in bytes (1 MB)
-        }
-      }
-    }
+          fileSize: 1 * 1024 * 1024, // Max file size in bytes (1 MB)
+        },
+      },
+    },
   },
-  shared: {
-    owasp: {
-      allowPassphrases: true,
-      maxLength: 128,
-      minLength: 10,
-      minPhraseLength: 20,
-      minOptionalTestsToPass: 4
-    }
+  // zxcvbn is used to manage password security
+  zxcvbn: {
+    minimumScore: 3,
   },
   jwt: {
-    secret: 'test'
+    secret: 'test',
   },
   mailer: {
     from: 'WAOS_BACK_mailer_from',
@@ -107,19 +96,31 @@ module.exports = {
       service: 'WAOS_BACK_mailer_options_service',
       auth: {
         user: 'WAOS_BACK_mailer_options_auth_user',
-        pass: 'WAOS_BACK_mailer_options_auth_pass'
-      }
-    }
+        pass: 'WAOS_BACK_mailer_options_auth_pass',
+      },
+    },
   },
   google: {
-    clientId: 'WAOS_BACK_google_clientId'
+    clientId: 'WAOS_BACK_google_clientId',
   },
   microsoft: {
     clientId: 'WAOS_BACK_microsoft_clientId',
     issuer: 'https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0',
-    discovery: 'https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration'
-//    issuer: 'WAOS_BACK_microsoft_issuer',
-//    discovery: 'WAOS_BACK_microsoft_discovery'
+    discovery: 'https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration',
+    //    issuer: 'WAOS_BACK_microsoft_issuer',
+    //    discovery: 'WAOS_BACK_microsoft_discovery'
+  },
+  // joi is used to manage schema restrictions, on the top of mongo / orm
+  joi: {
+    // enabled HTTP methods for request data validation
+    supportedMethods: ['post', 'put'],
+    // Joi validation options
+    validationOptions: {
+      abortEarly: false, // abort after the last validation error
+      allowUnknown: true, // allow unknown keys that will be ignored
+      stripUnknown: true, // remove unknown keys from the validated data
+      noDefaults: false, // automatically set to true for put method (update)
+    },
   },
   domain: '',
   seedDB: {
@@ -133,7 +134,7 @@ module.exports = {
         firstName: 'User',
         lastName: 'Local',
         displayName: 'User Local',
-        roles: ['user']
+        roles: ['user'],
       },
       seedAdmin: {
         username: 'seedadmin',
@@ -142,8 +143,8 @@ module.exports = {
         firstName: 'Admin',
         lastName: 'Local',
         displayName: 'Admin Local',
-        roles: ['user', 'admin']
-      }
-    }
-  }
+        roles: ['user', 'admin'],
+      },
+    },
+  },
 };

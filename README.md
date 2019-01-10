@@ -15,14 +15,15 @@ This project a stack Node that can be ran as a standalone application. Or in a f
 | Subject | Node
 | ------- | --------
 | **Node.js**  | v8
-| **DB: SQL**  | Sequelize ORM
-| **DB: Mongo**  | Mongoose
+| **DB:**  | Sequelize ORM, Mongoose, Joi
 | **Deliver**  | Docker & Docker-compose
-| **CI**  | Travis
-| **Testing: Tools** | request, ava
+| **Testing: Tools** | request, mocha, chai
+| **Security** | zxcvbn
+
 | **Testing: Tests Automation** | separates tasks to unit tests, integration tests
 | **Testing: ExpressJS** | gulp instantiates a real ExpressJS API service
 | **Testing: Seed** | seed tasks resets the db/models to clear data and is separated to own gulp task
+
 | **Developer: Community**  | uses `commitizen` to streamline commit guidelines
 | **Developer: Debug**  | uses v8's builtin `debug` and `inspect` optionse
 
@@ -30,11 +31,10 @@ Planned:
 
 | Subject  | Node
 | -------  | --------
-| **CI**  | Travis, Gitlab-ci
-| **Config** | dotenv, convict
-| **Documentation: API**  | Swagger
-| **Documentation: Code**  | Docco
-| **Developer: Lint** | Standard JS
+| **CI**  | Travis, Gitlab-ci ?
+| **Config** | convict ?
+| **Documentation: API**  | Swagger ?
+| **Documentation: Code**  | Docco ?
 
 ## [Demo](http://meanie.weareopensource.me)  (This Node stack is used for this demonstration of MEANie fullstack)
 
@@ -53,18 +53,12 @@ $ npm i
 ## Running Your Application
 
 ### Development
-* Run `npm start` for a dev server. Available at `http://localhost:3000/`.
+* Run `gulp` for a dev server. Available at `http://localhost:3000/`.
 
 ### Production
-* Run `npm run prod` to run on production mode. Available at `http://localhost:3000/`.
+* Run `gulp prod` for a prod server. Available at `http://localhost:8443/`
 
-### Configuration
-The running process takes into account all system environment variables defined under the form WAOS_BACK_<path_toVariable>. A pre-build npm script turns under the hood those system environment variables into an object, infering paths from the varialbles name, merged to the environment object defined on config/defaults/development.js, regardless of the production or developement mode.
-
-All configuration avalable on config/defaults/development.js file are overidable. You can for instance define the API server coordonates by defining those system environment variables:
-
--  WAOS_BACK_host='my-server'
--  WAOS_BACK_port=4000
+// TODO add config description
 
 <!--
 ## Running unit tests
