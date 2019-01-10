@@ -8,7 +8,7 @@ module.exports = {
   port: 3000,
   host: 'localhost',
   db: {
-    uri: 'mongodb://localhost/riess-dev',
+    uri: 'mongodb://localhost/WaosNodeDev',
     debug: true,
     options: {
       user: '',
@@ -34,7 +34,6 @@ module.exports = {
     ssl: false,
   },
   log: {
-    format: 'dev',
     fileLogger: {
       directoryPath: process.cwd(),
       fileName: 'app.log',
@@ -45,7 +44,7 @@ module.exports = {
   },
   livereload: true,
   // orm: {
-  //    dbname: 'riessdev',
+  //    dbname: 'WaosNodeDev',
   //    user: '',
   //    pass: '',
   //    options: {
@@ -55,7 +54,6 @@ module.exports = {
   //      port: ''
   //    }
   //  },
-
   // Lusca config
   csrf: {
     csrf: false,
@@ -67,16 +65,14 @@ module.exports = {
   cors: {
     url: 'http://localhost:4200',
   },
-  illegalUsernames: ['meanjs', 'administrator', 'password', 'admin', 'user',
-    'unknown', 'anonymous', 'null', 'undefined', 'api',
-  ],
+  illegalUsernames: ['waos', 'weareopensource', 'administrator', 'password', 'admin', 'user', 'unknown', 'anonymous', 'null', 'undefined', 'api'],
+  roles: ['user', 'admin'],
   // secure: {
   //   ssl: true,
   //   privateKey: './config/sslcerts/key.pem',
   //   certificate: './config/sslcerts/cert.pem',
   //   caBundle: './config/sslcerts/cabundle.crt'
   // },
-
   uploads: {
     profile: {
       image: {
@@ -87,14 +83,9 @@ module.exports = {
       },
     },
   },
-  shared: {
-    owasp: {
-      allowPassphrases: true,
-      maxLength: 128,
-      minLength: 10,
-      minPhraseLength: 20,
-      minOptionalTestsToPass: 4,
-    },
+  // zxcvbn is used to manage password security
+  zxcvbn: {
+    minimumScore: 3,
   },
   jwt: {
     secret: 'test',
@@ -118,6 +109,18 @@ module.exports = {
     discovery: 'https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration',
     //    issuer: 'WAOS_BACK_microsoft_issuer',
     //    discovery: 'WAOS_BACK_microsoft_discovery'
+  },
+  // joi is used to manage schema restrictions, on the top of mongo / orm
+  joi: {
+    // enabled HTTP methods for request data validation
+    supportedMethods: ['post', 'put'],
+    // Joi validation options
+    validationOptions: {
+      abortEarly: false, // abort after the last validation error
+      allowUnknown: true, // allow unknown keys that will be ignored
+      stripUnknown: true, // remove unknown keys from the validated data
+      noDefaults: false, // automatically set to true for put method (update)
+    },
   },
   domain: '',
   seedDB: {

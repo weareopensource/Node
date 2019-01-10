@@ -6,9 +6,12 @@ const mongoose = require('mongoose');
 const User = mongoose.model('User');
 
 class UserRepository {
-  static create(userObj) {
-    const user = new User(userObj);
-    return user.save();
+  static create(user) {
+    return new User(user).save();
+  }
+
+  static delete(user) {
+    return new User(user).remove();
   }
 
   static getById(id) {

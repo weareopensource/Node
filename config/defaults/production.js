@@ -7,7 +7,7 @@ module.exports = _.merge(defaultConfig, {
   },
   host: '0.0.0.0',
   db: {
-    uri: 'mongodb://localhost/riess',
+    uri: 'mongodb://localhost/WaosNode',
     debug: false,
   },
   secure: {

@@ -2,7 +2,6 @@
  * Module dependencies.
  */
 const _ = require('lodash');
-const fs = require('fs');
 const glob = require('glob');
 const gulp = require('gulp');
 const gulpLoadPlugins = require('gulp-load-plugins');
@@ -100,62 +99,27 @@ gulp.task('eslint', () => {
     .pipe(plugins.eslint.format());
 });
 
-// Copy local development environment config example
-gulp.task('copyLocalEnvConfig', () => {
-  const src = [];
-  const renameTo = 'local-development.js';
-
-  // only add the copy source if our destination file doesn't already exist
-  if (!fs.existsSync(`config/env/${renameTo}`)) {
-    src.push('config/env/local.example.js');
-  }
-
-  return gulp.src(src)
-    .pipe(plugins.rename(renameTo))
-    .pipe(gulp.dest('config/env'));
-});
-
-// Make sure upload directory exists
-gulp.task('makeUploadsDir', () => fs.mkdir(`${process.cwd()}/uploads`, (err) => {
-  if (err && err.code !== 'EEXIST') {
-    console.error(err);
-  }
-}));
 
 // Mocha tests task
-gulp.task('mocha', (done) => {
-  // Open mongoose connections
-  const mongoose = require('./lib/services/mongoose.js');
+gulp.task('mocha', () => {
   const testSuites = changedTestFiles.length ? changedTestFiles : defaultAssets.tests;
-  let error;
 
-  // Connect mongoose
-  mongoose.connect(() => {
-    mongoose.loadModels();
-    // Run the tests
-    gulp.src(testSuites)
-      .pipe(plugins.mocha({
-        reporter: 'spec',
-        timeout: 10000,
-      }))
-      .on('error', (err) => {
-        // If an error occurs, save it
-        error = err;
-      })
-      .on('end', () => {
-        // When the tests are done, disconnect mongoose and pass the error state back to gulp
-        mongoose.disconnect(() => {
-          done(error);
-        });
-      });
-  });
+  gulp.src(testSuites)
+    .pipe(plugins.mocha({
+      reporter: 'spec',
+      timeout: 10000,
+    }))
+    .on('error', (err) => {
+    // If an error occurs, save it
+      console.log(err);
+    });
 });
 
 // Prepare istanbul coverage test
 gulp.task('pre-test', () => gulp.src(defaultAssets.allJS)
-// Covering files
+  // Covering files
   .pipe(plugins.istanbul())
-// Force `require` to return covered files
+  // Force `require` to return covered files
   .pipe(plugins.istanbul.hookRequire()));
 
 // Run istanbul test and write report
@@ -189,25 +153,6 @@ gulp.task('server:bootstrap', (done) => {
   });
 });
 
-// Launch Ava's integration tests
-gulp.task('ava:test:integration', () => gulp.src(defaultAssets.testIntegration)
-// gulp-ava needs filepaths so you can't have any plugins before it
-  .pipe(plugins.ava({
-    verbose: true,
-  }))
-  .on('error', (err) => {
-    // On errors emitted by Ava we display them and exit with a non-zero error code
-    // to fail the build
-    console.log(err.message);
-    process.exit(1);
-  })
-  .on('end', () => {
-    // Because this test depends on `server:bootstrap` which opens an even listener
-    // for server connections, it is required to force an exit, otherwise the gulp
-    // process will stay open, waiting to process connections due to `server:bootstrap`
-    process.exit(0);
-  }));
-
 // Connects to Mongoose based on environment settings and seeds the database, performing
 // a drop of the mongo database to clear it out
 gulp.task('seed:mongoose', (done) => {
@@ -233,39 +178,35 @@ gulp.task('seed:sequelize', (done) => {
 });
 
 // Performs database seeding, used in test environments and related tasks
-gulp.task('test:seed', (done) => {
-  runSequence('seed:mongoose', 'seed:sequelize', done);
+// gulp.task('test:seed', (done) => {
+//   runSequence('seed:mongoose', 'seed:sequelize', done);
+// });
+
+gulp.task('test', (done) => {
+  runSequence('env:test', 'lint', 'mocha', done);
 });
 
-// Run Integration Tests
-gulp.task('test:integration', (done) => {
-  runSequence('env:test', 'server:bootstrap', 'ava:test:integration', done);
-});
-
-gulp.task('test:server', (done) => {
-  runSequence('env:test', 'lint', ['copyLocalEnvConfig', 'makeUploadsDir'], 'mocha', done);
-});
-
-// Watch all server files for changes & run server tests (test:server) task on changes
-gulp.task('test:server:watch', (done) => {
-  runSequence('test:server', 'watch:server:run-tests', done);
-});
-
-gulp.task('test:coverage', (done) => {
-  runSequence('env:test', ['copyLocalEnvConfig', 'makeUploadsDir'], 'mocha:coverage', done);
-});
+//
+// // Watch all server files for changes & run server tests (test:server) task on changes
+// gulp.task('test:server:watch', (done) => {
+//   runSequence('test:server', 'watch:server:run-tests', done);
+// });
+//
+// gulp.task('test:coverage', (done) => {
+//   runSequence('env:test', 'mocha:coverage', done);
+// });
 
 // Run the project in development mode
 gulp.task('default', (done) => {
-  runSequence('env:dev', ['copyLocalEnvConfig', 'makeUploadsDir'], 'lint', ['nodemon', 'watch'], done);
+  runSequence('env:dev', 'lint', ['nodemon', 'watch'], done);
 });
 
 // Run the project in debug mode
 gulp.task('debug', (done) => {
-  runSequence('env:dev', ['copyLocalEnvConfig', 'makeUploadsDir'], ['nodemon-debug', 'watch'], done);
+  runSequence('env:dev', ['nodemon-debug', 'watch'], done);
 });
 
 // Run the project in production mode
 gulp.task('prod', (done) => {
-  runSequence(['copyLocalEnvConfig', 'makeUploadsDir'], 'env:prod', ['nodemon-nodebug', 'watch'], done);
+  runSequence('env:prod', ['nodemon-nodebug', 'watch'], done);
 });

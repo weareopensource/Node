@@ -47,7 +47,7 @@ exports.forgot = ({ body }, res, next) => {
         });
       } else {
         return res.status(422).send({
-          message: 'Username field must not be blank',
+          message: 'Mail field must not be blank',
         });
       }
     },
@@ -203,12 +203,11 @@ exports.reset = (req, res, next) => {
 exports.changePassword = (req, res) => {
   // Init Variables
   const passwordDetails = req.body;
-
   if (req.user) {
     if (passwordDetails.newPassword) {
-      User.findById(req.user.id, (err, user) => {
+      User.findById(req.user.id, async (err, user) => {
         if (!err && user) {
-          if (user.authenticate(passwordDetails.currentPassword)) {
+          if (await UserService.comparePassword(passwordDetails.currentPassword, user.password)) {
             if (passwordDetails.newPassword === passwordDetails.verifyPassword) {
               user.password = passwordDetails.newPassword;
 
