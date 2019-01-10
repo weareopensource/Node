@@ -114,7 +114,7 @@ const initGlobalConfigFiles = (config, assets) => {
   config.files.configs = getGlobbedPaths(assets.config);
 
   // Setting Globbed socket files
-  config.files.sockets = getGlobbedPaths(assets.sockets);
+  // config.files.sockets = getGlobbedPaths(assets.sockets);
 
   // Setting Globbed policies files
   config.files.policies = getGlobbedPaths(assets.policies);

@@ -9,116 +9,71 @@ mongoose.Promise = Promise;
 /**
  * User Schema
  */
-const UserSchema = new Schema({
-  sub: {
-    type: String,
-    default: '',
-  },
-  firstName: {
-    type: String,
-    trim: true,
-    default: '',
-  },
-  lastName: {
-    type: String,
-    trim: true,
-    default: '',
-  },
-  displayName: {
-    type: String,
-    trim: true,
-  },
+const UserMongoose = new Schema({
+  sub: String,
+  firstName: String,
+  lastName: String,
+  displayName: String,
   email: {
     type: String,
-    index: {
-      unique: true,
-      sparse: true,
-    },
-    lowercase: true,
-    trim: true,
-    default: '',
+    unique: 'Email already exists',
   },
   username: {
     type: String,
-    required: 'Please fill in a username',
-    lowercase: true,
-    trim: true,
+    unique: 'Username already exists',
   },
-  password: {
-    type: String,
-    default: '',
-  },
-  salt: {
-    type: String,
-  },
-  profileImageURL: {
-    type: String,
-    default: 'assets/ic_profile.png',
-  },
-  provider: {
-    type: String,
-    required: 'Provider is required',
-  },
+  profileImageURL: String,
+  roles: [],
+  /* Extra */
+  updated: Date,
+  created: Date,
+  /* Provider */
+  provider: String,
   providerData: {},
   additionalProvidersData: {},
-  roles: {
-    type: [{
-      type: String,
-      enum: ['user', 'admin'],
-    }],
-    default: ['user'],
-    required: 'Please provide at least one role',
-  },
-  updated: {
-    type: Date,
-  },
-  created: {
-    type: Date,
-    default: Date.now,
-  },
-  /* For reset password */
-  resetPasswordToken: {
-    type: String,
-  },
-  resetPasswordExpires: {
-    type: Date,
-  },
+  /* Password */
+  password: String,
+  salt: String,
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
 });
+
+UserMongoose.set('toObject', { getters: true });
 
 /**
  * Create instance method for authenticating user
  */
-UserSchema.methods.authenticate = password => this.password === this.hashPassword(password);
+// UserMongoose.methods.authenticate = password => this.password === this.hashPassword(password);
 
-/**
- * Find possible not used username
- */
-UserSchema.statics.findUniqueUsername = (username, suffix, callback) => {
-  const that = this;
-  const possibleUsername = username.toLowerCase() + (suffix || '');
+// /**
+//  * Find possible not used username
+//  */
+// UserMongoose.statics.findUniqueUsername = (username, suffix, callback) => {
+//   const that = this;
+//   const possibleUsername = username.toLowerCase() + (suffix || '');
 
-  that.findOne({
-    username: possibleUsername,
-  }, (err, user) => {
-    if (!err) {
-      if (!user) {
-        return callback(possibleUsername);
-      }
-      return that.findUniqueUsername(username, (suffix || 0) + 1, callback);
-    }
-    return callback(null);
-  });
-};
+//   that.findOne({
+//     username: possibleUsername,
+//   }, (err, user) => {
+//     if (!err) {
+//       if (!user) {
+//         return callback(possibleUsername);
+//       }
+//       return that.findUniqueUsername(username, (suffix || 0) + 1, callback);
+//     }
+//     return callback(null);
+//   });
+// };
 
-UserSchema.static('findOneOrCreate', async (condition, doc) => {
-  const one = await this.findOne(condition);
-  return one || this.create(doc).then((document) => {
-    console.log('docteur', document);
-    return document;
-  }).catch((err) => {
-    console.log(err);
-    return Promise.resolve(doc);
-  });
-});
+// UserMongoose.static('findOneOrCreate', async (condition, doc) => {
+//   const one = await this.findOne(condition);
+//   return one || this.create(doc).then((document) => {
+//     console.log('docteur', document);
+//     return document;
+//   }).catch((err) => {
+//     console.log(err);
+//     return Promise.resolve(doc);
+//   });
+// });
 
-mongoose.model('User', UserSchema);
+mongoose.model('User', UserMongoose);

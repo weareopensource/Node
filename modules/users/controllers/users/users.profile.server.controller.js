@@ -6,7 +6,6 @@ const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
 const multer = require('multer');
-const validatorLib = require('validator');
 const jwt = require('jsonwebtoken');
 const IdTokenVerifier = require('idtoken-verifier');
 const rp = require('request-promise');
@@ -16,7 +15,7 @@ const errorHandler = require(path.resolve('./modules/core/controllers/errors.ser
 const config = require(path.resolve('./config'));
 const configuration = require(path.resolve('./config'));
 const imageFileFilter = require(path.resolve('./lib/services/multer')).imageFileFilter;
-const whitelistedFields = ['firstName', 'lastName', 'email', 'username', 'roles', 'profileImageURL'];
+const whitelistedFields = ['firstName', 'lastName', 'email', 'username', 'profileImageURL'];
 const {
   OAuth2Client,
 } = require('google-auth-library');
@@ -27,7 +26,6 @@ const {
 exports.update = (req, res) => {
   // Init Variables
   let user = req.user;
-
   if (user) {
     // Update whitelisted fields only
     user = _.extend(user, _.pick(req.body, whitelistedFields));
@@ -85,8 +83,10 @@ exports.changeProfilePicture = (req, res) => {
 
   function updateUser() {
     return new Promise((resolve, reject) => {
+      user.updated = Date.now();
       user.profileImageURL = config.uploads.profile.image.dest + req.file.filename;
-      user.save((err) => {
+
+      User.findByIdAndUpdate(user.id, user, (err) => {
         if (err) {
           reject(err);
         } else {
@@ -139,6 +139,7 @@ exports.changeProfilePicture = (req, res) => {
         res.json(user);
       })
       .catch((err) => {
+        console.log(err);
         res.status(422)
           .send(err);
       });
@@ -156,21 +157,22 @@ exports.changeProfilePicture = (req, res) => {
 exports.me = ({ user }, res) => {
   // Sanitize the user - short term solution. Copied from core.server.controller.js
   // TODO create proper passport mock: See https://gist.github.com/mweibel/5219403
+
   let safeUserObject = null;
   if (user) {
     safeUserObject = {
       id: user.id,
-      provider: validatorLib.escape(user.provider),
-      username: validatorLib.escape(user.username),
-      created: user.created.toString(),
+      provider: escape(user.provider),
+      username: escape(user.username),
       roles: user.roles,
       profileImageURL: user.profileImageURL,
-      email: validatorLib.escape(user.email),
-      lastName: validatorLib.escape(user.lastName),
-      firstName: validatorLib.escape(user.firstName),
+      email: escape(user.email),
+      lastName: escape(user.lastName),
+      firstName: escape(user.firstName),
       additionalProvidersData: user.additionalProvidersData,
     };
   }
+
   res.json(safeUserObject || null);
 };
 

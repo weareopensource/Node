@@ -23,8 +23,7 @@ const noReturnUrls = [
  */
 exports.signup = async ({ body }, res, next) => {
   try {
-    let user = await UserService.signUp(body);
-    user = user.toObject({ getters: true });
+    const user = await UserService.save(body);
     const token = jwt.sign({ userId: user.id }, config.jwt.secret);
     return res.status(200)
       .cookie('TOKEN', token, { httpOnly: true })
@@ -43,14 +42,6 @@ exports.signin = async (req, res) => {
   return res.status(200)
     .cookie('TOKEN', token, { httpOnly: true })
     .json({ user, tokenExpiresIn: Date.now() + (3600 * 24 * 1000) });
-};
-
-/**
- * Signout
- */
-exports.signout = (req, res) => {
-  req.logout();
-  return res.status(200).send();
 };
 
 /**

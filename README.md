@@ -15,14 +15,15 @@ This project a stack Node that can be ran as a standalone application. Or in a f
 | Subject | Node
 | ------- | --------
 | **Node.js**  | v8
-| **DB: SQL**  | Sequelize ORM
-| **DB: Mongo**  | Mongoose
+| **DB:**  | Sequelize ORM, Mongoose, Joi
 | **Deliver**  | Docker & Docker-compose
-| **CI**  | Travis
-| **Testing: Tools** | request, ava
+| **Testing: Tools** | request, mocha, chai
+| **Security** | zxcvbn
+
 | **Testing: Tests Automation** | separates tasks to unit tests, integration tests
 | **Testing: ExpressJS** | gulp instantiates a real ExpressJS API service
 | **Testing: Seed** | seed tasks resets the db/models to clear data and is separated to own gulp task
+
 | **Developer: Community**  | uses `commitizen` to streamline commit guidelines
 | **Developer: Debug**  | uses v8's builtin `debug` and `inspect` optionse
 
@@ -30,11 +31,10 @@ Planned:
 
 | Subject  | Node
 | -------  | --------
-| **CI**  | Travis, Gitlab-ci
-| **Config** | dotenv, convict
-| **Documentation: API**  | Swagger
-| **Documentation: Code**  | Docco
-| **Developer: Lint** | Standard JS
+| **CI**  | Travis, Gitlab-ci ?
+| **Config** | convict ?
+| **Documentation: API**  | Swagger ?
+| **Documentation: Code**  | Docco ?
 
 ## [Demo](http://meanie.weareopensource.me)  (This Node stack is used for this demonstration of MEANie fullstack)
 
