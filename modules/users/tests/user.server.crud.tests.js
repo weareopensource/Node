@@ -14,7 +14,7 @@ const should = chai.should();
 /**
  * Unit tests
  */
-describe('User CRUD Init :', () => {
+describe('User CRUD Unit Tests :', () => {
   let UserService = null;
 
   // Mongoose init
@@ -41,7 +41,7 @@ describe('User CRUD Init :', () => {
   /**
  * User routes tests
  */
-  describe('User CRUD tests', () => {
+  describe('User CRUD logged', () => {
     before((done) => {
     // Get application
       app = express.init();
@@ -125,19 +125,7 @@ describe('User CRUD Init :', () => {
       } catch (err) {
         console.log(err);
         should.not.exist(err);
-      }
-
-      // // Login with username
-      // agent.post('/api/auth/signin')
-      //   .send(credentials[0])
-      //   .expect(200)
-      //   .end((signinErr) => {
-      //   // Handle signin error
-      //     if (signinErr) {
-      //       return done(signinErr);
-      //     }
-      //     return done();
-      //   });
+      }});
     });
 
     it('should not be able to retrieve a list of users if not admin', async () => {
@@ -496,26 +484,6 @@ describe('User CRUD Init :', () => {
       }
     });
 
-
-    // TODO test with logout
-    // it('should not be able to change user own password if not signed in', async () => {
-    //   try {
-    //     // const result =
-    //     await agent.post('/api/users/password')
-    //       .send({
-    //         newPassword: '1234567890Aa$',
-    //         verifyPassword: '1234567890Aa$',
-    //         currentPassword: credentials.password,
-    //       })
-    //       .expect(401);
-    //     // TODO error message
-    //     // result.body.message.should.equal('User is not signed in');
-    //   } catch (err) {
-    //     should.not.exist(err);
-    //     console.log(err);
-    //   }
-    // });
-
     it('should be able to get own user details successfully', async () => {
       try {
         const result = await agent.get('/api/users/me')
@@ -530,19 +498,6 @@ describe('User CRUD Init :', () => {
         should.not.exist(err);
       }
     });
-
-    // TODO test with logout
-    // it('should not be able to get any user details if not logged in', async () => {
-    //   try {
-    //     const result = await agent.get('/api/users/me')
-    //       .expect(200);
-    //     console.log(result.body);
-    //     should.not.exist(result.body);
-    //   } catch (err) {
-    //     should.not.exist(err);
-    //     console.log(err);
-    //   }
-    // });
 
     it('should be able to update own user details', async () => {
       const userUpdate = {
@@ -691,51 +646,6 @@ describe('User CRUD Init :', () => {
       }
     });
 
-    // TODO test with logout
-    // it('should not be able to update own user details if not logged-in', (done) => {
-    //   user.roles = ['user'];
-
-    //   user.save((err) => {
-    //     should.not.exist(err);
-
-    //     const userUpdate = {
-    //       firstName: 'user_update_first',
-    //       lastName: 'user_update_last',
-    //     };
-
-    //     agent.put('/api/users')
-    //       .send(userUpdate)
-    //       .expect(401)
-    //       .end((userInfoErr, { body }) => {
-    //         if (userInfoErr) {
-    //           return done(userInfoErr);
-    //         }
-
-    //         body.message.should.equal('User is not signed in');
-
-    //         // Call the assertion callback
-    //         return done();
-    //       });
-    //   });
-    // });
-
-    // TODO test with logout
-    // it('should not be able to update own user profile picture without being logged-in', (done) => {
-    //   agent.post('/api/users/picture')
-    //     .send({})
-    //     .expect(401)
-    //     .end((userInfoErr, { body }) => {
-    //       if (userInfoErr) {
-    //         return done(userInfoErr);
-    //       }
-
-    //       body.message.should.equal('User is not signed in');
-
-    //       // Call the assertion callback
-    //       return done();
-    //     });
-    // });
-
     it('should be able to change profile picture if signed in', async () => {
       try {
         const result = await agent.post('/api/users/picture')
@@ -788,6 +698,76 @@ describe('User CRUD Init :', () => {
       try {
         await UserService.remove(user);
       } catch (err) {
+        console.log(err);
+      }
+    });
+  });
+
+  describe('User CRUD logout', () => {
+    before((done) => {
+    // Get application
+      app = express.init();
+      agent = request.agent(app);
+
+      done();
+    });
+
+    it('should not be able to change user own password if not signed in', async () => {
+      try {
+        await agent.post('/api/users/password')
+          .send({
+            newPassword: '1234567890Aa$',
+            verifyPassword: '1234567890Aa$',
+            currentPassword: 'W@os.jsI$Aw3$0m3',
+          })
+          .expect(401);
+        // TODO error message
+        // result.body.message.should.equal('User is not signed in');
+      } catch (err) {
+        should.not.exist(err);
+        console.log(err);
+      }
+    });
+
+    it('should not be able to get any user details if not logged in', async () => {
+      try {
+        await agent.get('/api/users/me')
+          .expect(401);
+        // TODO error message
+        // result.body.message.should.equal('User is not signed in');
+      } catch (err) {
+        should.not.exist(err);
+        console.log(err);
+      }
+    });
+
+    it('should not be able to update own user details if not logged-in', async () => {
+      try {
+        const userUpdate = {
+          firstName: 'user_update_first',
+          lastName: 'user_update_last',
+        };
+
+        await agent.put('/api/users')
+          .send(userUpdate)
+          .expect(401);
+        // TODO error message
+        // result.body.message.should.equal('User is not signed in');
+      } catch (err) {
+        should.not.exist(err);
+        console.log(err);
+      }
+    });
+
+    it('should not be able to update own user profile picture without being logged-in', async () => {
+      try {
+        await agent.post('/api/users/picture')
+          .send({})
+          .expect(401);
+        // TODO error message
+        // result.body.message.should.equal('User is not signed in');
+      } catch (err) {
+        should.not.exist(err);
         console.log(err);
       }
     });
