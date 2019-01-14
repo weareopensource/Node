@@ -14,7 +14,7 @@ This project a stack Node that can be ran as a standalone application. Or in a f
 
 | Subject | Node
 | ------- | --------
-| **Node.js**  | v8
+| **Node.js**  | v10.15 LTS
 | **DB:**  | Sequelize ORM, Mongoose, Joi
 | **Deliver**  | Docker & Docker-compose
 | **Testing: Tools** | request, mocha, chai

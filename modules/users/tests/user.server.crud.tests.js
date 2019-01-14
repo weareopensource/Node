@@ -125,7 +125,7 @@ describe('User CRUD Unit Tests :', () => {
       } catch (err) {
         console.log(err);
         should.not.exist(err);
-      }});
+      }
     });
 
     it('should not be able to retrieve a list of users if not admin', async () => {
