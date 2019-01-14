@@ -259,7 +259,6 @@ describe('User CRUD Unit Tests :', () => {
     });
 
     it('forgot password should return 422 for no email provided', async () => {
-      // edit
       _userEdited.provider = 'facebook';
 
       try {
@@ -293,7 +292,6 @@ describe('User CRUD Unit Tests :', () => {
     });
 
     it('forgot password should return 400 for non-local provider set for the user object', async () => {
-      // edit
       _userEdited.provider = 'facebook';
 
       try {
@@ -721,8 +719,8 @@ describe('User CRUD Unit Tests :', () => {
             currentPassword: 'W@os.jsI$Aw3$0m3',
           })
           .expect(401);
-        // TODO error message
-        // result.body.message.should.equal('User is not signed in');
+      // TODO error message
+      // result.body.message.should.equal('User is not signed in');
       } catch (err) {
         should.not.exist(err);
         console.log(err);
@@ -733,8 +731,8 @@ describe('User CRUD Unit Tests :', () => {
       try {
         await agent.get('/api/users/me')
           .expect(401);
-        // TODO error message
-        // result.body.message.should.equal('User is not signed in');
+      // TODO error message
+      // result.body.message.should.equal('User is not signed in');
       } catch (err) {
         should.not.exist(err);
         console.log(err);
@@ -751,8 +749,8 @@ describe('User CRUD Unit Tests :', () => {
         await agent.put('/api/users')
           .send(userUpdate)
           .expect(401);
-        // TODO error message
-        // result.body.message.should.equal('User is not signed in');
+      // TODO error message
+      // result.body.message.should.equal('User is not signed in');
       } catch (err) {
         should.not.exist(err);
         console.log(err);
@@ -764,8 +762,8 @@ describe('User CRUD Unit Tests :', () => {
         await agent.post('/api/users/picture')
           .send({})
           .expect(401);
-        // TODO error message
-        // result.body.message.should.equal('User is not signed in');
+      // TODO error message
+      // result.body.message.should.equal('User is not signed in');
       } catch (err) {
         should.not.exist(err);
         console.log(err);
