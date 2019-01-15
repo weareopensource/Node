@@ -81,7 +81,7 @@ exports.userByID = (req, res, next, id) => {
       message: 'User is invalid',
     });
   } else {
-    User.findById(id, '-salt -password -providerData').exec((err, user) => {
+    User.findOne({ _id: id }, '-salt -password -providerData').exec((err, user) => {
       if (err) {
         next(err);
       } if (!user) {

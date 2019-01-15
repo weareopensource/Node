@@ -32,7 +32,7 @@ exports.update = (req, res) => {
 
     user.updated = Date.now();
     user.displayName = `${user.firstName} ${user.lastName}`;
-    User.findByIdAndUpdate(user.id, user, (err) => {
+    User.findOneAndUpdate({ _id: user.id }, user, (err) => {
       if (err) {
         res.status(422)
           .send({
@@ -86,7 +86,7 @@ exports.changeProfilePicture = (req, res) => {
       user.updated = Date.now();
       user.profileImageURL = config.uploads.profile.image.dest + req.file.filename;
 
-      User.findByIdAndUpdate(user.id, user, (err) => {
+      User.findOneAndUpdate({ _id: user.id }, user, (err) => {
         if (err) {
           reject(err);
         } else {
