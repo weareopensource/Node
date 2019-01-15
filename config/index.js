@@ -131,7 +131,7 @@ const initGlobalConfig = () => {
   const assets = require(path.join(process.cwd(), './config/assets'));
 
   // Get the current config
-  const currentEnv = process.env.NODE_ENV || 'developement';
+  const currentEnv = process.env.NODE_ENV || 'development';
   const defaultConfig = require(path.join(process.cwd(), './config', 'defaults', currentEnv)) || {};
 
   // Get the config from  process.env.WAOS_BACK_*
