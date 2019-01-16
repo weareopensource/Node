@@ -46,7 +46,7 @@ exports.update = ({ model, body }, res) => {
 exports.delete = ({ model }, res) => {
   const user = model;
 
-  user.remove((err) => {
+  User.deleteOne({ _id: user.id }).exec((err) => {
     if (err) {
       res.status(422).send({
         message: errorHandler.getErrorMessage(err),

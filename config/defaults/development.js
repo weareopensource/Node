@@ -13,6 +13,9 @@ module.exports = {
     options: {
       user: '',
       pass: '',
+      useCreateIndex: true,
+      useNewUrlParser: true,
+      useFindAndModify: false,
       /**
         * Uncomment to enable ssl certificate based authentication to mongodb
         * servers. Adjust the settings below for your specific certificate

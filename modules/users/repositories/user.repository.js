@@ -11,7 +11,7 @@ class UserRepository {
   }
 
   static delete(user) {
-    return new User(user).remove();
+    return User.deleteOne({ _id: user.id }).exec();
   }
 
   static getById(id) {
