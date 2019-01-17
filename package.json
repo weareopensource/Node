@@ -1,18 +1,18 @@
 {
-  "name": "meanjs",
-  "description": "Full-Stack JavaScript with MongoDB, Express, AngularJS, and Node.js.",
-  "version": "2.0.0-backend",
-  "meanjs-version": "2.0.0-backend",
+  "name": "waosNode",
+  "description": "Stack JavaScript with MongoDB, ORM(sequelize ...), Express, and Node.js. (Based on meanjs and riess.js)",
+  "version": "",
   "private": false,
-  "author": "https://github.com/meanjs/mean/graphs/contributors",
+  "author": "https://github.com/weareopensource/Node/graphs/contributors",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/meanjs/mean.git"
+    "url": "https://github.com/weareopensource/Node.git"
   },
   "engines": {
-    "node": ">=8.4.0",
-    "npm": ">=5.3.0"
+    "node": ">=10.15.0",
+    "npm": ">=6.4.1",
+    "yarn": ">=1.13.0"
   },
   "scripts": {
     "start": "cross-env NODE_ENV=development node server.js",
@@ -29,12 +29,12 @@
     "async": "~2.6.1",
     "bcrypt": "^3.0.3",
     "body-parser": "^1.18.3",
-    "chai": "^4.2.0",
     "chalk": "~2.4.1",
     "compression": "^1.7.2",
     "consolidate": "^0.15.1",
     "cookie-parser": "~1.4.1",
     "cors": "^2.8.4",
+    "cross-env": "^5.1.6",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.13.0",
     "express": "^4.16.3",
@@ -63,15 +63,14 @@
     "request": "^2.87.0",
     "request-promise": "^4.2.2",
     "sequelize": "^4.37.10",
-    "supertest": "^3.1.0",
     "swig": "^1.4.2",
     "winston": "^3.1.0",
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
     "ava": "^1.1.0",
+    "chai": "^4.2.0",
     "coveralls": "~3.0.1",
-    "cross-env": "^5.1.6",
     "cz-conventional-changelog": "^2.1.0",
     "eslint": "^5.12.0",
     "gulp": "~4.0.0",
@@ -80,7 +79,8 @@
     "gulp-mocha": "~6.0.0",
     "gulp-nodemon": "~2.4.2",
     "gulp-refresh": "~1.1.0",
-    "lcov-result-merger": "~3.1.0"
+    "lcov-result-merger": "~3.1.0",
+    "supertest": "^3.1.0"
   },
   "config": {
     "commitizen": {

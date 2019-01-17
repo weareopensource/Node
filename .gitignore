@@ -17,7 +17,7 @@ app/tests/coverage/
 coverage/
 .coveralls.yml
 
-# MEAN.js app and assets
+# waos Node app and assets
 # ======================
 public/dist/
 uploads
@@ -31,7 +31,7 @@ config/env/local-*.js
 modules/*/client/scss/*.css
 modules/*/client/less/*.css
 
-# Ignoring MEAN.JS's gh-pages branch for documenation
+# Ignoring waos Node's gh-pages branch for documenation
 _site/
 
 # General
