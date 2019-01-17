@@ -38,7 +38,16 @@ const UserMongoose = new Schema({
   resetPasswordExpires: Date,
 });
 
-UserMongoose.set('toObject', { getters: true });
+// add virtual id field (FIXME mongoose.virtual ko es6)
+function addID() {
+  return this._id.toHexString();
+}
+UserMongoose.virtual('id').get(addID);
+
+// Ensure virtual fields are serialised.
+UserMongoose.set('toJSON', {
+  virtuals: true,
+});
 
 /**
  * Create instance method for authenticating user

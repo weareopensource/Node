@@ -46,7 +46,7 @@ exports.update = ({ model, body }, res) => {
 exports.delete = ({ model }, res) => {
   const user = model;
 
-  user.remove((err) => {
+  User.deleteOne({ _id: user.id }).exec((err) => {
     if (err) {
       res.status(422).send({
         message: errorHandler.getErrorMessage(err),
@@ -81,7 +81,7 @@ exports.userByID = (req, res, next, id) => {
       message: 'User is invalid',
     });
   } else {
-    User.findById(id, '-salt -password -providerData').exec((err, user) => {
+    User.findOne({ _id: id }, '-salt -password -providerData').exec((err, user) => {
       if (err) {
         next(err);
       } if (!user) {

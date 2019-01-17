@@ -37,10 +37,7 @@ module.exports = {
     ApplicationConfiguration: true
   },
   parserOptions: {
-    "ecmaVersion": 8,
-    "ecmaFeatures": {
-      "experimentalObjectRestSpread": true
-    },
+    ecmaVersion: 10,
     sourceType: 'module',
   }
 };

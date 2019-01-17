@@ -3,7 +3,7 @@ const defaultConfig = require('./development');
 
 module.exports = _.merge(defaultConfig, {
   app: {
-    title: 'MEAN.JS',
+    title: 'WeAreOpenSource Node',
   },
   host: '0.0.0.0',
   db: {

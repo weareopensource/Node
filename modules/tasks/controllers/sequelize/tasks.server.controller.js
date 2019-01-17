@@ -120,7 +120,7 @@ exports.userList = (req, res) => {
 exports.taskByID = (req, res, next, id) => {
   // TODO Validate id format
 
-  orm.Task.findById(id).then((task) => {
+  orm.Task.findOne({ _id: id }).then((task) => {
     if (!task) {
       res.status(404).send({
         message: 'No Task with that identifier has been found',

@@ -3,7 +3,7 @@ const defaultConfig = require('./development');
 
 module.exports = _.merge(defaultConfig, {
   app: {
-    title: 'MEAN.JS - Test Environment',
+    title: 'WeAreOpenSource Node - Test Environment',
   },
   port: 3001,
   host: 'localhost',

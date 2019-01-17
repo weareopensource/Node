@@ -120,7 +120,7 @@ exports.taskByID = (req, res, next, id) => {
       message: 'Task is invalid',
     });
   } else {
-    Task.findById(id).exec().then((task) => {
+    Task.findOne({ _id: id }).exec().then((task) => {
       if (!task) {
         res.status(404).send({
           message: 'No Task with that identifier has been found',

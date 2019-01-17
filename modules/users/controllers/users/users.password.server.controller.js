@@ -205,7 +205,7 @@ exports.changePassword = (req, res) => {
   const passwordDetails = req.body;
   if (req.user) {
     if (passwordDetails.newPassword) {
-      User.findById(req.user.id, async (err, user) => {
+      User.findOne({ _id: req.user.id }, async (err, user) => {
         if (!err && user) {
           if (await UserService.comparePassword(passwordDetails.currentPassword, user.password)) {
             if (passwordDetails.newPassword === passwordDetails.verifyPassword) {
