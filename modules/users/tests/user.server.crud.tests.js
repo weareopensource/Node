@@ -1,15 +1,12 @@
 /**
  * Module dependencies.
  */
-const chai = require('chai');
 const request = require('supertest');
 const path = require('path');
 const _ = require('lodash');
 
 const express = require(path.resolve('./lib/services/express'));
 const mongooseService = require(path.resolve('./lib/services/mongoose'));
-
-const should = chai.should();
 
 /**
  * Unit tests
@@ -18,7 +15,7 @@ describe('User CRUD Unit Tests :', () => {
   let UserService = null;
 
   // Mongoose init
-  before(() => mongooseService.connect()
+  beforeAll(() => mongooseService.connect()
     .then(() => {
       mongooseService.loadModels();
       UserService = require('../services/user.service');
@@ -42,7 +39,7 @@ describe('User CRUD Unit Tests :', () => {
  * User routes tests
  */
   describe('User CRUD logged', () => {
-    before((done) => {
+    beforeAll((done) => {
     // Get application
       app = express.init();
       agent = request.agent(app);
@@ -84,11 +81,11 @@ describe('User CRUD Unit Tests :', () => {
         user = result.body.user;
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
     });
 
-    it('should be able to register a new user', async () => {
+    test('should be able to register a new user', async () => {
       // Init user edited
       _userEdited.username = 'register_new_user';
       _userEdited.email = 'register_new_user_@test.com';
@@ -99,48 +96,54 @@ describe('User CRUD Unit Tests :', () => {
           .expect(200);
         userEdited = result.body.user;
 
-        result.body.user.username.should.equal(_userEdited.username);
-        result.body.user.email.should.equal(_userEdited.email);
-        result.body.user.roles.should.be.instanceof(Array).and.have.lengthOf(1);
-        result.body.user.roles.indexOf('user').should.equal(0);
+        expect(result.body.user.username).toBe(_userEdited.username);
+        expect(result.body.user.email).toBe(_userEdited.email);
+        expect(result.body.user.roles).toBeInstanceOf(Array);
+        expect(result.body.user.roles).toHaveLength(1);
+        expect(result.body.user.roles).toEqual(
+          expect.arrayContaining(['user']),
+        );
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
 
       try {
         await UserService.remove(userEdited);
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
     });
 
 
-    it('should be able to login with username successfully', async () => {
+    test('should be able to login with username successfully', async () => {
       try {
         await agent.post('/api/auth/signin')
           .send(credentials[0])
           .expect(200);
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
     });
 
-    it('should not be able to retrieve a list of users if not admin', async () => {
-      try {
-        await agent.get('/api/users')
-          .send(credentials[0])
-          .expect(403);
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
-    });
+    test(
+      'should not be able to retrieve a list of users if not admin',
+      async () => {
+        try {
+          await agent.get('/api/users')
+            .send(credentials[0])
+            .expect(403);
+        } catch (err) {
+          console.log(err);
+          expect(err).toBeFalsy();
+        }
+      },
+    );
 
 
-    it('should be able to get a single user details if admin', async () => {
+    test('should be able to get a single user details if admin', async () => {
       _userEdited.roles = ['user', 'admin'];
 
       try {
@@ -150,28 +153,28 @@ describe('User CRUD Unit Tests :', () => {
         userEdited = result.body.user;
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
 
       try {
         const result = await agent.get(`/api/users/${userEdited._id}`)
           .expect(200);
-        result.body.should.be.instanceof(Object);
-        result.body._id.should.be.equal(String(userEdited._id));
+        expect(result.body).toBeInstanceOf(Object);
+        expect(result.body._id).toBe(String(userEdited._id));
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
 
       try {
         await UserService.remove(userEdited);
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
     });
 
-    it('should be able to update a single user details if admin', async () => {
+    test('should be able to update a single user details if admin', async () => {
       _userEdited.roles = ['user', 'admin'];
 
       try {
@@ -181,7 +184,7 @@ describe('User CRUD Unit Tests :', () => {
         userEdited = result.body.user;
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
 
       try {
@@ -194,25 +197,29 @@ describe('User CRUD Unit Tests :', () => {
         const result = await agent.put(`/api/users/${userEdited._id}`)
           .send(userUpdate)
           .expect(200);
-        result.body.should.be.instanceof(Object);
-        result.body.firstName.should.be.equal('admin_update_first');
-        result.body.lastName.should.be.equal('admin_update_last');
-        result.body.roles.should.be.instanceof(Array).and.have.lengthOf(1);
-        result.body._id.should.be.equal(String(userEdited._id));
+        expect(result.body).toBeInstanceOf(Object);
+        expect(result.body.firstName).toBe('admin_update_first');
+        expect(result.body.lastName).toBe('admin_update_last');
+        expect(result.body.roles).toBeInstanceOf(Array);
+        expect(result.body.roles).toHaveLength(1);
+        expect(result.body.roles).toEqual(
+          expect.arrayContaining(['admin']),
+        );
+        expect(result.body._id).toBe(String(userEdited._id));
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
 
       try {
         await UserService.remove(userEdited);
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
     });
 
-    it('should be able to delete a single user if admin', async () => {
+    test('should be able to delete a single user if admin', async () => {
       _userEdited.roles = ['user', 'admin'];
 
       try {
@@ -222,28 +229,28 @@ describe('User CRUD Unit Tests :', () => {
         userEdited = result.body.user;
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
 
       try {
         const result = await agent.delete(`/api/users/${userEdited._id}`)
           .expect(200);
-        result.body.should.be.instanceof(Object);
-        result.body._id.should.be.equal(String(userEdited._id));
+        expect(result.body).toBeInstanceOf(Object);
+        expect(result.body._id).toBe(String(userEdited._id));
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
 
       try {
         await UserService.remove(userEdited);
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
     });
 
-    it('forgot password should return 400 for non-existent mail', async () => {
+    test('forgot password should return 400 for non-existent mail', async () => {
       try {
         const result = await agent.post('/api/auth/forgot')
           .send({
@@ -251,14 +258,14 @@ describe('User CRUD Unit Tests :', () => {
           })
           .expect(400);
 
-        result.body.message.should.equal('No account with that email has been found');
+        expect(result.body.message).toBe('No account with that email has been found');
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
     });
 
-    it('forgot password should return 422 for no email provided', async () => {
+    test('forgot password should return 422 for no email provided', async () => {
       _userEdited.provider = 'facebook';
 
       try {
@@ -268,7 +275,7 @@ describe('User CRUD Unit Tests :', () => {
         userEdited = result.body.user;
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
 
       try {
@@ -277,151 +284,163 @@ describe('User CRUD Unit Tests :', () => {
             email: '',
           })
           .expect(422);
-        result.body.message.should.equal('Mail field must not be blank');
+        expect(result.body.message).toBe('Mail field must not be blank');
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
 
       try {
         await UserService.remove(userEdited);
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
     });
 
-    it('forgot password should return 400 for non-local provider set for the user object', async () => {
-      _userEdited.provider = 'facebook';
-
-      try {
-        const result = await agent.post('/api/auth/signup')
-          .send(_userEdited)
-          .expect(200);
-        userEdited = result.body.user;
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
-
-      try {
-        const result = await agent.post('/api/auth/forgot')
-          .send({
-            email: userEdited.email,
-          })
-          .expect(400);
-        result.body.message.should.equal(`It seems like you signed up using your ${userEdited.provider} account`);
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
-
-      try {
-        await UserService.remove(userEdited);
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
-    });
-
-    it('forgot password should be able to reset password for user password reset request', async () => {
-      try {
-        const result = await agent.post('/api/auth/forgot')
-          .send({
-            email: user.email,
-          })
-          .expect(400);
-        result.body.message.should.be.equal('Failure sending email');
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
-
-      try {
-        const result = await UserService.get({
-          email: user.email,
-        });
-        result.should.be.an('object');
-        should.exist(result.resetPasswordToken);
-        should.exist(result.resetPasswordExpires);
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
-    });
-
-    it('forgot password should be able to reset the password using reset token', async () => {
-      try {
-        const result = await agent.post('/api/auth/forgot')
-          .send({
-            email: user.email,
-          })
-          .expect(400);
-        result.body.message.should.be.equal('Failure sending email');
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
-
-      try {
-        const result = await UserService.get({
-          email: user.email,
-        });
-        result.should.be.an('object');
-        should.exist(result.resetPasswordToken);
-        should.exist(result.resetPasswordExpires);
+    test(
+      'forgot password should return 400 for non-local provider set for the user object',
+      async () => {
+        _userEdited.provider = 'facebook';
 
         try {
-          const result2 = await agent.get(`/api/auth/reset/${result.resetPasswordToken}`)
-            .expect(302);
-          result2.headers.location.should.be.equal(`/password/reset/${result.resetPasswordToken}`);
+          const result = await agent.post('/api/auth/signup')
+            .send(_userEdited)
+            .expect(200);
+          userEdited = result.body.user;
         } catch (err) {
           console.log(err);
-          should.not.exist(err);
+          expect(err).toBeFalsy();
         }
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
-    });
-
-    it('forgot password should return error when using invalid reset token', async () => {
-      try {
-        const result = await agent.post('/api/auth/forgot')
-          .send({
-            email: user.email,
-          })
-          .expect(400);
-        result.body.message.should.be.equal('Failure sending email');
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
-
-      try {
-        const result = await UserService.get({
-          email: user.email,
-        });
-        result.should.be.an('object');
-        should.exist(result.resetPasswordToken);
-        should.exist(result.resetPasswordExpires);
 
         try {
-          const invalidToken = 'someTOKEN1234567890';
-          const result2 = await agent.get(`/api/auth/reset/${invalidToken}`)
-            .expect(302);
-          result2.headers.location.should.be.equal('/password/reset/invalid');
+          const result = await agent.post('/api/auth/forgot')
+            .send({
+              email: userEdited.email,
+            })
+            .expect(400);
+          expect(result.body.message).toBe(`It seems like you signed up using your ${userEdited.provider} account`);
         } catch (err) {
           console.log(err);
-          should.not.exist(err);
+          expect(err).toBeFalsy();
         }
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
-    });
 
-    it('should be able to change user own password successfully', async () => {
+        try {
+          await UserService.remove(userEdited);
+        } catch (err) {
+          console.log(err);
+          expect(err).toBeFalsy();
+        }
+      },
+    );
+
+    test(
+      'forgot password should be able to reset password for user password reset request',
+      async () => {
+        try {
+          const result = await agent.post('/api/auth/forgot')
+            .send({
+              email: user.email,
+            })
+            .expect(400);
+          expect(result.body.message).toBe('Failure sending email');
+        } catch (err) {
+          console.log(err);
+          expect(err).toBeFalsy();
+        }
+
+        try {
+          const result = await UserService.get({
+            email: user.email,
+          });
+          expect(typeof result).toBe('object');
+          expect(result.resetPasswordToken).toBeDefined();
+          expect(result.resetPasswordExpires).toBeDefined();
+        } catch (err) {
+          console.log(err);
+          expect(err).toBeFalsy();
+        }
+      },
+    );
+
+    test(
+      'forgot password should be able to reset the password using reset token',
+      async () => {
+        try {
+          const result = await agent.post('/api/auth/forgot')
+            .send({
+              email: user.email,
+            })
+            .expect(400);
+          expect(result.body.message).toBe('Failure sending email');
+        } catch (err) {
+          console.log(err);
+          expect(err).toBeFalsy();
+        }
+
+        try {
+          const result = await UserService.get({
+            email: user.email,
+          });
+          expect(typeof result).toBe('object');
+          expect(result.resetPasswordToken).toBeDefined();
+          expect(result.resetPasswordExpires).toBeDefined();
+
+          try {
+            const result2 = await agent.get(`/api/auth/reset/${result.resetPasswordToken}`)
+              .expect(302);
+            expect(result2.headers.location).toBe(`/password/reset/${result.resetPasswordToken}`);
+          } catch (err) {
+            console.log(err);
+            expect(err).toBeFalsy();
+          }
+        } catch (err) {
+          console.log(err);
+          expect(err).toBeFalsy();
+        }
+      },
+    );
+
+    test(
+      'forgot password should return error when using invalid reset token',
+      async () => {
+        try {
+          const result = await agent.post('/api/auth/forgot')
+            .send({
+              email: user.email,
+            })
+            .expect(400);
+          expect(result.body.message).toBe('Failure sending email');
+        } catch (err) {
+          console.log(err);
+          expect(err).toBeFalsy();
+        }
+
+        try {
+          const result = await UserService.get({
+            email: user.email,
+          });
+          expect(typeof result).toBe('object');
+          expect(result.resetPasswordToken).toBeDefined();
+          expect(result.resetPasswordExpires).toBeDefined();
+
+          try {
+            const invalidToken = 'someTOKEN1234567890';
+            const result2 = await agent.get(`/api/auth/reset/${invalidToken}`)
+              .expect(302);
+            expect(result2.headers.location).toBe('/password/reset/invalid');
+          } catch (err) {
+            console.log(err);
+            expect(err).toBeFalsy();
+          }
+        } catch (err) {
+          console.log(err);
+          expect(err).toBeFalsy();
+        }
+      },
+    );
+
+    test('should be able to change user own password successfully', async () => {
       try {
         const result = await agent.post('/api/users/password')
           .send({
@@ -430,74 +449,83 @@ describe('User CRUD Unit Tests :', () => {
             currentPassword: credentials[0].password,
           })
           .expect(200);
-        result.body.message.should.equal('Password changed successfully');
+        expect(result.body.message).toBe('Password changed successfully');
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
     });
 
-    it('should not be able to change user own password if wrong verifyPassword is given', async () => {
-      try {
-        const result = await agent.post('/api/users/password')
-          .send({
-            newPassword: '1234567890Aa$',
-            verifyPassword: '1234567890-ABC-123-Aa$',
-            currentPassword: credentials[0].password,
-          });
-        result.body.message.should.equal('Passwords do not match');
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
-    });
+    test(
+      'should not be able to change user own password if wrong verifyPassword is given',
+      async () => {
+        try {
+          const result = await agent.post('/api/users/password')
+            .send({
+              newPassword: '1234567890Aa$',
+              verifyPassword: '1234567890-ABC-123-Aa$',
+              currentPassword: credentials[0].password,
+            });
+          expect(result.body.message).toBe('Passwords do not match');
+        } catch (err) {
+          console.log(err);
+          expect(err).toBeFalsy();
+        }
+      },
+    );
 
-    it('should not be able to change user own password if wrong currentPassword is given', async () => {
-      try {
-        const result = await agent.post('/api/users/password')
-          .send({
-            newPassword: '1234567890Aa$',
-            verifyPassword: '1234567890Aa$',
-            currentPassword: 'some_wrong_passwordAa$',
-          });
-        result.body.message.should.equal('Current password is incorrect');
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
-    });
+    test(
+      'should not be able to change user own password if wrong currentPassword is given',
+      async () => {
+        try {
+          const result = await agent.post('/api/users/password')
+            .send({
+              newPassword: '1234567890Aa$',
+              verifyPassword: '1234567890Aa$',
+              currentPassword: 'some_wrong_passwordAa$',
+            });
+          expect(result.body.message).toBe('Current password is incorrect');
+        } catch (err) {
+          console.log(err);
+          expect(err).toBeFalsy();
+        }
+      },
+    );
 
-    it('should not be able to change user own password if no new password is at all given', async () => {
-      try {
-        const result = await agent.post('/api/users/password')
-          .send({
-            newPassword: '',
-            verifyPassword: '',
-            currentPassword: credentials[0].password,
-          });
-        result.body.message.should.equal('Please provide a new password');
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
-    });
+    test(
+      'should not be able to change user own password if no new password is at all given',
+      async () => {
+        try {
+          const result = await agent.post('/api/users/password')
+            .send({
+              newPassword: '',
+              verifyPassword: '',
+              currentPassword: credentials[0].password,
+            });
+          expect(result.body.message).toBe('Please provide a new password');
+        } catch (err) {
+          console.log(err);
+          expect(err).toBeFalsy();
+        }
+      },
+    );
 
-    it('should be able to get own user details successfully', async () => {
+    test('should be able to get own user details successfully', async () => {
       try {
         const result = await agent.get('/api/users/me')
           .expect(200);
-        result.body.should.be.instanceof(Object);
-        result.body.username.should.equal(user.username);
-        result.body.email.should.equal(user.email);
-        should.not.exist(result.body.salt);
-        should.not.exist(result.body.password);
+        expect(result.body).toBeInstanceOf(Object);
+        expect(result.body.username).toBe(user.username);
+        expect(result.body.email).toBe(user.email);
+        expect(result.body.salt).toBeFalsy();
+        expect(result.body.password).toBeFalsy();
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
     });
 
-    it('should be able to update own user details', async () => {
+    test('should be able to update own user details', async () => {
       const userUpdate = {
         firstName: 'user_update_first',
         lastName: 'user_update_last',
@@ -508,112 +536,126 @@ describe('User CRUD Unit Tests :', () => {
           .send(userUpdate)
           .expect(200);
 
-        result.body.should.be.instanceof(Object);
-        result.body.firstName.should.be.equal('user_update_first');
-        result.body.lastName.should.be.equal('user_update_last');
-        result.body.roles.should.be.instanceof(Array).and.have.lengthOf(1);
-        result.body.roles.indexOf('user').should.equal(0);
-        result.body.id.should.be.equal(String(user.id));
+        expect(result.body).toBeInstanceOf(Object);
+        expect(result.body.firstName).toBe('user_update_first');
+        expect(result.body.lastName).toBe('user_update_last');
+        expect(result.body.roles).toBeInstanceOf(Array);
+        expect(result.body.roles).toHaveLength(1);
+        expect(result.body.roles).toEqual(
+          expect.arrayContaining(['user']),
+        );
+        expect(result.body.id).toBe(String(user.id));
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
     });
 
-    it('should not be able to update own user details and add roles if not admin', async () => {
-      const userUpdate = {
-        firstName: 'user_update_first',
-        lastName: 'user_update_last',
-        roles: ['user', 'admin'],
-      };
-
-      try {
-        const result = await agent.put('/api/users')
-          .send(userUpdate)
-          .expect(200);
-        result.body.should.be.instanceof(Object);
-        result.body.firstName.should.be.equal('user_update_first');
-        result.body.lastName.should.be.equal('user_update_last');
-        result.body.roles.should.be.instanceof(Array).and.have.lengthOf(1);
-        result.body.roles.indexOf('user').should.equal(0);
-        result.body.id.should.be.equal(String(user.id));
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
-    });
-
-    it('should not be able to update own user details with existing username', async () => {
-      try {
-        const result = await agent.post('/api/auth/signup')
-          .send(_userEdited)
-          .expect(200);
-        userEdited = result.body.user;
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
-
-      try {
+    test(
+      'should not be able to update own user details and add roles if not admin',
+      async () => {
         const userUpdate = {
-          firstName: _userEdited.firstName,
-          lastName: _userEdited.lastName,
-          username: _user.username,
+          firstName: 'user_update_first',
+          lastName: 'user_update_last',
+          roles: ['user', 'admin'],
         };
+        try {
+          const result = await agent.put('/api/users')
+            .send(userUpdate)
+            .expect(200);
+          expect(result.body).toBeInstanceOf(Object);
+          expect(result.body.firstName).toBe('user_update_first');
+          expect(result.body.lastName).toBe('user_update_last');
+          expect(result.body.roles).toBeInstanceOf(Array);
+          expect(result.body.roles).toHaveLength(1);
+          expect(result.body.roles).toEqual(
+            expect.arrayContaining(['user']),
+          );
+          expect(result.body.id).toBe(String(user.id));
+        } catch (err) {
+          console.log(err);
+          expect(err).toBeFalsy();
+        }
+      },
+    );
 
-        const result = await agent.put('/api/users')
-          .send(userUpdate)
-          .expect(422);
-        result.body.message.should.equal('Username already exists');
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
+    test(
+      'should not be able to update own user details with existing username',
+      async () => {
+        try {
+          const result = await agent.post('/api/auth/signup')
+            .send(_userEdited)
+            .expect(200);
+          userEdited = result.body.user;
+        } catch (err) {
+          console.log(err);
+          expect(err).toBeFalsy();
+        }
 
-      try {
-        await UserService.remove(userEdited);
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
-    });
+        try {
+          const userUpdate = {
+            firstName: _userEdited.firstName,
+            lastName: _userEdited.lastName,
+            username: _user.username,
+          };
 
-    it('should not be able to update own user details with existing email', async () => {
-      try {
-        const result = await agent.post('/api/auth/signup')
-          .send(_userEdited)
-          .expect(200);
-        userEdited = result.body.user;
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
+          const result = await agent.put('/api/users')
+            .send(userUpdate)
+            .expect(422);
+          expect(result.body.message).toBe('Username already exists');
+        } catch (err) {
+          console.log(err);
+          expect(err).toBeFalsy();
+        }
 
-      try {
-        const userUpdate = {
-          firstName: _userEdited.firstName,
-          lastName: _userEdited.lastName,
-          email: _user.email,
-        };
+        try {
+          await UserService.remove(userEdited);
+        } catch (err) {
+          console.log(err);
+          expect(err).toBeFalsy();
+        }
+      },
+    );
 
-        const result = await agent.put('/api/users')
-          .send(userUpdate)
-          .expect(422);
-        result.body.message.should.equal('Email already exists');
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
+    test(
+      'should not be able to update own user details with existing email',
+      async () => {
+        try {
+          const result = await agent.post('/api/auth/signup')
+            .send(_userEdited)
+            .expect(200);
+          userEdited = result.body.user;
+        } catch (err) {
+          console.log(err);
+          expect(err).toBeFalsy();
+        }
 
-      try {
-        await UserService.remove(userEdited);
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
-    });
+        try {
+          const userUpdate = {
+            firstName: _userEdited.firstName,
+            lastName: _userEdited.lastName,
+            email: _user.email,
+          };
 
-    it('should not be able to update secure fields', async () => {
+          const result = await agent.put('/api/users')
+            .send(userUpdate)
+            .expect(422);
+          expect(result.body.message).toBe('Email already exists');
+        } catch (err) {
+          console.log(err);
+          expect(err).toBeFalsy();
+        }
+
+        try {
+          await UserService.remove(userEdited);
+        } catch (err) {
+          console.log(err);
+          expect(err).toBeFalsy();
+        }
+      },
+    );
+
+    test('should not be able to update secure fields', async () => {
       try {
         const userUpdate = {
           firstName: 'admin_update_first',
@@ -628,69 +670,78 @@ describe('User CRUD Unit Tests :', () => {
           .expect(200);
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
 
 
       try {
         const result = await UserService.get(user);
 
-        result.password.should.be.equal(user.password);
-        result.created.getTime().should.be.equal(new Date(user.created).getTime());
-        should.not.exist(result.resetPasswordToken);
+        expect(result.password).toBe(user.password);
+        expect(result.created.getTime()).toBe(new Date(user.created).getTime());
+        expect(result.resetPasswordToken).toBeFalsy();
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
     });
 
-    it('should be able to change profile picture if signed in', async () => {
+    test('should be able to change profile picture if signed in', async () => {
       try {
         const result = await agent.post('/api/users/picture')
           .attach('newProfilePicture', './modules/users/tests/img/default.png')
           .expect(200);
 
-        result.body.should.be.instanceof(Object);
-        result.body.profileImageURL.should.be.a('string');
-        result.body.id.should.be.equal(String(user.id));
+        expect(result.body).toBeInstanceOf(Object);
+        expect(typeof result.body.profileImageURL).toBe('string');
+        expect(result.body.id).toBe(String(user.id));
       } catch (err) {
         console.log(err);
-        should.not.exist(err);
+        expect(err).toBeFalsy();
       }
     });
 
-    it('should not be able to change profile picture if attach a picture with a different field name', async () => {
-      try {
-        await agent.post('/api/users/picture')
-          .attach('fieldThatDoesntWork', './modules/users/tests/img/default.png')
-          .expect(422);
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
-    });
+    test(
+      'should not be able to change profile picture if attach a picture with a different field name',
+      async () => {
+        try {
+          await agent.post('/api/users/picture')
+            .attach('fieldThatDoesntWork', './modules/users/tests/img/default.png')
+            .expect(422);
+        } catch (err) {
+          console.log(err);
+          expect(err).toBeFalsy();
+        }
+      },
+    );
 
-    it('should not be able to upload a non-image file as a profile picture', async () => {
-      try {
-        await agent.post('/api/users/picture')
-          .attach('newProfilePicture', './modules/users/tests/img/text-file.txt')
-          .expect(422);
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
-    });
+    test(
+      'should not be able to upload a non-image file as a profile picture',
+      async () => {
+        try {
+          await agent.post('/api/users/picture')
+            .attach('newProfilePicture', './modules/users/tests/img/text-file.txt')
+            .expect(422);
+        } catch (err) {
+          console.log(err);
+          expect(err).toBeFalsy();
+        }
+      },
+    );
 
-    it('should not be able to change profile picture to too big of a file', async () => {
-      try {
-        await agent.post('/api/users/picture')
-          .attach('newProfilePicture', './modules/users/tests/img/too-big-file.png')
-          .expect(422);
-      } catch (err) {
-        console.log(err);
-        should.not.exist(err);
-      }
-    });
+    test(
+      'should not be able to change profile picture to too big of a file',
+      async () => {
+        try {
+          await agent.post('/api/users/picture')
+            .attach('newProfilePicture', './modules/users/tests/img/too-big-file.png')
+            .expect(422);
+        } catch (err) {
+          console.log(err);
+          expect(err).toBeFalsy();
+        }
+      },
+    );
 
     afterEach(async () => {
       try {
@@ -702,7 +753,7 @@ describe('User CRUD Unit Tests :', () => {
   });
 
   describe('User CRUD logout', () => {
-    before((done) => {
+    beforeAll((done) => {
     // Get application
       app = express.init();
       agent = request.agent(app);
@@ -710,69 +761,81 @@ describe('User CRUD Unit Tests :', () => {
       done();
     });
 
-    it('should not be able to change user own password if not signed in', async () => {
-      try {
-        await agent.post('/api/users/password')
-          .send({
-            newPassword: '1234567890Aa$',
-            verifyPassword: '1234567890Aa$',
-            currentPassword: 'W@os.jsI$Aw3$0m3',
-          })
-          .expect(401);
-      // TODO error message
-      // result.body.message.should.equal('User is not signed in');
-      } catch (err) {
-        should.not.exist(err);
-        console.log(err);
-      }
-    });
+    test(
+      'should not be able to change user own password if not signed in',
+      async () => {
+        try {
+          await agent.post('/api/users/password')
+            .send({
+              newPassword: '1234567890Aa$',
+              verifyPassword: '1234567890Aa$',
+              currentPassword: 'W@os.jsI$Aw3$0m3',
+            })
+            .expect(401);
+        // TODO error message
+        // result.body.message.should.equal('User is not signed in');
+        } catch (err) {
+          expect(err).toBeFalsy();
+          console.log(err);
+        }
+      },
+    );
 
-    it('should not be able to get any user details if not logged in', async () => {
-      try {
-        await agent.get('/api/users/me')
-          .expect(401);
-      // TODO error message
-      // result.body.message.should.equal('User is not signed in');
-      } catch (err) {
-        should.not.exist(err);
-        console.log(err);
-      }
-    });
+    test(
+      'should not be able to get any user details if not logged in',
+      async () => {
+        try {
+          await agent.get('/api/users/me')
+            .expect(401);
+        // TODO error message
+        // result.body.message.should.equal('User is not signed in');
+        } catch (err) {
+          expect(err).toBeFalsy();
+          console.log(err);
+        }
+      },
+    );
 
-    it('should not be able to update own user details if not logged-in', async () => {
-      try {
-        const userUpdate = {
-          firstName: 'user_update_first',
-          lastName: 'user_update_last',
-        };
+    test(
+      'should not be able to update own user details if not logged-in',
+      async () => {
+        try {
+          const userUpdate = {
+            firstName: 'user_update_first',
+            lastName: 'user_update_last',
+          };
 
-        await agent.put('/api/users')
-          .send(userUpdate)
-          .expect(401);
-      // TODO error message
-      // result.body.message.should.equal('User is not signed in');
-      } catch (err) {
-        should.not.exist(err);
-        console.log(err);
-      }
-    });
+          await agent.put('/api/users')
+            .send(userUpdate)
+            .expect(401);
+        // TODO error message
+        // result.body.message.should.equal('User is not signed in');
+        } catch (err) {
+          expect(err).toBeFalsy();
+          console.log(err);
+        }
+      },
+    );
 
-    it('should not be able to update own user profile picture without being logged-in', async () => {
-      try {
-        await agent.post('/api/users/picture')
-          .send({})
-          .expect(401);
-      // TODO error message
-      // result.body.message.should.equal('User is not signed in');
-      } catch (err) {
-        should.not.exist(err);
-        console.log(err);
-      }
-    });
+    test(
+      'should not be able to update own user profile picture without being logged-in',
+      async () => {
+        try {
+          await agent.post('/api/users/picture')
+            .send({})
+            .expect(401);
+        // TODO error message
+        // result.body.message.should.equal('User is not signed in');
+        } catch (err) {
+          expect(err).toBeFalsy();
+          console.log(err);
+        }
+      },
+    );
   });
 
   // Mongoose disconnect
-  after(() => mongooseService.disconnect()
+  afterAll(() => mongooseService.disconnect()
     .catch((e) => {
       console.log(e);
     }));

@@ -19,8 +19,8 @@
     "debug": "cross-env NODE_ENV=development nodemon --inspect server.js",
     "prod": "cross-env NODE_ENV=production pm2 start server.js --name=waosNode",
     "test": "cross-env NODE_ENV=test gulp test",
-    "testWatch": "cross-env NODE_ENV=test gulp test:server:watch",
-    "testCoverage": "cross-env NODE_ENV=test gulp test:coverage",
+    "testWatch": "cross-env NODE_ENV=test gulp testWatch",
+    "testCoverage": "cross-env NODE_ENV=test gulp testCoverage",
     "generate-ssl-certs": "lib/scripts/generate-ssl-certs.sh",
     "lint": "gulp lint"
   },
@@ -63,24 +63,22 @@
     "request": "^2.87.0",
     "request-promise": "^4.2.2",
     "sequelize": "^4.37.10",
+    "supertest": "^3.1.0",
     "swig": "^1.4.2",
     "winston": "^3.1.0",
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
-    "ava": "^1.1.0",
-    "chai": "^4.2.0",
     "coveralls": "~3.0.1",
     "cz-conventional-changelog": "^2.1.0",
-    "eslint": "^5.12.0",
+    "eslint": "^5.12.1",
     "gulp": "~4.0.0",
     "gulp-eslint": "^5.0.0",
     "gulp-load-plugins": "^1.5.0",
-    "gulp-mocha": "~6.0.0",
     "gulp-nodemon": "~2.4.2",
     "gulp-refresh": "~1.1.0",
-    "lcov-result-merger": "~3.1.0",
-    "supertest": "^3.1.0"
+    "jest-cli": "^23.6.0",
+    "lcov-result-merger": "~3.1.0"
   },
   "config": {
     "commitizen": {
