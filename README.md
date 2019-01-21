@@ -1,71 +1,94 @@
-[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/weareopensource?utm_source=share-link&utm_medium=link&utm_campaign=share-link)
-[![Build Status](https://travis-ci.org/weareopensource/node.svg?branch=master)](https://travis-ci.org/weareopensource/node)
-[![Dependencies Status](https://david-dm.org/weareopensource/node.svg)](https://david-dm.org/weareopensource/node)
-[![Coverage Status](https://coveralls.io/repos/weareopensource/node/badge.svg?branch=master&service=github)](https://coveralls.io/github/weareopensource/node?branch=master)
-[![Known Vulnerabilities](https://snyk.io/test/github/weareopensource/node/badge.svg)](https://snyk.io/test/github/weareopensource/node)
+
+
+![Build Status](https://badges.weareopensource.me/travis/weareopensource/node.svg?style=flat-square) ![Coveralls Status](https://badges.weareopensource.me/coveralls/github/weareopensource/node.svg?style=flat-square) [![Dependencies Status](https://david-dm.org/weareopensource/node.svg?style=flat-square)](https://david-dm.org/weareopensource/node) [![Known Vulnerabilities](https://snyk.io/test/github/weareopensource/node/badge.svg?style=flat-square)](https://snyk.io/test/github/weareopensource/node)
+
+[![Blog](https://badges.weareopensource.me/badge/Read-On%20our%20Blog-1abc9c.svg?style=flat-square)](https://weareopensource.me) [![Slack](https://badges.weareopensource.me/badge/Chat-On%20Slack-d0355b.svg?style=flat-square)](mailto:weareopensource.me@gmail.com?subject=Join%20Slack&body=Hi,%20I%20found%20your%20community%20We%20Are%20Open%20Source.%20I%20would%20be%20interested%20to%20join%20the%20Slack%20to%20share%20and%20discuss%20about%20...%20,%20Thanks) [![Mail](https://badges.weareopensource.me/badge/Contact-By%20Mail-3498db.svg?style=flat-square)](mailto:weareopensource.me@gmail.com?subject=Contact)
+
+
 
 
 # [WeAreOpenSource](https://weareopensource.me) Node
 
-### Node / Express / Mongoose / Sequelize
+### Node / Express / Mongoose - Sequelize Orm
 
 ## Presentation
-This project a stack Node that can be ran as a standalone application. Or in a fullstack, like this example, [MEANie](https://github.com/weareopensource/MEANie). We are actually in Beta.
 
-| Subject | Node
+This project is a stack Node that can be ran as a standalone backend. Or in a fullstack with another of our repo of your choice (ex: [Angular](https://github.com/weareopensource/Angular)). 
+
+You can have more informations about : 
+
+* our mindset and what we would like to create in our [introduction](https://weareopensource.me/introduction/) (in construction)
+* how to create a fullstack from our repo in our [wiki](https://github.com/weareopensource/weareopensource.github.io/wiki) (in construciton).
+* our global roadmap and propose ideas about stacks in our [board](https://github.com/weareopensource/weareopensource.github.io/projects/1)
+
+Our stack node is actually in Beta. 
+
+
+## Technology Overview
+
+| Subject | Informations
 | ------- | --------
-| **Node.js**  | v10.15 LTS
-| **DB:**  | Sequelize ORM, Mongoose, Joi
-| **Deliver**  | Docker & Docker-compose
-| **Testing: Tools** | request, mocha, chai
-| **Security** | zxcvbn
+| **Available** | 
+| Server  | [Node v10.15 LTS](https://nodejs.org/en/) <br> [Express](https://github.com/expressjs/express) - [body-parser](https://github.com/expressjs/body-parser) - [compression](https://github.com/expressjs/compression) - [CORS](https://github.com/expressjs/cors) - [method-override](https://github.com/expressjs/method-override) <br> [gulp 4](https://github.com/gulpjs/gulp) - [nodemon](https://github.com/remy/nodemon) - [pm2](https://github.com/Unitech/pm2)
+| DataBase  | [Mongo 4.x LTS](https://www.mongodb.com/download-center/community) &  [mongoose](https://github.com/Automattic/mongoose) (user management & crud Task example) <br> [Sequelize](https://github.com/sequelize/sequelize) : PostgreSQL, MySQL, SQLit 4.x (option - crud Task example) <br> [JOI](https://github.com/hapijs/joi) Models & Repository for database code abstraction
+| Testing |  [Jest](https://github.com/facebook/jest) & [SuperTest](https://github.com/visionmedia/supertest) (Coverage & Watch) <br> *example of mocha with gulp available*
+| Linter  | [ESLint](https://github.com/eslint/eslint) ecmaVersion 10 (2019)
+| Security | JWT Stateless - [passport-jwt](https://github.com/themikenicholson/passport-jwt) <br> Passwords - [zxcvbn](https://github.com/dropbox/zxcvbn) <br> DataBases options available (auth, ssl ..) <br> SSL options availble 
+| **Being released** | 
+| CI  | Travis 
+| Deliver | Docker & Docker-compose
+| Database | seed
+| Architecture | vertical modules architecture with Repository and Services Pattern  
+| **In reflexion** | 
+| Config | convict 
+| Documentation  | Swagger <br> Docco 
+| Developer  | uses `commitizen` to streamline commit guidelines <br> uses v8's builtin `debug` and `inspect` optionse
 
-| **Testing: Tests Automation** | separates tasks to unit tests, integration tests
-| **Testing: ExpressJS** | gulp instantiates a real ExpressJS API service
-| **Testing: Seed** | seed tasks resets the db/models to clear data and is separated to own gulp task
+## Features Overview
 
-| **Developer: Community**  | uses `commitizen` to streamline commit guidelines
-| **Developer: Debug**  | uses v8's builtin `debug` and `inspect` optionse
+#### Available
 
-Planned:
+* **User** : classic register / aiuth or oAuth(microsoft, google) - profile management (update, avatar upload ...)
+* **Admin** : list users - edit user - delete user
+* **Tasks** : list tasks - add tasks - edit tasks - delete tasks
 
-| Subject  | Node
-| -------  | --------
-| **CI**  | Travis, Gitlab-ci ?
-| **Config** | convict ?
-| **Documentation: API**  | Swagger ?
-| **Documentation: Code**  | Docco ?
+#### In reflexion
 
-## [Demo](http://meanie.weareopensource.me)  (This Node stack is used for this demonstration of MEANie fullstack)
+RGPD conpliance 
+
+## [Demo](http://meanie.weareopensource.me)  
+(This Node stack is used for this demonstration with our [Angular](https://github.com/weareopensource/Angular) Stack)
 
 ## Prerequisites
 Make sure you have installed all of the following prerequisites on your development machine:
 * Git - [Download & Install Git](https://git-scm.com/downloads)
-* Node.js (7.x, 8.x) - [Download & Install Node.js](https://nodejs.org/en/download/)
+* Node.js (10.x) - [Download & Install Node.js](https://nodejs.org/en/download/)
 
 ## Installation
-It's straightforward
+It's straightforward (you can use yarn if you want)
 ```bash
 $ git clone https://github.com/weareopensource/node.git && cd Node
-$ npm i
+$ npm i 
 ```
 
 ## Running Your Application
 
 ### Development
-* Run `gulp` for a dev server. Available at `http://localhost:3000/`.
+* Run `npm start` for a dev server. Available at `http://localhost:3000/`.
 
 ### Production
-* Run `gulp prod` for a prod server. Available at `http://localhost:8443/`
+* Run `npm run prod` for a prod server. Available at `http://localhost:3000/`
 
-// TODO add config description
+### others 
 
-<!--
-## Running unit tests
-Run `gulp  test:server`
--->
+* debug : `npm run debug`
+* test : `npm test`
+* test Watch : `npm run testWatch `
+* test Coverage : `npm run testCoverage `
+* generate SSL certs : `npm run generateSSLCerts`
+* lint : `npm run lint`
 
-## [Contribute](CONTRIBUTING.md)
+## [Contribute](https://github.com/weareopensource/weareopensource.github.io/wiki/Contribute)
 
 ## History
 
@@ -75,5 +98,14 @@ This work is based on [MEAN.js](http://meanjs.org) and more precisely on a fork 
 Today, we dreams to create Backs/Fronts, aligns on feats, in multiple languages, in order to allow anyone to compose fullstack on demand (React, Angular, VusJS, Node, Nest, Swift, Go).
 Feel free to discuss, share other kind of bricks, and invite whoever you want with this mindset to come help us.
 
-## License
-[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE.md)
+## Licence
+
+[![Packagist](https://badges.weareopensource.me/packagist/l/doctrine/orm.svg?style=flat-square)](/LICENSE.md)
+
+## Main Team
+
+#### Pierre 
+[![Help](https://badges.weareopensource.me/badge/Help-On%20Patreon-052d49.svg?style=flat-square)](https://www.patreon.com/pbrisorgueil) [![Cofee](https://badges.weareopensource.me/badge/Buy-Me%20a%20Coffee-FF813F.svg?style=flat-square)](https://www.buymeacoffee.com/JrSa9tZGO) [![Github](https://badges.weareopensource.me/badge/Follow-me%20on%20Github-25292E.svg?style=flat-square)](https://github.com/PierreBrisorgueil) [![Twitter](https://badges.weareopensource.me/badge/Follow-me%20on%20Twitter-3498db.svg?style=flat-square)](https://twitter.com/pbrisorgueil?lang=fr)  [![Youtube](https://badges.weareopensource.me/badge/Watch-me%20on%20Youtube-e74c3c.svg?style=flat-square)](https://www.youtube.com/channel/UCIIjHtrZL5-rFFupn7c3OtA)
+
+#### techla 
+[![Github](https://badges.weareopensource.me/badge/Follow-me%20on%20Github-25292E.svg?style=flat-square)](https://github.com/techla)

@@ -21,7 +21,7 @@
     "test": "cross-env NODE_ENV=test gulp test",
     "testWatch": "cross-env NODE_ENV=test gulp testWatch",
     "testCoverage": "cross-env NODE_ENV=test gulp testCoverage",
-    "generate-ssl-certs": "lib/scripts/generate-ssl-certs.sh",
+    "generateSSLCerts": "lib/scripts/generate-ssl-certs.sh",
     "lint": "gulp lint"
   },
   "dependencies": {
