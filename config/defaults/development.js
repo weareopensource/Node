@@ -35,6 +35,12 @@ module.exports = {
   },
   secure: {
     ssl: false,
+    /**
+     ssl: true,
+     privateKey: './config/sslcerts/key.pem',
+     certificate: './config/sslcerts/cert.pem',
+     caBundle: './config/sslcerts/cabundle.crt'
+    */
   },
   log: {
     fileLogger: {
@@ -70,12 +76,6 @@ module.exports = {
   },
   illegalUsernames: ['waos', 'weareopensource', 'administrator', 'password', 'admin', 'user', 'unknown', 'anonymous', 'null', 'undefined', 'api'],
   roles: ['user', 'admin'],
-  // secure: {
-  //   ssl: true,
-  //   privateKey: './config/sslcerts/key.pem',
-  //   certificate: './config/sslcerts/cert.pem',
-  //   caBundle: './config/sslcerts/cabundle.crt'
-  // },
   uploads: {
     profile: {
       image: {
