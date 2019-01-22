@@ -62,9 +62,9 @@
     vxx "1.2.2"
 
 "@pm2/js-api@^0.5.43":
-  version "0.5.44"
-  resolved "https://registry.yarnpkg.com/@pm2/js-api/-/js-api-0.5.44.tgz#ff3b23dab7ca3b763f0df0fa146747a3a1e860d8"
-  integrity sha512-1zwM2E/ueo3gu/1bbHTJjf4EmtPVtg6rzkWbuwnOgLHOVXK6QGxVTfkU+hX6k9xY0KvnmontkqnrvsDKXRpCCA==
+  version "0.5.45"
+  resolved "https://registry.yarnpkg.com/@pm2/js-api/-/js-api-0.5.45.tgz#b9b69324dff7b39cb6ab8a9646c206f65b5ae213"
+  integrity sha512-U7drj+5zbQYkt6GqcXt3U2G7O2gC6efpLzQTN9JzZItaHPJQjlVDidU8cTiT6aPFVV8nr6SJSVhw9K75Ae6ZTA==
   dependencies:
     async "^2.4.1"
     axios "^0.16.2"
@@ -5002,9 +5002,9 @@ moment-timezone@^0.5.14, moment-timezone@^0.5.x:
     moment ">= 2.9.0"
 
 "moment@>= 2.9.0", moment@^2.20.0, moment@^2.21.0, moment@^2.22.2:
-  version "2.23.0"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.23.0.tgz#759ea491ac97d54bac5ad776996e2a58cc1bc225"
-  integrity sha512-3IE39bHVqFbWWaPOMHZF98Q9c3LDKGTmypMiTM2QygGXXElkFWIH7GxfmlwmY2vwa+wmNsoYZmG2iusf1ZjJoA==
+  version "2.24.0"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
+  integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==
 
 mongodb-core@2.1.20:
   version "2.1.20"
@@ -6503,9 +6503,9 @@ resolve@1.1.7:
   integrity sha1-IDEU2CrSxe2ejgQRs5ModeiJ6Xs=
 
 resolve@^1.1.6, resolve@^1.1.7, resolve@^1.4.0, resolve@^1.5.0, resolve@^1.6.0:
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.9.0.tgz#a14c6fdfa8f92a7df1d996cb7105fa744658ea06"
-  integrity sha512-TZNye00tI67lwYvzxCxHGjwTNlUV70io54/Ed4j6PscB8xVfuBJpRenI/o6dVk0cY0PYTY27AgCoGGxRnYuItQ==
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.10.0.tgz#3bdaaeaf45cc07f375656dfd2e54ed0810b101ba"
+  integrity sha512-3sUr9aq5OfSg2S9pNtPA9hL1FVEAjvfOC4leW0SNf/mpnaakz2a9femSd6LqAww2RaFctwyf1lCqnTHuF1rxDg==
   dependencies:
     path-parse "^1.0.6"
 
@@ -7134,9 +7134,9 @@ superagent@^3.8.2, superagent@^3.8.3:
     readable-stream "^2.3.5"
 
 supertest@^3.1.0:
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/supertest/-/supertest-3.4.1.tgz#91b19ea34804c205769d0ff5ad947aff3eb2731d"
-  integrity sha512-r4AmsjjKxC50LxGACe/E4xKjau2amiFlj3aCT2sZCRig2o3l4XFN6Acw7crDu4d8Af1f5chafIyLkQ1mac/boA==
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/supertest/-/supertest-3.4.2.tgz#bad7de2e43d60d27c8caeb8ab34a67c8a5f71aad"
+  integrity sha512-WZWbwceHUo2P36RoEIdXvmqfs47idNNZjCuJOqDz6rvtkk8ym56aU5oglORCpPeXGxT7l9rkJ41+O1lffQXYSA==
   dependencies:
     methods "^1.1.2"
     superagent "^3.8.3"
