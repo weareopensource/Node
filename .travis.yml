@@ -1,6 +1,5 @@
 language: node_js
 node_js:
-  - 9
   - 10
   - 11
 matrix:
@@ -8,7 +7,6 @@ matrix:
     - node_js: 11
 os:
   - linux
-  - centos
   - macosx
   - windows
 cache:
