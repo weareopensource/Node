@@ -18,9 +18,8 @@ module.exports = {
     node: true,
     es6: true,
     browser: true,
-    jasmine: true,
-    mocha: true,
-    jquery: true
+    jest: true,
+    mongo: true,
   },
   globals: {
     angular: true,
