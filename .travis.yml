@@ -8,7 +8,7 @@ matrix:
     - node_js: 11
 os:
   - linux
-  - osx
+  - macosx
 cache:
   directories:
   - node_modules
