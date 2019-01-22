@@ -21,7 +21,7 @@
     "test": "cross-env NODE_ENV=test gulp test",
     "testWatch": "cross-env NODE_ENV=test gulp testWatch",
     "testCoverage": "cross-env NODE_ENV=test gulp testCoverage",
-    "testCoveralls": "cross-env NODE_ENV=test gulp testCoverage && cat ./tests/coverage/lcov.info | coveralls",
+    "testCoveralls": "cross-env NODE_ENV=test gulp testCoverage && cat ./coverage/lcov.info | coveralls",
     "generateSSLCerts": "lib/scripts/generate-ssl-certs.sh",
     "lint": "gulp lint"
   },

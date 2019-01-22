@@ -18,10 +18,10 @@ services:
   - mongodb
 install: 
   #  - npm i nsp -g
-  - npm i
+  - yarn
 after_script:
   #  - nsp check
-  - npm run testCoveralls
+  - yarn testCoveralls
 #notifications:
 #  webhooks:
 #    urls:
