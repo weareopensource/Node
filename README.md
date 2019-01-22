@@ -31,8 +31,9 @@ Our stack node is actually in Beta.
 | Testing |  [Jest](https://github.com/facebook/jest) & [SuperTest](https://github.com/visionmedia/supertest) (Coverage & Watch) <br> *example of mocha with gulp available*
 | Linter  | [ESLint](https://github.com/eslint/eslint) ecmaVersion 10 (2019)
 | Security | JWT Stateless - [passport-jwt](https://github.com/themikenicholson/passport-jwt) <br> Passwords - [zxcvbn](https://github.com/dropbox/zxcvbn) <br> DataBases options available (auth, ssl ..) <br> SSL options availble 
+| CI  | [Travis CI](https://travis-ci.org/weareopensource/Node) 
+| Developer  | [Coveralls](https://coveralls.io/github/weareopensource/Node) - [Code Climate](https://codeclimate.com/github/weareopensource/Node) - [Dependency status](https://david-dm.org/weareopensource/node) - [GreenKeeper](https://greenkeeper.io) - [Snyk](https://snyk.io/test/github/weareopensource/node) 
 | **Being released** | 
-| CI  | Travis 
 | Deliver | Docker & Docker-compose
 | Database | seed
 | Architecture | vertical modules architecture with Repository and Services Pattern  
