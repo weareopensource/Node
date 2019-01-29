@@ -23,7 +23,9 @@
     "testCoverage": "cross-env NODE_ENV=test gulp testCoverage",
     "testCoveralls": "cross-env NODE_ENV=test gulp testCoverage && cat ./coverage/lcov.info | coveralls",
     "generateSSLCerts": "lib/scripts/generate-ssl-certs.sh",
-    "lint": "gulp lint"
+    "lint": "gulp lint",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "acl": "~0.4.11",
@@ -67,7 +69,8 @@
     "supertest": "^3.4.2",
     "swig": "^1.4.2",
     "winston": "^3.1.0",
-    "zxcvbn": "^4.4.2"
+    "zxcvbn": "^4.4.2",
+    "snyk": "^1.123.0"
   },
   "devDependencies": {
     "coveralls": "~3.0.2",
@@ -84,5 +87,6 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  }
+  },
+  "snyk": true
 }
