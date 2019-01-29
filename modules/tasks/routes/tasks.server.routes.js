@@ -2,12 +2,17 @@
  * Module dependencies
  */
 const passport = require('passport');
-const tasksPolicy = require('../policies/tasks.server.policy');
+const path = require('path');
+
+const model = require(path.resolve('./lib/middlewares/model'));
 const tasks = require('../controllers/mongoose/tasks.server.controller');
+const tasksSchema = require('../models/tasks.server.schema');
+const tasksPolicy = require('../policies/tasks.server.policy');
+
 
 module.exports = (app) => {
   // Tasks collection routes
-  app.route('/api/tasks').all(passport.authenticate('jwt'), tasksPolicy.isAllowed)
+  app.route('/api/tasks').all(passport.authenticate('jwt'), model.isValid(tasksSchema.Task), tasksPolicy.isAllowed)
     .get(tasks.list)
     .post(tasks.create);
 
@@ -15,7 +20,7 @@ module.exports = (app) => {
     .get(tasks.userList);
 
   // Single task routes
-  app.route('/api/tasks/:taskId').all(passport.authenticate('jwt'), tasksPolicy.isAllowed)
+  app.route('/api/tasks/:taskId').all(passport.authenticate('jwt'), model.isValid(tasksSchema.Task), tasksPolicy.isAllowed)
     .get(tasks.read)
     .put(tasks.update)
     .delete(tasks.delete);

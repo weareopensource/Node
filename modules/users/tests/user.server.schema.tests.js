@@ -1,10 +1,12 @@
 /**
  * Module dependencies.
  */
+const _ = require('lodash');
 const path = require('path');
 const Joi = require('joi');
 
 const config = require(path.resolve('./config'));
+const options = _.clone(config.joi.validationOptions);
 const schema = require('../models/user.server.schema');
 
 
@@ -42,7 +44,7 @@ describe('User Schema Unit Tests:', () => {
 
   describe('Schema Save', () => {
     test('should be valid a user example without problems', (done) => {
-      const result = Joi.validate(user, schema.User);
+      const result = Joi.validate(user, schema.User, options);
       expect(typeof result).toBe('object');
       expect(result.error).toBeFalsy();
       done();
@@ -63,53 +65,41 @@ describe('User Schema Unit Tests:', () => {
     //   });
     // });
 
-    test(
-      'should be able to show an error when trying a schema without first name',
-      (done) => {
-        user.firstName = '';
+    test('should be able to show an error when trying a schema without first name', (done) => {
+      user.firstName = '';
 
-        const result = Joi.validate(user, schema.User);
-        expect(typeof result).toBe('object');
-        expect(result.error).toBeDefined();
-        done();
-      },
-    );
+      const result = Joi.validate(user, schema.User, options);
+      expect(typeof result).toBe('object');
+      expect(result.error).toBeDefined();
+      done();
+    });
 
-    test(
-      'should be able to accept a user with valid roles without problems',
-      (done) => {
-        user.roles = ['user', 'admin'];
+    test('should be able to accept a user with valid roles without problems', (done) => {
+      user.roles = ['user', 'admin'];
 
-        const result = Joi.validate(user, schema.User);
-        expect(typeof result).toBe('object');
-        expect(result.error).toBeFalsy();
-        done();
-      },
-    );
+      const result = Joi.validate(user, schema.User, options);
+      expect(typeof result).toBe('object');
+      expect(result.error).toBeFalsy();
+      done();
+    });
 
-    test(
-      'should be able to show an error when trying a user without a role',
-      (done) => {
-        user.roles = [];
+    test('should be able to show an error when trying a user without a role', (done) => {
+      user.roles = [];
 
-        const result = Joi.validate(user, schema.User);
-        expect(typeof result).toBe('object');
-        expect(result.error).toBeDefined();
-        done();
-      },
-    );
+      const result = Joi.validate(user, schema.User, options);
+      expect(typeof result).toBe('object');
+      expect(result.error).toBeDefined();
+      done();
+    });
 
-    test(
-      'should be able to show an error when trying to update an existing user with a invalid role',
-      (done) => {
-        user.roles = ['invalid-user-role-enum'];
+    test('should be able to show an error when trying to update an existing user with a invalid role', (done) => {
+      user.roles = ['invalid-user-role-enum'];
 
-        const result = Joi.validate(user, schema.User);
-        expect(typeof result).toBe('object');
-        expect(result.error).toBeDefined();
-        done();
-      },
-    );
+      const result = Joi.validate(user, schema.User, options);
+      expect(typeof result).toBe('object');
+      expect(result.error).toBeDefined();
+      done();
+    });
 
     //   it('should confirm that saving user model doesnt change the password', (done) => {
     //     const user = new User(user);
@@ -196,116 +186,95 @@ describe('User Schema Unit Tests:', () => {
   });
 
   describe('User Password Validation Tests', () => {
-    test(
-      'should validate when the password strength passes - "P-@-$-$-w-0-r-d-!"',
-      (done) => {
-        user.password = 'P-@-$-$-w-0-r-d-!';
+    test('should validate when the password strength passes - "P-@-$-$-w-0-r-d-!"', (done) => {
+      user.password = 'P-@-$-$-w-0-r-d-!';
 
-        const result = Joi.validate(user, schema.User);
-        expect(typeof result).toBe('object');
-        expect(result.error).toBeFalsy();
-        done();
-      },
-    );
-
-    test('should validate when the password is undefined', (done) => {
-      user.password = undefined;
-
-      const result = Joi.validate(user, schema.User);
+      const result = Joi.validate(user, schema.User, options);
       expect(typeof result).toBe('object');
       expect(result.error).toBeFalsy();
       done();
     });
 
-    test(
-      'should allow a difficult password with a score of 4 with zxcvbn- "WeAreOpenSource"',
-      (done) => {
-        user.password = 'Open-Source Stack Solution For WeAreOpenSource Applications';
+    test('should validate when the password is undefined', (done) => {
+      user.password = undefined;
 
-        const result = Joi.validate(user, schema.User);
-        expect(typeof result).toBe('object');
-        expect(result.error).toBeFalsy();
-        done();
-      },
-    );
+      const result = Joi.validate(user, schema.User, options);
+      expect(typeof result).toBe('object');
+      expect(result.error).toBeFalsy();
+      done();
+    });
 
-    test(
-      'should allow a password with a score of 3 with zxcvbn- "AreOpenSource"',
-      (done) => {
-        user.password = 'AreOpenSource';
+    test('should allow a difficult password with a score of 4 with zxcvbn- "WeAreOpenSource"', (done) => {
+      user.password = 'Open-Source Stack Solution For WeAreOpenSource Applications';
 
-        const result = Joi.validate(user, schema.User);
-        expect(typeof result).toBe('object');
-        expect(result.error).toBeFalsy();
-        done();
-      },
-    );
+      const result = Joi.validate(user, schema.User, options);
+      expect(typeof result).toBe('object');
+      expect(result.error).toBeFalsy();
+      done();
+    });
 
-    test(
-      'should not allow a password with a score of 2 with zxcvbn- "OpenSource"',
-      (done) => {
-        user.password = 'OpenSource';
+    test('should allow a password with a score of 3 with zxcvbn- "AreOpenSource"', (done) => {
+      user.password = 'AreOpenSource';
 
-        const result = Joi.validate(user, schema.User);
-        expect(typeof result).toBe('object');
-        expect(result.error).toBeDefined();
-        done();
-      },
-    );
+      const result = Joi.validate(user, schema.User, options);
+      expect(typeof result).toBe('object');
+      expect(result.error).toBeFalsy();
+      done();
+    });
 
-    test(
-      'should not allow a simple password with a score of 1 with zxcvbn- "Source"',
-      (done) => {
-        user.password = 'Source';
+    test('should not allow a password with a score of 2 with zxcvbn- "OpenSource"', (done) => {
+      user.password = 'OpenSource';
 
-        const result = Joi.validate(user, schema.User);
-        expect(typeof result).toBe('object');
-        expect(result.error).toBeDefined();
-        done();
-      },
-    );
-
-
-    test('should not allow this simple password - "P@$$w0rd!"', (done) => {
-      user.password = 'P@$$w0rd!';
-
-      const result = Joi.validate(user, schema.User);
+      const result = Joi.validate(user, schema.User, options);
       expect(typeof result).toBe('object');
       expect(result.error).toBeDefined();
       done();
     });
 
-    test(
-      'should not allow a password greater than 128 characters long.',
-      (done) => {
-        user.password = ')!/uLT="lh&:`6X!]|15o!$!TJf,.13l?vG].-j],lFPe/QhwN#{Z<[*1nX@n1^?WW-%_.*D)m$toB+N7z}kcN#B_d(f41h%w@0F!]igtSQ1gl~6sEV&r~}~1ub>If1c+';
+    test('should not allow a simple password with a score of 1 with zxcvbn- "Source"', (done) => {
+      user.password = 'Source';
 
-        const result = Joi.validate(user, schema.User);
-        expect(typeof result).toBe('object');
-        expect(result.error).toBeDefined();
-        done();
-      },
-    );
+      const result = Joi.validate(user, schema.User, options);
+      expect(typeof result).toBe('object');
+      expect(result.error).toBeDefined();
+      done();
+    });
 
 
-    test(
-      'should not allow a password with 3 or more repeating characters - "P@$$w0rd!!!"',
-      (done) => {
-        user.password = 'P@$$w0rd!!!';
+    test('should not allow this simple password - "P@$$w0rd!"', (done) => {
+      user.password = 'P@$$w0rd!';
 
-        const result = Joi.validate(user, schema.User);
-        expect(typeof result).toBe('object');
-        expect(result.error).toBeDefined();
-        done();
-      },
-    );
+      const result = Joi.validate(user, schema.User, options);
+      expect(typeof result).toBe('object');
+      expect(result.error).toBeDefined();
+      done();
+    });
+
+    test('should not allow a password greater than 128 characters long.', (done) => {
+      user.password = ')!/uLT="lh&:`6X!]|15o!$!TJf,.13l?vG].-j],lFPe/QhwN#{Z<[*1nX@n1^?WW-%_.*D)m$toB+N7z}kcN#B_d(f41h%w@0F!]igtSQ1gl~6sEV&r~}~1ub>If1c+';
+
+      const result = Joi.validate(user, schema.User, options);
+      expect(typeof result).toBe('object');
+      expect(result.error).toBeDefined();
+      done();
+    });
+
+
+    test('should not allow a password with 3 or more repeating characters - "P@$$w0rd!!!"', (done) => {
+      user.password = 'P@$$w0rd!!!';
+
+      const result = Joi.validate(user, schema.User, options);
+      expect(typeof result).toBe('object');
+      expect(result.error).toBeDefined();
+      done();
+    });
   });
 
   describe('User E-mail Validation Tests', () => {
     test('should not allow invalid email address - "123"', (done) => {
       user.email = '123';
 
-      const result = Joi.validate(user, schema.User);
+      const result = Joi.validate(user, schema.User, options);
       expect(typeof result).toBe('object');
       expect(result.error).toBeDefined();
       done();
@@ -314,7 +283,7 @@ describe('User Schema Unit Tests:', () => {
     test('should not allow invalid email address - "123@123@123"', (done) => {
       user.email = '123@123@123';
 
-      const result = Joi.validate(user, schema.User);
+      const result = Joi.validate(user, schema.User, options);
       expect(typeof result).toBe('object');
       expect(result.error).toBeDefined();
       done();
@@ -323,7 +292,7 @@ describe('User Schema Unit Tests:', () => {
     test('should not allow invalid email address - "123.com"', (done) => {
       user.email = '123.com';
 
-      const result = Joi.validate(user, schema.User);
+      const result = Joi.validate(user, schema.User, options);
       expect(typeof result).toBe('object');
       expect(result.error).toBeDefined();
       done();
@@ -332,7 +301,7 @@ describe('User Schema Unit Tests:', () => {
     test('should not allow invalid email address - "@123.com"', (done) => {
       user.email = '@123.com';
 
-      const result = Joi.validate(user, schema.User);
+      const result = Joi.validate(user, schema.User, options);
       expect(typeof result).toBe('object');
       expect(result.error).toBeDefined();
       done();
@@ -341,77 +310,62 @@ describe('User Schema Unit Tests:', () => {
     test('should not allow invalid email address - "abc@abc@abc.com"', (done) => {
       user.email = 'abc@abc@abc.com';
 
-      const result = Joi.validate(user, schema.User);
+      const result = Joi.validate(user, schema.User, options);
       expect(typeof result).toBe('object');
       expect(result.error).toBeDefined();
       done();
     });
 
-    test(
-      'should not allow invalid characters in email address - "abc~@#$%^&*()ef=@abc.com"',
-      (done) => {
-        user.email = 'abc~@#$%^&*()ef=@abc.com';
+    test('should not allow invalid characters in email address - "abc~@#$%^&*()ef=@abc.com"', (done) => {
+      user.email = 'abc~@#$%^&*()ef=@abc.com';
 
-        const result = Joi.validate(user, schema.User);
-        expect(typeof result).toBe('object');
-        expect(result.error).toBeDefined();
-        done();
-      },
-    );
+      const result = Joi.validate(user, schema.User, options);
+      expect(typeof result).toBe('object');
+      expect(result.error).toBeDefined();
+      done();
+    });
 
-    test(
-      'should not allow space characters in email address - "abc def@abc.com"',
-      (done) => {
-        user.email = 'abc def@abc.com';
+    test('should not allow space characters in email address - "abc def@abc.com"', (done) => {
+      user.email = 'abc def@abc.com';
 
-        const result = Joi.validate(user, schema.User);
-        expect(typeof result).toBe('object');
-        expect(result.error).toBeDefined();
-        done();
-      },
-    );
+      const result = Joi.validate(user, schema.User, options);
+      expect(typeof result).toBe('object');
+      expect(result.error).toBeDefined();
+      done();
+    });
 
     /* eslint no-useless-escape: 0 */
-    test(
-      'should not allow doudble quote characters in email address - "abc\"def@abc.com"',
-      (done) => {
-        user.email = 'abc\"def@abc.com';
+    test('should not allow doudble quote characters in email address - "abc\"def@abc.com"', (done) => {
+      user.email = 'abc\"def@abc.com';
 
-        const result = Joi.validate(user, schema.User);
-        expect(typeof result).toBe('object');
-        expect(result.error).toBeDefined();
-        done();
-      },
-    );
+      const result = Joi.validate(user, schema.User, options);
+      expect(typeof result).toBe('object');
+      expect(result.error).toBeDefined();
+      done();
+    });
 
-    test(
-      'should not allow double dotted characters in email address - "abcdef@abc..com"',
-      (done) => {
-        user.email = 'abcdef@abc..com';
+    test('should not allow double dotted characters in email address - "abcdef@abc..com"', (done) => {
+      user.email = 'abcdef@abc..com';
 
-        const result = Joi.validate(user, schema.User);
-        expect(typeof result).toBe('object');
-        expect(result.error).toBeDefined();
-        done();
-      },
-    );
+      const result = Joi.validate(user, schema.User, options);
+      expect(typeof result).toBe('object');
+      expect(result.error).toBeDefined();
+      done();
+    });
 
-    test(
-      'should allow single quote characters in email address - "abc\'def@abc.com"',
-      (done) => {
-        user.email = 'abc\'def@abc.com';
+    test('should allow single quote characters in email address - "abc\'def@abc.com"', (done) => {
+      user.email = 'abc\'def@abc.com';
 
-        const result = Joi.validate(user, schema.User);
-        expect(typeof result).toBe('object');
-        expect(result.error).toBeFalsy();
-        done();
-      },
-    );
+      const result = Joi.validate(user, schema.User, options);
+      expect(typeof result).toBe('object');
+      expect(result.error).toBeFalsy();
+      done();
+    });
 
     test('should allow valid email address - "abc@abc.com"', (done) => {
       user.email = 'abc@abc.com';
 
-      const result = Joi.validate(user, schema.User);
+      const result = Joi.validate(user, schema.User, options);
       expect(typeof result).toBe('object');
       expect(result.error).toBeFalsy();
       done();
@@ -420,7 +374,7 @@ describe('User Schema Unit Tests:', () => {
     test('should allow valid email address - "abc+def@abc.com"', (done) => {
       user.email = 'abc+def@abc.com';
 
-      const result = Joi.validate(user, schema.User);
+      const result = Joi.validate(user, schema.User, options);
       expect(typeof result).toBe('object');
       expect(result.error).toBeFalsy();
       done();
@@ -429,7 +383,7 @@ describe('User Schema Unit Tests:', () => {
     test('should allow valid email address - "abc.def@abc.com"', (done) => {
       user.email = 'abc.def@abc.com';
 
-      const result = Joi.validate(user, schema.User);
+      const result = Joi.validate(user, schema.User, options);
       expect(typeof result).toBe('object');
       expect(result.error).toBeFalsy();
       done();
@@ -438,7 +392,7 @@ describe('User Schema Unit Tests:', () => {
     test('should allow valid email address - "abc.def@abc.def.com"', (done) => {
       user.email = 'abc.def@abc.def.com';
 
-      const result = Joi.validate(user, schema.User);
+      const result = Joi.validate(user, schema.User, options);
       expect(typeof result).toBe('object');
       expect(result.error).toBeFalsy();
       done();
@@ -447,7 +401,7 @@ describe('User Schema Unit Tests:', () => {
     test('should allow valid email address - "abc-def@abc.com"', (done) => {
       user.email = 'abc-def@abc.com';
 
-      const result = Joi.validate(user, schema.User);
+      const result = Joi.validate(user, schema.User, options);
       expect(typeof result).toBe('object');
       expect(result.error).toBeFalsy();
       done();
@@ -458,28 +412,25 @@ describe('User Schema Unit Tests:', () => {
     test('should show error to valid username beginning with .', (done) => {
       user.username = '.login';
 
-      const result = Joi.validate(user, schema.User);
+      const result = Joi.validate(user, schema.User, options);
       expect(typeof result).toBe('object');
       expect(result.error).toBeDefined();
       done();
     });
 
-    test(
-      'should be able to show an error when try to valid with not allowed username',
-      (done) => {
-        user.username = config.illegalUsernames[Math.floor(Math.random() * config.illegalUsernames.length)];
+    test('should be able to show an error when try to valid with not allowed username', (done) => {
+      user.username = config.illegalUsernames[Math.floor(Math.random() * config.illegalUsernames.length)];
 
-        const result = Joi.validate(user, schema.User);
-        expect(typeof result).toBe('object');
-        expect(result.error).toBeDefined();
-        done();
-      },
-    );
+      const result = Joi.validate(user, schema.User, options);
+      expect(typeof result).toBe('object');
+      expect(result.error).toBeDefined();
+      done();
+    });
 
     test('should show error to valid username end with .', (done) => {
       user.username = 'login.';
 
-      const result = Joi.validate(user, schema.User);
+      const result = Joi.validate(user, schema.User, options);
       expect(typeof result).toBe('object');
       expect(result.error).toBeDefined();
       done();
@@ -488,52 +439,43 @@ describe('User Schema Unit Tests:', () => {
     test('should show error to valid username with ..', (done) => {
       user.username = 'log..in';
 
-      const result = Joi.validate(user, schema.User);
+      const result = Joi.validate(user, schema.User, options);
       expect(typeof result).toBe('object');
       expect(result.error).toBeDefined();
       done();
     });
 
-    test(
-      'should show error to valid username shorter than 3 character',
-      (done) => {
-        user.username = 'lo';
+    test('should show error to valid username shorter than 3 character', (done) => {
+      user.username = 'lo';
 
-        const result = Joi.validate(user, schema.User);
-        expect(typeof result).toBe('object');
-        expect(result.error).toBeDefined();
-        done();
-      },
-    );
+      const result = Joi.validate(user, schema.User, options);
+      expect(typeof result).toBe('object');
+      expect(result.error).toBeDefined();
+      done();
+    });
 
-    test(
-      'should show error to valid a username without at least one alphanumeric character',
-      (done) => {
-        user.username = '-_-';
+    test('should show error to valid a username without at least one alphanumeric character', (done) => {
+      user.username = '-_-';
 
-        const result = Joi.validate(user, schema.User);
-        expect(typeof result).toBe('object');
-        expect(result.error).toBeDefined();
-        done();
-      },
-    );
+      const result = Joi.validate(user, schema.User, options);
+      expect(typeof result).toBe('object');
+      expect(result.error).toBeDefined();
+      done();
+    });
 
-    test(
-      'should show error to valid a username longer than 34 characters',
-      (done) => {
-        user.username = 'l'.repeat(35);
+    test('should show error to valid a username longer than 34 characters', (done) => {
+      user.username = 'l'.repeat(35);
 
-        const result = Joi.validate(user, schema.User);
-        expect(typeof result).toBe('object');
-        expect(result.error).toBeDefined();
-        done();
-      },
-    );
+      const result = Joi.validate(user, schema.User, options);
+      expect(typeof result).toBe('object');
+      expect(result.error).toBeDefined();
+      done();
+    });
 
     test('should to valid username with dot', (done) => {
       user.username = 'log.in';
 
-      const result = Joi.validate(user, schema.User);
+      const result = Joi.validate(user, schema.User, options);
       expect(typeof result).toBe('object');
       expect(result.error).toBeFalsy();
       done();
