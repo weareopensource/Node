@@ -21,7 +21,6 @@ describe('Tasks Schema Unit Tests:', () => {
     task = {
       title: 'title',
       description: 'do something about something else',
-      user: '507f1f77bcf86cd799439011',
     };
   });
 
@@ -51,12 +50,12 @@ describe('Tasks Schema Unit Tests:', () => {
       done();
     });
 
-    test('should be able to show an error when trying a schema without user', (done) => {
-      task.user = '';
+    test('should not show an error when trying a schema with user', (done) => {
+      task.user = '507f1f77bcf86cd799439011';
 
       const result = Joi.validate(task, schema.Task, options);
       expect(typeof result).toBe('object');
-      expect(result.error).toBeDefined();
+      expect(result.error).toBeFalsy();
       done();
     });
 

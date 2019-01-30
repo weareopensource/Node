@@ -48,7 +48,7 @@ describe('User CRUD Unit Tests :', () => {
     });
 
     beforeEach(async () => {
-    // Create user credentials with username
+    // users credentials
       credentials = [{
         email: 'test@test.com',
         password: 'W@os.jsI$Aw3$0m3',
@@ -57,7 +57,7 @@ describe('User CRUD Unit Tests :', () => {
         password: 'W@os.jsI$Aw3$0m3',
       }];
 
-      // Create a new user
+      // users
       _user = {
         firstName: 'Full',
         lastName: 'Name',
@@ -67,13 +67,12 @@ describe('User CRUD Unit Tests :', () => {
         password: credentials[0].password,
         provider: 'local',
       };
-
-      // Init user edited
       _userEdited = _.clone(_user);
       _userEdited.username = 'test2';
       _userEdited.email = credentials[1].email;
       _userEdited.password = credentials[1].password;
 
+      // add user
       try {
         const result = await agent.post('/api/auth/signup')
           .send(_user)
@@ -128,19 +127,16 @@ describe('User CRUD Unit Tests :', () => {
       }
     });
 
-    test(
-      'should not be able to retrieve a list of users if not admin',
-      async () => {
-        try {
-          await agent.get('/api/users')
-            .send(credentials[0])
-            .expect(403);
-        } catch (err) {
-          console.log(err);
-          expect(err).toBeFalsy();
-        }
-      },
-    );
+    test('should not be able to retrieve a list of users if not admin', async () => {
+      try {
+        await agent.get('/api/users')
+          .send(credentials[0])
+          .expect(403);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
 
 
     test('should be able to get a single user details if admin', async () => {
@@ -705,6 +701,7 @@ describe('User CRUD Unit Tests :', () => {
     });
 
     afterEach(async () => {
+      // del user
       try {
         await UserService.remove(user);
       } catch (err) {

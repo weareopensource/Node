@@ -21,7 +21,7 @@ async function verifyCallback(jwtPayload, done) {
     }
     return done(null, false);
   } catch (err) {
-    return done(err);
+    return done(err, false);
   }
 }
 

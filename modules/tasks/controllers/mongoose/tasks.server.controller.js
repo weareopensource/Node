@@ -66,7 +66,7 @@ exports.delete = (req, res) => {
   const newTask = req.task;
 
   newTask.remove().then((task) => {
-    res.json({ taskId: task.id });
+    res.json({ id: task.id });
   }).catch((err) => {
     res.status(422).send({
       message: errorHandler.getErrorMessage(err),
