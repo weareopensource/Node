@@ -97,22 +97,53 @@ describe('User CRUD Unit Tests :', () => {
       }
     });
 
-    test('should be able to save and delete a task if logged in', async () => {
+    test('should be able to save a task if logged in', async () => {
       // add task
       try {
         const result = await agent.post('/api/tasks')
           .send(_tasks[1])
           .expect(200);
+        task2 = result.body;
 
         expect(result.body.title).toBe(_tasks[1].title);
         expect(result.body.description).toBe(_tasks[1].description);
         expect(result.body.user).toBe(user.id);
-
-        task2 = result.body;
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
       }
+    });
+
+    test('should be able to get a task if logged in', async () => {
+      // delete task
+      try {
+        const result = await agent.get(`/api/tasks/${task2.id}`)
+          .expect(200);
+        expect(result.body.id).toBe(task2.id);
+        expect(result.body.title).toBe(_tasks[1].title);
+        expect(result.body.description).toBe(_tasks[1].description);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+
+    test('should be able to edit a task if logged in', async () => {
+      // edit task
+      try {
+        const result = await agent.put(`/api/tasks/${task2.id}`)
+          .send(_tasks[0])
+          .expect(200);
+        expect(result.body.id).toBe(task2.id);
+        expect(result.body.title).toBe(_tasks[0].title);
+        expect(result.body.description).toBe(_tasks[0].description);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+
+    test('should be able to delete a task if logged in', async () => {
       // delete task
       try {
         const result = await agent.delete(`/api/tasks/${task2.id}`)
@@ -122,8 +153,15 @@ describe('User CRUD Unit Tests :', () => {
         console.log(err);
         expect(err).toBeFalsy();
       }
+      // check delete
+      try {
+        await agent.get(`/api/tasks/${task2.id}`)
+          .expect(404);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
     });
-
 
     test('should be able to get list of tasks if logged in', async () => {
       // get list
@@ -137,7 +175,6 @@ describe('User CRUD Unit Tests :', () => {
         expect(err).toBeFalsy();
       }
     });
-
 
     afterEach(async () => {
       // del task
@@ -179,19 +216,19 @@ describe('User CRUD Unit Tests :', () => {
       }
     });
 
-    // test('should be able to get list of tasks if logged out', async () => {
-    //   // get list
-    //   try {
-    //     const result = await agent.get('/api/tasks')
-    //       .expect(200);
-    //     console.log(result.body);
-    //     expect(result.body).toBeInstanceOf(Array);
-    //     expect(result.body).toHaveLength(0);
-    //   } catch (err) {
-    //     console.log(err);
-    //     expect(err).toBeFalsy();
-    //   }
-    // });
+    test('should be able to get list of tasks if logged out', async () => {
+      // get list
+      try {
+        const result = await agent.get('/api/tasks')
+          .expect(200);
+        console.log(result.body);
+        expect(result.body).toBeInstanceOf(Array);
+        expect(result.body).toHaveLength(0);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
   });
 
   // Mongoose disconnect
