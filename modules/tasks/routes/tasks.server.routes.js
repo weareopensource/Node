@@ -11,19 +11,16 @@ const tasksPolicy = require('../policies/tasks.server.policy');
 
 
 module.exports = (app) => {
-  // Tasks collection routes
-  app.route('/api/tasks').all(passport.authenticate('jwt'), model.isValid(tasksSchema.Task), tasksPolicy.isAllowed)
+  // list & post
+  app.route('/api/tasks')
     .get(tasks.list)
-    .post(tasks.create);
+    .post(passport.authenticate('jwt'), tasksPolicy.isAllowed, model.isValid(tasksSchema.Task), tasks.create);
 
-  app.route('/api/tasks/me').all(passport.authenticate('jwt'), tasksPolicy.isAllowed)
-    .get(tasks.userList);
-
-  // Single task routes
-  app.route('/api/tasks/:taskId').all(passport.authenticate('jwt'), model.isValid(tasksSchema.Task), tasksPolicy.isAllowed)
+  // classic crud
+  app.route('/api/tasks/:taskId').all(passport.authenticate('jwt'), tasksPolicy.isAllowed)
     .get(tasks.read)
-    .put(tasks.update)
-    .delete(tasks.delete);
+    .put(model.isValid(tasksSchema.Task), tasks.update)
+    .delete(model.isValid(tasksSchema.Task), tasks.delete);
 
   // Finish by binding the task middleware
   app.param('taskId', tasks.taskByID);

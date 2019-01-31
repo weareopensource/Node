@@ -17,9 +17,6 @@ exports.invokeRolesPolicies = () => {
       resources: '/api/tasks',
       permissions: '*',
     }, {
-      resources: '/api/tasks/me',
-      permissions: ['get'],
-    }, {
       resources: '/api/tasks/:taskId',
       permissions: '*',
     }],
