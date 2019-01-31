@@ -17,4 +17,15 @@ const TaskMongoose = new Schema({
   },
 });
 
+// add virtual id field (FIXME mongoose.virtual ko es6)
+function addID() {
+  return this._id.toHexString();
+}
+TaskMongoose.virtual('id').get(addID);
+
+// Ensure virtual fields are serialised.
+TaskMongoose.set('toJSON', {
+  virtuals: true,
+});
+
 mongoose.model('Task', TaskMongoose);

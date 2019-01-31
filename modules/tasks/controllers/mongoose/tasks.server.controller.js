@@ -11,9 +11,8 @@ const errorHandler = require(path.resolve('./modules/core/controllers/errors.ser
  * Show the current task
  */
 exports.read = (req, res) => {
-  // convert mongoose document to JSON
   const task = req.task ? req.task.toJSON() : {};
-  res.json(task.toObject({ getters: true }));
+  res.json(task);
 };
 
 /**
@@ -32,7 +31,7 @@ exports.create = (req, res) => {
     newTask.user = req.user.id;
 
     newTask.save().then((task) => {
-      res.json(task.toObject({ getters: true }));
+      res.json(task);
     }).catch((err) => {
       console.log(err);
       res.status(422).send({
@@ -51,7 +50,7 @@ exports.update = (req, res) => {
   newTask.description = req.body.description;
 
   newTask.save().then((task) => {
-    res.json(task.toObject({ getters: true }));
+    res.json(task);
   }).catch((err) => {
     res.status(422).send({
       message: errorHandler.getErrorMessage(err),
@@ -79,36 +78,13 @@ exports.delete = (req, res) => {
  */
 exports.list = (req, res) => {
   Task.find().sort('-created').exec().then((tasks) => {
-    res.json(tasks.map(task => (task.toObject({ getters: true }))));
+    res.json(tasks);
   })
     .catch((err) => {
       res.status(422).send({
         message: errorHandler.getErrorMessage(err),
       });
     });
-};
-
-/**
- * List of Tasks for one username
- */
-exports.userList = (req, res) => {
-  if (!req.user) {
-    res.status(404).send({
-      message: 'User not defined',
-    });
-  } else {
-    Task.find({
-      user: req.user.id,
-    }).sort('-created').exec()
-      .then((tasks) => {
-        res.json(tasks.map(task => task.toObject({ getters: true })));
-      })
-      .catch((err) => {
-        res.status(422).send({
-          message: errorHandler.getErrorMessage(err),
-        });
-      });
-  }
 };
 
 /**
@@ -132,3 +108,26 @@ exports.taskByID = (req, res, next, id) => {
     }).catch(err => next(err));
   }
 };
+
+/**
+ * Example List of Tasks for one username
+ */
+// exports.userList = (req, res) => {
+//   if (!req.user) {
+//     res.status(404).send({
+//       message: 'User not defined',
+//     });
+//   } else {
+//     Task.find({
+//       user: req.user.id,
+//     }).sort('-created').exec()
+//       .then((tasks) => {
+//         res.json(tasks);
+//       })
+//       .catch((err) => {
+//         res.status(422).send({
+//           message: errorHandler.getErrorMessage(err),
+//         });
+//       });
+//   }
+// };

@@ -92,7 +92,26 @@
 // };
 
 // /**
-//  * List of Tasks for one username
+//  * Task middleware
+//  */
+// exports.taskByID = (req, res, next, id) => {
+//   // TODO Validate id format
+
+//   orm.Task.findOne({ _id: id }).then((task) => {
+//     if (!task) {
+//       res.status(404).send({
+//         message: 'No Task with that identifier has been found',
+//       });
+//     } else {
+//       req.task = task;
+//       next();
+//     }
+//   }).catch(err => next(err));
+// };
+
+
+// /**
+//  * Example List of Tasks for one username
 //  */
 // exports.userList = (req, res) => {
 //   if (!req.user || !req.user.username) {
@@ -112,22 +131,4 @@
 //       });
 //     });
 //   }
-// };
-
-// /**
-//  * Task middleware
-//  */
-// exports.taskByID = (req, res, next, id) => {
-//   // TODO Validate id format
-
-//   orm.Task.findOne({ _id: id }).then((task) => {
-//     if (!task) {
-//       res.status(404).send({
-//         message: 'No Task with that identifier has been found',
-//       });
-//     } else {
-//       req.task = task;
-//       next();
-//     }
-//   }).catch(err => next(err));
 // };
