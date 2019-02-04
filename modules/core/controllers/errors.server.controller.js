@@ -31,40 +31,48 @@ const getUniqueErrorMessage = (err) => {
   return output;
 };
 
+
+/**
+ * Get unique error field name
+ */
+const getErrorMessageFromCode = (err) => {
+  let output;
+  switch (err.code) {
+    case 11000:
+    case 11001:
+      output = getUniqueErrorMessage(err);
+      break;
+    case 'UNSUPPORTED_MEDIA_TYPE':
+      output = 'Unsupported filetype';
+      break;
+    case 'LIMIT_FILE_SIZE':
+      output = `Image file too large. Maximum size allowed is ${(config.uploads.profile.image.limits.fileSize / (1024 * 1024)).toFixed(2)} Mb files.`;
+      break;
+    case 'LIMIT_UNEXPECTED_FILE':
+      output = 'Missing `newProfilePicture` field';
+      break;
+    default:
+      output = 'Something went wrong';
+  }
+  return output;
+};
+
 /**
  * Get the error message from error object
  */
 exports.getErrorMessage = (err) => {
-  let message = '';
-
+  let output = '';
   if (err.code) {
-    switch (err.code) {
-      case 11000:
-      case 11001:
-        message = getUniqueErrorMessage(err);
-        break;
-      case 'UNSUPPORTED_MEDIA_TYPE':
-        message = 'Unsupported filetype';
-        break;
-      case 'LIMIT_FILE_SIZE':
-        message = `Image file too large. Maximum size allowed is ${(config.uploads.profile.image.limits.fileSize / (1024 * 1024)).toFixed(2)} Mb files.`;
-        break;
-      case 'LIMIT_UNEXPECTED_FILE':
-        message = 'Missing `newProfilePicture` field';
-        break;
-      default:
-        message = 'Something went wrong';
-    }
+    output = getErrorMessageFromCode(err);
   } else if (err.message && !err.errors) {
-    message = err.message;
+    output = err.message;
   } else {
     err.errors.map((error) => {
       if (error.message) {
-        message = error.message;
+        output = error.message;
       }
       return null;
     });
   }
-
-  return message;
+  return output;
 };
