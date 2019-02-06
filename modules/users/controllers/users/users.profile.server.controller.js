@@ -233,18 +233,10 @@ const addUser = async (provider, idToken) => {
   let user;
   switch (provider) {
     case 'google':
-      try {
-        user = await verifyGoogleToken(idToken);
-      } catch (err) {
-        console.log(err);
-      }
+      user = await verifyGoogleToken(idToken);
       break;
     case 'microsoft':
-      try {
-        user = await verifyMicrosoftToken(idToken);
-      } catch (err) {
-        console.log(err);
-      }
+      user = await verifyMicrosoftToken(idToken);
       break;
     default:
   }
