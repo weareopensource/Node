@@ -179,7 +179,7 @@ exports.me = ({ user }, res) => {
 
 const client = new OAuth2Client(config.google.clientId);
 
-async function verifyGoogleToken(idToken) {
+const verifyGoogleToken = async (idToken) => {
   const ticket = await client.verifyIdToken({
     idToken,
   });
@@ -196,7 +196,7 @@ async function verifyGoogleToken(idToken) {
   // If request specified a G Suite domain:
   // const domain = payload['hd'];
   return user;
-}
+};
 
 
 const microsoftValidator = rp.get(config.microsoft.discovery)
@@ -207,7 +207,7 @@ const microsoftValidator = rp.get(config.microsoft.discovery)
     audience: config.microsoft.clientId,
   }));
 
-async function verifyMicrosoftToken(idToken) {
+const verifyMicrosoftToken = async (idToken) => {
   const validator = await microsoftValidator;
   return new Promise((resolve, reject) => {
     validator.verify(idToken, validator.decode(idToken)
@@ -227,42 +227,39 @@ async function verifyMicrosoftToken(idToken) {
       });
     });
   }).catch(console.log);
-}
+};
 
-const addGoogleUser = idToken => verifyGoogleToken(idToken)
-  .then(user => User.findOneOrCreate({
-    sub: user.sub,
-  }, user));
-
-const addMicrosoftUser = idToken => verifyMicrosoftToken(idToken)
-  .then(user => User.findOneOrCreate({
-    sub: user.sub,
-  }, user));
-
-exports.addOAuthProviderUserProfile = ({ body }, res) => {
-  const provider = body.provider;
+const addUser = async (provider, idToken) => {
+  let user;
   switch (provider) {
     case 'google':
-      addGoogleUser(body.idToken)
-        .catch(() => res.sendStatus(304))
-        .then((user) => {
-          const token = jwt.sign({ userId: user.id }, configuration.jwt.secret);
-          res.status(200)
-            .cookie('TOKEN', token, { httpOnly: true })
-            .json({ user: user.toObject({ getters: true }), tokenExpiresIn: Date.now() + (3600 * 24 * 1000) });
-        });
+      user = await verifyGoogleToken(idToken);
       break;
     case 'microsoft':
-      addMicrosoftUser(body.idToken)
-        .catch(() => res.sendStatus(304))
-        .then((user) => {
-          const token = jwt.sign({ userId: user.id }, configuration.jwt.secret);
-          res.status(200)
-            .cookie('TOKEN', token, { httpOnly: true })
-            .json({ user: user.toObject({ getters: true }), tokenExpiresIn: Date.now() + (3600 * 24 * 1000) });
-        });
+      user = await verifyMicrosoftToken(idToken);
       break;
     default:
-      res.status(404).send('No Oauth found'); // TODO: Change this into something else
   }
+  if (!user) return null;
+
+  return User.findOneOrCreate({
+    sub: user.sub,
+  }, user);
+};
+
+
+exports.addOAuthProviderUserProfile = async ({ body }, res) => {
+  let user;
+  try {
+    user = await addUser(body.provider, body.idToken);
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(304);
+  }
+  if (!user) res.status(404).send('No Oauth found'); // TODO: Change this into something else
+
+  const token = jwt.sign({ userId: user.id }, configuration.jwt.secret);
+  res.status(200)
+    .cookie('TOKEN', token, { httpOnly: true })
+    .json({ user, tokenExpiresIn: Date.now() + (3600 * 24 * 1000) });
 };
