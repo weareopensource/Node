@@ -436,62 +436,53 @@ describe('Core Server Config:', () => {
         mock.restore();
       });
 
-      test(
-        'should verify that a file logger object was created using the logger configuration',
-        () => {
-          const _dir = process.cwd();
-          const _filename = 'unit-test-access.log';
+      test('should verify that a file logger object was created using the logger configuration', () => {
+        const _dir = process.cwd();
+        const _filename = 'unit-test-access.log';
 
-          config.log = {
-            fileLogger: {
-              directoryPath: _dir,
-              fileName: _filename,
+        config.log = {
+          fileLogger: {
+            directoryPath: _dir,
+            fileName: _filename,
+          },
+        };
+
+        const fileTransport = logger.setupFileLogger(config);
+        expect(fileTransport).toBeInstanceOf(Object);
+        expect(fileTransport.filename).toBe(`${_dir}/${_filename}`);
+      });
+
+      test('should not create a file transport object if critical options are missing: filename', () => {
+        // manually set the config stream fileName option to an empty string
+        config.log = {
+          format: 'combined',
+          options: {
+            stream: {
+              directoryPath: process.cwd(),
+              fileName: '',
             },
-          };
+          },
+        };
 
-          const fileTransport = logger.setupFileLogger(config);
-          expect(fileTransport).toBeInstanceOf(Object);
-          expect(fileTransport.filename).toBe(`${_dir}/${_filename}`);
-        },
-      );
+        const fileTransport = logger.setupFileLogger(config);
+        expect(fileTransport).toBe(false);
+      });
 
-      test(
-        'should not create a file transport object if critical options are missing: filename',
-        () => {
-          // manually set the config stream fileName option to an empty string
-          config.log = {
-            format: 'combined',
-            options: {
-              stream: {
-                directoryPath: process.cwd(),
-                fileName: '',
-              },
+      test('should not create a file transport object if critical options are missing: directory', () => {
+        // manually set the config stream fileName option to an empty string
+        config.log = {
+          format: 'combined',
+          options: {
+            stream: {
+              directoryPath: '',
+              fileName: 'app.log',
             },
-          };
+          },
+        };
 
-          const fileTransport = logger.setupFileLogger(config);
-          expect(fileTransport).toBe(false);
-        },
-      );
-
-      test(
-        'should not create a file transport object if critical options are missing: directory',
-        () => {
-          // manually set the config stream fileName option to an empty string
-          config.log = {
-            format: 'combined',
-            options: {
-              stream: {
-                directoryPath: '',
-                fileName: 'app.log',
-              },
-            },
-          };
-
-          const fileTransport = logger.setupFileLogger(config);
-          expect(fileTransport).toBe(false);
-        },
-      );
+        const fileTransport = logger.setupFileLogger(config);
+        expect(fileTransport).toBe(false);
+      });
     });
   });
 
