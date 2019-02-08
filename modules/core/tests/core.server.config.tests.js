@@ -5,7 +5,7 @@ const _ = require('lodash');
 // const chai = require('chai');
 // const mongoose = require('mongoose');
 const path = require('path');
-const mock = require('mock-fs');
+// const mock = require('mock-fs');
 
 const config = require(path.resolve('./config'));
 const logger = require(path.resolve('./lib/services/logger'));
@@ -428,12 +428,12 @@ describe('Core Server Config:', () => {
     describe('Testing Logger Configuration', () => {
       beforeEach(() => {
         originalLogConfig = _.clone(config.log, true);
-        mock();
+        // mock();
       });
 
       afterEach(() => {
         config.log = originalLogConfig;
-        mock.restore();
+        // mock.restore();
       });
 
       test('should verify that a file logger object was created using the logger configuration', () => {
