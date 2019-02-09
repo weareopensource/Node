@@ -194,34 +194,21 @@ exports.removeOAuthProvider = (req, res) => {
   const user = req.user;
   const provider = req.query.provider;
 
-  if (!user) {
-    res.status(401).json({
-      message: 'User is not authenticated',
-    });
-  } if (!provider) {
-    res.status(400).send();
-  }
+  if (!user) res.status(401).json({ message: 'User is not authenticated' });
+  if (!provider) res.status(400).send();
 
-  // Delete the additional provider
+  // Delete the additional provider and Then tell mongoose that we've updated the additionalProvidersData field
   if (user.additionalProvidersData[provider]) {
     delete user.additionalProvidersData[provider];
-
-    // Then tell mongoose that we've updated the additionalProvidersData field
     user.markModified('additionalProvidersData');
   }
 
   user.save((err) => {
-    if (err) {
-      res.status(422).send({
-        message: errorHandler.getErrorMessage(err),
-      });
-    } else {
+    if (err) res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    else {
       req.login(user, (errLogin) => {
-        if (errLogin) {
-          res.status(400).send(errLogin);
-        } else {
-          res.json(user);
-        }
+        if (errLogin) res.status(400).send(errLogin);
+        else res.json(user);
       });
     }
   });
