@@ -25,16 +25,9 @@ exports.forgot = ({ body }, res, next) => {
         User.findOne({
           email: body.email,
         }, '-salt -password', (err, user) => {
-          if (err || !user) {
-            return res.status(400).send({
-              message: 'No account with that email has been found',
-            });
-          }
-          if (user.provider !== 'local') {
-            return res.status(400).send({
-              message: `It seems like you signed up using your ${user.provider} account`,
-            });
-          }
+          if (err || !user) return res.status(400).send({ message: 'No account with that email has been found' });
+          if (user.provider !== 'local') return res.status(400).send({ message: `It seems like you signed up using your ${user.provider} account` });
+
           const payload = { exp: Date.now() + 3600000 };
           const token = jwt.sign(payload, configuration.jwt.secret, { algorithm: 'HS256' });
 
@@ -45,11 +38,7 @@ exports.forgot = ({ body }, res, next) => {
             done(err, token, user);
           });
         });
-      } else {
-        return res.status(422).send({
-          message: 'Mail field must not be blank',
-        });
-      }
+      } else return res.status(422).send({ message: 'Mail field must not be blank' });
     },
     (token, user, done) => {
       let httpTransport = 'http://';
@@ -79,18 +68,14 @@ exports.forgot = ({ body }, res, next) => {
             message: 'An email has been sent to the provided email with further instructions.',
           });
         } else {
-          return res.status(400).send({
-            message: 'Failure sending email',
-          });
+          return res.status(400).send({ message: 'Failure sending email' });
         }
 
         done(err);
       });
     },
   ], (err) => {
-    if (err) {
-      return next(err);
-    }
+    if (err) return next(err);
   });
 };
 
@@ -104,9 +89,7 @@ exports.validateResetToken = ({ params }, res) => {
       $gt: Date.now(),
     },
   }, (err, user) => {
-    if (err || !user) {
-      return res.redirect('/password/reset/invalid');
-    }
+    if (err || !user) return res.redirect('/password/reset/invalid');
 
     res.redirect(`/password/reset/${params.token}`);
   });
@@ -144,15 +127,10 @@ exports.reset = (req, res, next) => {
           user.resetPasswordExpires = undefined;
 
           user.save((err) => {
-            if (err) {
-              return res.status(422).send({
-                message: errorHandler.getErrorMessage(err),
-              });
-            }
+            if (err) return res.status(422).send({ message: errorHandler.getErrorMessage(err) });
             req.login(user, (err) => {
-              if (err) {
-                res.status(400).send(err);
-              } else {
+              if (err) res.status(400).send(err);
+              else {
                 // Remove sensitive data before return authenticated user
                 user.password = undefined;
                 user.salt = undefined;
@@ -163,11 +141,7 @@ exports.reset = (req, res, next) => {
               }
             });
           });
-        } else {
-          return res.status(400).send({
-            message: 'Password reset token is invalid or has expired.',
-          });
-        }
+        } else return res.status(400).send({ message: 'Password reset token is invalid or has expired.' });
       });
     },
     (user, done) => {
@@ -191,9 +165,7 @@ exports.reset = (req, res, next) => {
       });
     },
   ], (err) => {
-    if (err) {
-      return next(err);
-    }
+    if (err) return next(err);
   });
 };
 
@@ -212,45 +184,17 @@ exports.changePassword = (req, res) => {
               user.password = passwordDetails.newPassword;
 
               user.save((err) => {
-                if (err) {
-                  return res.status(422).send({
-                    message: errorHandler.getErrorMessage(err),
-                  });
-                }
+                if (err) return res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+
                 req.login(user, (err) => {
-                  if (err) {
-                    res.status(400).send(err);
-                  } else {
-                    res.send({
-                      message: 'Password changed successfully',
-                    });
-                  }
+                  if (err) res.status(400).send(err);
+                  else res.send({ message: 'Password changed successfully' });
                 });
               });
-            } else {
-              res.status(422).send({
-                message: 'Passwords do not match',
-              });
-            }
-          } else {
-            res.status(422).send({
-              message: 'Current password is incorrect',
-            });
-          }
-        } else {
-          res.status(400).send({
-            message: 'User is not found',
-          });
-        }
+            } else res.status(422).send({ message: 'Passwords do not match' });
+          } else res.status(422).send({ message: 'Current password is incorrect' });
+        } else res.status(400).send({ message: 'User is not found' });
       });
-    } else {
-      res.status(422).send({
-        message: 'Please provide a new password',
-      });
-    }
-  } else {
-    res.status(401).send({
-      message: 'User is not signed in',
-    });
-  }
+    } else res.status(422).send({ message: 'Please provide a new password' });
+  } else res.status(401).send({ message: 'User is not signed in' });
 };

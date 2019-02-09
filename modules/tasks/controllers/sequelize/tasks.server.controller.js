@@ -19,19 +19,14 @@
 //  * Create an task
 //  */
 // exports.create = (req, res) => {
-//   if (!req.user || !req.user.username) {
-//     res.status(404).send({
-//       message: 'User not defined',
-//     });
-//   } else {
+//   if (!req.user || !req.user.username) res.status(404).send({message: 'User not defined',});
+//   else {
 //     const newTask = req.body;
 //     newTask.user = req.user.username;
 
 //     orm.Task.create(newTask)
 //       .then(task => res.status(201).send(task))
-//       .catch(err => res.status(422).send({
-//         message: errorHandler.getErrorMessage(err),
-//       }));
+//       .catch(err => res.status(422).send({message: errorHandler.getErrorMessage(err)}));
 //   }
 // };
 
@@ -53,9 +48,7 @@
 //   }).then(() => {
 //     res.status(200).send(req.body); // TODO: Do not send the body but the task from db or nothing
 //   }).catch((err) => {
-//     res.status(422).send({
-//       message: errorHandler.getErrorMessage(err),
-//     });
+//     res.status(422).send({message: errorHandler.getErrorMessage(err)});
 //   });
 // };
 
@@ -72,9 +65,7 @@
 //   }).then((task) => {
 //     res.status(200).send(task);
 //   }).catch((err) => {
-//     res.status(422).send({
-//       message: errorHandler.getErrorMessage(err),
-//     });
+//     res.status(422).send({message: errorHandler.getErrorMessage(err)});
 //   });
 // };
 
@@ -85,9 +76,7 @@
 //   orm.Task.findAll().then((tasks) => {
 //     res.status(200).send(tasks);
 //   }).catch((err) => {
-//     res.status(422).send({
-//       message: errorHandler.getErrorMessage(err),
-//     });
+//     res.status(422).send({message: errorHandler.getErrorMessage(err)});
 //   });
 // };
 
@@ -98,11 +87,8 @@
 //   // TODO Validate id format
 
 //   orm.Task.findOne({ _id: id }).then((task) => {
-//     if (!task) {
-//       res.status(404).send({
-//         message: 'No Task with that identifier has been found',
-//       });
-//     } else {
+//     if (!task) res.status(404).send({message: 'No Task with that identifier has been found',});
+//     else {
 //       req.task = task;
 //       next();
 //     }
@@ -114,11 +100,8 @@
 //  * Example List of Tasks for one username
 //  */
 // exports.userList = (req, res) => {
-//   if (!req.user || !req.user.username) {
-//     res.status(404).send({
-//       message: 'User not defined',
-//     });
-//   } else {
+//   if (!req.user || !req.user.username) res.status(404).send({message: 'User not defined',});
+//   else {
 //     orm.Task.findAll({
 //       where: {
 //         user: req.user.username,
@@ -126,9 +109,7 @@
 //     }).then((tasks) => {
 //       res.status(200).send(tasks);
 //     }).catch((err) => {
-//       res.status(422).send({
-//         message: errorHandler.getErrorMessage(err),
-//       });
+//       res.status(422).send({message: errorHandler.getErrorMessage(err)});
 //     });
 //   }
 // };

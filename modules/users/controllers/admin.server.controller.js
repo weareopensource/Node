@@ -30,13 +30,8 @@ exports.update = ({ model, body }, res) => {
   user.profileImageURL = body.profileImageURL;
 
   user.save((err) => {
-    if (err) {
-      res.status(422).send({
-        message: errorHandler.getErrorMessage(err),
-      });
-    } else {
-      res.json(user.toObject({ getters: true }));
-    }
+    if (err) res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    else res.json(user.toObject({ getters: true }));
   });
 };
 
@@ -47,13 +42,8 @@ exports.delete = ({ model }, res) => {
   const user = model;
 
   User.deleteOne({ _id: user.id }).exec((err) => {
-    if (err) {
-      res.status(422).send({
-        message: errorHandler.getErrorMessage(err),
-      });
-    } else {
-      res.json(user.toObject({ getters: true }));
-    }
+    if (err) res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    else res.json(user.toObject({ getters: true }));
   });
 };
 
@@ -62,13 +52,8 @@ exports.delete = ({ model }, res) => {
  */
 exports.list = (req, res) => {
   User.find({}, '-salt -password -providerData').sort('-created').populate('user', 'displayName').exec((err, users) => {
-    if (err) {
-      res.status(422).send({
-        message: errorHandler.getErrorMessage(err),
-      });
-    } else {
-      res.json(users.map(user => (user.toObject({ getters: true }))));
-    }
+    if (err) res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    else res.json(users.map(user => (user.toObject({ getters: true }))));
   });
 };
 
@@ -77,14 +62,12 @@ exports.list = (req, res) => {
  */
 exports.userByID = (req, res, next, id) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    res.status(400).send({
-      message: 'User is invalid',
-    });
+    res.status(400).send({ message: 'User is invalid' });
   } else {
     User.findOne({ _id: id }, '-salt -password -providerData').exec((err, user) => {
-      if (err) {
-        next(err);
-      } if (!user) {
+      if (err) next(err);
+
+      if (!user) {
         next(new Error(`Failed to load user ${id}`));
       } else {
         req.model = user;

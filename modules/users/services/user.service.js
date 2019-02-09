@@ -26,7 +26,9 @@ class UserService {
 
   static async save(user) {
     // Set provider to local
-    if (!user.provider) user.provider = 'local';
+    if (!user.provider) {
+      user.provider = 'local';
+    }
     // confirming to secure password policies
     if (user.password) {
       const validPassword = zxcvbn(user.password);
@@ -65,12 +67,10 @@ class UserService {
 
   static async authenticate(email, password) {
     const user = await UserRepository.getByEmail(email);
-    if (!user) {
-      throw new ApiError('invalid user or password');
-    }
-    if (await this.comparePassword(password, user.password)) {
-      return this.deserialize(user);
-    }
+    if (!user) throw new ApiError('invalid user or password');
+
+    if (await this.comparePassword(password, user.password)) return this.deserialize(user);
+
     throw new ApiError('invalid user or password');
   }
 
@@ -83,9 +83,8 @@ class UserService {
   }
 
   static deserialize(user) {
-    if (!user || typeof user !== 'object') {
-      return null;
-    }
+    if (!user || typeof user !== 'object') return null;
+
     return {
       id: user.id,
       displayName: user.displayName,

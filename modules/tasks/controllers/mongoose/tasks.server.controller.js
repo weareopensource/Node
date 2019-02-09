@@ -21,11 +21,8 @@ exports.read = (req, res) => {
 exports.create = (req, res) => {
   const user = req.user;
 
-  if (!user) {
-    res.status(404).send({
-      message: 'User not defined',
-    });
-  } else {
+  if (!user) res.status(404).send({ message: 'User not defined' });
+  else {
     const newTask = new Task(req.body);
 
     newTask.user = req.user.id;
@@ -34,9 +31,7 @@ exports.create = (req, res) => {
       res.json(task);
     }).catch((err) => {
       console.log(err);
-      res.status(422).send({
-        message: errorHandler.getErrorMessage(err),
-      });
+      res.status(422).send({ message: errorHandler.getErrorMessage(err) });
     });
   }
 };
@@ -52,9 +47,7 @@ exports.update = (req, res) => {
   newTask.save().then((task) => {
     res.json(task);
   }).catch((err) => {
-    res.status(422).send({
-      message: errorHandler.getErrorMessage(err),
-    });
+    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
   });
 };
 
@@ -67,9 +60,7 @@ exports.delete = (req, res) => {
   newTask.remove().then((task) => {
     res.json({ id: task.id });
   }).catch((err) => {
-    res.status(422).send({
-      message: errorHandler.getErrorMessage(err),
-    });
+    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
   });
 };
 
@@ -81,9 +72,7 @@ exports.list = (req, res) => {
     res.json(tasks);
   })
     .catch((err) => {
-      res.status(422).send({
-        message: errorHandler.getErrorMessage(err),
-      });
+      res.status(422).send({ message: errorHandler.getErrorMessage(err) });
     });
 };
 
@@ -91,17 +80,11 @@ exports.list = (req, res) => {
  * Task middleware
  */
 exports.taskByID = (req, res, next, id) => {
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    res.status(400).send({
-      message: 'Task is invalid',
-    });
-  } else {
+  if (!mongoose.Types.ObjectId.isValid(id)) res.status(400).send({ message: 'Task is invalid' });
+  else {
     Task.findOne({ _id: id }).exec().then((task) => {
-      if (!task) {
-        res.status(404).send({
-          message: 'No Task with that identifier has been found',
-        });
-      } else {
+      if (!task) res.status(404).send({ message: 'No Task with that identifier has been found' });
+      else {
         req.task = task;
         next();
       }
@@ -113,11 +96,8 @@ exports.taskByID = (req, res, next, id) => {
  * Example List of Tasks for one username
  */
 // exports.userList = (req, res) => {
-//   if (!req.user) {
-//     res.status(404).send({
-//       message: 'User not defined',
-//     });
-//   } else {
+//   if (!req.user) res.status(404).send({message: 'User not defined'});
+//   else {
 //     Task.find({
 //       user: req.user.id,
 //     }).sort('-created').exec()
@@ -125,9 +105,7 @@ exports.taskByID = (req, res, next, id) => {
 //         res.json(tasks);
 //       })
 //       .catch((err) => {
-//         res.status(422).send({
-//           message: errorHandler.getErrorMessage(err),
-//         });
+//         res.status(422).send({message: errorHandler.getErrorMessage(err)});
 //       });
 //   }
 // };
