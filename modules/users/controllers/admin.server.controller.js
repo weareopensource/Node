@@ -11,7 +11,7 @@ const errorHandler = require(path.resolve('./modules/core/controllers/errors.ser
  * Show the current user
  */
 exports.read = ({ model }, res) => {
-  res.send(model.toObject({ getters: true }));
+  res.send(model);
 };
 
 /**
@@ -31,7 +31,7 @@ exports.update = ({ model, body }, res) => {
 
   user.save((err) => {
     if (err) res.status(422).send({ message: errorHandler.getErrorMessage(err) });
-    else res.json(user.toObject({ getters: true }));
+    else res.json(user);
   });
 };
 
@@ -43,7 +43,7 @@ exports.delete = ({ model }, res) => {
 
   User.deleteOne({ _id: user.id }).exec((err) => {
     if (err) res.status(422).send({ message: errorHandler.getErrorMessage(err) });
-    else res.json(user.toObject({ getters: true }));
+    else res.json(user);
   });
 };
 
@@ -53,7 +53,7 @@ exports.delete = ({ model }, res) => {
 exports.list = (req, res) => {
   User.find({}, '-salt -password -providerData').sort('-created').populate('user', 'displayName').exec((err, users) => {
     if (err) res.status(422).send({ message: errorHandler.getErrorMessage(err) });
-    else res.json(users.map(user => (user.toObject({ getters: true }))));
+    else res.json(users.map(user => (user)));
   });
 };
 
