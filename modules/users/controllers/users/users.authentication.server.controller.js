@@ -87,16 +87,11 @@ exports.oauthCallback = (req, res, next) => {
 
   // info.redirect_to contains intended redirect path
   passport.authenticate(strategy, (err, user, { redirectTo }) => {
-    if (err) {
-      res.redirect(`/authentication/signin?err=${encodeURIComponent(errorHandler.getErrorMessage(err))}`);
-    }
-    if (!user) {
-      res.redirect('/authentication/signin');
-    } else {
+    if (err) res.redirect(`/authentication/signin?err=${encodeURIComponent(errorHandler.getErrorMessage(err))}`);
+    if (!user) res.redirect('/authentication/signin');
+    else {
       req.login(user, (errLogin) => {
-        if (errLogin) {
-          return res.redirect('/authentication/signin');
-        }
+        if (errLogin) return res.redirect('/authentication/signin');
 
         return res.redirect(redirectTo || '/');
       });
@@ -113,8 +108,9 @@ exports.saveOAuthUserProfile = (req, providerUserProfile, done) => {
 
   // Set redirection path on session.
   // Do not redirect to a signin or signup page
-  if (noReturnUrls.indexOf(req.session.redirect_to) === -1) info.redirect_to = req.session.redirect_to;
-
+  if (noReturnUrls.indexOf(req.session.redirect_to) === -1) {
+    info.redirect_to = req.session.redirect_to;
+  }
   if (!req.user) {
     // Define a search query fields
     const searchMainProviderIdentifierField = `providerData.${providerUserProfile.providerIdentifierField}`;
@@ -135,9 +131,9 @@ exports.saveOAuthUserProfile = (req, providerUserProfile, done) => {
     };
 
     User.findOne(searchQuery, (err, user) => {
-      if (err) {
-        done(err);
-      } if (!user) {
+      if (err) done(err);
+
+      if (!user) {
         const possibleUsername = providerUserProfile.username || ((providerUserProfile.email) ? providerUserProfile.email.split('@')[0] : '');
 
         User.findUniqueUsername(possibleUsername, null, (availableUsername) => {

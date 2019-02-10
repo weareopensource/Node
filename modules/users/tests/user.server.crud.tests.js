@@ -447,7 +447,8 @@ describe('User CRUD Unit Tests :', () => {
             newPassword: '1234567890Aa$',
             verifyPassword: '1234567890-ABC-123-Aa$',
             currentPassword: credentials[0].password,
-          });
+          })
+          .expect(422);
         expect(result.body.message).toBe('Passwords do not match');
       } catch (err) {
         console.log(err);
@@ -462,7 +463,8 @@ describe('User CRUD Unit Tests :', () => {
             newPassword: '1234567890Aa$',
             verifyPassword: '1234567890Aa$',
             currentPassword: 'some_wrong_passwordAa$',
-          });
+          })
+          .expect(422);
         expect(result.body.message).toBe('Current password is incorrect');
       } catch (err) {
         console.log(err);
@@ -477,7 +479,8 @@ describe('User CRUD Unit Tests :', () => {
             newPassword: '',
             verifyPassword: '',
             currentPassword: credentials[0].password,
-          });
+          })
+          .expect(422);
         expect(result.body.message).toBe('Please provide a new password');
       } catch (err) {
         console.log(err);

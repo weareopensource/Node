@@ -125,11 +125,8 @@ const dropdb = (done) => {
     mongooseService.connect()
       .then((db) => {
         db.connection.dropDatabase((err) => {
-          if (err) {
-            console.error(err);
-          } else {
-            console.log('Successfully dropped db: ', db.connections[0].name);
-          }
+          if (err) console.error(err);
+          else console.log('Successfully dropped db: ', db.connections[0].name);
           mongooseService.disconnect(done());
         });
       })

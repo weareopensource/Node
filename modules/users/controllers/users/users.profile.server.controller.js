@@ -34,26 +34,16 @@ exports.update = (req, res) => {
     user.displayName = `${user.firstName} ${user.lastName}`;
     User.findOneAndUpdate({ _id: user.id }, user, (err) => {
       if (err) {
-        res.status(422)
-          .send({
-            message: errorHandler.getErrorMessage(err),
-          });
+        res.status(422).send({ message: errorHandler.getErrorMessage(err) });
       } else {
         req.login(user, (errLogin) => {
-          if (errLogin) {
-            res.status(400)
-              .send(errLogin);
-          } else {
-            res.json(user);
-          }
+          if (errLogin) res.status(400).send(errLogin);
+          else res.json(user);
         });
       }
     });
   } else {
-    res.status(401)
-      .send({
-        message: 'User is not signed in',
-      });
+    res.status(401).send({ message: 'User is not signed in' });
   }
 };
 
@@ -72,11 +62,8 @@ exports.changeProfilePicture = (req, res) => {
   function uploadImage() {
     return new Promise((resolve, reject) => {
       upload(req, res, (uploadError) => {
-        if (uploadError) {
-          reject(errorHandler.getErrorMessage(uploadError));
-        } else {
-          resolve();
-        }
+        if (uploadError) reject(errorHandler.getErrorMessage(uploadError));
+        else resolve();
       });
     });
   }
@@ -87,11 +74,8 @@ exports.changeProfilePicture = (req, res) => {
       user.profileImageURL = config.uploads.profile.image.dest + req.file.filename;
 
       User.findOneAndUpdate({ _id: user.id }, user, (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
+        if (err) reject(err);
+        else resolve();
       });
     });
   }
@@ -119,12 +103,8 @@ exports.changeProfilePicture = (req, res) => {
   function login() {
     return new Promise((resolve) => {
       req.login(user, (err) => {
-        if (err) {
-          res.status(400)
-            .send(err);
-        } else {
-          resolve();
-        }
+        if (err) res.status(400).send(err);
+        else resolve();
       });
     });
   }
@@ -140,14 +120,10 @@ exports.changeProfilePicture = (req, res) => {
       })
       .catch((err) => {
         // console.log(err);
-        res.status(422)
-          .send(err);
+        res.status(422).send(err);
       });
   } else {
-    res.status(401)
-      .send({
-        message: 'User is not signed in',
-      });
+    res.status(401).send({ message: 'User is not signed in' });
   }
 };
 
@@ -216,9 +192,7 @@ const verifyMicrosoftToken = async (idToken) => {
       name,
       preferred_username: preferredUsername,
     }) => {
-      if (err) {
-        return reject(err);
-      }
+      if (err) return reject(err);
       return resolve({
         sub,
         username: name,

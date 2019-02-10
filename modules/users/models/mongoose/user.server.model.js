@@ -65,9 +65,7 @@ UserMongoose.set('toJSON', {
 //     username: possibleUsername,
 //   }, (err, user) => {
 //     if (!err) {
-//       if (!user) {
-//         return callback(possibleUsername);
-//       }
+//       if (!user) return callback(possibleUsername);
 //       return that.findUniqueUsername(username, (suffix || 0) + 1, callback);
 //     }
 //     return callback(null);

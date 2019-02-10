@@ -12,9 +12,8 @@ module.exports = () => {
   }, async (email, password, done) => {
     try {
       const user = await UserService.authenticate(email, password);
-      if (user) {
-        return done(null, user);
-      }
+      if (user) return done(null, user);
+
       return done(null, false, {
         message: 'Invalid username or password',
       });
