@@ -35,7 +35,6 @@ exports.isAllowed = ({
   Acl.areAnyRolesAllowed(roles, route.path, method.toLowerCase(), (err, isAllowed) => {
     if (err) return res.status(500).send('Unexpected authorization error'); // An authorization error occurre
     if (isAllowed) return next(); // Access granted! Invoke next middleware
-    if (isAllowed) return next(); // Access granted! Invoke next middleware
     if (user.id === body.id) return next();
 
     return res.status(403).json({ message: 'User is not authorized' });
