@@ -175,26 +175,26 @@ exports.reset = (req, res, next) => {
 exports.changePassword = (req, res) => {
   // Init Variables
   const passwordDetails = req.body;
-  if (req.user) {
-    if (passwordDetails.newPassword) {
-      User.findOne({ _id: req.user.id }, async (err, user) => {
-        if (!err && user) {
-          if (await UserService.comparePassword(passwordDetails.currentPassword, user.password)) {
-            if (passwordDetails.newPassword === passwordDetails.verifyPassword) {
-              user.password = passwordDetails.newPassword;
 
-              user.save((err) => {
-                if (err) return res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+  if (!req.user) return res.status(401).send({ message: 'User is not signed in' });
+  if (!passwordDetails.newPassword) return res.status(422).send({ message: 'Please provide a new password' });
 
-                req.login(user, (err) => {
-                  if (err) res.status(400).send(err);
-                  else res.send({ message: 'Password changed successfully' });
-                });
-              });
-            } else res.status(422).send({ message: 'Passwords do not match' });
-          } else res.status(422).send({ message: 'Current password is incorrect' });
-        } else res.status(400).send({ message: 'User is not found' });
-      });
-    } else res.status(422).send({ message: 'Please provide a new password' });
-  } else res.status(401).send({ message: 'User is not signed in' });
+  User.findOne({ _id: req.user.id }, async (err, user) => {
+    if (err && !user) return res.status(400).send({ message: 'User is not found' });
+
+    if (await UserService.comparePassword(passwordDetails.currentPassword, user.password)) {
+      if (passwordDetails.newPassword === passwordDetails.verifyPassword) {
+        user.password = passwordDetails.newPassword;
+
+        user.save((err) => {
+          if (err) return res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+
+          req.login(user, (err) => {
+            if (err) res.status(400).send(err);
+            else res.send({ message: 'Password changed successfully' });
+          });
+        });
+      } else res.status(422).send({ message: 'Passwords do not match' });
+    } else res.status(422).send({ message: 'Current password is incorrect' });
+  });
 };
