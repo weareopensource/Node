@@ -3,7 +3,9 @@
  */
 const TasksRepository = require('../repositories/tasks.repository');
 
-
+/**
+ * Service
+ */
 class TasksService {
   static async get(id) {
     const result = await TasksRepository.get(id);

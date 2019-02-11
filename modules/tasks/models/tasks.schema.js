@@ -4,7 +4,7 @@
 const Joi = require('joi');
 
 /**
- * User Data Schema
+ *  Data Schema
  */
 const TasksSchema = Joi.object().keys({
   title: Joi.string().trim().default('').required(),

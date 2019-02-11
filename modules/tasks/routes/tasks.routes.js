@@ -9,7 +9,9 @@ const tasks = require('../controllers/tasks.controller');
 const tasksSchema = require('../models/tasks.schema');
 const tasksPolicy = require('../policies/tasks.policy');
 
-
+/**
+ * Routes
+ */
 module.exports = (app) => {
   // list & post
   app.route('/api/tasks')

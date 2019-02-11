@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 /**
- * Task Schema
+ * Data Model Mongoose
  */
 const TaskMongoose = new Schema({
   title: String,
