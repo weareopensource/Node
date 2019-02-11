@@ -8,9 +8,9 @@ const Task = mongoose.model('Task');
 const ApiError = require(path.resolve('./lib/helpers/ApiError'));
 
 /**
- * Module dependencies
+ * Repository
  */
-class UserRepository {
+class TasksRepository {
   static get(id) {
     if (!mongoose.Types.ObjectId.isValid(id)) throw new ApiError({ message: 'Task is invalid' });
     return Task.findOne({ _id: id }).exec();
@@ -33,4 +33,4 @@ class UserRepository {
   }
 }
 
-module.exports = UserRepository;
+module.exports = TasksRepository;
