@@ -5,7 +5,7 @@ const passport = require('passport');
 const path = require('path');
 
 const model = require(path.resolve('./lib/middlewares/model'));
-const tasks = require('../controllers/mongoose/tasks.server.controller');
+const tasks = require('../controllers/tasks.server.controller');
 const tasksSchema = require('../models/tasks.server.schema');
 const tasksPolicy = require('../policies/tasks.server.policy');
 
