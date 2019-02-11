@@ -5,9 +5,9 @@ const passport = require('passport');
 const path = require('path');
 
 const model = require(path.resolve('./lib/middlewares/model'));
-const tasks = require('../controllers/tasks.server.controller');
-const tasksSchema = require('../models/tasks.server.schema');
-const tasksPolicy = require('../policies/tasks.server.policy');
+const tasks = require('../controllers/tasks.controller');
+const tasksSchema = require('../models/tasks.schema');
+const tasksPolicy = require('../policies/tasks.policy');
 
 
 module.exports = (app) => {
