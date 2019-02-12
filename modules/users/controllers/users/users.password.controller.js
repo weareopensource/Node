@@ -9,7 +9,7 @@ const async = require('async');
 const jwt = require('jsonwebtoken');
 const UserService = require('../../services/user.service');
 
-const errorHandler = require(path.resolve('./modules/core/controllers/errors.server.controller'));
+const errorHandler = require(path.resolve('./modules/core/controllers/errors.controller'));
 const configuration = require(path.resolve('./config'));
 const config = require(path.resolve('./config'));
 const User = mongoose.model('User');

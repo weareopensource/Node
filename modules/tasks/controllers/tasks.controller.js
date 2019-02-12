@@ -3,7 +3,7 @@
  */
 const path = require('path');
 
-const errorHandler = require(path.resolve('./modules/core/controllers/errors.server.controller'));
+const errorHandler = require(path.resolve('./modules/core/controllers/errors.controller'));
 const TasksService = require('../services/tasks.service');
 
 /**

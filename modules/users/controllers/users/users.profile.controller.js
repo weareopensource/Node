@@ -11,7 +11,7 @@ const IdTokenVerifier = require('idtoken-verifier');
 const rp = require('request-promise');
 
 const User = mongoose.model('User');
-const errorHandler = require(path.resolve('./modules/core/controllers/errors.server.controller'));
+const errorHandler = require(path.resolve('./modules/core/controllers/errors.controller'));
 const config = require(path.resolve('./config'));
 const configuration = require(path.resolve('./config'));
 const imageFileFilter = require(path.resolve('./lib/services/multer')).imageFileFilter;
@@ -131,7 +131,7 @@ exports.changeProfilePicture = (req, res) => {
  * Send User
  */
 exports.me = ({ user }, res) => {
-  // Sanitize the user - short term solution. Copied from core.server.controller.js
+  // Sanitize the user - short term solution. Copied from core.controller.js
   // TODO create proper passport mock: See https://gist.github.com/mweibel/5219403
 
   let safeUserObject = null;

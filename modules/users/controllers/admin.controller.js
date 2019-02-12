@@ -5,7 +5,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 
 const User = mongoose.model('User');
-const errorHandler = require(path.resolve('./modules/core/controllers/errors.server.controller'));
+const errorHandler = require(path.resolve('./modules/core/controllers/errors.controller'));
 
 /**
  * Show the current user

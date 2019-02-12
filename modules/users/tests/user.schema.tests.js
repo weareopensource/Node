@@ -7,7 +7,7 @@ const Joi = require('joi');
 
 const config = require(path.resolve('./config'));
 const options = _.clone(config.joi.validationOptions);
-const schema = require('../models/user.server.schema');
+const schema = require('../models/user.schema');
 
 
 // Globals
