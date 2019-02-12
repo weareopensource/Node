@@ -149,6 +149,7 @@ describe('User CRUD Unit Tests :', () => {
         const result = await agent.delete(`/api/tasks/${task2.id}`)
           .expect(200);
         expect(result.body.id).toBe(task2.id);
+        expect(result.body.deletedCount).toBe(1);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();

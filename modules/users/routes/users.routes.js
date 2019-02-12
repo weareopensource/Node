@@ -5,11 +5,11 @@ const passport = require('passport');
 const path = require('path');
 
 const model = require(path.resolve('./lib/middlewares/model'));
-const usersSchema = require('../models/user.server.schema');
+const usersSchema = require('../models/user.schema');
 
 
 module.exports = (app) => {
-  const users = require('../controllers/users.server.controller');
+  const users = require('../controllers/users.controller');
 
   // Setting up the users profile api
   app.route('/api/users/me').get(passport.authenticate('jwt'), users.me);

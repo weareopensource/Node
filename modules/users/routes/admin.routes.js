@@ -2,12 +2,12 @@
  * Module dependencies
  */
 const passport = require('passport');
-const adminPolicy = require('../policies/admin.server.policy');
-const admin = require('../controllers/admin.server.controller');
+const adminPolicy = require('../policies/admin.policy');
+const admin = require('../controllers/admin.controller');
 
 module.exports = (app) => {
   /* eslint global-require: 0 */
-  require('./users.server.routes.js')(app);
+  require('./users.routes.js')(app);
 
   // Users collection routes
   app.route('/api/users')

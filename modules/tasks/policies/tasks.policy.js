@@ -33,7 +33,10 @@ exports.invokeRolesPolicies = () => {
 };
 
 /**
- * Check If Tasks Policy Allows
+ * @desc MiddleWare to check if user is allowed
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
  */
 exports.isAllowed = (req, res, next) => {
   const roles = (req.user) ? req.user.roles : ['guest'];

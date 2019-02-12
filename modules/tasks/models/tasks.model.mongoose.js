@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 /**
- * Task Schema
+ * Data Model Mongoose
  */
 const TaskMongoose = new Schema({
   title: String,
@@ -17,12 +17,19 @@ const TaskMongoose = new Schema({
   },
 });
 
-// add virtual id field (FIXME mongoose.virtual ko es6)
+/**
+ * @desc Function to add id (+ _id) to all objects
+ * @param {Object} task
+ * @return {Object} Task
+ */
 function addID() {
   return this._id.toHexString();
 }
-TaskMongoose.virtual('id').get(addID);
 
+/**
+ * Model configuration
+ */
+TaskMongoose.virtual('id').get(addID);
 // Ensure virtual fields are serialised.
 TaskMongoose.set('toJSON', {
   virtuals: true,

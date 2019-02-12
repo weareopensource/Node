@@ -10,7 +10,7 @@ const User = mongoose.model('User');
 const config = require(path.resolve('./config'));
 const configuration = require(path.resolve('./config'));
 const ApiError = require(path.resolve('./lib/helpers/ApiError'));
-const errorHandler = require(path.resolve('./modules/core/controllers/errors.server.controller'));
+const errorHandler = require(path.resolve('./modules/core/controllers/errors.controller'));
 const UserService = require('../../services/user.service');
 // URLs for which user can't be redirected on signin
 const noReturnUrls = [

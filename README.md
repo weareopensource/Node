@@ -36,7 +36,7 @@ Our stack node is actually in Beta.
 | **Being released** | 
 | Deliver | Docker & Docker-compose
 | Database | seed
-| Architecture | vertical modules architecture with Repository and Services Pattern  
+| Architecture | Layered Architecture : everything is separated in layers, and the upper layers are abstractions of the lower ones, that's why every layer should only reference the immediate lower layer (vertical modules architecture with Repository and Services Pattern)
 | **In reflexion** | 
 | Config | convict 
 | Documentation  | Swagger <br> Docco 

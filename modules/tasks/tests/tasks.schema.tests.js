@@ -7,7 +7,7 @@ const path = require('path');
 
 const config = require(path.resolve('./config'));
 const options = _.clone(config.joi.validationOptions);
-const schema = require('../models/tasks.server.schema');
+const schema = require('../models/tasks.schema');
 
 
 // Globals
