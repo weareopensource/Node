@@ -7,7 +7,9 @@ const errorHandler = require(path.resolve('./modules/core/controllers/errors.con
 const TasksService = require('../services/tasks.service');
 
 /**
- * Show the current task
+ * @desc Endpoint to show the current task
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
 exports.read = (req, res) => {
   const task = req.task ? req.task.toJSON() : {};
@@ -15,7 +17,9 @@ exports.read = (req, res) => {
 };
 
 /**
- * Create an task
+ * @desc Endpoint to ask the service to create a task
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
 exports.create = async (req, res) => {
   const user = req.user;
@@ -30,7 +34,9 @@ exports.create = async (req, res) => {
 };
 
 /**
- * Update a task
+ * @desc Endpoint to ask the service to update a task
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
 exports.update = async (req, res) => {
   try {
@@ -42,7 +48,9 @@ exports.update = async (req, res) => {
 };
 
 /**
- * Delete a task
+ * @desc Endpoint to ask the service to delete a task
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
 exports.delete = async (req, res) => {
   try {
@@ -55,7 +63,9 @@ exports.delete = async (req, res) => {
 };
 
 /**
- * List of Tasks
+ * @desc Endpoint to ask the service to get the list of tasks
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
 exports.list = async (req, res) => {
   try {
@@ -67,7 +77,11 @@ exports.list = async (req, res) => {
 };
 
 /**
- * Task middleware
+ * @desc MiddleWare to ask the service the task for this id
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @param {String} id - task id
  */
 exports.taskByID = async (req, res, next, id) => {
   try {

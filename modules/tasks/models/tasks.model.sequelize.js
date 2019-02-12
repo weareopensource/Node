@@ -1,6 +1,6 @@
-// /**
-//  * Task Schema
-//  */
+/**
+ * Data Model Sequelize
+ */
 // module.exports = (sequelize, DataTypes) => {
 //   const TaskSequelize = sequelize.define('Task', {
 //     title: DataTypes.STRING,
