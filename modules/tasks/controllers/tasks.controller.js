@@ -22,9 +22,6 @@ exports.read = (req, res) => {
  * @param {Object} res - Express response object
  */
 exports.create = async (req, res) => {
-  const user = req.user;
-  if (!user) res.status(404).send({ message: 'User not defined' });
-
   try {
     const task = await TasksService.create(req.body, req.user);
     res.json(task);
