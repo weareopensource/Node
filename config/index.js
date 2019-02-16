@@ -134,9 +134,9 @@ const initGlobalConfig = () => {
   const currentEnv = process.env.NODE_ENV || 'development';
   const defaultConfig = require(path.join(process.cwd(), './config', 'defaults', currentEnv)) || {};
 
-  // Get the config from  process.env.WAOS_BACK_*
+  // Get the config from  process.env.WAOS_NODE_*
   const environmentVars = _.mapKeys(
-    _.pickBy(process.env, (_value, key) => key.startsWith('WAOS_BACK_')),
+    _.pickBy(process.env, (_value, key) => key.startsWith('WAOS_NODE_')),
     (_v, k) => k.split('_').slice(2).join('.'),
   );
   const environmentConfigVars = {};

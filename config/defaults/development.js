@@ -3,7 +3,7 @@ module.exports = {
     title: 'WeAreOpenSource Node',
     description: 'Full-Stack JavaScript with MongoDB, Express, AngularJS, and Node.js',
     keywords: 'mongodb, express, angularjs, node.js, mongoose, passport',
-    googleAnalyticsTrackingID: 'WAOS_BACK_app_googleAnalyticsTrackingID',
+    googleAnalyticsTrackingID: 'WAOS_NODE_app_googleAnalyticsTrackingID',
   },
   port: 3000,
   host: 'localhost',
@@ -94,24 +94,24 @@ module.exports = {
     secret: 'test',
   },
   mailer: {
-    from: 'WAOS_BACK_mailer_from',
+    from: 'WAOS_NODE_mailer_from',
     options: {
-      service: 'WAOS_BACK_mailer_options_service',
+      service: 'WAOS_NODE_mailer_options_service',
       auth: {
-        user: 'WAOS_BACK_mailer_options_auth_user',
-        pass: 'WAOS_BACK_mailer_options_auth_pass',
+        user: 'WAOS_NODE_mailer_options_auth_user',
+        pass: 'WAOS_NODE_mailer_options_auth_pass',
       },
     },
   },
   google: {
-    clientId: 'WAOS_BACK_google_clientId',
+    clientId: 'WAOS_NODE_google_clientId',
   },
   microsoft: {
-    clientId: 'WAOS_BACK_microsoft_clientId',
+    clientId: 'WAOS_NODE_microsoft_clientId',
     issuer: 'https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0',
     discovery: 'https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration',
-    //    issuer: 'WAOS_BACK_microsoft_issuer',
-    //    discovery: 'WAOS_BACK_microsoft_discovery'
+    //    issuer: 'WAOS_NODE_microsoft_issuer',
+    //    discovery: 'WAOS_NODE_microsoft_discovery'
   },
   // joi is used to manage schema restrictions, on the top of mongo / orm
   joi: {
