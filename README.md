@@ -86,6 +86,18 @@ $ npm i
 * generate SSL certs : `npm run generateSSLCerts`
 * lint : `npm run lint`
 
+### Configuration
+
+The default configuration is : 'config/defaults/development.js'
+The other configurations : 'config/defaults/*.js' overwrite the default configuration named development. 
+
+We have a process that take into account all system environment variables defined under the form WAOS_NODE_<path_toVariable>. A script turns under the hood those system environment variables into an object, infering paths from the varialbles name, merged to the environment object defined on 'config/defaults/*.js' to regenerate that file, regardless of the production or developement mode.
+
+To summarize, all configuration avalable on 'config/defaults/*.js' file are overidable. You can for instance define the API porrt by defining those system environment variables:
+
+-  WAOS_NODE_port=3000
+-  WAOS_BACK_db_uri='mongodb://localhost/myDB'
+
 ## [Contribute](https://github.com/weareopensource/weareopensource.github.io/wiki/Contribute)
 
 ## History
