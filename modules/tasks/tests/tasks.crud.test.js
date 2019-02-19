@@ -222,7 +222,6 @@ describe('User CRUD Unit Tests :', () => {
       try {
         const result = await agent.get('/api/tasks')
           .expect(200);
-        console.log(result.body);
         expect(result.body).toBeInstanceOf(Array);
         expect(result.body).toHaveLength(0);
       } catch (err) {
