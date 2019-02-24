@@ -34,6 +34,7 @@ Our stack node is actually in Beta.
 | Security | JWT Stateless - [passport-jwt](https://github.com/themikenicholson/passport-jwt) <br> Passwords - [zxcvbn](https://github.com/dropbox/zxcvbn) <br> DataBases options available (auth, ssl ..) <br> SSL options availble 
 | CI  | [Travis CI](https://travis-ci.org/weareopensource/Node) 
 | Developer  | [Coveralls](https://coveralls.io/github/weareopensource/Node) - [Code Climate](https://codeclimate.com/github/weareopensource/Node) - [Dependency status](https://david-dm.org/weareopensource/node) - [GreenKeeper](https://greenkeeper.io) - [Snyk](https://snyk.io/test/github/weareopensource/node) 
+| Dependencies  | [npm](https://www.npmjs.com) or [Yarn](https://yarnpkg.com/en/)
 | **Being released** | 
 | Deliver | Docker & Docker-compose
 | Database | seed
@@ -101,7 +102,7 @@ To summarize, all configuration avalable on 'config/defaults/*.js' file are over
 
 ## History
 
-This work is based on [MEAN.js](http://meanjs.org) and more precisely on a fork of the developers named [Riess.js](https://github.com/lirantal/Riess.js). The work being stopped we wished to take it back, we want to create updated stack with same mindset "simple", "easy to use". The toolbox needed to start projects.
+This work is based on [MEAN.js](http://meanjs.org) and more precisely on a fork of the developers named [Riess.js](https://github.com/lirantal/Riess.js). The work being stopped we wished to take it back, we want to create updated stack with same mindset "simple", "easy to use". The toolbox needed to start projects, but not only with Node and Angular ...
 
 ## [We Are Open Source, Who we are ?](https://weareopensource.me)
 Today, we dreams to create Backs/Fronts, aligns on feats, in multiple languages, in order to allow anyone to compose fullstack on demand (React, Angular, VusJS, Node, Nest, Swift, Go).
