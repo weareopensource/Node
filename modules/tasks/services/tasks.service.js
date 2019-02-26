@@ -16,7 +16,7 @@ exports.get = async (id) => {
 /**
  * @desc Function to ask repository to create a task
  * @param {Object} task
- * @return {Promise} Task
+ * @return {Promise} task
  */
 exports.create = async (task, user) => {
   task.user = user.id;
@@ -29,7 +29,7 @@ exports.create = async (task, user) => {
  * @desc Functio to ask repository to update a task
  * @param {Object} task - original task
  * @param {Object} body - task edited
- * @return {Promise} Task
+ * @return {Promise} task
  */
 exports.update = async (task, body) => {
   task.title = body.title;

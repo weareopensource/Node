@@ -2,25 +2,38 @@
  * Module dependencies
  */
 const mongoose = require('mongoose');
+const path = require('path');
 
 const User = mongoose.model('User');
+const ApiError = require(path.resolve('./lib/helpers/ApiError'));
 
-class UserRepository {
-  static create(user) {
-    return new User(user).save();
-  }
+/**
+ * @desc Function to get a user from db by id
+ * @param {String} id
+ * @return {Object} user
+ */
+exports.getById = (id) => {
+  if (!mongoose.Types.ObjectId.isValid(id)) throw new ApiError({ message: 'User id is invalid' });
+  return User.findOne({ _id: id }).exec();
+};
 
-  static delete(user) {
-    return User.deleteOne({ _id: user.id }).exec();
-  }
+/**
+ * @desc Function to get a user from db by id
+ * @param {String} id
+ * @return {Object} user
+ */
+exports.getByEmail = email => User.findOne({ email }).exec();
 
-  static getById(id) {
-    return User.findOne({ _id: String(id) }).exec();
-  }
+/**
+ * @desc Function to create a user in db
+ * @param {Object} user
+ * @return {Object} user
+ */
+exports.create = user => new User(user).save();
 
-  static getByEmail(email) {
-    return User.findOne({ email }).exec();
-  }
-}
-
-module.exports = UserRepository;
+/**
+ * @desc Function to delete a user in db
+ * @param {Object} user
+ * @return {Object} confirmation of delete
+ */
+exports.delete = user => User.deleteOne({ _id: user.id }).exec();
