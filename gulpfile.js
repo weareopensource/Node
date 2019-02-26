@@ -167,15 +167,15 @@ exports.dropdb = dropdb;
 // });
 
 // Run project tests
-const test = gulp.series(lint, jest, dropdb);
+const test = gulp.series(dropdb, lint, jest);
 exports.test = test;
 
 // Run project tests with coverage
-const testWatch = gulp.series(lint, jestWatch);
+const testWatch = gulp.series(dropdb, lint, jestWatch);
 exports.testWatch = testWatch;
 
 // Run project tests with coverage
-const testCoverage = gulp.series(lint, jestCoverage, dropdb);
+const testCoverage = gulp.series(dropdb, lint, jestCoverage);
 exports.testCoverage = testCoverage;
 
 // Run project in development mode
