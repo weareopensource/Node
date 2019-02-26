@@ -28,7 +28,7 @@ exports.removeSensitive = (user) => {
  * @param {Object} user
  * @return {Promise} user
  */
-exports.save = async (user) => {
+exports.create = async (user) => {
   // Set provider to local
   if (!user.provider) {
     user.provider = 'local';
@@ -52,7 +52,7 @@ exports.save = async (user) => {
  * @param {Object} user
  * @return {Promise} user
  */
-exports.remove = async (user) => {
+exports.delete = async (user) => {
   const result = await UserRepository.delete(user);
   return Promise.resolve(result);
 };
