@@ -66,7 +66,7 @@ exports.delete = async (req, res) => {
  */
 exports.list = async (req, res) => {
   try {
-    const tasks = await TasksService.list(req.task);
+    const tasks = await TasksService.list();
     res.json(tasks);
   } catch (err) {
     res.status(422).send({ message: errorHandler.getErrorMessage(err) });
