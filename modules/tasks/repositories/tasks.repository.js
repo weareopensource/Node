@@ -10,24 +10,24 @@ const ApiError = require(path.resolve('./lib/helpers/ApiError'));
 /**
  * @desc Function to get a task from db
  * @param {String} id
- * @return {Object} Task
+ * @return {Object} task
  */
 exports.get = (id) => {
-  if (!mongoose.Types.ObjectId.isValid(id)) throw new ApiError({ message: 'Task is invalid' });
+  if (!mongoose.Types.ObjectId.isValid(id)) throw new ApiError({ message: 'Task id is invalid' });
   return Task.findOne({ _id: id }).exec();
 };
 
 /**
  * @desc Function to create a task in db
  * @param {Object} task
- * @return {Object} Task
+ * @return {Object} task
  */
 exports.create = task => new Task(task).save();
 
 /**
  * @desc Function to update a task in db
  * @param {Object} task
- * @return {Object} Task
+ * @return {Object} task
  */
 exports.update = task => new Task(task).save();
 

@@ -23,7 +23,7 @@ const noReturnUrls = [
  */
 exports.signup = async ({ body }, res, next) => {
   try {
-    const user = await UserService.save(body);
+    const user = await UserService.create(body);
     const token = jwt.sign({ userId: user.id }, config.jwt.secret);
     return res.status(200)
       .cookie('TOKEN', token, { httpOnly: true })

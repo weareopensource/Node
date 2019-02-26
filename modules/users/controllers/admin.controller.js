@@ -2,77 +2,79 @@
  * Module dependencies
  */
 const path = require('path');
-const mongoose = require('mongoose');
 
-const User = mongoose.model('User');
 const errorHandler = require(path.resolve('./modules/core/controllers/errors.controller'));
+const UserService = require('../services/user.service');
 
 /**
- * Show the current user
+ * @desc Endpoint to read the current user in req
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
-exports.read = ({ model }, res) => {
-  res.send(model);
+exports.read = (req, res) => {
+  res.send(req.model);
 };
 
 /**
- * Update a User
+ * @desc Endpoint to ask the service to update a user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
-exports.update = ({ model, body }, res) => {
-  const user = model;
+exports.update = async (req, res) => {
+  try {
+    const user = await UserService.update(req.model, req.body);
+    res.json(user);
+  } catch (err) {
+    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+  }
+};
 
-  // For security purposes only merge these parameters
-  user.firstName = body.firstName;
-  user.lastName = body.lastName;
-  user.displayName = `${user.firstName} ${user.lastName}`;
-  user.username = body.username;
-  user.roles = body.roles;
-  user.email = body.email;
-  user.profileImageURL = body.profileImageURL;
 
-  user.save((err) => {
-    if (err) res.status(422).send({ message: errorHandler.getErrorMessage(err) });
-    else res.json(user);
-  });
+/**
+ * @desc Endpoint to ask the service to delete a user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.delete = async (req, res) => {
+  try {
+    const result = await UserService.delete(req.model);
+    result.id = req.model.id;
+    res.json(result);
+  } catch (err) {
+    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+  }
 };
 
 /**
- * Delete a user
+ * @desc Endpoint to ask the service to get the list of users
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
-exports.delete = ({ model }, res) => {
-  const user = model;
-
-  User.deleteOne({ _id: user.id }).exec((err) => {
-    if (err) res.status(422).send({ message: errorHandler.getErrorMessage(err) });
-    else res.json(user);
-  });
+exports.list = async (req, res) => {
+  try {
+    const users = await UserService.list();
+    res.json(users);
+  } catch (err) {
+    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+  }
 };
 
 /**
- * List of Users
+ * @desc MiddleWare to ask the service the user for this id
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @param {String} id - user id
  */
-exports.list = (req, res) => {
-  User.find({}, '-salt -password -providerData').sort('-created').populate('user', 'displayName').exec((err, users) => {
-    if (err) res.status(422).send({ message: errorHandler.getErrorMessage(err) });
-    else res.json(users.map(user => (user)));
-  });
-};
-
-/**
- * User middleware
- */
-exports.userByID = (req, res, next, id) => {
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    res.status(400).send({ message: 'User is invalid' });
-  } else {
-    User.findOne({ _id: id }, '-salt -password -providerData').exec((err, user) => {
-      if (err) next(err);
-
-      if (!user) {
-        next(new Error(`Failed to load user ${id}`));
-      } else {
-        req.model = user;
-        next();
-      }
-    });
+exports.userByID = async (req, res, next, id) => {
+  try {
+    const user = await UserService.get({ id });
+    if (!user) res.status(404).send({ message: 'No User with that identifier has been found' });
+    else {
+      req.model = user;
+      next();
+    }
+  } catch (err) {
+    next(err);
   }
 };

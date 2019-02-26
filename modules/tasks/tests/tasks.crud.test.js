@@ -188,7 +188,7 @@ describe('User CRUD Unit Tests :', () => {
       }
       // del user
       try {
-        await UserService.remove(user);
+        await UserService.delete(user);
       } catch (err) {
         console.log(err);
       }
