@@ -22,7 +22,7 @@ module.exports = (app) => {
   // from it so it can be saved in `req.user`
   passport.deserializeUser(async (id, done) => {
     try {
-      const user = await UserService.getUserDeserializedById(id);
+      const user = await UserService.get({ id });
       return done(null, user);
     } catch (err) {
       return done(err, null);

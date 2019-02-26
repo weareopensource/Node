@@ -5,6 +5,7 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 const generatePassword = require('generate-password');
 const zxcvbn = require('zxcvbn');
+const _ = require('lodash');
 
 const config = require(path.resolve('./config'));
 const ApiError = require(path.resolve('./lib/helpers/ApiError'));
@@ -13,14 +14,38 @@ const UserRepository = require('../repositories/user.repository');
 const SALT_ROUNDS = 10;
 
 /**
- * @desc Function remove sensitive data of user object
+ * @desc Local function to removeSensitive data from user
  * @param {Object} user
  * @return {Object} user
  */
-exports.removeSensitive = (user) => {
-  // @TODO instead of blacklisting unwanted properties we should instead only return a newly composed object of expected properties otherwise we return fields from the repository like mongo's __v field
-  user.salt = undefined;
-  return user;
+const removeSensitive = (user) => {
+  if (!user || typeof user !== 'object') return null;
+  const whitelist = ['_id',
+    'id',
+    'displayName',
+    'firstName',
+    'lastName',
+    'username',
+    'email',
+    'roles',
+    'profileImageURL',
+    'updated',
+    'created',
+    'resetPasswordToken',
+    'resetPasswordExpires'];
+
+  return _.extend(user, _.pick(user, whitelist));
+};
+
+
+/**
+ * @desc Function to ask repository to get a user by id or email
+ * @param {Object} user.id or user.email
+ * @return {Object} user
+ */
+exports.get = async (user) => {
+  const result = await UserRepository.get(user);
+  return Promise.resolve(removeSensitive(result));
 };
 
 /**
@@ -44,7 +69,26 @@ exports.create = async (user) => {
   }
   const result = await UserRepository.create(user);
   // Remove sensitive data before return
-  return Promise.resolve(this.removeSensitive(result));
+  return Promise.resolve(removeSensitive(result));
+};
+
+/**
+ * @desc Functio to ask repository to update a user
+ * @param {Object} user - original user
+ * @param {Object} body - user edited
+ * @return {Promise} user
+ */
+exports.update = async (user, body) => {
+  if (body.firstName) user.firstName = body.firstName;
+  if (body.lastName) user.lastName = body.lastName;
+  if (body.displayName) user.displayName = `${user.firstName} ${user.lastName}`;
+  if (body.username) user.username = body.username;
+  if (body.roles) user.roles = body.roles;
+  if (body.email) user.email = body.email;
+  if (body.profileImageURL) user.profileImageURL = body.profileImageURL;
+
+  const result = await UserRepository.update(user);
+  return Promise.resolve(removeSensitive(result));
 };
 
 /**
@@ -57,6 +101,14 @@ exports.delete = async (user) => {
   return Promise.resolve(result);
 };
 
+/**
+ * @desc Function to get all task in db
+ * @return {Promise} All tasks
+ */
+exports.list = async () => {
+  const result = await UserRepository.list();
+  return Promise.resolve(result);
+};
 
 /**
  * @desc Function to authenticate user)
@@ -65,9 +117,9 @@ exports.delete = async (user) => {
  * @return {Object} user
  */
 exports.authenticate = async (email, password) => {
-  const user = await UserRepository.getByEmail(email);
+  const user = await UserRepository.get({ email });
   if (!user) throw new ApiError('invalid user or password');
-  if (await this.comparePassword(password, user.password)) return this.deserialize(user);
+  if (await this.comparePassword(password, user.password)) return removeSensitive(user);
   throw new ApiError('invalid user or password');
 };
 
@@ -85,55 +137,6 @@ exports.comparePassword = async (userPassword, storedPassword) => bcrypt.compare
  * @return {String} password hashed
  */
 exports.hashPassword = password => bcrypt.hash(String(password), SALT_ROUNDS);
-
-/**
- * @desc Function to deserialize user
- * @param {Object} user
- * @return {Object} user
- */
-exports.deserialize = (user) => {
-  if (!user || typeof user !== 'object') return null;
-
-  return {
-    id: user.id,
-    displayName: user.displayName,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    username: user.username,
-    email: user.email,
-    provider: user.provider,
-    roles: user.roles,
-    profileImageURL: user.profileImageURL,
-  };
-};
-
-
-/**
- * @desc Function to ask repository to get a user
- * @param {Object} user
- * @return {Object} user
- */
-exports.get = async (user) => {
-  if (user.id) {
-    const result = await UserRepository.getById(user.id);
-    return Promise.resolve(result);
-  }
-  if (user.email) {
-    const result = await UserRepository.getByEmail(user.email);
-    return Promise.resolve(result);
-  }
-  throw new ApiError('invalid user');
-};
-
-/**
- * @desc Function to ask repository to get a user and deserialize
- * @param {Object} user
- * @return {Object} user
- */
-exports.getUserDeserializedById = async (id) => {
-  const user = await UserRepository.getById(id);
-  return this.deserialize(user);
-};
 
 /**
  * @desc Seed : Function to generateRandomPassphrase

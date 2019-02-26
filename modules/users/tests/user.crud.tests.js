@@ -232,7 +232,7 @@ describe('User CRUD Unit Tests :', () => {
         const result = await agent.delete(`/api/users/${userEdited._id}`)
           .expect(200);
         expect(result.body).toBeInstanceOf(Object);
-        expect(result.body._id).toBe(String(userEdited._id));
+        expect(result.body.id).toBe(String(userEdited._id));
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
