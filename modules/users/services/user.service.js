@@ -40,11 +40,21 @@ const removeSensitive = (user) => {
 
 /**
  * @desc Function to ask repository to get a user by id or email
- * @param {Object} user.id or user.email
+ * @param {Object} user.id / user.email / user.username
  * @return {Object} user
  */
 exports.get = async (user) => {
   const result = await UserRepository.get(user);
+  return Promise.resolve(removeSensitive(result));
+};
+
+/**
+ * @desc Function to ask repository to search a user by request
+ * @param {Object} mongoose input request
+ * @return {Object} user
+ */
+exports.search = async (input) => {
+  const result = await UserRepository.search(input);
   return Promise.resolve(removeSensitive(result));
 };
 
@@ -137,6 +147,25 @@ exports.comparePassword = async (userPassword, storedPassword) => bcrypt.compare
  * @return {String} password hashed
  */
 exports.hashPassword = password => bcrypt.hash(String(password), SALT_ROUNDS);
+
+
+/**
+ * @desc Function to ask repository to generate unique username for one username
+ * @param {Object} mongoose input request
+ * @return {Object} user
+ */
+exports.generateUniqueUsername = async (username, suffix) => {
+  username = (suffix || '');
+
+  const result = await UserRepository.get({ username });
+  if (!result) return Promise.resolve(username);
+
+  try {
+    return await this.generateUniqueUsername(username, (suffix || 0) + 1);
+  } catch (err) {
+    throw new ApiError(err);
+  }
+};
 
 /**
  * @desc Seed : Function to generateRandomPassphrase
