@@ -46,7 +46,7 @@ Our stack node is actually in Beta.
 
 #### Available
 
-* **User** : classic register / aiuth or oAuth(microsoft, google) - profile management (update, avatar upload ...)
+* **User** : classic register / auth or oAuth(microsoft, google) - profile management (update, avatar upload ...)
 * **Admin** : list users - edit user - delete user
 * **Tasks** : list tasks - add tasks - edit tasks - delete tasks
 
