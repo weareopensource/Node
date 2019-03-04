@@ -2,16 +2,36 @@
  * Module dependencies
  */
 const path = require('path');
+const _ = require('lodash');
 const bcrypt = require('bcrypt');
 const generatePassword = require('generate-password');
 const zxcvbn = require('zxcvbn');
-const _ = require('lodash');
+const fs = require('fs');
+const multer = require('multer');
 
 const config = require(path.resolve('./config'));
 const ApiError = require(path.resolve('./lib/helpers/ApiError'));
+const imageFileFilter = require(path.resolve('./lib/services/multer')).imageFileFilter;
 const UserRepository = require('../repositories/user.repository');
 
-const SALT_ROUNDS = 10;
+const saltRounds = 10;
+// update whitelist
+const whitelistUpdate = ['firstName', 'lastName', 'username', 'email', 'profileImageURL'];
+const whitelistUpdateAdmin = whitelistUpdate.concat(['roles']);
+// Data filter whitelist
+const whitelist = ['_id',
+  'id',
+  'firstName',
+  'lastName',
+  'displayName',
+  'username',
+  'email',
+  'roles',
+  'profileImageURL',
+  'updated',
+  'created',
+  'resetPasswordToken',
+  'resetPasswordExpires'];
 
 /**
  * @desc Local function to removeSensitive data from user
@@ -20,21 +40,7 @@ const SALT_ROUNDS = 10;
  */
 const removeSensitive = (user) => {
   if (!user || typeof user !== 'object') return null;
-  const whitelist = ['_id',
-    'id',
-    'displayName',
-    'firstName',
-    'lastName',
-    'username',
-    'email',
-    'roles',
-    'profileImageURL',
-    'updated',
-    'created',
-    'resetPasswordToken',
-    'resetPasswordExpires'];
-
-  return _.extend(user, _.pick(user, whitelist));
+  return _.assignIn(user, _.pick(user, whitelist));
 };
 
 
@@ -86,20 +92,45 @@ exports.create = async (user) => {
  * @desc Functio to ask repository to update a user
  * @param {Object} user - original user
  * @param {Object} body - user edited
- * @return {Promise} user
+ * @param {boolean} admin - true if admin update
+ * @return {Promise} user -
  */
-exports.update = async (user, body) => {
-  if (body.firstName) user.firstName = body.firstName;
-  if (body.lastName) user.lastName = body.lastName;
-  if (body.displayName) user.displayName = `${user.firstName} ${user.lastName}`;
-  if (body.username) user.username = body.username;
-  if (body.roles) user.roles = body.roles;
-  if (body.email) user.email = body.email;
-  if (body.profileImageURL) user.profileImageURL = body.profileImageURL;
+exports.update = async (user, body, admin) => {
+  if (!admin) user = _.assignIn(user, _.pick(body, whitelistUpdate));
+  else user = _.assignIn(user, _.pick(body, whitelistUpdateAdmin));
+
+  user.updated = Date.now();
+  user.displayName = `${user.firstName} ${user.lastName}`;
 
   const result = await UserRepository.update(user);
   return Promise.resolve(removeSensitive(result));
 };
+
+/**
+ * @desc Upload new image based on multer configuration
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @return {Promise} result
+ */
+exports.uploadImage = async (req, res, config) => new Promise((resolve, reject) => {
+  // upload
+  const multerConfig = config;
+  multerConfig.fileFilter = imageFileFilter;
+  const upload = multer(multerConfig)
+    .single('newProfilePicture');
+
+  upload(req, res, (uploadError) => {
+    if (uploadError) reject(uploadError);
+    else resolve();
+  });
+});
+
+/**
+ * @desc Delete image at this pa†h
+ * @param {String} path
+ * @return {Promise} result
+ */
+exports.deleteImage = async path => fs.unlink(path);
 
 /**
  * @desc Function to ask repository to delete a user
@@ -146,26 +177,7 @@ exports.comparePassword = async (userPassword, storedPassword) => bcrypt.compare
  * @param {String} password
  * @return {String} password hashed
  */
-exports.hashPassword = password => bcrypt.hash(String(password), SALT_ROUNDS);
-
-
-/**
- * @desc Function to ask repository to generate unique username for one username
- * @param {Object} mongoose input request
- * @return {Object} user
- */
-exports.generateUniqueUsername = async (username, suffix) => {
-  username = (suffix || '');
-
-  const result = await UserRepository.get({ username });
-  if (!result) return Promise.resolve(username);
-
-  try {
-    return await this.generateUniqueUsername(username, (suffix || 0) + 1);
-  } catch (err) {
-    throw new ApiError(err);
-  }
-};
+exports.hashPassword = password => bcrypt.hash(String(password), saltRounds);
 
 /**
  * @desc Seed : Function to generateRandomPassphrase

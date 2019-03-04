@@ -22,7 +22,7 @@ exports.read = (req, res) => {
  */
 exports.update = async (req, res) => {
   try {
-    const user = await UserService.update(req.model, req.body);
+    const user = await UserService.update(req.model, req.body, true);
     res.json(user);
   } catch (err) {
     res.status(422).send({ message: errorHandler.getErrorMessage(err) });

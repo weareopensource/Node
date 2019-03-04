@@ -20,6 +20,7 @@ exports.get = (user) => {
   }
   if (user.email) return User.findOne({ email: user.email }).exec();
   if (user.username) return User.findOne({ username: user.username }).exec();
+  if (user.sub) return User.findOne({ sub: user.sub }).exec();
   throw new ApiError('User is invalid');
 };
 

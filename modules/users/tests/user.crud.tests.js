@@ -7,6 +7,7 @@ const _ = require('lodash');
 
 const express = require(path.resolve('./lib/services/express'));
 const mongooseService = require(path.resolve('./lib/services/mongoose'));
+const config = require(path.resolve('./config'));
 
 /**
  * Unit tests
@@ -672,20 +673,21 @@ describe('User CRUD Unit Tests :', () => {
 
     test('should not be able to change profile picture if attach a picture with a different field name', async () => {
       try {
-        await agent.post('/api/users/picture')
+        const result = await agent.post('/api/users/picture')
           .attach('fieldThatDoesntWork', './modules/users/tests/img/default.png')
           .expect(422);
+        expect(result.body.message).toEqual('Missing `newProfilePicture` field');
       } catch (err) {
-        console.log(err);
         expect(err).toBeFalsy();
       }
     });
 
     test('should not be able to upload a non-image file as a profile picture', async () => {
       try {
-        await agent.post('/api/users/picture')
+        const result = await agent.post('/api/users/picture')
           .attach('newProfilePicture', './modules/users/tests/img/text-file.txt')
           .expect(422);
+        expect(result.body.message).toEqual('Unsupported filetype');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -694,9 +696,10 @@ describe('User CRUD Unit Tests :', () => {
 
     test('should not be able to change profile picture to too big of a file', async () => {
       try {
-        await agent.post('/api/users/picture')
+        const result = await agent.post('/api/users/picture')
           .attach('newProfilePicture', './modules/users/tests/img/too-big-file.png')
           .expect(422);
+        expect(result.body.message).toEqual(`Image file too large. Maximum size allowed is ${(config.uploads.profile.avatar.limits.fileSize / (1024 * 1024)).toFixed(2)} Mb files.`);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();

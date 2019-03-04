@@ -78,7 +78,7 @@ module.exports = {
   roles: ['user', 'admin'],
   uploads: {
     profile: {
-      image: {
+      avatar: {
         dest: './uploads',
         limits: {
           fileSize: 1 * 1024 * 1024, // Max file size in bytes (1 MB)

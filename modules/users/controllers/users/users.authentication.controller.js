@@ -10,6 +10,8 @@ const configuration = require(path.resolve('./config'));
 const ApiError = require(path.resolve('./lib/helpers/ApiError'));
 const errorHandler = require(path.resolve('./modules/core/controllers/errors.controller'));
 const UserService = require('../../services/user.service');
+const OAuthService = require('../../services/oAuth.service');
+
 // URLs for which user can't be redirected on signin
 const noReturnUrls = [
   '/authentication/signin',
@@ -101,7 +103,6 @@ exports.oauthCallback = (req, res, next) => {
     else {
       req.login(user, (errLogin) => {
         if (errLogin) return res.redirect('/authentication/signin');
-
         return res.redirect(redirectTo || '/');
       });
     }
@@ -148,7 +149,7 @@ exports.saveOAuthUserProfile = async (req, providerUserProfile, done) => {
     // if no, generate the user
     try {
       const possibleUsername = providerUserProfile.username || ((providerUserProfile.email) ? providerUserProfile.email.split('@')[0] : '');
-      const availableUsername = await UserService.generateUniqueUsername(possibleUsername);
+      const availableUsername = await OAuthService.generateUniqueUsername(possibleUsername);
       user = {
         firstName: providerUserProfile.firstName,
         lastName: providerUserProfile.lastName,
