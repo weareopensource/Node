@@ -1,7 +1,7 @@
 {
   "name": "waosNode",
   "description": "Stack JavaScript with MongoDB, ORM(sequelize ...), Express, and Node.js. (Based on meanjs and riess.js)",
-  "version": "",
+  "version": "0.1.0",
   "private": false,
   "author": "https://github.com/weareopensource/Node/graphs/contributors",
   "license": "MIT",
@@ -25,7 +25,14 @@
     "generateSSLCerts": "lib/scripts/generate-ssl-certs.sh",
     "lint": "gulp lint",
     "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect"
+    "prepare": "npm run snyk-protect",
+    "commit": "npx git-cz",
+    "release": "standard-version"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
   },
   "dependencies": {
     "acl": "~0.4.11",
@@ -71,6 +78,9 @@
     "snyk": "^1.135.1"
   },
   "devDependencies": {
+    "@commitlint/cli": "^7.5.2",
+    "@commitlint/config-conventional": "^7.5.0",
+    "commitizen": "^3.0.7",
     "coveralls": "~3.0.3",
     "cz-conventional-changelog": "^2.1.0",
     "eslint": "^5.15.1",
@@ -79,7 +89,9 @@
     "gulp-load-plugins": "^1.5.0",
     "gulp-nodemon": "~2.4.2",
     "gulp-refresh": "~1.1.0",
-    "jest-cli": "^24.1.0"
+    "husky": "^1.3.1",
+    "jest-cli": "^24.1.0",
+    "standard-version": "^5.0.1"
   },
   "config": {
     "commitizen": {
