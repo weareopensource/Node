@@ -3,198 +3,186 @@
  */
 const path = require('path');
 
-const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
-const async = require('async');
 const jwt = require('jsonwebtoken');
 const UserService = require('../../services/user.service');
 
 const errorHandler = require(path.resolve('./modules/core/controllers/errors.controller'));
 const configuration = require(path.resolve('./config'));
 const config = require(path.resolve('./config'));
-const User = mongoose.model('User');
 const smtpTransport = nodemailer.createTransport(config.mailer.options);
 
 /**
- * Forgot for reset password (forgot POST)
+ * @desc Endpoint to init password reset mail
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
-exports.forgot = ({ body }, res, next) => {
-  async.waterfall([
-    (done) => {
-      if (body.email) {
-        User.findOne({
-          email: body.email,
-        }, '-salt -password', (err, user) => {
-          if (err || !user) return res.status(400).send({ message: 'No account with that email has been found' });
-          if (user.provider !== 'local') return res.status(400).send({ message: `It seems like you signed up using your ${user.provider} account` });
+exports.forgot = async (req, res) => {
+  let user;
+  let token;
+  let emailHTML;
 
-          const payload = { exp: Date.now() + 3600000 };
-          const token = jwt.sign(payload, configuration.jwt.secret, { algorithm: 'HS256' });
+  // check input
+  if (!req.body.email) return res.status(422).send({ message: 'Mail field must not be blank' });
 
-          user.resetPasswordToken = token;
-          user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+  try {
+    // get user
+    user = await UserService.get({ email: req.body.email });
+    if (!user) return res.status(400).send({ message: 'No account with that email has been found' });
+    if (user.provider !== 'local') return res.status(400).send({ message: `It seems like you signed up using your ${user.provider} account` });
+    // update user with recover token
+    const payload = { exp: Date.now() + 3600000 };
+    const edit = {
+      resetPasswordToken: jwt.sign(payload, configuration.jwt.secret, { algorithm: 'HS256' }),
+      resetPasswordExpires: Date.now() + 3600000,
+    };
+    user = await UserService.update(user, edit, 'recover');
+  } catch (err) {
+    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+  }
 
-          user.save((err) => {
-            done(err, token, user);
-          });
-        });
-      } else return res.status(422).send({ message: 'Mail field must not be blank' });
-    },
-    (token, user, done) => {
-      let httpTransport = 'http://';
-      if (config.secure && config.secure.ssl === true) {
-        httpTransport = 'https://';
-      }
-      //      const baseUrl = req.app.get('domain') || httpTransport + req.headers.host;
-      const baseUrl = `${httpTransport + config.host}:4200`;
-      res.render('reset-password-email', {
-        name: user.displayName,
-        appName: config.app.title,
-        url: `${baseUrl}/auth/password-reset?token=${token}`,
-      }, (err, emailHTML) => {
-        done(err, emailHTML, user);
-      });
-    },
-    (emailHTML, { email }, done) => {
-      const mailOptions = {
-        to: email,
-        from: config.mailer.from,
-        subject: 'Password Reset',
-        html: emailHTML,
-      };
-      smtpTransport.sendMail(mailOptions, (err) => {
-        if (!err) {
-          res.send({
-            message: 'An email has been sent to the provided email with further instructions.',
-          });
-        } else {
-          return res.status(400).send({ message: 'Failure sending email' });
-        }
+  // prepare template
+  let httpTransport = 'http://';
+  if (config.secure && config.secure.ssl === true) {
+    httpTransport = 'https://';
+  }
+  // const baseUrl = req.app.get('domain') || httpTransport + req.headers.host;
+  const baseUrl = `${httpTransport + config.host}:4200`;
+  res.render('reset-password-email', {
+    name: user.displayName,
+    appName: config.app.title,
+    url: `${baseUrl}/auth/password-reset?token=${token}`,
+  }, (err, result) => {
+    if (!err) emailHTML = result;
+    else return res.status(400).send({ message: 'Failure sending email' });
+  });
 
-        done(err);
-      });
-    },
-  ], (err) => {
-    if (err) return next(err);
+  // send mail
+  const mailOptions = {
+    to: user.email,
+    from: config.mailer.from,
+    subject: 'Password Reset',
+    html: emailHTML,
+  };
+  smtpTransport.sendMail(mailOptions, (err) => {
+    if (!err) res.send({ message: 'An email has been sent to the provided email with further instructions.' });
+    else return res.status(400).send({ message: 'Failure sending email' });
   });
 };
 
 /**
- * Reset password GET from email token
+ * @desc Endpoint to validate Reset Token from link
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
-exports.validateResetToken = ({ params }, res) => {
-  User.findOne({
-    resetPasswordToken: params.token,
-    resetPasswordExpires: {
-      $gt: Date.now(),
-    },
-  }, (err, user) => {
-    if (err || !user) return res.redirect('/password/reset/invalid');
-
-    res.redirect(`/password/reset/${params.token}`);
-  });
+exports.validateResetToken = async (req, res) => {
+  try {
+    const user = await UserService.search({
+      resetPasswordToken: req.params.token,
+      resetPasswordExpires: {
+        $gt: Date.now(),
+      },
+    });
+    if (!user) return res.redirect('/password/reset/invalid');
+    res.redirect(`/password/reset/${req.params.token}`);
+  } catch (err) {
+    return res.redirect('/password/reset/invalid');
+  }
 };
 
 /**
- * Reset password POST from email token
+ * @desc Endpoint to reset password from url with token
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
-exports.reset = (req, res, next) => {
+exports.reset = async (req, res) => {
   // Init Variables
   const newPassword = req.body.newPassword;
   const resetPasswordToken = req.body.token;
+  let user;
+  let emailHTML;
 
-  async.waterfall([
-    (done) => {
-      UserService.hashPassword(newPassword)
-        .then((password) => {
-          done(null, password);
-        })
-        .catch((e) => {
-          console.log(e);
-          done(e);
-        });
-    },
-    (password, done) => {
-      User.findOne({
-        resetPasswordToken,
-        resetPasswordExpires: {
-          $gt: Date.now(),
-        },
-      }, (err, user) => {
-        if (!err && user) {
-          user.password = password;
-          user.resetPasswordToken = undefined;
-          user.resetPasswordExpires = undefined;
+  try {
+    // Hash new password
+    const password = await UserService.hashPassword(newPassword);
+    // get user
+    user = await UserService.search({
+      resetPasswordToken,
+      resetPasswordExpires: {
+        $gt: Date.now(),
+      },
+    });
+    if (!user) return res.status(400).send({ message: 'Password reset token is invalid or has expired.' });
+    // update user
+    const edit = {
+      password,
+      resetPasswordToken: undefined,
+      resetPasswordExpires: undefined,
+    };
+    user = await UserService.update(user, edit, 'recover');
+    // reset login
+    req.login(user, (errLogin) => {
+      if (errLogin) return res.status(400).send(errLogin);
+      user.password = undefined;
+      user.salt = undefined;
+      return res.json(user);
+    });
+  } catch (err) {
+    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+  }
 
-          user.save((err) => {
-            if (err) return res.status(422).send({ message: errorHandler.getErrorMessage(err) });
-            req.login(user, (err) => {
-              if (err) res.status(400).send(err);
-              else {
-                // Remove sensitive data before return authenticated user
-                user.password = undefined;
-                user.salt = undefined;
+  // prepare template
+  res.render('reset-password-confirm-email', {
+    name: user.displayName,
+    appName: config.app.title,
+  }, (err, result) => {
+    if (!err) emailHTML = result;
+    else res.status(400).send({ message: 'Failure sending email' });
+  });
 
-                res.json(user);
-
-                done(err, user);
-              }
-            });
-          });
-        } else return res.status(400).send({ message: 'Password reset token is invalid or has expired.' });
-      });
-    },
-    (user, done) => {
-      res.render('reset-password-confirm-email', {
-        name: user.displayName,
-        appName: config.app.title,
-      }, (err, emailHTML) => {
-        done(err, emailHTML, user);
-      });
-    },
-    (emailHTML, { email }, done) => {
-      const mailOptions = {
-        to: email,
-        from: config.mailer.from,
-        subject: 'Your password has been changed',
-        html: emailHTML,
-      };
-
-      smtpTransport.sendMail(mailOptions, (err) => {
-        done(err, 'done');
-      });
-    },
-  ], (err) => {
-    if (err) return next(err);
+  // send mail
+  const mailOptions = {
+    to: user.email,
+    from: config.mailer.from,
+    subject: 'Your password has been changed',
+    html: emailHTML,
+  };
+  smtpTransport.sendMail(mailOptions, (err) => {
+    if (!err) res.send({ message: 'An email has been sent to the provided email with reset password confirmation.' });
+    else res.status(400).send({ message: 'Failure sending email' });
   });
 };
 
 /**
  * Change Password
  */
-exports.changePassword = (req, res) => {
+exports.changePassword = async (req, res) => {
   // Init Variables
   const passwordDetails = req.body;
+  let user;
+  let password;
 
   if (!req.user) return res.status(401).send({ message: 'User is not signed in' });
   if (!passwordDetails.newPassword) return res.status(422).send({ message: 'Please provide a new password' });
 
-  User.findOne({ _id: req.user.id }, async (err, user) => {
-    if (err && !user) return res.status(400).send({ message: 'User is not found' });
-
+  try {
+    // get user
+    user = await UserService.get({ id: req.user.id });
+    if (!user) return res.status(400).send({ message: 'User is not found' });
+    // check password
     if (await UserService.comparePassword(passwordDetails.currentPassword, user.password)) {
       if (passwordDetails.newPassword === passwordDetails.verifyPassword) {
-        user.password = passwordDetails.newPassword;
-
-        user.save((err) => {
-          if (err) return res.status(422).send({ message: errorHandler.getErrorMessage(err) });
-
-          req.login(user, (err) => {
-            if (err) res.status(400).send(err);
-            else res.send({ message: 'Password changed successfully' });
-          });
-        });
-      } else res.status(422).send({ message: 'Passwords do not match' });
-    } else res.status(422).send({ message: 'Current password is incorrect' });
-  });
+        password = passwordDetails.newPassword;
+      } else return res.status(422).send({ message: 'Passwords do not match' });
+    } else return res.status(422).send({ message: 'Current password is incorrect' });
+    // update user
+    user = await UserService.update(user, { password }, 'recover');
+    // reset login
+    req.login(user, (errLogin) => {
+      if (errLogin) return res.status(400).send(errLogin);
+      return res.send({ message: 'Password changed successfully' });
+    });
+  } catch (err) {
+    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+  }
 };

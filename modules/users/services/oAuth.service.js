@@ -102,7 +102,7 @@ exports.addUser = async (provider, idToken) => {
   }
   if (!user) return null;
 
-  return UserRepository.get({
+  return UserRepository.search({
     sub: user.sub,
   });
 };

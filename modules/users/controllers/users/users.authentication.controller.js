@@ -70,7 +70,7 @@ exports.token = async (req, res, next) => {
     // @TODO properly sign the token, not with a shared secret (use pubkey instead),
     // and specify proper expiration, issuer, algorithm, etc.
     const token = jwt.sign(payload, config.jwt.secret);
-    res.status(200).cookies('TOKEN', token);
+    return res.status(200).cookies('TOKEN', token);
   } catch (err) {
     next(new ApiError(err.message));
   }
@@ -98,14 +98,12 @@ exports.oauthCallback = (req, res, next) => {
 
   // info.redirect_to contains intended redirect path
   passport.authenticate(strategy, (err, user, { redirectTo }) => {
-    if (err) res.redirect(`/authentication/signin?err=${encodeURIComponent(errorHandler.getErrorMessage(err))}`);
-    if (!user) res.redirect('/authentication/signin');
-    else {
-      req.login(user, (errLogin) => {
-        if (errLogin) return res.redirect('/authentication/signin');
-        return res.redirect(redirectTo || '/');
-      });
-    }
+    if (err) return res.redirect(`/authentication/signin?err=${encodeURIComponent(errorHandler.getErrorMessage(err))}`);
+    if (!user) return res.redirect('/authentication/signin');
+    req.login(user, (errLogin) => {
+      if (errLogin) return res.redirect('/authentication/signin');
+      return res.redirect(redirectTo || '/');
+    });
   })(req, res, next);
 };
 
@@ -208,8 +206,8 @@ exports.removeOAuthProvider = async (req, res) => {
   let user = req.user;
   const provider = req.query.provider;
 
-  if (!user) res.status(401).json({ message: 'User is not authenticated' });
-  if (!provider) res.status(400).send();
+  if (!user) return res.status(401).json({ message: 'User is not authenticated' });
+  if (!provider) return res.status(400).send();
 
   // Delete the additional provider and Then tell mongoose that we've updated the additionalProvidersData field
   if (user.additionalProvidersData[provider]) {
@@ -220,8 +218,8 @@ exports.removeOAuthProvider = async (req, res) => {
   try {
     user = await UserService.create(user);
     req.login(user, (errLogin) => {
-      if (errLogin) res.status(400).send(errLogin);
-      else res.json(user);
+      if (errLogin) return res.status(400).send(errLogin);
+      return res.json(user);
     });
   } catch (err) {
     return res.status(422).send({ message: errorHandler.getErrorMessage(err) });

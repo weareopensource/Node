@@ -18,6 +18,7 @@ const saltRounds = 10;
 // update whitelist
 const whitelistUpdate = ['firstName', 'lastName', 'username', 'email', 'profileImageURL'];
 const whitelistUpdateAdmin = whitelistUpdate.concat(['roles']);
+const whitelistRecover = ['password', 'resetPasswordToken', 'resetPasswordExpires'];
 // Data filter whitelist
 const whitelist = ['_id',
   'id',
@@ -95,9 +96,10 @@ exports.create = async (user) => {
  * @param {boolean} admin - true if admin update
  * @return {Promise} user -
  */
-exports.update = async (user, body, admin) => {
-  if (!admin) user = _.assignIn(user, _.pick(body, whitelistUpdate));
-  else user = _.assignIn(user, _.pick(body, whitelistUpdateAdmin));
+exports.update = async (user, body, option) => {
+  if (!option) user = _.assignIn(user, _.pick(body, whitelistUpdate));
+  else if (option === 'admin') user = _.assignIn(user, _.pick(body, whitelistUpdateAdmin));
+  else if (option === 'recover') user = _.assignIn(user, _.pick(body, whitelistRecover));
 
   user.updated = Date.now();
   user.displayName = `${user.firstName} ${user.lastName}`;

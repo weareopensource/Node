@@ -16,11 +16,11 @@ const oAuthService = require('../../services/user.service');
  */
 exports.update = async (req, res) => {
   try {
-    const user = await UserService.update(req.user, req.body, false);
+    const user = await UserService.update(req.user, req.body);
     // reset login
     req.login(user, (errLogin) => {
-      if (errLogin) res.status(400).send(errLogin);
-      else res.json(user);
+      if (errLogin) return res.status(400).send(errLogin);
+      return res.json(user);
     });
   } catch (err) {
     res.status(422).send({ message: errorHandler.getErrorMessage(err) });
@@ -38,11 +38,11 @@ exports.changeProfilePicture = async (req, res) => {
     if (req.user.profileImageURL) await UserService.deleteImage(req.user.profileImageURL);
     // add new image path to user
     const profileImageURL = config.uploads.profile.avatar.dest + req.file.filename;
-    const user = await UserService.update(req.user, { profileImageURL }, false);
+    const user = await UserService.update(req.user, { profileImageURL });
     // reset login
     req.login(user, (errLogin) => {
-      if (errLogin) res.status(400).send(errLogin);
-      else res.json(user);
+      if (errLogin) return res.status(400).send(errLogin);
+      return res.json(user);
     });
   } catch (err) {
     res.status(422).send({ message: errorHandler.getErrorMessage(err) });
@@ -85,9 +85,9 @@ exports.addOAuthProviderUserProfile = async (req, res) => {
     user = await oAuthService.addUser(req.body.provider, req.body.idToken);
   } catch (err) {
     console.log(err);
-    res.sendStatus(304);
+    return res.sendStatus(304);
   }
-  if (!user) res.status(404).send('No Oauth found'); // TODO: Change this into something else
+  if (!user) return res.status(404).send('No Oauth found'); // TODO: Change this into something else
 
   const token = jwt.sign({ userId: user.id }, config.jwt.secret);
 
