@@ -19,8 +19,16 @@ exports.get = (user) => {
     return User.findOne({ _id: user.id }).exec();
   }
   if (user.email) return User.findOne({ email: user.email }).exec();
+  if (user.username) return User.findOne({ username: user.username }).exec();
   throw new ApiError('User is invalid');
 };
+
+/**
+ * @desc Function to get a search in db request
+ * @param {Object} mongoose input request
+ * @return {Object} user
+ */
+exports.search = input => User.findOne(input).exec();
 
 /**
  * @desc Function to create a user in db

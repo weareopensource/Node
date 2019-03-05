@@ -46,7 +46,7 @@ const getErrorMessageFromCode = (err) => {
       output = 'Unsupported filetype';
       break;
     case 'LIMIT_FILE_SIZE':
-      output = `Image file too large. Maximum size allowed is ${(config.uploads.profile.image.limits.fileSize / (1024 * 1024)).toFixed(2)} Mb files.`;
+      output = `Image file too large. Maximum size allowed is ${(config.uploads.profile.avatar.limits.fileSize / (1024 * 1024)).toFixed(2)} Mb files.`;
       break;
     case 'LIMIT_UNEXPECTED_FILE':
       output = 'Missing `newProfilePicture` field';
@@ -58,21 +58,28 @@ const getErrorMessageFromCode = (err) => {
 };
 
 /**
+ * Get Map Error
+ */
+const mapError = (err) => {
+  let output = '';
+  err.errors.map((error) => {
+    if (error.message) {
+      output = error.message;
+    }
+    return null;
+  });
+  return output;
+};
+
+/**
  * Get the error message from error object
  */
 exports.getErrorMessage = (err) => {
   let output = '';
-  if (err.code) {
-    output = getErrorMessageFromCode(err);
-  } else if (err.message && !err.errors) {
-    output = err.message;
-  } else {
-    err.errors.map((error) => {
-      if (error.message) {
-        output = error.message;
-      }
-      return null;
-    });
-  }
+  if (err.code) output = getErrorMessageFromCode(err);
+  else if (err.message && !err.errors) output = err.message;
+  else if (err.errors && typeof err.errors instanceof Array) output = err.errors;
+  else if (err.errors && typeof err.errors instanceof String) output = mapError(err);
+  else output = `error while retrieving the error :o : ${JSON.stringify(err)}`;
   return output;
 };

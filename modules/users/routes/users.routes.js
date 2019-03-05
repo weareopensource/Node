@@ -18,7 +18,4 @@ module.exports = (app) => {
   app.route('/api/users/accounts').post(model.isValid(usersSchema.User), users.addOAuthProviderUserProfile);
   app.route('/api/users/password').post(passport.authenticate('jwt'), users.changePassword);
   app.route('/api/users/picture').post(passport.authenticate('jwt'), users.changeProfilePicture);
-
-  // Finish by binding the user middleware
-  app.param('userId', users.userByID);
 };

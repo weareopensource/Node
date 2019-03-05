@@ -54,23 +54,6 @@ UserMongoose.set('toJSON', {
  */
 // UserMongoose.methods.authenticate = password => this.password === this.hashPassword(password);
 
-// /**
-//  * Find possible not used username
-//  */
-// UserMongoose.statics.findUniqueUsername = (username, suffix, callback) => {
-//   const that = this;
-//   const possibleUsername = username.toLowerCase() + (suffix || '');
-
-//   that.findOne({
-//     username: possibleUsername,
-//   }, (err, user) => {
-//     if (!err) {
-//       if (!user) return callback(possibleUsername);
-//       return that.findUniqueUsername(username, (suffix || 0) + 1, callback);
-//     }
-//     return callback(null);
-//   });
-// };
 
 // UserMongoose.static('findOneOrCreate', async (condition, doc) => {
 //   const one = await this.findOne(condition);
