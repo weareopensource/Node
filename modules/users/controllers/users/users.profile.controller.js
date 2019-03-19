@@ -4,7 +4,7 @@
 const path = require('path');
 const jwt = require('jsonwebtoken');
 
-const errorHandler = require(path.resolve('./modules/core/controllers/errors.controller'));
+const errors = require(path.resolve('./lib/helpers/errors'));
 const config = require(path.resolve('./config'));
 const UserService = require('../../services/user.service');
 const oAuthService = require('../../services/user.service');
@@ -23,7 +23,7 @@ exports.update = async (req, res) => {
       return res.json(user);
     });
   } catch (err) {
-    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    res.status(422).send({ message: errors.getMessage(err) });
   }
 };
 
@@ -45,7 +45,7 @@ exports.changeProfilePicture = async (req, res) => {
       return res.json(user);
     });
   } catch (err) {
-    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    res.status(422).send({ message: errors.getMessage(err) });
   }
 };
 

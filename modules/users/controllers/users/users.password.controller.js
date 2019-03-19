@@ -7,7 +7,7 @@ const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const UserService = require('../../services/user.service');
 
-const errorHandler = require(path.resolve('./modules/core/controllers/errors.controller'));
+const errors = require(path.resolve('./lib/helpers/errors'));
 const configuration = require(path.resolve('./config'));
 const config = require(path.resolve('./config'));
 const smtpTransport = nodemailer.createTransport(config.mailer.options);
@@ -38,7 +38,7 @@ exports.forgot = async (req, res) => {
     };
     user = await UserService.update(user, edit, 'recover');
   } catch (err) {
-    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    res.status(422).send({ message: errors.getMessage(err) });
   }
 
   // prepare template
@@ -128,7 +128,7 @@ exports.reset = async (req, res) => {
       return res.json(user);
     });
   } catch (err) {
-    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    res.status(422).send({ message: errors.getMessage(err) });
   }
 
   // prepare template
@@ -183,6 +183,6 @@ exports.changePassword = async (req, res) => {
       return res.send({ message: 'Password changed successfully' });
     });
   } catch (err) {
-    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    res.status(422).send({ message: errors.getMessage(err) });
   }
 };

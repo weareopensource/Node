@@ -2,10 +2,8 @@
  * Module dependencies
  */
 const mongoose = require('mongoose');
-const path = require('path');
 
 const Task = mongoose.model('Task');
-const ApiError = require(path.resolve('./lib/helpers/ApiError'));
 
 /**
  * @desc Function to get a task from db
@@ -13,7 +11,7 @@ const ApiError = require(path.resolve('./lib/helpers/ApiError'));
  * @return {Object} task
  */
 exports.get = (id) => {
-  if (!mongoose.Types.ObjectId.isValid(id)) throw new ApiError({ message: 'Task id is invalid' });
+  if (!mongoose.Types.ObjectId.isValid(id)) return null;
   return Task.findOne({ _id: id }).exec();
 };
 

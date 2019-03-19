@@ -3,7 +3,7 @@
  */
 const path = require('path');
 
-const errorHandler = require(path.resolve('./modules/core/controllers/errors.controller'));
+const errors = require(path.resolve('./lib/helpers/errors'));
 const UserService = require('../services/user.service');
 
 /**
@@ -25,7 +25,7 @@ exports.update = async (req, res) => {
     const user = await UserService.update(req.model, req.body, 'admin');
     res.json(user);
   } catch (err) {
-    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    res.status(422).send({ message: errors.getMessage(err) });
   }
 };
 
@@ -41,7 +41,7 @@ exports.delete = async (req, res) => {
     result.id = req.model.id;
     res.json(result);
   } catch (err) {
-    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    res.status(422).send({ message: errors.getMessage(err) });
   }
 };
 
@@ -55,7 +55,7 @@ exports.list = async (req, res) => {
     const users = await UserService.list();
     res.json(users);
   } catch (err) {
-    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    res.status(422).send({ message: errors.getMessage(err) });
   }
 };
 

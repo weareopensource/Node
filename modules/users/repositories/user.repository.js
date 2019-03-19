@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 
 const User = mongoose.model('User');
-const ApiError = require(path.resolve('./lib/helpers/ApiError'));
+const AppError = require(path.resolve('./lib/helpers/AppError'));
 
 
 /**
@@ -15,12 +15,12 @@ const ApiError = require(path.resolve('./lib/helpers/ApiError'));
  */
 exports.get = (user) => {
   if (user.id) {
-    if (!mongoose.Types.ObjectId.isValid(user.id)) throw new ApiError('User id is invalid');
+    if (!mongoose.Types.ObjectId.isValid(user.id)) throw new AppError('User id is invalid');
     return User.findOne({ _id: user.id }).exec();
   }
   if (user.email) return User.findOne({ email: user.email }).exec();
   if (user.username) return User.findOne({ username: user.username }).exec();
-  throw new ApiError('User is invalid');
+  throw new AppError('User is invalid');
 };
 
 /**

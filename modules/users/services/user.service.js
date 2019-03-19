@@ -10,7 +10,7 @@ const fs = require('fs');
 const multer = require('multer');
 
 const config = require(path.resolve('./config'));
-const ApiError = require(path.resolve('./lib/helpers/ApiError'));
+const AppError = require(path.resolve('./lib/helpers/AppError'));
 const imageFileFilter = require(path.resolve('./lib/services/multer')).imageFileFilter;
 const UserRepository = require('../repositories/user.repository');
 
@@ -79,7 +79,7 @@ exports.create = async (user) => {
   if (user.password) {
     const validPassword = zxcvbn(user.password);
     if (!validPassword || !validPassword.score || validPassword.score < config.zxcvbn.minimumScore) {
-      throw new ApiError(`${validPassword.feedback.warning}. ${validPassword.feedback.suggestions.join('. ')}`);
+      throw new AppError(`${validPassword.feedback.warning}. ${validPassword.feedback.suggestions.join('. ')}`);
     }
     // When password is provided we need to make sure we are hashing it
     user.password = await this.hashPassword(user.password);
@@ -161,9 +161,9 @@ exports.list = async () => {
  */
 exports.authenticate = async (email, password) => {
   const user = await UserRepository.get({ email });
-  if (!user) throw new ApiError('invalid user or password');
+  if (!user) throw new AppError('invalid user or password');
   if (await this.comparePassword(password, user.password)) return removeSensitive(user);
-  throw new ApiError('invalid user or password');
+  throw new AppError('invalid user or password');
 };
 
 /**

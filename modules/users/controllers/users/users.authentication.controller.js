@@ -7,8 +7,8 @@ const jwt = require('jsonwebtoken');
 
 const config = require(path.resolve('./config'));
 const configuration = require(path.resolve('./config'));
-const ApiError = require(path.resolve('./lib/helpers/ApiError'));
-const errorHandler = require(path.resolve('./modules/core/controllers/errors.controller'));
+const AppError = require(path.resolve('./lib/helpers/AppError'));
+const errors = require(path.resolve('./lib/helpers/errors'));
 const UserService = require('../../services/user.service');
 const OAuthService = require('../../services/oAuth.service');
 
@@ -32,7 +32,7 @@ exports.signup = async (req, res, next) => {
       .cookie('TOKEN', token, { httpOnly: true })
       .json({ user, tokenExpiresIn: Date.now() + (3600 * 24 * 1000) });
   } catch (err) {
-    return next(new ApiError(err.message));
+    return next(new AppError(err.message));
   }
 };
 
@@ -72,7 +72,7 @@ exports.token = async (req, res, next) => {
     const token = jwt.sign(payload, config.jwt.secret);
     return res.status(200).cookies('TOKEN', token);
   } catch (err) {
-    next(new ApiError(err.message));
+    next(new AppError(err.message));
   }
 };
 
@@ -98,7 +98,7 @@ exports.oauthCallback = (req, res, next) => {
 
   // info.redirect_to contains intended redirect path
   passport.authenticate(strategy, (err, user, { redirectTo }) => {
-    if (err) return res.redirect(`/authentication/signin?err=${encodeURIComponent(errorHandler.getErrorMessage(err))}`);
+    if (err) return res.redirect(`/authentication/signin?err=${encodeURIComponent(errors.getMessage(err))}`);
     if (!user) return res.redirect('/authentication/signin');
     req.login(user, (errLogin) => {
       if (errLogin) return res.redirect('/authentication/signin');
@@ -222,6 +222,6 @@ exports.removeOAuthProvider = async (req, res) => {
       return res.json(user);
     });
   } catch (err) {
-    return res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    return res.status(422).send({ message: errors.getMessage(err) });
   }
 };
