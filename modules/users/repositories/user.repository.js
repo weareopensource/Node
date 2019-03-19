@@ -12,10 +12,7 @@ const User = mongoose.model('User');
  * @return {Object} user
  */
 exports.get = (user) => {
-  if (user.id) {
-    if (!mongoose.Types.ObjectId.isValid(user.id)) return null;
-    return User.findOne({ _id: user.id }).exec();
-  }
+  if (user.id && mongoose.Types.ObjectId.isValid(user.id)) return User.findOne({ _id: user.id }).exec();
   if (user.email) return User.findOne({ email: user.email }).exec();
   if (user.username) return User.findOne({ username: user.username }).exec();
   return null;

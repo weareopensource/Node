@@ -87,7 +87,7 @@ exports.addOAuthProviderUserProfile = async (req, res) => {
   } catch (err) {
     return responses.error(res, 304, errors.getMessage(err))(err);
   }
-  if (!user) return responses.error(res, 404, 'No Oauth found')(); // TODO: Change this into something else
+  if (!user) return responses.error(res, 404, 'No Oauth found')();
 
   const token = jwt.sign({ userId: user.id }, config.jwt.secret);
 
