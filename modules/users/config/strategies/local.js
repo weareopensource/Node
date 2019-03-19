@@ -18,7 +18,6 @@ module.exports = () => {
         message: 'Invalid username or password',
       });
     } catch (err) {
-      console.log(err);
       return done();
     }
   }));

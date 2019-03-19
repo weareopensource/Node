@@ -116,8 +116,22 @@ describe('User CRUD Unit Tests :', () => {
       }
     });
 
+    test('should not be able to login with wrong email', async () => {
+      try {
+        const result = await agent.post('/api/auth/signin')
+          .send({
+            email: 'test51@test.com',
+            password: 'W@os.jsI$Aw3$0m3',
+          })
+          .expect(401);
+        expect(result.error.text).toBe('Unauthorized');
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
 
-    test('should be able to login with username successfully', async () => {
+    test('should be able to login with email successfully', async () => {
       try {
         await agent.post('/api/auth/signin')
           .send(credentials[0])
@@ -156,8 +170,10 @@ describe('User CRUD Unit Tests :', () => {
       try {
         const result = await agent.get(`/api/users/${userEdited._id}`)
           .expect(200);
-        expect(result.body).toBeInstanceOf(Object);
-        expect(result.body._id).toBe(String(userEdited._id));
+        expect(result.body.type).toBe('success');
+        expect(result.body.message).toBe('user read');
+        expect(result.body.data).toBeInstanceOf(Object);
+        expect(result.body.data._id).toBe(String(userEdited._id));
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -194,15 +210,17 @@ describe('User CRUD Unit Tests :', () => {
         const result = await agent.put(`/api/users/${userEdited._id}`)
           .send(userUpdate)
           .expect(200);
-        expect(result.body).toBeInstanceOf(Object);
-        expect(result.body.firstName).toBe('admin_update_first');
-        expect(result.body.lastName).toBe('admin_update_last');
-        expect(result.body.roles).toBeInstanceOf(Array);
-        expect(result.body.roles).toHaveLength(1);
-        expect(result.body.roles).toEqual(
+        expect(result.body.type).toBe('success');
+        expect(result.body.message).toBe('user updated');
+        expect(result.body.data).toBeInstanceOf(Object);
+        expect(result.body.data.firstName).toBe('admin_update_first');
+        expect(result.body.data.lastName).toBe('admin_update_last');
+        expect(result.body.data.roles).toBeInstanceOf(Array);
+        expect(result.body.data.roles).toHaveLength(1);
+        expect(result.body.data.roles).toEqual(
           expect.arrayContaining(['admin']),
         );
-        expect(result.body._id).toBe(String(userEdited._id));
+        expect(result.body.data._id).toBe(String(userEdited._id));
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -232,8 +250,10 @@ describe('User CRUD Unit Tests :', () => {
       try {
         const result = await agent.delete(`/api/users/${userEdited._id}`)
           .expect(200);
-        expect(result.body).toBeInstanceOf(Object);
-        expect(result.body.id).toBe(String(userEdited._id));
+        expect(result.body.type).toBe('success');
+        expect(result.body.message).toBe('user deleted');
+        expect(result.body.data).toBeInstanceOf(Object);
+        expect(result.body.data.id).toBe(String(userEdited._id));
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -493,11 +513,13 @@ describe('User CRUD Unit Tests :', () => {
       try {
         const result = await agent.get('/api/users/me')
           .expect(200);
-        expect(result.body).toBeInstanceOf(Object);
-        expect(result.body.username).toBe(user.username);
-        expect(result.body.email).toBe(user.email);
-        expect(result.body.salt).toBeFalsy();
-        expect(result.body.password).toBeFalsy();
+        expect(result.body.type).toBe('success');
+        expect(result.body.message).toBe('user read');
+        expect(result.body.data).toBeInstanceOf(Object);
+        expect(result.body.data.username).toBe(user.username);
+        expect(result.body.data.email).toBe(user.email);
+        expect(result.body.data.salt).toBeFalsy();
+        expect(result.body.data.password).toBeFalsy();
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -514,16 +536,17 @@ describe('User CRUD Unit Tests :', () => {
         const result = await agent.put('/api/users')
           .send(userUpdate)
           .expect(200);
-
-        expect(result.body).toBeInstanceOf(Object);
-        expect(result.body.firstName).toBe('user_update_first');
-        expect(result.body.lastName).toBe('user_update_last');
-        expect(result.body.roles).toBeInstanceOf(Array);
-        expect(result.body.roles).toHaveLength(1);
-        expect(result.body.roles).toEqual(
+        expect(result.body.type).toBe('success');
+        expect(result.body.message).toBe('user updated');
+        expect(result.body.data).toBeInstanceOf(Object);
+        expect(result.body.data.firstName).toBe('user_update_first');
+        expect(result.body.data.lastName).toBe('user_update_last');
+        expect(result.body.data.roles).toBeInstanceOf(Array);
+        expect(result.body.data.roles).toHaveLength(1);
+        expect(result.body.data.roles).toEqual(
           expect.arrayContaining(['user']),
         );
-        expect(result.body.id).toBe(String(user.id));
+        expect(result.body.data.id).toBe(String(user.id));
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -540,15 +563,17 @@ describe('User CRUD Unit Tests :', () => {
         const result = await agent.put('/api/users')
           .send(userUpdate)
           .expect(200);
-        expect(result.body).toBeInstanceOf(Object);
-        expect(result.body.firstName).toBe('user_update_first');
-        expect(result.body.lastName).toBe('user_update_last');
-        expect(result.body.roles).toBeInstanceOf(Array);
-        expect(result.body.roles).toHaveLength(1);
-        expect(result.body.roles).toEqual(
+        expect(result.body.type).toBe('success');
+        expect(result.body.message).toBe('user updated');
+        expect(result.body.data).toBeInstanceOf(Object);
+        expect(result.body.data.firstName).toBe('user_update_first');
+        expect(result.body.data.lastName).toBe('user_update_last');
+        expect(result.body.data.roles).toBeInstanceOf(Array);
+        expect(result.body.data.roles).toHaveLength(1);
+        expect(result.body.data.roles).toEqual(
           expect.arrayContaining(['user']),
         );
-        expect(result.body.id).toBe(String(user.id));
+        expect(result.body.data.id).toBe(String(user.id));
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -661,10 +686,11 @@ describe('User CRUD Unit Tests :', () => {
         const result = await agent.post('/api/users/picture')
           .attach('newProfilePicture', './modules/users/tests/img/default.png')
           .expect(200);
-
-        expect(result.body).toBeInstanceOf(Object);
-        expect(typeof result.body.profileImageURL).toBe('string');
-        expect(result.body.id).toBe(String(user.id));
+        expect(result.body.type).toBe('success');
+        expect(result.body.message).toBe('profile picture updated');
+        expect(result.body.data).toBeInstanceOf(Object);
+        expect(typeof result.body.data.profileImageURL).toBe('string');
+        expect(result.body.data.id).toBe(String(user.id));
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();

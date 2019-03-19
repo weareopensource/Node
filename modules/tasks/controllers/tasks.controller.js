@@ -85,7 +85,7 @@ exports.list = async (req, res) => {
 exports.taskByID = async (req, res, next, id) => {
   try {
     const task = await TasksService.get(id);
-    if (!task) responses.error(res, 404, 'No Task with that identifier has been found')(task);
+    if (!task) responses.error(res, 404, 'No Task with that identifier has been found')();
     else {
       req.task = task;
       next();

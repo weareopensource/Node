@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 
 const config = require(path.resolve('./config'));
 const configuration = require(path.resolve('./config'));
-const AppError = require(path.resolve('./lib/helpers/AppError'));
+const responses = require(path.resolve('./lib/helpers/responses'));
 const errors = require(path.resolve('./lib/helpers/errors'));
 const UserService = require('../../services/user.service');
 const OAuthService = require('../../services/oAuth.service');
@@ -22,9 +22,8 @@ const noReturnUrls = [
  * @desc Endpoint to ask the service to create a user
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
- * @param {Function} next - Express next middleware function
  */
-exports.signup = async (req, res, next) => {
+exports.signup = async (req, res) => {
   try {
     const user = await UserService.create(req.body);
     const token = jwt.sign({ userId: user.id }, config.jwt.secret);
@@ -32,7 +31,7 @@ exports.signup = async (req, res, next) => {
       .cookie('TOKEN', token, { httpOnly: true })
       .json({ user, tokenExpiresIn: Date.now() + (3600 * 24 * 1000) });
   } catch (err) {
-    return next(new AppError(err.message));
+    responses.error(res, 422, errors.getMessage(err))(err);
   }
 };
 
@@ -54,9 +53,8 @@ exports.signin = async (req, res) => {
  * @desc Endpoint to generate a token
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
- * @param {Function} next - Express next middleware function
  */
-exports.token = async (req, res, next) => {
+exports.token = async (req, res) => {
   try {
     // Authenticate the user based on credentials
     // @TODO be consistent with whether the login field for user identification
@@ -72,7 +70,7 @@ exports.token = async (req, res, next) => {
     const token = jwt.sign(payload, config.jwt.secret);
     return res.status(200).cookies('TOKEN', token);
   } catch (err) {
-    next(new AppError(err.message));
+    responses.error(res, 422, errors.getMessage(err))(err);
   }
 };
 
@@ -206,8 +204,8 @@ exports.removeOAuthProvider = async (req, res) => {
   let user = req.user;
   const provider = req.query.provider;
 
-  if (!user) return res.status(401).json({ message: 'User is not authenticated' });
-  if (!provider) return res.status(400).send();
+  if (!user) return responses.error(res, 422, 'User is not authenticated')();
+  if (!provider) return responses.error(res, 400, 'Provider is not defined')();
 
   // Delete the additional provider and Then tell mongoose that we've updated the additionalProvidersData field
   if (user.additionalProvidersData[provider]) {
@@ -218,10 +216,10 @@ exports.removeOAuthProvider = async (req, res) => {
   try {
     user = await UserService.create(user);
     req.login(user, (errLogin) => {
-      if (errLogin) return res.status(400).send(errLogin);
-      return res.json(user);
+      if (errLogin) return responses.error(res, 400, errors.getMessage(errLogin))(errLogin);
+      return responses.success(res, 'oAuth provider removed')(user);
     });
   } catch (err) {
-    return res.status(422).send({ message: errors.getMessage(err) });
+    return responses.error(res, 422, errors.getMessage(err))(err);
   }
 };

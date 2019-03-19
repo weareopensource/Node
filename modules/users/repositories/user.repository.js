@@ -2,10 +2,8 @@
  * Module dependencies
  */
 const mongoose = require('mongoose');
-const path = require('path');
 
 const User = mongoose.model('User');
-const AppError = require(path.resolve('./lib/helpers/AppError'));
 
 
 /**
@@ -15,12 +13,12 @@ const AppError = require(path.resolve('./lib/helpers/AppError'));
  */
 exports.get = (user) => {
   if (user.id) {
-    if (!mongoose.Types.ObjectId.isValid(user.id)) throw new AppError('User id is invalid');
+    if (!mongoose.Types.ObjectId.isValid(user.id)) return null;
     return User.findOne({ _id: user.id }).exec();
   }
   if (user.email) return User.findOne({ email: user.email }).exec();
   if (user.username) return User.findOne({ username: user.username }).exec();
-  throw new AppError('User is invalid');
+  return null;
 };
 
 /**
