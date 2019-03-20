@@ -6,8 +6,8 @@ Welcome to the Node wiki! Here you will find various information about this repo
 
 ## Doc 
 
-* [Api](https://github.com/weareopensource/Node/blob/master/README.md#API)
-* [Errors](https://github.com/weareopensource/Node/blob/master/README.md#Errors)
+* [Api](https://github.com/weareopensource/Node/blob/master/WIKI.md#API)
+* [Errors](https://github.com/weareopensource/Node/blob/master/WIKI.md#Errors)
 
 ## Other informations
 
