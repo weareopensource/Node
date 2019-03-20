@@ -102,7 +102,7 @@ To summarize, all configuration avalable on 'config/defaults/*.js' file are over
 -  WAOS_NODE_port=3000
 -  WAOS_BACK_db_uri='mongodb://localhost/myDB'
 
-## [Contribute](https://github.com/weareopensource/weareopensource.github.io/wiki/Contribute)
+## [Contribute](https://github.com/weareopensource/weareopensource.github.io/blob/master/CONTRIBUTE.md)
 
 ## History
 
