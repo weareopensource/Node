@@ -3,11 +3,11 @@ This includes links to knowledge and tools and explaining the reason for the ope
 * **Bold** : used
 * _Italic_ : not used
 
-### Node Links :tada:
+## Node Links :tada:
 
 - [npm Trends](https://www.npmtrends.com)
 
-### Dependencies :arrow_up:
+## Dependencies :arrow_up:
 
 #### Articles :
 - WIP
@@ -19,7 +19,7 @@ This includes links to knowledge and tools and explaining the reason for the ope
 #### Conclusion
 Both :), package.json matter, do your own choice. 
 
-### Tests :rotating_light:
+## Tests :rotating_light:
 
 #### Articles :
 - [Comparing Jasmine, Mocha, AVA, Tape, and Jest](https://dzone.com/articles/comparing-jasmine-mocha-ava-tape-and-jest)
@@ -37,7 +37,7 @@ Both :), package.json matter, do your own choice.
 #### Conclusion
 Jest because of trends : https://www.npmtrends.com/ava-vs-jasmine-vs-jest-vs-mocha-vs-qunit, with supertest for simplicity. With this config, chai or should was useless. 
 
-### CI & .. :construction_worker: 
+## CI & .. :construction_worker: 
 
 #### Articles :
 - [7 Convenient CI/CD Tools for Your Node.js Projects](https://nodesource.com/blog/seven-convenient-ci-cd-tools-for-your-node-js-projects/)
