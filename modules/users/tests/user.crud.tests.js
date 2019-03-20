@@ -89,6 +89,25 @@ describe('User CRUD Unit Tests :', () => {
       // Init user edited
       _userEdited.username = 'register_new_user';
       _userEdited.email = 'register_new_user_@test.com';
+      _userEdited.password = 'azerty';
+
+      try {
+        const result = await agent.post('/api/auth/signup')
+          .send(_userEdited)
+          .expect(422);
+        expect(result.body.type).toBe('error');
+        expect(result.body.message).toBe('schema validation error');
+        expect(result.body.error.details[0].message).toBe('password Password strength score 0 does not suffice the minimum of 3');
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+
+    test('should be able to register a new user ', async () => {
+      // Init user edited
+      _userEdited.username = 'register_new_user';
+      _userEdited.email = 'register_new_user_@test.com';
 
       try {
         const result = await agent.post('/api/auth/signup')
@@ -116,19 +135,42 @@ describe('User CRUD Unit Tests :', () => {
       }
     });
 
-    test('should be able to register a new user', async () => {
+    test('should not be able to register a user with same email', async () => {
       // Init user edited
       _userEdited.username = 'register_new_user';
       _userEdited.email = 'register_new_user_@test.com';
-      _userEdited.password = 'azerty';
+
+      try {
+        const result = await agent.post('/api/auth/signup')
+          .send(_userEdited)
+          .expect(200);
+        userEdited = result.body.user;
+
+        expect(result.body.user.username).toBe(_userEdited.username);
+        expect(result.body.user.email).toBe(_userEdited.email);
+        expect(result.body.user.roles).toBeInstanceOf(Array);
+        expect(result.body.user.roles).toHaveLength(1);
+        expect(result.body.user.roles).toEqual(
+          expect.arrayContaining(['user']),
+        );
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
 
       try {
         const result = await agent.post('/api/auth/signup')
           .send(_userEdited)
           .expect(422);
         expect(result.body.type).toBe('error');
-        expect(result.body.message).toBe('schema validation error');
-        expect(result.body.error.details[0].message).toBe('password Password strength score 0 does not suffice the minimum of 3');
+        expect(result.body.message).toBe('Email already exists');
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+
+      try {
+        await UserService.delete(userEdited);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
