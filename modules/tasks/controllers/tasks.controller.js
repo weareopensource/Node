@@ -3,7 +3,9 @@
  */
 const path = require('path');
 
-const errorHandler = require(path.resolve('./modules/core/controllers/errors.controller'));
+const errors = require(path.resolve('./lib/helpers/errors'));
+const responses = require(path.resolve('./lib/helpers/responses'));
+
 const TasksService = require('../services/tasks.service');
 
 /**
@@ -13,7 +15,7 @@ const TasksService = require('../services/tasks.service');
  */
 exports.read = (req, res) => {
   const task = req.task ? req.task.toJSON() : {};
-  res.json(task);
+  responses.success(res, 'task read')(task);
 };
 
 /**
@@ -24,9 +26,9 @@ exports.read = (req, res) => {
 exports.create = async (req, res) => {
   try {
     const task = await TasksService.create(req.body, req.user);
-    res.json(task);
+    responses.success(res, 'task created')(task);
   } catch (err) {
-    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    responses.error(res, 422, errors.getMessage(err))(err);
   }
 };
 
@@ -38,9 +40,9 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const task = await TasksService.update(req.task, req.body);
-    res.json(task);
+    responses.success(res, 'task updated')(task);
   } catch (err) {
-    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    responses.error(res, 422, errors.getMessage(err))(err);
   }
 };
 
@@ -53,9 +55,9 @@ exports.delete = async (req, res) => {
   try {
     const result = await TasksService.delete(req.task);
     result.id = req.task.id;
-    res.json(result);
+    responses.success(res, 'task deleted')(result);
   } catch (err) {
-    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    responses.error(res, 422, errors.getMessage(err))(err);
   }
 };
 
@@ -67,9 +69,9 @@ exports.delete = async (req, res) => {
 exports.list = async (req, res) => {
   try {
     const tasks = await TasksService.list();
-    res.json(tasks);
+    responses.success(res, 'task list')(tasks);
   } catch (err) {
-    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    responses.error(res, 422, errors.getMessage(err))(err);
   }
 };
 
@@ -83,7 +85,7 @@ exports.list = async (req, res) => {
 exports.taskByID = async (req, res, next, id) => {
   try {
     const task = await TasksService.get(id);
-    if (!task) res.status(404).send({ message: 'No Task with that identifier has been found' });
+    if (!task) responses.error(res, 404, 'No Task with that identifier has been found')();
     else {
       req.task = task;
       next();

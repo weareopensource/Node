@@ -3,7 +3,7 @@ const path = require('path');
 const { OAuth2Client } = require('google-auth-library');
 
 const config = require(path.resolve('./config'));
-const ApiError = require(path.resolve('./lib/helpers/ApiError'));
+const AppError = require(path.resolve('./lib/helpers/AppError'));
 const IdTokenVerifier = require('idtoken-verifier');
 const rp = require('request-promise');
 const UserRepository = require('../repositories/user.repository');
@@ -31,7 +31,7 @@ exports.generateUniqueUsername = async (username, suffix) => {
   try {
     return await this.generateUniqueUsername(username, (suffix || 0) + 1);
   } catch (err) {
-    throw new ApiError(err);
+    throw new AppError(err);
   }
 };
 

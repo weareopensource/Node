@@ -2,6 +2,9 @@
  * Module dependencies
  */
 const ACL = require('acl');
+const path = require('path');
+
+const responses = require(path.resolve('./lib/helpers/responses'));
 
 // Using the memory backend
 /* eslint new-cap: 0 */
@@ -46,10 +49,10 @@ exports.isAllowed = (req, res, next) => {
   else {
     // Check for user roles
     Acl.areAnyRolesAllowed(roles, req.route.path, req.method.toLowerCase(), (err, isAllowed) => {
-      if (err) return res.status(500).send('Unexpected authorization error'); // An authorization error occurred
+      if (err) return responses.error(res, 500, 'Unexpected authorization error')(err);// An authorization error occurred
       if (isAllowed) return next(); // Access granted! Invoke next middleware
 
-      return res.status(403).json({ message: 'User is not authorized' });
+      return responses.error(res, 403, 'User is not authorized')();
     });
   }
 };

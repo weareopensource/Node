@@ -7,7 +7,8 @@ const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const UserService = require('../../services/user.service');
 
-const errorHandler = require(path.resolve('./modules/core/controllers/errors.controller'));
+const errors = require(path.resolve('./lib/helpers/errors'));
+const responses = require(path.resolve('./lib/helpers/responses'));
 const configuration = require(path.resolve('./config'));
 const config = require(path.resolve('./config'));
 const smtpTransport = nodemailer.createTransport(config.mailer.options);
@@ -23,13 +24,13 @@ exports.forgot = async (req, res) => {
   let emailHTML;
 
   // check input
-  if (!req.body.email) return res.status(422).send({ message: 'Mail field must not be blank' });
+  if (!req.body.email) return responses.error(res, 422, 'Mail field must not be blank')();
 
   try {
     // get user
     user = await UserService.get({ email: req.body.email });
-    if (!user) return res.status(400).send({ message: 'No account with that email has been found' });
-    if (user.provider !== 'local') return res.status(400).send({ message: `It seems like you signed up using your ${user.provider} account` });
+    if (!user) return responses.error(res, 400, 'No account with that email has been found')();
+    if (user.provider !== 'local') return responses.error(res, 400, `It seems like you signed up using your ${user.provider} account`)();
     // update user with recover token
     const payload = { exp: Date.now() + 3600000 };
     const edit = {
@@ -38,7 +39,7 @@ exports.forgot = async (req, res) => {
     };
     user = await UserService.update(user, edit, 'recover');
   } catch (err) {
-    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    responses.error(res, 422, errors.getMessage(err))(err);
   }
 
   // prepare template
@@ -54,7 +55,7 @@ exports.forgot = async (req, res) => {
     url: `${baseUrl}/auth/password-reset?token=${token}`,
   }, (err, result) => {
     if (!err) emailHTML = result;
-    else return res.status(400).send({ message: 'Failure sending email' });
+    else return responses.error(res, 400, errors.getMessage('Failure sending email'))(err);
   });
 
   // send mail
@@ -65,8 +66,8 @@ exports.forgot = async (req, res) => {
     html: emailHTML,
   };
   smtpTransport.sendMail(mailOptions, (err) => {
-    if (!err) res.send({ message: 'An email has been sent to the provided email with further instructions.' });
-    else return res.status(400).send({ message: 'Failure sending email' });
+    if (!err) responses.success(res, 'An email has been sent to the provided email with further instructions.')();
+    else return responses.error(res, 400, 'Failure sending email')(err);
   });
 };
 
@@ -112,7 +113,7 @@ exports.reset = async (req, res) => {
         $gt: Date.now(),
       },
     });
-    if (!user) return res.status(400).send({ message: 'Password reset token is invalid or has expired.' });
+    if (!user) return responses.error(res, 400, 'Password reset token is invalid or has expired.')();
     // update user
     const edit = {
       password,
@@ -122,13 +123,13 @@ exports.reset = async (req, res) => {
     user = await UserService.update(user, edit, 'recover');
     // reset login
     req.login(user, (errLogin) => {
-      if (errLogin) return res.status(400).send(errLogin);
+      if (errLogin) return responses.error(res, 400, errors.getMessage(errLogin))(errLogin);
       user.password = undefined;
       user.salt = undefined;
-      return res.json(user);
+      return responses.success(res, 'password reseted')(user);
     });
   } catch (err) {
-    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    responses.error(res, 422, errors.getMessage(err))(err);
   }
 
   // prepare template
@@ -137,7 +138,7 @@ exports.reset = async (req, res) => {
     appName: config.app.title,
   }, (err, result) => {
     if (!err) emailHTML = result;
-    else res.status(400).send({ message: 'Failure sending email' });
+    else responses.error(res, 400, 'Failure sending email')(err);
   });
 
   // send mail
@@ -148,8 +149,8 @@ exports.reset = async (req, res) => {
     html: emailHTML,
   };
   smtpTransport.sendMail(mailOptions, (err) => {
-    if (!err) res.send({ message: 'An email has been sent to the provided email with reset password confirmation.' });
-    else res.status(400).send({ message: 'Failure sending email' });
+    if (!err) responses.success(res, 'An email has been sent to the provided email with reset password confirmation.')();
+    else responses.error(res, 400, 'Failure sending email')(err);
   });
 };
 
@@ -162,27 +163,27 @@ exports.changePassword = async (req, res) => {
   let user;
   let password;
 
-  if (!req.user) return res.status(401).send({ message: 'User is not signed in' });
-  if (!passwordDetails.newPassword) return res.status(422).send({ message: 'Please provide a new password' });
+  if (!req.user) return responses.error(res, 401, 'User is not signed in')();
+  if (!passwordDetails.newPassword) return responses.error(res, 422, 'Please provide a new password')();
 
   try {
     // get user
     user = await UserService.get({ id: req.user.id });
-    if (!user) return res.status(400).send({ message: 'User is not found' });
+    if (!user) return responses.error(res, 400, 'User is not found')();
     // check password
     if (await UserService.comparePassword(passwordDetails.currentPassword, user.password)) {
       if (passwordDetails.newPassword === passwordDetails.verifyPassword) {
         password = passwordDetails.newPassword;
-      } else return res.status(422).send({ message: 'Passwords do not match' });
-    } else return res.status(422).send({ message: 'Current password is incorrect' });
+      } else return responses.error(res, 422, 'Passwords do not match')();
+    } else return responses.error(res, 422, 'Current password is incorrect')();
     // update user
     user = await UserService.update(user, { password }, 'recover');
     // reset login
     req.login(user, (errLogin) => {
-      if (errLogin) return res.status(400).send(errLogin);
-      return res.send({ message: 'Password changed successfully' });
+      if (errLogin) return responses.error(res, 400, errors.getMessage(errLogin))();
+      return responses.success(res, 'Password changed successfully')();
     });
   } catch (err) {
-    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    responses.error(res, 422, errors.getMessage(err))(err);
   }
 };

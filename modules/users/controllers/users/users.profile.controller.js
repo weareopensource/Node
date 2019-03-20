@@ -4,7 +4,8 @@
 const path = require('path');
 const jwt = require('jsonwebtoken');
 
-const errorHandler = require(path.resolve('./modules/core/controllers/errors.controller'));
+const errors = require(path.resolve('./lib/helpers/errors'));
+const responses = require(path.resolve('./lib/helpers/responses'));
 const config = require(path.resolve('./config'));
 const UserService = require('../../services/user.service');
 const oAuthService = require('../../services/user.service');
@@ -19,11 +20,11 @@ exports.update = async (req, res) => {
     const user = await UserService.update(req.user, req.body);
     // reset login
     req.login(user, (errLogin) => {
-      if (errLogin) return res.status(400).send(errLogin);
-      return res.json(user);
+      if (errLogin) return responses.error(res, 400, errors.getMessage(errLogin))(errLogin);
+      return responses.success(res, 'user updated')(user);
     });
   } catch (err) {
-    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    responses.error(res, 422, errors.getMessage(err))(err);
   }
 };
 
@@ -41,11 +42,11 @@ exports.changeProfilePicture = async (req, res) => {
     const user = await UserService.update(req.user, { profileImageURL });
     // reset login
     req.login(user, (errLogin) => {
-      if (errLogin) return res.status(400).send(errLogin);
-      return res.json(user);
+      if (errLogin) return responses.error(res, 400, errors.getMessage(errLogin))(errLogin);
+      return responses.success(res, 'profile picture updated')(user);
     });
   } catch (err) {
-    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    responses.error(res, 422, errors.getMessage(err))(err);
   }
 };
 
@@ -71,7 +72,7 @@ exports.me = (req, res) => {
       additionalProvidersData: req.user.additionalProvidersData,
     };
   }
-  res.json(safeUserObject || null);
+  return responses.success(res, 'user read')(safeUserObject);
 };
 
 /**
@@ -84,10 +85,9 @@ exports.addOAuthProviderUserProfile = async (req, res) => {
   try {
     user = await oAuthService.addUser(req.body.provider, req.body.idToken);
   } catch (err) {
-    console.log(err);
-    return res.sendStatus(304);
+    return responses.error(res, 304, errors.getMessage(err))(err);
   }
-  if (!user) return res.status(404).send('No Oauth found'); // TODO: Change this into something else
+  if (!user) return responses.error(res, 404, 'No Oauth found')();
 
   const token = jwt.sign({ userId: user.id }, config.jwt.secret);
 

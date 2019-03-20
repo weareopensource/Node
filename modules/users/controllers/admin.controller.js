@@ -3,7 +3,8 @@
  */
 const path = require('path');
 
-const errorHandler = require(path.resolve('./modules/core/controllers/errors.controller'));
+const errors = require(path.resolve('./lib/helpers/errors'));
+const responses = require(path.resolve('./lib/helpers/responses'));
 const UserService = require('../services/user.service');
 
 /**
@@ -12,7 +13,8 @@ const UserService = require('../services/user.service');
  * @param {Object} res - Express response object
  */
 exports.read = (req, res) => {
-  res.send(req.model);
+  const user = req.model ? req.model.toJSON() : {};
+  responses.success(res, 'user read')(user);
 };
 
 /**
@@ -23,9 +25,9 @@ exports.read = (req, res) => {
 exports.update = async (req, res) => {
   try {
     const user = await UserService.update(req.model, req.body, 'admin');
-    res.json(user);
+    responses.success(res, 'user updated')(user);
   } catch (err) {
-    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    responses.error(res, 422, errors.getMessage(err))(err);
   }
 };
 
@@ -39,9 +41,9 @@ exports.delete = async (req, res) => {
   try {
     const result = await UserService.delete(req.model);
     result.id = req.model.id;
-    res.json(result);
+    responses.success(res, 'user deleted')(result);
   } catch (err) {
-    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    responses.error(res, 422, errors.getMessage(err))(err);
   }
 };
 
@@ -53,9 +55,9 @@ exports.delete = async (req, res) => {
 exports.list = async (req, res) => {
   try {
     const users = await UserService.list();
-    res.json(users);
+    responses.success(res, 'user list')(users);
   } catch (err) {
-    res.status(422).send({ message: errorHandler.getErrorMessage(err) });
+    responses.error(res, 422, errors.getMessage(err))(err);
   }
 };
 
@@ -69,7 +71,7 @@ exports.list = async (req, res) => {
 exports.userByID = async (req, res, next, id) => {
   try {
     const user = await UserService.get({ id });
-    if (!user) res.status(404).send({ message: 'No User with that identifier has been found' });
+    if (!user) responses.error(res, 404, 'No User with that identifier has been found')();
     else {
       req.model = user;
       next();
