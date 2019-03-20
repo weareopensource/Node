@@ -1,4 +1,4 @@
-This includes links to knowledge and information explaining the reason for the operation and architecture of this repo. (WIP)
+This includes links to knowledge and tools and explaining the reason for the operations and architecture of this repo.
 
 * **Bold** : used
 * _Italic_ : not used
@@ -7,25 +7,25 @@ This includes links to knowledge and information explaining the reason for the o
 
 - [npm Trends](https://www.npmtrends.com)
 
-## Dependencies 
+### :arrow_up: Dependencies 
 
-### Informations :
+#### Articles :
 - WIP
 
-### List :
+#### Tools :
 - **[NPM](https://www.npmjs.comya)**
 - **[Yarn](https://yarnpkg.com/en/)**
 
-### Conclusion
+#### Conclusion
 Both :), package.json matter, do your own choice. 
 
-## Tests
+### :rotating_light: Tests
 
-### Informations :
+#### Articles :
 - [Comparing Jasmine, Mocha, AVA, Tape, and Jest](https://dzone.com/articles/comparing-jasmine-mocha-ava-tape-and-jest)
 - [Jest vs. AVA](https://stackshare.io/stackups/ava-vs-jest)
 
-### List :
+#### Tools :
 - _[ava](https://github.com/avajs/ava)_ - Testing can be a drag. AVA helps you get it done.
 - _[jasmine](https://github.com/jasmine/jasmine-npm)_ - A jasmine runner for node projects.
 - _[mocha](https://github.com/mochajs/mocha)_ - simple, flexible, fun javascript test framework for node.js & the browser
@@ -34,17 +34,17 @@ Both :), package.json matter, do your own choice.
 - _[chai](https://github.com/chaijs/chai)_ - BDD / TDD assertion framework for node.js 
 - _[should](https://github.com/shouldjs/should.js)_ - BDD style assertions for node.js -- test framework agnostic
 
-### Conclusion
+#### Conclusion
 Jest because of trends : https://www.npmtrends.com/ava-vs-jasmine-vs-jest-vs-mocha-vs-qunit, with supertest for simplicity. With this config, chai or should was useless. 
 
-## CI & ..
+### :construction_worker: CI & ..
 
-### Informations :
+#### Articles :
 - [7 Convenient CI/CD Tools for Your Node.js Projects](https://nodesource.com/blog/seven-convenient-ci-cd-tools-for-your-node-js-projects/)
 - [How to set up CI/CD Pipeline for a node.js app with Jenkin](https://medium.com/@mosheezderman/how-to-set-up-ci-cd-pipeline-for-a-node-js-app-with-jenkins-c51581cc783c)
 - [circleci tuto](https://circleci.com/docs/2.0/language-javascript/)
 
-### List :
+#### Tools :
 - **[Travis](https://travis-ci.org)** - way to test and deploy your projects
 - _[Circle](https://circleci.com)_ - way to test and deploy your projects
 - **[Coveralls](https://coveralls.io)** - See coverage trends emerge
@@ -54,5 +54,5 @@ Jest because of trends : https://www.npmtrends.com/ava-vs-jasmine-vs-jest-vs-moc
 - **[GreenKeeper](https://greenkeeper.io)** - dependencies PR
 - **[Snyk.io](https://snyk.io)** - Vulnerabilities check up
 
-### Conclusion
+#### Conclusion
 Travis, Codeclimate, Coveralls (more details than codeclimate), EsLint, Dependencies + GreenKeeper, Snyk.io
