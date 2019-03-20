@@ -32,6 +32,7 @@ Our stack node is actually in Beta.
 | Testing |  [Jest](https://github.com/facebook/jest) & [SuperTest](https://github.com/visionmedia/supertest) (Coverage & Watch) <br> *example of mocha with gulp available*
 | Linter  | [ESLint](https://github.com/eslint/eslint) ecmaVersion 10 (2019)
 | Security | JWT Stateless - [passport-jwt](https://github.com/themikenicholson/passport-jwt) <br> Passwords - [zxcvbn](https://github.com/dropbox/zxcvbn) <br> DataBases options available (auth, ssl ..) <br> SSL options availble 
+| API | Default answer wrapper (helper) : [jsend](https://github.com/omniti-labs/jsend) like : status, message, data or error <br>  Default error handling (helper) : formatted by the controller, Custom ES6 errors for other layers
 | CI  | [Travis CI](https://travis-ci.org/weareopensource/Node) 
 | Developer  | [Coveralls](https://coveralls.io/github/weareopensource/Node) - [Code Climate](https://codeclimate.com/github/weareopensource/Node) - [Dependency status](https://david-dm.org/weareopensource/node) - [GreenKeeper](https://greenkeeper.io) - [Snyk](https://snyk.io/test/github/weareopensource/node) - [standard-version](https://github.com/conventional-changelog/standard-version) - [commitlint](https://github.com/conventional-changelog/commitlint)
 | Dependencies  | [npm](https://www.npmjs.com) or [Yarn](https://yarnpkg.com/en/)
@@ -41,6 +42,7 @@ Our stack node is actually in Beta.
 | **In reflexion** | 
 | Documentation  | Swagger <br> Docco 
 | Developer  | uses v8's builtin `debug` and `inspect` optionse
+| API | evolution & version guideline 
 
 ## Features Overview
 
