@@ -77,10 +77,11 @@ exports.create = async (user) => {
   }
   // confirming to secure password policies
   if (user.password) {
-    const validPassword = zxcvbn(user.password);
-    if (!validPassword || !validPassword.score || validPassword.score < config.zxcvbn.minimumScore) {
-      throw new AppError(`${validPassword.feedback.warning}. ${validPassword.feedback.suggestions.join('. ')}`);
-    }
+    // done in model, let this comment for information if one day joi.zxcvbn is not ok / sufficient
+    // const validPassword = zxcvbn(user.password);
+    // if (!validPassword || !validPassword.score || validPassword.score < config.zxcvbn.minimumScore) {
+    //   throw new AppError(`${validPassword.feedback.warning}. ${validPassword.feedback.suggestions.join('. ')}`);
+    // }
     // When password is provided we need to make sure we are hashing it
     user.password = await this.hashPassword(user.password);
   }
