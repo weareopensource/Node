@@ -6,8 +6,6 @@
 
 # [WeAreOpenSource](https://weareopensource.me) Node
 
-### Node / Express / Mongoose - Sequelize Orm
-
 ## Presentation
 
 This project is a stack Node that can be ran as a standalone backend. Or in a fullstack with another of our repo of your choice (ex: [Angular](https://github.com/weareopensource/Angular)). 
@@ -17,9 +15,11 @@ You can have more informations about :
 * our mindset and what we would like to create in our [introduction](https://weareopensource.me/introduction/) (in construction)
 * how to create a fullstack from our repo in our [wiki](https://github.com/weareopensource/weareopensource.github.io/wiki) (in construciton).
 * our global roadmap and propose ideas about stacks in our [board](https://github.com/weareopensource/weareopensource.github.io/projects/1)
+* how to contribute and help us [here](https://github.com/weareopensource/weareopensource.github.io/blob/master/CONTRIBUTE.md)
 
 Our stack node is actually in Beta. 
 
+# Node / Express / Mongoose - Sequelize Orm
 
 ## Technology Overview
 
