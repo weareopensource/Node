@@ -193,8 +193,8 @@ const testCoverage = gulp.series(dropDB, lint, jestCoverage);
 exports.testCoverage = testCoverage;
 
 // Run Mongoose Seed
-const testSeed = gulp.series(dropDB, seedMongoose);
-exports.testSeed = testSeed;
+const seed = gulp.series(dropDB, seedMongoose);
+exports.seed = seed;
 
 // Run project in development mode
 const dev = gulp.series(lint, gulp.parallel(nodemon, watch));
