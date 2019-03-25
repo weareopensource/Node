@@ -152,17 +152,22 @@ const dropDB = (done) => {
 exports.dropDB = dropDB;
 
 // Connects to Mongoose based on environment settings and seeds the database
-const seedMongoose = (done) => {
-  const seed = require(path.resolve('./lib/services/seed'));
-  seed.start({
-    options: {
+const seedMongoose = async () => {
+  try {
+    const mongooseService = require(path.resolve('./lib/services/mongoose'));
+    await mongooseService.connect();
+    await mongooseService.loadModels();
+    const UserService = require(path.resolve('./modules/users/services/user.service'));
+    const seed = require(path.resolve('./lib/services/seed'));
+    await seed.start({
       logResults: true,
-    },
-  }).then(() => {
-    done();
-  }).catch((e) => {
-    console.log(e);
-  });
+    }, UserService).catch((e) => {
+      console.log(e);
+    });
+    await mongooseService.disconnect();
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 // Connects to an SQL database, drop and re-create the schemas
