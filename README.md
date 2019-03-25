@@ -88,6 +88,8 @@ $ npm i
 * test : `npm test`
 * test Watch : `npm run testWatch `
 * test Coverage : `npm run testCoverage `
+* seed development= `npm run seedDev`
+* seed Production = `npm run seedProd`
 * generate SSL certs : `npm run generateSSLCerts`
 * lint : `npm run lint`
 * commit : `npm run commit`

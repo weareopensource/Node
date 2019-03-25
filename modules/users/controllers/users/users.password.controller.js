@@ -78,13 +78,13 @@ exports.forgot = async (req, res) => {
  */
 exports.validateResetToken = async (req, res) => {
   try {
-    const user = await UserService.search({
+    const users = await UserService.search({
       resetPasswordToken: req.params.token,
       resetPasswordExpires: {
         $gt: Date.now(),
       },
     });
-    if (!user) return res.redirect('/password/reset/invalid');
+    if (users.length === 0) return res.redirect('/password/reset/invalid');
     res.redirect(`/password/reset/${req.params.token}`);
   } catch (err) {
     return res.redirect('/password/reset/invalid');

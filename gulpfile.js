@@ -7,6 +7,7 @@ const gulp = require('gulp');
 const gulpLoadPlugins = require('gulp-load-plugins');
 const path = require('path');
 const jestCli = require('jest-cli');
+const inquirer = require('inquirer');
 
 
 const plugins = gulpLoadPlugins();
@@ -72,13 +73,11 @@ const jest = (done) => {
   jestCli.runCLI(
     {},
     '.',
-  )
-    .then(() => {
-      done();
-    })
-    .catch((e) => {
-      console.log(e);
-    });
+  ).then(() => {
+    done();
+  }).catch((e) => {
+    console.log(e);
+  });
 };
 exports.jest = jest;
 
@@ -107,76 +106,95 @@ const jestCoverage = (done) => {
       ],
     },
     '.',
-  )
-    .then(() => {
-      done();
+  ).then(() => {
+    done();
+  }).catch((e) => {
+    console.log(e);
+  });
+};
+exports.jestCoverage = jestCoverage;
+
+// Drops the MongoDB database, used in e2e testing by security
+const dropMongo = (done) => {
+  const mongooseService = require(path.resolve('./lib/services/mongoose'));
+  mongooseService.connect()
+    .then((db) => {
+      db.connection.dropDatabase((err) => {
+        if (err) console.error(err);
+        else console.log('Successfully dropped db: ', db.connections[0].name);
+        mongooseService.disconnect(done());
+      });
     })
     .catch((e) => {
       console.log(e);
     });
 };
-exports.jestCoverage = jestCoverage;
+exports.dropMongo = dropMongo;
 
-// Drops the MongoDB database, used in e2e testing by security
-const dropdb = (done) => {
-  // Use mongoose configuration
-  if (process.env.NODE_ENV === 'test') {
+// Drop database after confirmation, depends of ENV
+const dropDB = (done) => {
+  if (process.env.NODE_ENV !== 'test') {
+    const question = [
+      {
+        type: 'confirm',
+        name: 'continue',
+        message: `Do you want really want to dropDB in ${process.env.NODE_ENV} ENV ?(no)`,
+        default: false,
+      },
+    ];
+
+    inquirer.prompt(question).then((answer) => {
+      if (!answer.continue) return process.exit(2);
+      this.dropMongo(done);
+    });
+  } else this.dropMongo(done);
+};
+exports.dropDB = dropDB;
+
+// Connects to Mongoose based on environment settings and seeds the database
+const seedMongoose = async () => {
+  try {
     const mongooseService = require(path.resolve('./lib/services/mongoose'));
-    mongooseService.connect()
-      .then((db) => {
-        db.connection.dropDatabase((err) => {
-          if (err) console.error(err);
-          else console.log('Successfully dropped db: ', db.connections[0].name);
-          mongooseService.disconnect(done());
-        });
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  } else {
-    console.log('db not dropped', process.env.NODE_ENV);
+    await mongooseService.connect();
+    await mongooseService.loadModels();
+    const UserService = require(path.resolve('./modules/users/services/user.service'));
+    const seed = require(path.resolve('./lib/services/seed'));
+    await seed.start({
+      logResults: true,
+    }, UserService).catch((e) => {
+      console.log(e);
+    });
+    await mongooseService.disconnect();
+  } catch (err) {
+    console.log(err);
   }
 };
-exports.dropdb = dropdb;
 
-// TODO seed are currently in rework
-// // Connects to Mongoose based on environment settings and seeds the database, performing
-// // a drop of the mongo database to clear it out
-// gulp.task('seed:mongoose', (done) => {
-//   const mongoose = require('./lib/services/mongoose');
-//   mongoose.connect()
-//     .then(mongoose.seed)
-//     .then(mongoose.disconnect)
-//     .then(() => {
-//       done();
-//     });
-// });
-// // Connects to an SQL database, drop and re-create the schemas
+// Connects to an SQL database, drop and re-create the schemas
 // gulp.task('seed:sequelize', (done) => {
 //   const sequelize = require('./lib/services/sequelize');
-
 //   sequelize.seed()
 //     .then(() => {
 //       sequelize.sequelize.close();
 //       done();
 //     });
 // });
-// Performs database seeding, used in test environments and related tasks
-// gulp.task('test:seed', (done) => {
-//   runSequence('seed:mongoose', 'seed:sequelize', done);
-// });
 
 // Run project tests
-const test = gulp.series(dropdb, lint, jest);
+const test = gulp.series(dropDB, lint, jest);
 exports.test = test;
 
 // Run project tests with coverage
-const testWatch = gulp.series(dropdb, lint, jestWatch);
+const testWatch = gulp.series(dropDB, lint, jestWatch);
 exports.testWatch = testWatch;
 
 // Run project tests with coverage
-const testCoverage = gulp.series(dropdb, lint, jestCoverage);
+const testCoverage = gulp.series(dropDB, lint, jestCoverage);
 exports.testCoverage = testCoverage;
+
+// Run Mongoose Seed
+const seed = gulp.series(dropDB, seedMongoose);
+exports.seed = seed;
 
 // Run project in development mode
 const dev = gulp.series(lint, gulp.parallel(nodemon, watch));

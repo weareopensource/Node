@@ -56,9 +56,9 @@ exports.get = async (user) => {
 };
 
 /**
- * @desc Function to ask repository to search a user by request
+ * @desc Function to ask repository to search users by request
  * @param {Object} mongoose input request
- * @return {Object} user
+ * @return {Array} users
  */
 exports.search = async (input) => {
   const result = await UserRepository.search(input);
@@ -136,9 +136,9 @@ exports.uploadImage = async (req, res, config) => new Promise((resolve, reject) 
 exports.deleteImage = async path => fs.unlink(path);
 
 /**
- * @desc Function to ask repository to delete a user
+ * @desc Function to ask repository to a user from db by id or email
  * @param {Object} user
- * @return {Promise} user
+ * @return {Promise} result & id
  */
 exports.delete = async (user) => {
   const result = await UserRepository.delete(user);
@@ -189,7 +189,7 @@ exports.hashPassword = password => bcrypt.hash(String(password), saltRounds);
  * NOTE: Passphrases are only tested against the required zxcvbn strength tests, and not the optional tests.
  * @return {Promise} user
  */
-exports.generateRandomPassphrase = () => new Promise((resolve, reject) => {
+exports.generateRandomPassphrase = () => {
   let password = '';
   const repeatingCharacters = new RegExp('(.)\\1{2,}', 'g');
   // iterate until the we have a valid passphrase
@@ -209,9 +209,9 @@ exports.generateRandomPassphrase = () => new Promise((resolve, reject) => {
   }
   // Send the rejection back if the passphrase fails to pass the strength test
   if (zxcvbn(password).score < config.zxcvbn.minimumScore) {
-    reject(new Error('An unexpected problem occured while generating the random passphrase'));
+    throw new AppError('An unexpected problem occured while generating the random passphrase');
   } else {
     // resolve with the validated passphrase
-    resolve(password);
+    return password;
   }
-});
+};

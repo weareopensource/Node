@@ -22,6 +22,8 @@
     "testWatch": "cross-env NODE_ENV=test gulp testWatch",
     "testCoverage": "cross-env NODE_ENV=test gulp testCoverage",
     "testCoveralls": "cross-env NODE_ENV=test gulp testCoverage && cat ./coverage/lcov.info | coveralls",
+    "seedDev": "cross-env NODE_ENV=development gulp seed",
+    "seedProd": "cross-env NODE_ENV=production gulp seed",
     "generateSSLCerts": "lib/scripts/generate-ssl-certs.sh",
     "lint": "gulp lint",
     "snyk-protect": "snyk protect",
@@ -90,6 +92,7 @@
     "gulp-nodemon": "~2.4.2",
     "gulp-refresh": "~1.1.0",
     "husky": "^1.3.1",
+    "inquirer": "^6.2.2",
     "jest-cli": "^24.5.0",
     "standard-version": "^5.0.2"
   },
