@@ -116,6 +116,7 @@ describe('User CRUD Unit Tests :', () => {
         userEdited = result.body.user;
 
         expect(result.body.user.username).toBe(_userEdited.username);
+        expect(result.body.user._id).toBe(result.body.user.id);
         expect(result.body.user.email).toBe(_userEdited.email);
         expect(result.body.user.roles).toBeInstanceOf(Array);
         expect(result.body.user.roles).toHaveLength(1);
