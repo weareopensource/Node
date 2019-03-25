@@ -2,493 +2,314 @@
  * Module dependencies.
  */
 const _ = require('lodash');
-// const chai = require('chai');
-// const mongoose = require('mongoose');
 const path = require('path');
 // const mock = require('mock-fs');
 
 const config = require(path.resolve('./config'));
 const logger = require(path.resolve('./lib/services/logger'));
-// const seed = require(path.resolve('./lib/services/seed'));
-// const mongooseService = require(path.resolve('./lib/services/mongoose.js'));
+const mongooseService = require(path.resolve('./lib/services/mongoose'));
+const seed = require(path.resolve('./lib/services/seed'));
 
+/**
+ * Unit tests
+ */
+describe('Configuration Tests:', () => {
+  let UserService = null;
 
-// const should = chai.should();
+  beforeAll(() => mongooseService.connect()
+    .then(() => {
+      mongooseService.loadModels();
+      UserService = require(path.resolve('./modules/users/services/user.service'));
+    })
+    .catch((e) => {
+      console.log(e);
+    }));
 
-describe('Core Server Config:', () => {
-  // let User = null;
+  let user1;
+  let admin1;
+  let userFromSeedConfig;
+  let adminFromSeedConfig;
 
-  // Mongoose init
-  // before(() => mongooseService.connect()
-  //   .then(() => {
-  //     mongooseService.loadModels();
-  //     User = mongoose.model('User');
-  //   })
-  //   .catch((e) => {
-  //     console.log(e);
-  //   }));
-
-
-  // Globals
-  // let user1;
-  // /let admin1;
-  // let userFromSeedConfig;
-  // let adminFromSeedConfig;
   let originalLogConfig;
 
-  describe('Configuration Tests:', () => {
-    // describe('Testing default seedDB', () => {
-    //   before((done) => {
-    //     User.remove((err) => {
-    //       should.not.exist(err);
+  describe('Testing default seedDB', () => {
+    beforeAll((done) => {
+      user1 = {
+        username: 'user_config_test',
+        provider: 'local',
+        email: 'user_config_test_@localhost.com',
+        firstName: 'User',
+        lastName: 'Local',
+        displayName: 'User Local',
+        roles: ['user'],
+      };
 
-    //       // user1 = {
-    //       //   username: 'user_config_test',
-    //       //   provider: 'local',
-    //       //   email: 'user_config_test_@localhost.com',
-    //       //   firstName: 'User',
-    //       //   lastName: 'Local',
-    //       //   displayName: 'User Local',
-    //       //   roles: ['user'],
-    //       // };
+      admin1 = {
+        username: 'admin_config_test',
+        provider: 'local',
+        email: 'admin_config_test_@localhost.com',
+        firstName: 'Admin',
+        lastName: 'Local',
+        displayName: 'Admin Local',
+        roles: ['user', 'admin'],
+      };
 
-    //       // admin1 = {
-    //       //   username: 'admin_config_test',
-    //       //   provider: 'local',
-    //       //   email: 'admin_config_test_@localhost.com',
-    //       //   firstName: 'Admin',
-    //       //   lastName: 'Local',
-    //       //   displayName: 'Admin Local',
-    //       //   roles: ['user', 'admin'],
-    //       // };
+      userFromSeedConfig = config.seedDB.options.seedUser;
+      adminFromSeedConfig = config.seedDB.options.seedAdmin;
+      done();
+    });
 
-    //       userFromSeedConfig = config.seedDB.options.seedUser;
-    //       adminFromSeedConfig = config.seedDB.options.seedAdmin;
+    it('should have seedDB configuration set for "regular" user', (done) => {
+      expect(userFromSeedConfig).toBeInstanceOf(Object);
+      expect(typeof userFromSeedConfig.username).toBe('string');
+      expect(typeof userFromSeedConfig.email).toBe('string');
+      done();
+    });
 
-    //       return done();
-    //     });
-    //   });
+    it('should have seedDB configuration set for admin user', (done) => {
+      expect(userFromSeedConfig).toBeInstanceOf(Object);
+      expect(typeof adminFromSeedConfig.username).toBe('string');
+      expect(typeof adminFromSeedConfig.email).toBe('string');
+      done();
+    });
 
-    //   after((done) => {
-    //     User.remove((err) => {
-    //       should.not.exist(err);
-    //       return done();
-    //     });
-    //   });
+    it('should seed ONLY the admin user account when NODE_ENV is set to "production"', async () => {
+      const nodeEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'production';
+      let seedusers;
 
-    //   it('should have seedDB configuration set for "regular" user', () => {
-    //     (typeof userFromSeedConfig).should.not.equal('undefined');
-    //     should.exist(userFromSeedConfig.username);
-    //     should.exist(userFromSeedConfig.email);
-    //   });
+      try {
+        seedusers = await seed.start({ logResults: false }, UserService);
+        expect(seedusers).toBeInstanceOf(Array);
+        expect(seedusers).toHaveLength(1);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
 
-    //   it('should have seedDB configuration set for admin user', () => {
-    //     (typeof adminFromSeedConfig).should.not.equal('undefined');
-    //     should.exist(adminFromSeedConfig.username);
-    //     should.exist(adminFromSeedConfig.email);
-    //   });
+      try {
+        await UserService.delete({ id: seedusers[0]._id });
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
 
-    //   it('should not be an admin user to begin with', (done) => {
-    //     User.find({
-    //       username: 'seedadmin',
-    //     }, (err, users) => {
-    //       should.not.exist(err);
-    //       users.should.be.instanceof(Array).and.have.lengthOf(0);
-    //       return done();
-    //     });
-    //   });
+      process.env.NODE_ENV = nodeEnv;
+    });
 
-    //   it('should not be a "regular" user to begin with', (done) => {
-    //     User.find({
-    //       username: 'seeduser',
-    //     }, (err, users) => {
-    //       should.not.exist(err);
-    //       users.should.be.instanceof(Array).and.have.lengthOf(0);
-    //       return done();
-    //     });
-    //   });
+    it('should seed admin, and regular user accounts when NODE_ENV is set to "test"', async () => {
+      const nodeEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'test';
+      let seedusers;
 
-    //   //   it('should seed ONLY the admin user account when NODE_ENV is set to "production"', (done) => {
-    //   //   // Save original value
-    //   //     const nodeEnv = process.env.NODE_ENV;
-    //   //     // Set node env ro production environment
-    //   //     process.env.NODE_ENV = 'production';
+      try {
+        seedusers = await seed.start({ logResults: false }, UserService);
+        expect(seedusers).toBeInstanceOf(Array);
+        expect(seedusers).toHaveLength(2);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
 
-    //   //     User.find({
-    //   //       username: adminFromSeedConfig.username,
-    //   //     }, (err, users) => {
-    //   //     // There shouldn't be any errors
-    //   //       should.not.exist(err);
-    //   //       users.should.be.instanceof(Array).and.have.lengthOf(0);
+      try {
+        await UserService.delete({ id: seedusers[0]._id });
+        await UserService.delete({ id: seedusers[1]._id });
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
 
-    //   //       seed
-    //   //         .start({
-    //   //           logResults: false,
-    //   //         })
-    //   //         .then(() => {
-    //   //           User.find({
-    //   //             username: adminFromSeedConfig.username,
-    //   //           }, (err, users) => {
-    //   //             should.not.exist(err);
-    //   //             users.should.be.instanceof(Array).and.have.lengthOf(1);
+      process.env.NODE_ENV = nodeEnv;
+    });
 
-    //   //             const _admin = users.pop();
-    //   //             _admin.username.should.equal(adminFromSeedConfig.username);
 
-    //   //             // Restore original NODE_ENV environment variable
-    //   //             process.env.NODE_ENV = nodeEnv;
+    it('should seed admin, and "regular" user accounts when NODE_ENV is set to "test" when they already exist', async () => {
+      const nodeEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'test';
+      let _user;
+      let _admin;
+      let seedusers;
 
-    //   //             User.remove((err) => {
-    //   //               should.not.exist(err);
-    //   //               return done();
-    //   //             });
-    //   //           });
-    //   //         });
-    //   //     });
-    //   //   });
+      try {
+        _user = await UserService.create(userFromSeedConfig);
+        _admin = await UserService.create(adminFromSeedConfig);
+        expect(_user).toBeInstanceOf(Object);
+        expect(_admin).toBeInstanceOf(Object);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
 
-    //   //   it('should seed admin, and "regular" user accounts when NODE_ENV is set to "test"', (done) => {
-    //   //   // Save original value
-    //   //     const nodeEnv = process.env.NODE_ENV;
-    //   //     // Set node env ro production environment
-    //   //     process.env.NODE_ENV = 'test';
+      try {
+        const result = await UserService.search({ username: { $in: [adminFromSeedConfig.username, userFromSeedConfig.username] } });
+        expect(result).toBeInstanceOf(Array);
+        expect(result).toHaveLength(2);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
 
-    //   //     User.find({
-    //   //       username: adminFromSeedConfig.username,
-    //   //     }, (err, users) => {
-    //   //     // There shouldn't be any errors
-    //   //       should.not.exist(err);
-    //   //       users.should.be.instanceof(Array).and.have.lengthOf(0);
+      try {
+        seedusers = await seed.start({ logResults: false }, UserService);
+        expect(seedusers).toBeInstanceOf(Array);
+        expect(seedusers).toHaveLength(2);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
 
-    //   //       seed
-    //   //         .start({
-    //   //           logResults: false,
-    //   //         })
-    //   //         .then(() => {
-    //   //           User.find({
-    //   //             username: adminFromSeedConfig.username,
-    //   //           }, (err, users) => {
-    //   //             should.not.exist(err);
-    //   //             users.should.be.instanceof(Array).and.have.lengthOf(1);
+      try {
+        await UserService.delete({ id: seedusers[0]._id });
+        await UserService.delete({ id: seedusers[1]._id });
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
 
-    //   //             const _admin = users.pop();
-    //   //             _admin.username.should.equal(adminFromSeedConfig.username);
+      process.env.NODE_ENV = nodeEnv;
+    });
 
-    //   //             User.find({
-    //   //               username: userFromSeedConfig.username,
-    //   //             }, (err, users) => {
-    //   //               should.not.exist(err);
-    //   //               users.should.be.instanceof(Array).and.have.lengthOf(1);
+    it('should ONLY seed admin user account when NODE_ENV is set to "production" with custom admin', async () => {
+      const nodeEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'production';
+      let seedusers;
 
-    //   //               const _user = users.pop();
-    //   //               _user.username.should.equal(userFromSeedConfig.username);
+      try {
+        seedusers = await seed.start({ logResults: false, seedAdmin: admin1 }, UserService);
+        expect(seedusers).toBeInstanceOf(Array);
+        expect(seedusers).toHaveLength(1);
+        expect(seedusers[0].username).toBe(admin1.username);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
 
-    //   //               // Restore original NODE_ENV environment variable
-    //   //               process.env.NODE_ENV = nodeEnv;
+      try {
+        await UserService.delete({ id: seedusers[0]._id });
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
 
-    //   //               User.remove((err) => {
-    //   //                 should.not.exist(err);
-    //   //                 return done();
-    //   //               });
-    //   //             });
-    //   //           });
-    //   //         });
-    //   //     });
-    //   //   });
+      process.env.NODE_ENV = nodeEnv;
+    });
 
-    //   //   it('should seed admin, and "regular" user accounts when NODE_ENV is set to "test" when they already exist', (done) => {
-    //   //   // Save original value
-    //   //     const nodeEnv = process.env.NODE_ENV;
-    //   //     // Set node env ro production environment
-    //   //     process.env.NODE_ENV = 'test';
+    it('should seed admin, and "regular" user accounts when NODE_ENV is set to "test" with custom options', async () => {
+      const nodeEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'test';
+      let seedusers;
 
-    //   //     const _user = new User(userFromSeedConfig);
-    //   //     const _admin = new User(adminFromSeedConfig);
+      try {
+        seedusers = await seed.start({ logResults: false, seedAdmin: admin1, seedUser: user1 }, UserService);
+        expect(seedusers).toBeInstanceOf(Array);
+        expect(seedusers).toHaveLength(2);
+        expect(seedusers[0].username).toBe(user1.username);
+        expect(seedusers[1].username).toBe(admin1.username);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
 
-    //   //     _admin.save((err) => {
-    //   //     // There shouldn't be any errors
-    //   //       should.not.exist(err);
-    //   //       _user.save((err) => {
-    //   //       // There shouldn't be any errors
-    //   //         should.not.exist(err);
+      try {
+        await UserService.delete({ id: seedusers[0]._id });
+        await UserService.delete({ id: seedusers[1]._id });
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
 
-    //   //         User.find({
-    //   //           username: {
-    //   //             $in: [adminFromSeedConfig.username, userFromSeedConfig.username],
-    //   //           },
-    //   //         }, (err, users) => {
-    //   //         // There shouldn't be any errors
-    //   //           should.not.exist(err);
-    //   //           users.should.be.instanceof(Array).and.have.lengthOf(2);
+      process.env.NODE_ENV = nodeEnv;
+    });
 
-    //   //           seed
-    //   //             .start({
-    //   //               logResults: false,
-    //   //             })
-    //   //             .then(() => {
-    //   //               User.find({
-    //   //                 username: {
-    //   //                   $in: [adminFromSeedConfig.username, userFromSeedConfig.username],
-    //   //                 },
-    //   //               }, (err, users) => {
-    //   //                 should.not.exist(err);
-    //   //                 users.should.be.instanceof(Array).and.have.lengthOf(2);
+    it('should NOT seed admin user account if it already exists when NODE_ENV is set to "production"', async () => {
+      const nodeEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'production';
+      let _admin;
+      let seedusers;
 
-    //   //                 // Restore original NODE_ENV environment variable
-    //   //                 process.env.NODE_ENV = nodeEnv;
+      try {
+        _admin = await UserService.create(adminFromSeedConfig);
+        expect(_admin).toBeInstanceOf(Object);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
 
-    //   //                 User.remove((err) => {
-    //   //                   should.not.exist(err);
-    //   //                   return done();
-    //   //                 });
-    //   //               });
-    //   //             });
-    //   //         });
-    //   //       });
-    //   //     });
-    //   //   });
+      try {
+        seedusers = await seed.start({ logResults: false }, UserService);
+        expect(seedusers[0].details[0].message).toBe('Failed due to local account already exists: seedadmin');
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
 
-    //   //   it('should ONLY seed admin user account when NODE_ENV is set to "production" with custom admin', (done) => {
-    //   //   // Save original value
-    //   //     const nodeEnv = process.env.NODE_ENV;
-    //   //     // Set node env ro production environment
-    //   //     process.env.NODE_ENV = 'production';
+      process.env.NODE_ENV = nodeEnv;
+    });
+  });
 
-    //   //     User.find({
-    //   //       username: admin1.username,
-    //   //     }, (err, users) => {
-    //   //     // There shouldn't be any errors
-    //   //       should.not.exist(err);
-    //   //       users.should.be.instanceof(Array).and.have.lengthOf(0);
+  describe('Testing Logger Configuration', () => {
+    beforeEach(() => {
+      originalLogConfig = _.clone(config.log, true);
+      // mock();
+    });
 
-    //   //       seed
-    //   //         .start({
-    //   //           logResults: false,
-    //   //           seedAdmin: admin1,
-    //   //         })
-    //   //         .then(() => {
-    //   //           User.find({
-    //   //             username: admin1.username,
-    //   //           }, (err, users) => {
-    //   //             should.not.exist(err);
-    //   //             users.should.be.instanceof(Array).and.have.lengthOf(1);
+    afterEach(() => {
+      config.log = originalLogConfig;
+      // mock.restore();
+    });
 
-    //   //             const _admin = users.pop();
-    //   //             _admin.username.should.equal(admin1.username);
+    test('should verify that a file logger object was created using the logger configuration', () => {
+      const _dir = process.cwd();
+      const _filename = 'unit-test-access.log';
 
-    //   //             // Restore original NODE_ENV environment variable
-    //   //             process.env.NODE_ENV = nodeEnv;
+      config.log = {
+        fileLogger: {
+          directoryPath: _dir,
+          fileName: _filename,
+        },
+      };
 
-    //   //             User.remove((err) => {
-    //   //               should.not.exist(err);
-    //   //               return done();
-    //   //             });
-    //   //           });
-    //   //         });
-    //   //     });
-    //   //   });
+      const fileTransport = logger.setupFileLogger(config);
+      expect(fileTransport).toBeInstanceOf(Object);
+      expect(fileTransport.filename).toBe(`${_dir}/${_filename}`);
+    });
 
-    //   //   it('should seed admin, and "regular" user accounts when NODE_ENV is set to "test" with custom options', (done) => {
-    //   //   // Save original value
-    //   //     const nodeEnv = process.env.NODE_ENV;
-    //   //     // Set node env ro production environment
-    //   //     process.env.NODE_ENV = 'test';
-
-    //   //     User.find({
-    //   //       username: admin1.username,
-    //   //     }, (err, users) => {
-    //   //     // There shouldn't be any errors
-    //   //       should.not.exist(err);
-    //   //       users.should.be.instanceof(Array).and.have.lengthOf(0);
-
-    //   //       seed
-    //   //         .start({
-    //   //           logResults: false,
-    //   //           seedAdmin: admin1,
-    //   //           seedUser: user1,
-    //   //         })
-    //   //         .then(() => {
-    //   //           User.find({
-    //   //             username: admin1.username,
-    //   //           }, (err, users) => {
-    //   //             should.not.exist(err);
-    //   //             users.should.be.instanceof(Array).and.have.lengthOf(1);
-
-    //   //             const _admin = users.pop();
-    //   //             _admin.username.should.equal(admin1.username);
-
-    //   //             User.find({
-    //   //               username: user1.username,
-    //   //             }, (err, users) => {
-    //   //               should.not.exist(err);
-    //   //               users.should.be.instanceof(Array).and.have.lengthOf(1);
-
-    //   //               const _user = users.pop();
-    //   //               _user.username.should.equal(user1.username);
-
-    //   //               // Restore original NODE_ENV environment variable
-    //   //               process.env.NODE_ENV = nodeEnv;
-
-    //   //               User.remove((err) => {
-    //   //                 should.not.exist(err);
-    //   //                 return done();
-    //   //               });
-    //   //             });
-    //   //           });
-    //   //         });
-    //   //     });
-    //   //   });
-
-    //   //   it('should NOT seed admin user account if it already exists when NODE_ENV is set to "production"', (done) => {
-    //   //   // Save original value
-    //   //     const nodeEnv = process.env.NODE_ENV;
-    //   //     // Set node env ro production environment
-    //   //     process.env.NODE_ENV = 'production';
-
-    //   //     const _admin = new User(adminFromSeedConfig);
-
-    //   //     _admin.save((err, user) => {
-    //   //     // There shouldn't be any errors
-    //   //       should.not.exist(err);
-    //   //       user.username.should.equal(adminFromSeedConfig.username);
-
-    //   //       seed
-    //   //         .start({
-    //   //           logResults: false,
-    //   //         })
-    //   //         .then(() => {
-    //   //         // we don't ever expect to make it here but we don't want to timeout
-    //   //           User.remove((err) => {
-    //   //             should.not.exist(err);
-    //   //             // force this test to fail since we should never be here
-    //   //             should.exist(undefined);
-    //   //             // Restore original NODE_ENV environment variable
-    //   //             process.env.NODE_ENV = nodeEnv;
-
-    //   //             return done();
-    //   //           });
-    //   //         })
-    //   //         .catch((err) => {
-    //   //           should.exist(err);
-    //   //           err.message.should.equal(`Failed due to local account already exists: ${adminFromSeedConfig.username}`);
-
-    //   //           // Restore original NODE_ENV environment variable
-    //   //           process.env.NODE_ENV = nodeEnv;
-
-    //   //           User.remove((removeErr) => {
-    //   //             should.not.exist(removeErr);
-
-    //   //             return done();
-    //   //           });
-    //   //         });
-    //   //     });
-    //   //   });
-
-    //   //   it('should NOT seed "regular" user account if missing email when NODE_ENV set to "test"', (done) => {
-    //   //   // Save original value
-    //   //     const nodeEnv = process.env.NODE_ENV;
-    //   //     // Set node env ro test environment
-    //   //     process.env.NODE_ENV = 'test';
-
-    //   //     const _user = new User(user1);
-    //   //     _user.email = '';
-
-    //   //     seed
-    //   //       .start({
-    //   //         logResults: false,
-    //   //         seedUser: _user,
-    //   //       })
-    //   //       .then(() => {
-    //   //       // we don't ever expect to make it here but we don't want to timeout
-    //   //         User.remove(() => {
-    //   //         // force this test to fail since we should never be here
-    //   //           should.exist(undefined);
-    //   //           // Restore original NODE_ENV environment variable
-    //   //           process.env.NODE_ENV = nodeEnv;
-
-    //   //           return done();
-    //   //         });
-    //   //       })
-    //   //       .catch((err) => {
-    //   //         should.exist(err);
-    //   //         err.message.should.equal(`Failed to add local ${user1.username}`);
-
-    //   //         // Restore original NODE_ENV environment variable
-    //   //         process.env.NODE_ENV = nodeEnv;
-
-    //   //         User.remove((removeErr) => {
-    //   //           should.not.exist(removeErr);
-
-    //   //           return done();
-    //   //         });
-    //   //       });
-    //   //   });
-    // });
-
-    describe('Testing Logger Configuration', () => {
-      beforeEach(() => {
-        originalLogConfig = _.clone(config.log, true);
-        // mock();
-      });
-
-      afterEach(() => {
-        config.log = originalLogConfig;
-        // mock.restore();
-      });
-
-      test('should verify that a file logger object was created using the logger configuration', () => {
-        const _dir = process.cwd();
-        const _filename = 'unit-test-access.log';
-
-        config.log = {
-          fileLogger: {
-            directoryPath: _dir,
-            fileName: _filename,
+    test('should not create a file transport object if critical options are missing: filename', () => {
+      // manually set the config stream fileName option to an empty string
+      config.log = {
+        format: 'combined',
+        options: {
+          stream: {
+            directoryPath: process.cwd(),
+            fileName: '',
           },
-        };
+        },
+      };
 
-        const fileTransport = logger.setupFileLogger(config);
-        expect(fileTransport).toBeInstanceOf(Object);
-        expect(fileTransport.filename).toBe(`${_dir}/${_filename}`);
-      });
+      const fileTransport = logger.setupFileLogger(config);
+      expect(fileTransport).toBe(false);
+    });
 
-      test('should not create a file transport object if critical options are missing: filename', () => {
-        // manually set the config stream fileName option to an empty string
-        config.log = {
-          format: 'combined',
-          options: {
-            stream: {
-              directoryPath: process.cwd(),
-              fileName: '',
-            },
+    test('should not create a file transport object if critical options are missing: directory', () => {
+      // manually set the config stream fileName option to an empty string
+      config.log = {
+        format: 'combined',
+        options: {
+          stream: {
+            directoryPath: '',
+            fileName: 'app.log',
           },
-        };
+        },
+      };
 
-        const fileTransport = logger.setupFileLogger(config);
-        expect(fileTransport).toBe(false);
-      });
-
-      test('should not create a file transport object if critical options are missing: directory', () => {
-        // manually set the config stream fileName option to an empty string
-        config.log = {
-          format: 'combined',
-          options: {
-            stream: {
-              directoryPath: '',
-              fileName: 'app.log',
-            },
-          },
-        };
-
-        const fileTransport = logger.setupFileLogger(config);
-        expect(fileTransport).toBe(false);
-      });
+      const fileTransport = logger.setupFileLogger(config);
+      expect(fileTransport).toBe(false);
     });
   });
 
   // Mongoose disconnect
-  // after(() => mongooseService.disconnect()
-  //   .catch((e) => {
-  //     console.log(e);
-  //   }));
+  afterAll(() => mongooseService.disconnect()
+    .catch((e) => {
+      console.log(e);
+    }));
 });
