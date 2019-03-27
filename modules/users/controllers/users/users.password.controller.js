@@ -3,15 +3,14 @@
  */
 const path = require('path');
 
-const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const UserService = require('../../services/user.service');
 
+const mail = require(path.resolve('./lib/helpers/mail'));
 const errors = require(path.resolve('./lib/helpers/errors'));
 const responses = require(path.resolve('./lib/helpers/responses'));
 const configuration = require(path.resolve('./config'));
 const config = require(path.resolve('./config'));
-const smtpTransport = nodemailer.createTransport(config.mailer.options);
 
 /**
  * @desc Endpoint to init password reset mail
@@ -21,7 +20,7 @@ const smtpTransport = nodemailer.createTransport(config.mailer.options);
 exports.forgot = async (req, res) => {
   let user;
   let token;
-  let emailHTML;
+  let send;
 
   // check input
   if (!req.body.email) return responses.error(res, 422, 'Mail field must not be blank')();
@@ -42,33 +41,10 @@ exports.forgot = async (req, res) => {
     responses.error(res, 422, errors.getMessage(err))(err);
   }
 
-  // prepare template
-  let httpTransport = 'http://';
-  if (config.secure && config.secure.ssl === true) {
-    httpTransport = 'https://';
-  }
-  // const baseUrl = req.app.get('domain') || httpTransport + req.headers.host;
-  const baseUrl = `${httpTransport + config.host}:4200`;
-  res.render('reset-password-email', {
-    name: user.displayName,
-    appName: config.app.title,
-    url: `${baseUrl}/auth/password-reset?token=${token}`,
-  }, (err, result) => {
-    if (!err) emailHTML = result;
-    else return responses.error(res, 400, errors.getMessage('Failure sending email'))(err);
-  });
-
-  // send mail
-  const mailOptions = {
-    to: user.email,
-    from: config.mailer.from,
-    subject: 'Password Reset',
-    html: emailHTML,
-  };
-  smtpTransport.sendMail(mailOptions, (err) => {
-    if (!err) responses.success(res, 'An email has been sent to the provided email with further instructions.')();
-    else return responses.error(res, 400, 'Failure sending email')(err);
-  });
+  const template = mail.generateTemplate(res, 'reset-password-email', user.displayName, token);
+  if (template) send = mail.sendMail(config.mailer.from, user.email, 'Password Reset', template);
+  if (!template || !send) return responses.error(res, 400, 'Failure sending email')();
+  responses.success(res, 'An email has been sent to the provided email with further instructions.')();
 };
 
 /**
@@ -101,7 +77,7 @@ exports.reset = async (req, res) => {
   const newPassword = req.body.newPassword;
   const resetPasswordToken = req.body.token;
   let user;
-  let emailHTML;
+  let send;
 
   try {
     // Hash new password
@@ -132,26 +108,10 @@ exports.reset = async (req, res) => {
     responses.error(res, 422, errors.getMessage(err))(err);
   }
 
-  // prepare template
-  res.render('reset-password-confirm-email', {
-    name: user.displayName,
-    appName: config.app.title,
-  }, (err, result) => {
-    if (!err) emailHTML = result;
-    else responses.error(res, 400, 'Failure sending email')(err);
-  });
-
-  // send mail
-  const mailOptions = {
-    to: user.email,
-    from: config.mailer.from,
-    subject: 'Your password has been changed',
-    html: emailHTML,
-  };
-  smtpTransport.sendMail(mailOptions, (err) => {
-    if (!err) responses.success(res, 'An email has been sent to the provided email with reset password confirmation.')();
-    else responses.error(res, 400, 'Failure sending email')(err);
-  });
+  const template = mail.generateTemplate(res, 'reset-password-confirm-email', user.displayName);
+  if (template) send = mail.sendMail(config.mailer.from, user.email, 'Your password has been changed', template);
+  if (!template || !send) return responses.error(res, 400, 'Failure sending email')();
+  responses.success(res, 'An email has been sent to the provided email with further instructions.')();
 };
 
 /**
@@ -181,7 +141,7 @@ exports.changePassword = async (req, res) => {
     // reset login
     req.login(user, (errLogin) => {
       if (errLogin) return responses.error(res, 400, errors.getMessage(errLogin))();
-      return responses.success(res, 'Password changed successfully')();
+      responses.success(res, 'Password changed successfully')();
     });
   } catch (err) {
     responses.error(res, 422, errors.getMessage(err))(err);
