@@ -162,9 +162,9 @@ exports.list = async () => {
  */
 exports.authenticate = async (email, password) => {
   const user = await UserRepository.get({ email });
-  if (!user) throw new AppError('invalid user or password');
+  if (!user) throw new AppError('invalid user or password.', { code: 'SERVICE_ERROR' });
   if (await this.comparePassword(password, user.password)) return removeSensitive(user);
-  throw new AppError('invalid user or password');
+  throw new AppError('invalid user or password.', { code: 'SERVICE_ERROR' });
 };
 
 /**
@@ -181,6 +181,23 @@ exports.comparePassword = async (userPassword, storedPassword) => bcrypt.compare
  * @return {String} password hashed
  */
 exports.hashPassword = password => bcrypt.hash(String(password), saltRounds);
+
+/**
+ * @desc Function to hash passwords
+ * @param {String} password
+ * @return {String} password hashed
+ */
+exports.checkPassword = (password) => {
+  const result = zxcvbn(password);
+  if (result.score < config.zxcvbn.minimumScore) {
+    throw new AppError('Password too weak.', {
+      code: 'SERVICE_ERROR',
+      details: result.feedback.suggestions.map(s => ({ message: s })),
+    });
+  } else {
+    return password;
+  }
+};
 
 /**
  * @desc Seed : Function to generateRandomPassphrase
@@ -208,10 +225,5 @@ exports.generateRandomPassphrase = () => {
     password = password.replace(repeatingCharacters, '');
   }
   // Send the rejection back if the passphrase fails to pass the strength test
-  if (zxcvbn(password).score < config.zxcvbn.minimumScore) {
-    throw new AppError('An unexpected problem occured while generating the random passphrase');
-  } else {
-    // resolve with the validated passphrase
-    return password;
-  }
+  return this.checkPassword(password);
 };

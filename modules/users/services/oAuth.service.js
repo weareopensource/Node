@@ -31,7 +31,7 @@ exports.generateUniqueUsername = async (username, suffix) => {
   try {
     return await this.generateUniqueUsername(username, (suffix || 0) + 1);
   } catch (err) {
-    throw new AppError(err);
+    throw new AppError(err, { code: 'SERVICE_ERROR' });
   }
 };
 

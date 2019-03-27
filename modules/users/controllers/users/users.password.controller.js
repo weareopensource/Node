@@ -126,11 +126,11 @@ exports.changePassword = async (req, res) => {
     user = await UserService.get({ id: req.user.id });
     if (!user) return responses.error(res, 400, 'User is not found')();
 
-    if (await UserService.comparePassword(req.body.currentPassword, user.password)) {
-      if (req.body.newPassword === req.body.verifyPassword) {
-        password = req.body.newPassword;
-      } else return responses.error(res, 422, 'Passwords do not match')();
-    } else return responses.error(res, 422, 'Current password is incorrect')();
+    if (!await UserService.comparePassword(req.body.currentPassword, user.password)) return responses.error(res, 422, 'Current password is incorrect')();
+    if (req.body.newPassword !== req.body.verifyPassword) return responses.error(res, 422, 'Passwords do not match')();
+
+
+    password = UserService.checkPassword(req.body.newPassword);
 
     user = await UserService.update(user, { password }, 'recover');
 
