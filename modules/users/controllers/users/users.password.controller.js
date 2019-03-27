@@ -119,7 +119,6 @@ exports.changePassword = async (req, res) => {
   let password;
 
   // check input
-  if (!req.user) return responses.error(res, 401, 'User is not signed in')();
   if (!req.body.newPassword) return responses.error(res, 422, 'Please provide a new password')();
 
   // get user, check password, update user, login again
