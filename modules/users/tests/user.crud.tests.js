@@ -164,7 +164,7 @@ describe('User CRUD Unit Tests :', () => {
           .send(_userEdited)
           .expect(422);
         expect(result.body.type).toBe('error');
-        expect(result.body.message).toBe('Email already exists');
+        expect(result.body.message).toBe('Email already exists.');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -511,8 +511,8 @@ describe('User CRUD Unit Tests :', () => {
       try {
         const result = await agent.post('/api/users/password')
           .send({
-            newPassword: '1234567890Aa$',
-            verifyPassword: '1234567890Aa$',
+            newPassword: 'WeAreOpenSource$&2',
+            verifyPassword: 'WeAreOpenSource$&2',
             currentPassword: credentials[0].password,
           })
           .expect(200);
@@ -565,6 +565,23 @@ describe('User CRUD Unit Tests :', () => {
           })
           .expect(422);
         expect(result.body.message).toBe('Please provide a new password');
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+
+    test('should not be able to change user own password successfully if new password is too easy', async () => {
+      try {
+        const result = await agent.post('/api/users/password')
+          .send({
+            newPassword: 'OpenSource',
+            verifyPassword: 'OpenSource',
+            currentPassword: credentials[0].password,
+          })
+          .expect(422);
+        expect(result.body.message).toBe('Password too weak.');
+        expect(result.body.error.details).toBeInstanceOf(Array);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -662,7 +679,7 @@ describe('User CRUD Unit Tests :', () => {
         const result = await agent.put('/api/users')
           .send(userUpdate)
           .expect(422);
-        expect(result.body.message).toBe('Username already exists');
+        expect(result.body.message).toBe('Username already exists.');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -697,7 +714,7 @@ describe('User CRUD Unit Tests :', () => {
         const result = await agent.put('/api/users')
           .send(userUpdate)
           .expect(422);
-        expect(result.body.message).toBe('Email already exists');
+        expect(result.body.message).toBe('Email already exists.');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -763,7 +780,7 @@ describe('User CRUD Unit Tests :', () => {
         const result = await agent.post('/api/users/picture')
           .attach('fieldThatDoesntWork', './modules/users/tests/img/default.png')
           .expect(422);
-        expect(result.body.message).toEqual('Missing `newProfilePicture` field');
+        expect(result.body.message).toEqual('Missing `newProfilePicture` field.');
       } catch (err) {
         expect(err).toBeFalsy();
       }
@@ -774,7 +791,7 @@ describe('User CRUD Unit Tests :', () => {
         const result = await agent.post('/api/users/picture')
           .attach('newProfilePicture', './modules/users/tests/img/text-file.txt')
           .expect(422);
-        expect(result.body.message).toEqual('Unsupported filetype');
+        expect(result.body.message).toEqual('Unsupported filetype.');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
