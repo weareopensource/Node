@@ -35,7 +35,7 @@ Both :), package.json matter, do your own choice.
 - _[should](https://github.com/shouldjs/should.js)_ - BDD style assertions for node.js -- test framework agnostic
 
 #### Conclusion
-Jest because of trends : https://www.npmtrends.com/ava-vs-jasmine-vs-jest-vs-mocha-vs-qunit, with supertest for simplicity. With this config, chai or should was useless. 
+Jest because of [trends](https://www.npmtrends.com/ava-vs-jasmine-vs-jest-vs-mocha-vs-qunit), with supertest for simplicity. With this config, chai or should was useless. 
 
 ## CI & .. :construction_worker: 
 
@@ -56,3 +56,16 @@ Jest because of trends : https://www.npmtrends.com/ava-vs-jasmine-vs-jest-vs-moc
 
 #### Conclusion
 Travis, Codeclimate, Coveralls (more details than codeclimate), EsLint, Dependencies + GreenKeeper, Snyk.io
+
+## Password :lock: 
+
+#### Articles :
+- [hashing in action understanding bcrypt](https://auth0.com/blog/hashing-in-action-understanding-bcrypt/)
+- [nodejs bcrypt vs native crypto](https://stackoverflow.com/questions/6951867/nodejs-bcrypt-vs-native-crypto)
+
+#### Tools :
+- **[bcrypt](hhttps://www.npmjs.com/package/bcrypt)** - way to test and deploy your projects
+- [crypto-js](https://github.com/brix/crypto-js) - JavaScript library of crypto standards.
+
+#### Conclusion
+We used Bcrypt for more security and simplicity ([trends](https://www.npmtrends.com/bcrypt-vs-crypto-js)).
