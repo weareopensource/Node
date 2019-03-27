@@ -98,7 +98,6 @@ exports.reset = async (req, res) => {
     req.login(user, (errLogin) => {
       if (errLogin) return responses.error(res, 400, errors.getMessage(errLogin))(errLogin);
       user.password = undefined;
-      user.salt = undefined;
       return responses.success(res, 'password reseted')(user);
     });
   } catch (err) {

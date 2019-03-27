@@ -32,7 +32,6 @@ const UserSchema = Joi.object().keys({
   /* Password */
   password: Joi.string().min(4).max(128).default('')
     .zxcvbn(config.zxcvbn.minimumScore),
-  salt: Joi.string(),
   resetPasswordToken: Joi.string(),
   resetPasswordExpires: Joi.date(),
 });

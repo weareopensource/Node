@@ -580,7 +580,6 @@ describe('User CRUD Unit Tests :', () => {
         expect(result.body.data).toBeInstanceOf(Object);
         expect(result.body.data.username).toBe(user.username);
         expect(result.body.data.email).toBe(user.email);
-        expect(result.body.data.salt).toBeFalsy();
         expect(result.body.data.password).toBeFalsy();
       } catch (err) {
         console.log(err);
