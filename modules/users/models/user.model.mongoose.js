@@ -33,7 +33,6 @@ const UserMongoose = new Schema({
   additionalProvidersData: {},
   /* Password */
   password: String,
-  salt: String,
   resetPasswordToken: String,
   resetPasswordExpires: Date,
 });

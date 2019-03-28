@@ -72,7 +72,9 @@ module.exports = {
     xssProtection: true,
   },
   cors: {
-    url: 'http://localhost:4200',
+    protocol: 'http',
+    host: 'localhost',
+    port: '4200',
   },
   illegalUsernames: ['waos', 'weareopensource', 'administrator', 'password', 'admin', 'user', 'unknown', 'anonymous', 'null', 'undefined', 'api'],
   roles: ['user', 'admin'],

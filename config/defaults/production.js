@@ -19,7 +19,9 @@ module.exports = _.merge(defaultConfig, {
     format: 'combined',
   },
   cors: {
-    url: 'http://localhost:3000',
+    protocol: 'http',
+    host: 'localhost',
+    port: '3000',
   },
   livereload: false,
 });

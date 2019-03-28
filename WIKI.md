@@ -98,18 +98,17 @@ body :
 
 #### service & others errors
 
-`throw new AppError('invalid user or password');`
+`throw new AppError('invalid user or password.', { code: 'SERVICE_ERROR', details: [] });`
 
 body : 
 
 ```
 { 
 	type: 'error',
-   message: 'Something went wrong',
+   message: 'invalid user or password.',
    error: { 
-       details: [{ 
-       	message: 'invalid user or password', 
-       }] 
+	   code: 'SERVICE_ERROR',
+       details: [] 
    } 
 }
 ```
