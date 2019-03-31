@@ -31,7 +31,7 @@ Our stack node is actually in Beta.
 | **Available** | 
 | Architecture | Layered Architecture : everything is separated in layers, and the upper layers are abstractions of the lower ones, that's why every layer should only reference the immediate lower layer (vertical modules architecture with Repository and Services Pattern)
 | Server  | [Node v10.15 LTS](https://nodejs.org/en/) <br> [Express](https://github.com/expressjs/express) - [body-parser](https://github.com/expressjs/body-parser) - [compression](https://github.com/expressjs/compression) - [CORS](https://github.com/expressjs/cors) - [method-override](https://github.com/expressjs/method-override) <br> [gulp 4](https://github.com/gulpjs/gulp) - [nodemon](https://github.com/remy/nodemon) - [pm2](https://github.com/Unitech/pm2)
-| DataBase  | [Mongo 4.x LTS](https://www.mongodb.com/download-center/community) &  [mongoose](https://github.com/Automattic/mongoose) (user management & crud Task example) <br> [Sequelize](https://github.com/sequelize/sequelize) : PostgreSQL, MySQL, SQLit 4.x (option - crud Task example) <br> [JOI](https://github.com/hapijs/joi) Models & Repository for database code abstraction
+| DataBase  | [Mongo 4.x LTS](https://www.mongodb.com/download-center/community) &  [mongoose](https://github.com/Automattic/mongoose) (user management & crud Task example) <br> [Sequelize](https://github.com/sequelize/sequelize) : PostgreSQL, MySQL, SQLit 4.x (option - crud Task example) <br> [JOI](https://github.com/hapijs/joi) Models & Repository for database code abstraction <br> seed functions
 | Testing |  [Jest](https://github.com/facebook/jest) & [SuperTest](https://github.com/visionmedia/supertest) (Coverage & Watch) <br> *example of mocha with gulp available*
 | Linter  | [ESLint](https://github.com/eslint/eslint) ecmaVersion 10 (2019)
 | Security | JWT Stateless - [passport-jwt](https://github.com/themikenicholson/passport-jwt) <br> Passwords: [bcrypt](https://en.wikipedia.org/wiki/Bcrypt) - [zxcvbn](https://github.com/dropbox/zxcvbn) <br> DataBases options available (auth, ssl ..) <br> SSL options availble 
@@ -41,7 +41,6 @@ Our stack node is actually in Beta.
 | Dependencies  | [npm](https://www.npmjs.com) or [Yarn](https://yarnpkg.com/en/)
 | **Being released** | 
 | Deliver | Docker & Docker-compose
-| Database | seed
 | **In reflexion** | 
 | Documentation  | Swagger <br> Docco 
 | Developer  | uses v8's builtin `debug` and `inspect` optionse
