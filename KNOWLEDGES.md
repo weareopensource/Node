@@ -1,9 +1,39 @@
+# Node Knwoledges
+
+## Introduction 
+
 This includes links to knowledge and tools and explaining the reason for the operations and architecture of this repo.
+
+## Informations 
 
 * **Bold** : used
 * _Italic_ : not used
 
-## Node Links :tada:
+## Menu 
+
+#### Node Knowledges 
+
+* [Links](https://github.com/weareopensource/Node/blob/master/KNOWLEDGES.md#links-tada)
+* [Dependencies](https://github.com/weareopensource/Node/blob/master/KNOWLEDGES.md#dependencies-arrow_up)
+* [Password](https://github.com/weareopensource/Node/blob/master/KNOWLEDGES.md#password-lock)
+
+#### Other informations
+
+* [Node Wiki](https://github.com/weareopensource/Node/blob/master/WIKI.md)
+* [Node Knowledges](https://github.com/weareopensource/Node/blob/master/KNOWLEDGES.md)
+* [Global Wiki](https://github.com/weareopensource/weareopensource.github.io/wiki)
+* [Changelog](https://github.com/weareopensource/Node/blob/master/CHANGELOG.md)
+* [Licence](https://github.com/weareopensource/Node/blob/master/LICENSE.md)
+* [Contribute](https://github.com/weareopensource/weareopensource.github.io/wiki/Contribute)
+
+#### WAOS
+
+* [Our Mindset](https://weareopensource.me/introduction/)
+* [Our Roadmap](https://github.com/weareopensource/weareopensource.github.io/projects)
+* [Us](https://github.com/weareopensource/weareopensource.github.io/wiki/Us)
+* [Help Us](https://github.com/weareopensource/weareopensource.github.io/wiki/HelpUs)
+
+## Links :tada:
 
 - [npm Trends](https://www.npmtrends.com)
 
