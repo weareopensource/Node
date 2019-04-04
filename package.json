@@ -2,6 +2,15 @@
   "name": "waosNode",
   "description": "Stack JavaScript with MongoDB, ORM(sequelize ...), Express, and Node.js. (Based on meanjs and riess.js)",
   "version": "0.2.0",
+  "keywords": [
+    "node",
+    "express",
+    "mongo",
+    "jwt",
+    "sequelize",
+    "stack",
+    "boilerplate"
+  ],
   "private": false,
   "author": "https://github.com/weareopensource/Node/graphs/contributors",
   "license": "MIT",
