@@ -70,7 +70,7 @@
     "lodash": "^4.17.11",
     "lusca": "~1.6.1",
     "method-override": "~3.0.0",
-    "mongoose": "~5.4.19",
+    "mongoose": "~5.5.0",
     "multer": "~1.4.1",
     "nodemailer": "~6.1.0",
     "nodemon": "^1.18.10",
