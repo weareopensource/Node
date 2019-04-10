@@ -419,7 +419,7 @@ describe('User Schema Unit Tests:', () => {
     });
 
     test('should be able to show an error when try to valid with not allowed username', (done) => {
-      user.username = config.illegalUsernames[Math.floor(Math.random() * config.illegalUsernames.length)];
+      user.username = config.blacklists.users.usernames[Math.floor(Math.random() * config.blacklists.users.usernames.length)];
 
       const result = Joi.validate(user, schema.User, options);
       expect(typeof result).toBe('object');

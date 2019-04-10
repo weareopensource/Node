@@ -15,24 +15,6 @@ const imageFileFilter = require(path.resolve('./lib/services/multer')).imageFile
 const UserRepository = require('../repositories/user.repository');
 
 const saltRounds = 10;
-// update whitelist
-const whitelistUpdate = ['firstName', 'lastName', 'username', 'email', 'profileImageURL'];
-const whitelistUpdateAdmin = whitelistUpdate.concat(['roles']);
-const whitelistRecover = ['password', 'resetPasswordToken', 'resetPasswordExpires'];
-// Data filter whitelist
-const whitelist = ['_id',
-  'id',
-  'firstName',
-  'lastName',
-  'displayName',
-  'username',
-  'email',
-  'roles',
-  'profileImageURL',
-  'updated',
-  'created',
-  'resetPasswordToken',
-  'resetPasswordExpires'];
 
 /**
  * @desc Local function to removeSensitive data from user
@@ -41,7 +23,7 @@ const whitelist = ['_id',
  */
 const removeSensitive = (user) => {
   if (!user || typeof user !== 'object') return null;
-  return _.assignIn(user, _.pick(user, whitelist));
+  return _.assignIn(user, _.pick(user, config.whitelists.users.default));
 };
 
 
@@ -98,9 +80,9 @@ exports.create = async (user) => {
  * @return {Promise} user -
  */
 exports.update = async (user, body, option) => {
-  if (!option) user = _.assignIn(user, _.pick(body, whitelistUpdate));
-  else if (option === 'admin') user = _.assignIn(user, _.pick(body, whitelistUpdateAdmin));
-  else if (option === 'recover') user = _.assignIn(user, _.pick(body, whitelistRecover));
+  if (!option) user = _.assignIn(user, _.pick(body, config.whitelists.users.update));
+  else if (option === 'admin') user = _.assignIn(user, _.pick(body, config.whitelists.users.updateAdmin));
+  else if (option === 'recover') user = _.assignIn(user, _.pick(body, config.whitelists.users.recover));
 
   user.updated = Date.now();
   user.displayName = `${user.firstName} ${user.lastName}`;

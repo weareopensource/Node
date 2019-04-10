@@ -19,9 +19,9 @@ const UserSchema = Joi.object().keys({
   email: Joi.string().email({ minDomainAtoms: 2 }),
   username: Joi.string().lowercase().trim()
     .regex(/^(?=[\w.-]+$)(?!.*[._-]{2})(?!\.)(?!.*\.$).{3,34}$/)
-    .invalid(config.illegalUsernames),
+    .invalid(config.blacklists.users.usernames),
   profileImageURL: Joi.string(),
-  roles: Joi.array().items(Joi.string().valid(config.roles)).min(1).default(['user']),
+  roles: Joi.array().items(Joi.string().valid(config.whitelists.users.roles)).min(1).default(['user']),
   /* Extra */
   updated: Joi.date(),
   created: Joi.date().default(Date.now, 'current date'),

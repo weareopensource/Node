@@ -76,8 +76,21 @@ module.exports = {
     host: 'localhost',
     port: '4200',
   },
-  illegalUsernames: ['waos', 'weareopensource', 'administrator', 'password', 'admin', 'user', 'unknown', 'anonymous', 'null', 'undefined', 'api'],
-  roles: ['user', 'admin'],
+  // Data filter whitelist & Blacklist
+  blacklists: {
+    users: {
+      usernames: ['waos', 'weareopensource', 'administrator', 'password', 'admin', 'user', 'unknown', 'anonymous', 'null', 'undefined', 'api'],
+    },
+  },
+  whitelists: {
+    users: {
+      default: ['_id', 'id', 'firstName', 'lastName', 'displayName', 'username', 'email', 'roles', 'profileImageURL', 'updated', 'created', 'resetPasswordToken', 'resetPasswordExpires'],
+      update: ['firstName', 'lastName', 'username', 'email', 'profileImageURL'],
+      updateAdmin: ['firstName', 'lastName', 'username', 'email', 'profileImageURL', 'roles'],
+      recover: ['password', 'resetPasswordToken', 'resetPasswordExpires'],
+      roles: ['user', 'admin'],
+    },
+  },
   uploads: {
     profile: {
       avatar: {
