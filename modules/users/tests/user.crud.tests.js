@@ -104,6 +104,26 @@ describe('User CRUD Unit Tests :', () => {
       }
     });
 
+    test('if should not be able to register, should not return sensible data', async () => {
+      // Init user edited
+      _userEdited.username = 'register_new_user';
+      _userEdited.email = 'register_new_user_@test.com';
+      _userEdited.password = 'azerty';
+
+      try {
+        const result = await agent.post('/api/auth/signup')
+          .send(_userEdited)
+          .expect(422);
+        expect(result.body.type).toBe('error');
+        expect(result.body.message).toBe('schema validation error');
+        expect(result.body.error.details[0].message).toBe('password Password strength score 0 does not suffice the minimum of 3');
+        expect(result.body.error.original.password).toBeUndefined();
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+
     test('should be able to register a new user ', async () => {
       // Init user edited
       _userEdited.username = 'register_new_user';
