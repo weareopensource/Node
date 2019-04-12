@@ -33,15 +33,12 @@ module.exports = {
     },
     promise: global.Promise,
   },
-  secure: {
-    ssl: false,
-    /**
-     ssl: true,
-     privateKey: './config/sslcerts/key.pem',
-     certificate: './config/sslcerts/cert.pem',
-     caBundle: './config/sslcerts/cabundle.crt'
-    */
-  },
+  // SSL on express server (FYI : Wiki)
+  // secure: {
+  //   ssl: false,
+  //   key: './config/sslcerts/key.pem',
+  //   cert: './config/sslcerts/cert.pem',
+  // },
   log: {
     fileLogger: {
       directoryPath: process.cwd(),
