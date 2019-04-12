@@ -76,22 +76,28 @@ const validateDomainIsSet = (config) => {
 };
 
 /**
- * Validate Secure=true parameter can actually be turned on
- * because it requires certs and key files to be available
+ * validate secure parameters and create credentials in consequence value for ssl
+ * @param config
  */
-const validateSecureMode = (config) => {
-  if (!(!config.secure || config.secure.ssl !== true)) {
-    const privateKey = fs.existsSync(path.resolve(config.secure.privateKey));
-    const certificate = fs.existsSync(path.resolve(config.secure.certificate));
-    if (!privateKey || !certificate) {
-      console.log(chalk.red('+ Error: Certificate file or key file is missing, falling back to non-SSL mode'));
-      console.log(chalk.red('  To create them, simply run the following from your shell: sh ./scripts/generate-ssl-certs.sh'));
-      console.log();
-      config.secure.ssl = false;
-    }
-    return false;
+const initSecureMode = (config) => {
+  if (!config.secure || config.secure.ssl !== true) {
+    return true;
   }
-  return true;
+
+  const key = fs.existsSync(path.resolve(config.secure.key));
+  const cert = fs.existsSync(path.resolve(config.secure.cert));
+
+  if (!key || !cert) {
+    console.log(chalk.red('+ Error: Certificate file or key file is missing, falling back to non-SSL mode'));
+    console.log(chalk.red('  To create them, simply run the following from your shell: sh ./scripts/generate-ssl-certs.sh'));
+    console.log();
+    config.secure.ssl = false;
+  } else {
+    config.secure.credentials = {
+      key: fs.readFileSync(path.resolve(config.secure.key)),
+      cert: fs.readFileSync(path.resolve(config.secure.cert)),
+    };
+  }
 };
 
 /**
@@ -155,8 +161,8 @@ const initGlobalConfig = () => {
   // Initialize global globbed files
   initGlobalConfigFiles(config, assets);
 
-  // Validate Secure SSL mode can be used
-  validateSecureMode(config);
+  // Init Secure SSL if can be used
+  initSecureMode(config);
 
   // Print a warning if config.domain is not set
   validateDomainIsSet(config);
