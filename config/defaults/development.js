@@ -142,6 +142,13 @@ module.exports = {
     seed: true,
     options: {
       logResults: true,
+      seedTasks: [{
+        title: 'title1',
+        description: 'do something about something else',
+      }, {
+        title: 'title2',
+        description: 'do something about something else',
+      }],
       seedUser: {
         username: 'seeduser',
         provider: 'local',

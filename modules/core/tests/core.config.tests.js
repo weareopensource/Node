@@ -15,11 +15,13 @@ const seed = require(path.resolve('./lib/services/seed'));
  */
 describe('Configuration Tests:', () => {
   let UserService = null;
+  let TaskService = null;
 
   beforeAll(() => mongooseService.connect()
     .then(() => {
       mongooseService.loadModels();
       UserService = require(path.resolve('./modules/users/services/user.service'));
+      TaskService = require(path.resolve('./modules/tasks/services/tasks.service'));
     })
     .catch((e) => {
       console.log(e);
@@ -29,6 +31,7 @@ describe('Configuration Tests:', () => {
   let admin1;
   let userFromSeedConfig;
   let adminFromSeedConfig;
+  let tasksFromSeedConfig;
 
   let originalLogConfig;
 
@@ -56,10 +59,11 @@ describe('Configuration Tests:', () => {
 
       userFromSeedConfig = config.seedDB.options.seedUser;
       adminFromSeedConfig = config.seedDB.options.seedAdmin;
+      tasksFromSeedConfig = config.seedDB.options.seedTasks;
       done();
     });
 
-    it('should have seedDB configuration set for "regular" user', (done) => {
+    it('should have seedDB configuration set for user', (done) => {
       expect(userFromSeedConfig).toBeInstanceOf(Object);
       expect(typeof userFromSeedConfig.username).toBe('string');
       expect(typeof userFromSeedConfig.email).toBe('string');
@@ -73,22 +77,29 @@ describe('Configuration Tests:', () => {
       done();
     });
 
+    it('should have seedDB configuration set for tasks', (done) => {
+      expect(tasksFromSeedConfig).toBeInstanceOf(Array);
+      expect(typeof tasksFromSeedConfig[0].title).toBe('string');
+      expect(typeof tasksFromSeedConfig[1].title).toBe('string');
+      done();
+    });
+
     it('should seed ONLY the admin user account when NODE_ENV is set to "production"', async () => {
       const nodeEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = 'production';
-      let seedusers;
+      let result;
 
       try {
-        seedusers = await seed.start({ logResults: false }, UserService);
-        expect(seedusers).toBeInstanceOf(Array);
-        expect(seedusers).toHaveLength(1);
+        result = await seed.start({ logResults: false }, UserService, TaskService);
+        expect(result).toBeInstanceOf(Array);
+        expect(result).toHaveLength(1);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
       }
 
       try {
-        await UserService.delete({ id: seedusers[0]._id });
+        await UserService.delete({ id: result[0]._id });
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -97,23 +108,50 @@ describe('Configuration Tests:', () => {
       process.env.NODE_ENV = nodeEnv;
     });
 
-    it('should seed admin, and regular user accounts when NODE_ENV is set to "test"', async () => {
+    it('should seed admin, user accounts when NODE_ENV is set to "test"', async () => {
       const nodeEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = 'test';
-      let seedusers;
+      let result;
 
       try {
-        seedusers = await seed.start({ logResults: false }, UserService);
-        expect(seedusers).toBeInstanceOf(Array);
-        expect(seedusers).toHaveLength(2);
+        result = await seed.start({ logResults: false }, UserService, TaskService);
+        expect(result).toBeInstanceOf(Array);
+        expect(result).toHaveLength(2);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
       }
 
       try {
-        await UserService.delete({ id: seedusers[0]._id });
-        await UserService.delete({ id: seedusers[1]._id });
+        await UserService.delete({ id: result[0]._id });
+        await UserService.delete({ id: result[1]._id });
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+
+      process.env.NODE_ENV = nodeEnv;
+    });
+
+    it('should seed admin, user accounts  and tasks when NODE_ENV is set to "development"', async () => {
+      const nodeEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'development';
+      let result;
+
+      try {
+        result = await seed.start({ logResults: false }, UserService, TaskService);
+        expect(result).toBeInstanceOf(Array);
+        expect(result).toHaveLength(4);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+
+      try {
+        await UserService.delete({ id: result[0]._id });
+        await UserService.delete({ id: result[1]._id });
+        await TaskService.delete({ id: result[2]._id });
+        await TaskService.delete({ id: result[3]._id });
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -128,7 +166,7 @@ describe('Configuration Tests:', () => {
       process.env.NODE_ENV = 'test';
       let _user;
       let _admin;
-      let seedusers;
+      let result;
 
       try {
         _user = await UserService.create(userFromSeedConfig);
@@ -150,17 +188,17 @@ describe('Configuration Tests:', () => {
       }
 
       try {
-        seedusers = await seed.start({ logResults: false }, UserService);
-        expect(seedusers).toBeInstanceOf(Array);
-        expect(seedusers).toHaveLength(2);
+        result = await seed.start({ logResults: false }, UserService, TaskService);
+        expect(result).toBeInstanceOf(Array);
+        expect(result).toHaveLength(2);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
       }
 
       try {
-        await UserService.delete({ id: seedusers[0]._id });
-        await UserService.delete({ id: seedusers[1]._id });
+        await UserService.delete({ id: result[0]._id });
+        await UserService.delete({ id: result[1]._id });
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -172,20 +210,20 @@ describe('Configuration Tests:', () => {
     it('should ONLY seed admin user account when NODE_ENV is set to "production" with custom admin', async () => {
       const nodeEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = 'production';
-      let seedusers;
+      let result;
 
       try {
-        seedusers = await seed.start({ logResults: false, seedAdmin: admin1 }, UserService);
-        expect(seedusers).toBeInstanceOf(Array);
-        expect(seedusers).toHaveLength(1);
-        expect(seedusers[0].username).toBe(admin1.username);
+        result = await seed.start({ logResults: false, seedAdmin: admin1 }, UserService, TaskService);
+        expect(result).toBeInstanceOf(Array);
+        expect(result).toHaveLength(1);
+        expect(result[0].username).toBe(admin1.username);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
       }
 
       try {
-        await UserService.delete({ id: seedusers[0]._id });
+        await UserService.delete({ id: result[0]._id });
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -197,22 +235,22 @@ describe('Configuration Tests:', () => {
     it('should seed admin, and "regular" user accounts when NODE_ENV is set to "test" with custom options', async () => {
       const nodeEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = 'test';
-      let seedusers;
+      let result;
 
       try {
-        seedusers = await seed.start({ logResults: false, seedAdmin: admin1, seedUser: user1 }, UserService);
-        expect(seedusers).toBeInstanceOf(Array);
-        expect(seedusers).toHaveLength(2);
-        expect(seedusers[0].username).toBe(user1.username);
-        expect(seedusers[1].username).toBe(admin1.username);
+        result = await seed.start({ logResults: false, seedAdmin: admin1, seedUser: user1 }, UserService, TaskService);
+        expect(result).toBeInstanceOf(Array);
+        expect(result).toHaveLength(2);
+        expect(result[0].username).toBe(user1.username);
+        expect(result[1].username).toBe(admin1.username);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
       }
 
       try {
-        await UserService.delete({ id: seedusers[0]._id });
-        await UserService.delete({ id: seedusers[1]._id });
+        await UserService.delete({ id: result[0]._id });
+        await UserService.delete({ id: result[1]._id });
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -225,7 +263,7 @@ describe('Configuration Tests:', () => {
       const nodeEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = 'production';
       let _admin;
-      let seedusers;
+      let result;
 
       try {
         _admin = await UserService.create(adminFromSeedConfig);
@@ -236,8 +274,8 @@ describe('Configuration Tests:', () => {
       }
 
       try {
-        seedusers = await seed.start({ logResults: false }, UserService);
-        expect(seedusers[0].details[0].message).toBe('Failed due to local account already exists: seedadmin');
+        result = await seed.start({ logResults: false }, UserService, TaskService);
+        expect(result[0].details[0].message).toBe('Failed due to local account already exists: seedadmin');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
