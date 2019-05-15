@@ -158,10 +158,11 @@ const seedMongoose = async () => {
     await mongooseService.connect();
     await mongooseService.loadModels();
     const UserService = require(path.resolve('./modules/users/services/user.service'));
+    const TaskService = require(path.resolve('./modules/tasks/services/tasks.service'));
     const seed = require(path.resolve('./lib/services/seed'));
     await seed.start({
       logResults: true,
-    }, UserService).catch((e) => {
+    }, UserService, TaskService).catch((e) => {
       console.log(e);
     });
     await mongooseService.disconnect();
