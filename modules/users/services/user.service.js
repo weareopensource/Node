@@ -26,25 +26,13 @@ const removeSensitive = (user) => {
   return _.assignIn(user, _.pick(user, config.whitelists.users.default));
 };
 
-
 /**
- * @desc Function to ask repository to get a user by id or email
- * @param {Object} user.id / user.email / user.username
- * @return {Object} user
+ * @desc Function to get all task in db
+ * @return {Promise} All tasks
  */
-exports.get = async (user) => {
-  const result = await UserRepository.get(user);
-  return Promise.resolve(removeSensitive(result));
-};
-
-/**
- * @desc Function to ask repository to search users by request
- * @param {Object} mongoose input request
- * @return {Array} users
- */
-exports.search = async (input) => {
-  const result = await UserRepository.search(input);
-  return Promise.resolve(removeSensitive(result));
+exports.list = async () => {
+  const result = await UserRepository.list();
+  return Promise.resolve(result);
 };
 
 /**
@@ -73,6 +61,26 @@ exports.create = async (user) => {
 };
 
 /**
+ * @desc Function to ask repository to get a user by id or email
+ * @param {Object} user.id / user.email / user.username
+ * @return {Object} user
+ */
+exports.get = async (user) => {
+  const result = await UserRepository.get(user);
+  return Promise.resolve(removeSensitive(result));
+};
+
+/**
+ * @desc Function to ask repository to search users by request
+ * @param {Object} mongoose input request
+ * @return {Array} users
+ */
+exports.search = async (input) => {
+  const result = await UserRepository.search(input);
+  return Promise.resolve(removeSensitive(result));
+};
+
+/**
  * @desc Functio to ask repository to update a user
  * @param {Object} user - original user
  * @param {Object} body - user edited
@@ -89,6 +97,16 @@ exports.update = async (user, body, option) => {
 
   const result = await UserRepository.update(user);
   return Promise.resolve(removeSensitive(result));
+};
+
+/**
+ * @desc Function to ask repository to a user from db by id or email
+ * @param {Object} user
+ * @return {Promise} result & id
+ */
+exports.delete = async (user) => {
+  const result = await UserRepository.delete(user);
+  return Promise.resolve(result);
 };
 
 /**
@@ -116,25 +134,6 @@ exports.uploadImage = async (req, res, config) => new Promise((resolve, reject) 
  * @return {Promise} result
  */
 exports.deleteImage = async path => fs.unlink(path);
-
-/**
- * @desc Function to ask repository to a user from db by id or email
- * @param {Object} user
- * @return {Promise} result & id
- */
-exports.delete = async (user) => {
-  const result = await UserRepository.delete(user);
-  return Promise.resolve(result);
-};
-
-/**
- * @desc Function to get all task in db
- * @return {Promise} All tasks
- */
-exports.list = async () => {
-  const result = await UserRepository.list();
-  return Promise.resolve(result);
-};
 
 /**
  * @desc Function to authenticate user)

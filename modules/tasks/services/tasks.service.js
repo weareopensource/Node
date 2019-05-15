@@ -4,12 +4,11 @@
 const TasksRepository = require('../repositories/tasks.repository');
 
 /**
- * @desc Function to ask repository to get a task
- * @param {String} id
- * @return {Promise} task
+ * @desc Function to get all task in db
+ * @return {Promise} All tasks
  */
-exports.get = async (id) => {
-  const result = await TasksRepository.get(id);
+exports.list = async () => {
+  const result = await TasksRepository.list();
   return Promise.resolve(result);
 };
 
@@ -22,6 +21,16 @@ exports.create = async (task, user) => {
   task.user = user.id;
 
   const result = await TasksRepository.create(task);
+  return Promise.resolve(result);
+};
+
+/**
+ * @desc Function to ask repository to get a task
+ * @param {String} id
+ * @return {Promise} task
+ */
+exports.get = async (id) => {
+  const result = await TasksRepository.get(id);
   return Promise.resolve(result);
 };
 
@@ -46,14 +55,5 @@ exports.update = async (task, body) => {
  */
 exports.delete = async (task) => {
   const result = await TasksRepository.delete(task);
-  return Promise.resolve(result);
-};
-
-/**
- * @desc Function to get all task in db
- * @return {Promise} All tasks
- */
-exports.list = async () => {
-  const result = await TasksRepository.list();
   return Promise.resolve(result);
 };

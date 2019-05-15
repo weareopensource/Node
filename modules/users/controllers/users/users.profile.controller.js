@@ -72,7 +72,7 @@ exports.me = (req, res) => {
       additionalProvidersData: req.user.additionalProvidersData,
     };
   }
-  return responses.success(res, 'user read')(safeUserObject);
+  return responses.success(res, 'user get')(safeUserObject);
 };
 
 /**

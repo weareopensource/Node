@@ -253,7 +253,7 @@ describe('User CRUD Unit Tests :', () => {
         const result = await agent.get(`/api/users/${userEdited._id}`)
           .expect(200);
         expect(result.body.type).toBe('success');
-        expect(result.body.message).toBe('user read');
+        expect(result.body.message).toBe('user get');
         expect(result.body.data).toBeInstanceOf(Object);
         expect(result.body.data._id).toBe(String(userEdited._id));
       } catch (err) {
@@ -613,7 +613,7 @@ describe('User CRUD Unit Tests :', () => {
         const result = await agent.get('/api/users/me')
           .expect(200);
         expect(result.body.type).toBe('success');
-        expect(result.body.message).toBe('user read');
+        expect(result.body.message).toBe('user get');
         expect(result.body.data).toBeInstanceOf(Object);
         expect(result.body.data.username).toBe(user.username);
         expect(result.body.data.email).toBe(user.email);
