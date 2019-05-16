@@ -9,13 +9,17 @@ const responses = require(path.resolve('./lib/helpers/responses'));
 const TasksService = require('../services/tasks.service');
 
 /**
- * @desc Endpoint to show the current task
+ * @desc Endpoint to ask the service to get the list of tasks
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.read = (req, res) => {
-  const task = req.task ? req.task.toJSON() : {};
-  responses.success(res, 'task read')(task);
+exports.list = async (req, res) => {
+  try {
+    const tasks = await TasksService.list();
+    responses.success(res, 'task list')(tasks);
+  } catch (err) {
+    responses.error(res, 422, errors.getMessage(err))(err);
+  }
 };
 
 /**
@@ -30,6 +34,16 @@ exports.create = async (req, res) => {
   } catch (err) {
     responses.error(res, 422, errors.getMessage(err))(err);
   }
+};
+
+/**
+ * @desc Endpoint to show the current task
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.get = (req, res) => {
+  const task = req.task ? req.task.toJSON() : {};
+  responses.success(res, 'task get')(task);
 };
 
 /**
@@ -61,19 +75,6 @@ exports.delete = async (req, res) => {
   }
 };
 
-/**
- * @desc Endpoint to ask the service to get the list of tasks
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
-exports.list = async (req, res) => {
-  try {
-    const tasks = await TasksService.list();
-    responses.success(res, 'task list')(tasks);
-  } catch (err) {
-    responses.error(res, 422, errors.getMessage(err))(err);
-  }
-};
 
 /**
  * @desc MiddleWare to ask the service the task for this id

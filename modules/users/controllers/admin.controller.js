@@ -8,13 +8,27 @@ const responses = require(path.resolve('./lib/helpers/responses'));
 const UserService = require('../services/user.service');
 
 /**
- * @desc Endpoint to read the current user in req
+ * @desc Endpoint to ask the service to get the list of users
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.read = (req, res) => {
+exports.list = async (req, res) => {
+  try {
+    const users = await UserService.list();
+    responses.success(res, 'user list')(users);
+  } catch (err) {
+    responses.error(res, 422, errors.getMessage(err))(err);
+  }
+};
+
+/**
+ * @desc Endpoint to get the current user in req
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.get = (req, res) => {
   const user = req.model ? req.model.toJSON() : {};
-  responses.success(res, 'user read')(user);
+  responses.success(res, 'user get')(user);
 };
 
 /**
@@ -42,20 +56,6 @@ exports.delete = async (req, res) => {
     const result = await UserService.delete(req.model);
     result.id = req.model.id;
     responses.success(res, 'user deleted')(result);
-  } catch (err) {
-    responses.error(res, 422, errors.getMessage(err))(err);
-  }
-};
-
-/**
- * @desc Endpoint to ask the service to get the list of users
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
-exports.list = async (req, res) => {
-  try {
-    const users = await UserService.list();
-    responses.success(res, 'user list')(users);
   } catch (err) {
     responses.error(res, 422, errors.getMessage(err))(err);
   }

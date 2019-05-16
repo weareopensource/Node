@@ -5,6 +5,18 @@ const mongoose = require('mongoose');
 
 const User = mongoose.model('User');
 
+/**
+ * @desc Function to get all user in db
+ * @return {Array} All users
+ */
+exports.list = () => User.find({}, '-password -providerData').sort('-created').exec();
+
+/**
+ * @desc Function to create a user in db
+ * @param {Object} user
+ * @return {Object} user
+ */
+exports.create = user => new User(user).save();
 
 /**
  * @desc Function to get a user from db by id or email
@@ -26,13 +38,6 @@ exports.get = (user) => {
 exports.search = input => User.find(input).exec();
 
 /**
- * @desc Function to create a user in db
- * @param {Object} user
- * @return {Object} user
- */
-exports.create = user => new User(user).save();
-
-/**
  * @desc Function to update a user in db
  * @param {Object} task
  * @return {Object} task
@@ -50,9 +55,3 @@ exports.delete = async (user) => {
   if (user.username) return User.deleteOne({ username: user.username }).exec();
   return null;
 };
-
-/**
- * @desc Function to get all user in db
- * @return {Array} All users
- */
-exports.list = () => User.find({}, '-password -providerData').sort('-created').exec();

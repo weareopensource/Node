@@ -139,7 +139,7 @@ describe('User CRUD Unit Tests :', () => {
         const result = await agent.get(`/api/tasks/${task2.id}`)
           .expect(200);
         expect(result.body.type).toBe('success');
-        expect(result.body.message).toBe('task read');
+        expect(result.body.message).toBe('task get');
         expect(result.body.data.id).toBe(task2.id);
         expect(result.body.data.title).toBe(_tasks[1].title);
         expect(result.body.data.description).toBe(_tasks[1].description);

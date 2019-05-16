@@ -11,13 +11,13 @@ module.exports = (app) => {
 
   // Users collection routes
   app.route('/api/users')
-    .get(passport.authenticate('jwt'), adminPolicy.isAllowed, admin.list);
+    .get(passport.authenticate('jwt'), adminPolicy.isAllowed, admin.list); // list
 
   // Single user routes
   app.route('/api/users/:userId')
-    .get(admin.read)
-    .put(passport.authenticate('jwt'), adminPolicy.isAllowed, admin.update)
-    .delete(passport.authenticate('jwt'), adminPolicy.isAllowed, admin.delete);
+    .get(admin.get) // get
+    .put(passport.authenticate('jwt'), adminPolicy.isAllowed, admin.update) // update
+    .delete(passport.authenticate('jwt'), adminPolicy.isAllowed, admin.delete); // delete
 
   // Finish by binding the user middleware
   app.param('userId', admin.userByID);
