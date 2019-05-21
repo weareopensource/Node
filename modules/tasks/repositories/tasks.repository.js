@@ -9,7 +9,7 @@ const Task = mongoose.model('Task');
  * @desc Function to get all task in db
  * @return {Array} All tasks
  */
-exports.list = () => Task.find().sort('-created').exec();
+exports.list = () => Task.find().sort('-createdAt').exec();
 
 /**
  * @desc Function to create a task in db

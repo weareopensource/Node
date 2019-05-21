@@ -24,9 +24,6 @@ const UserMongoose = new Schema({
   },
   profileImageURL: String,
   roles: [],
-  /* Extra */
-  updated: Date,
-  created: Date,
   /* Provider */
   provider: String,
   providerData: {},
@@ -35,6 +32,8 @@ const UserMongoose = new Schema({
   password: String,
   resetPasswordToken: String,
   resetPasswordExpires: Date,
+}, {
+  timestamps: true,
 });
 
 // add virtual id field (FIXME mongoose.virtual ko es6)

@@ -81,7 +81,7 @@ module.exports = {
   },
   whitelists: {
     users: {
-      default: ['_id', 'id', 'firstName', 'lastName', 'displayName', 'username', 'email', 'roles', 'profileImageURL', 'updated', 'created', 'resetPasswordToken', 'resetPasswordExpires'],
+      default: ['_id', 'id', 'firstName', 'lastName', 'displayName', 'username', 'email', 'roles', 'profileImageURL', 'resetPasswordToken', 'resetPasswordExpires'],
       update: ['firstName', 'lastName', 'username', 'email', 'profileImageURL'],
       updateAdmin: ['firstName', 'lastName', 'username', 'email', 'profileImageURL', 'roles'],
       recover: ['password', 'resetPasswordToken', 'resetPasswordExpires'],
