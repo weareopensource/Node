@@ -9,7 +9,7 @@ const User = mongoose.model('User');
  * @desc Function to get all user in db
  * @return {Array} All users
  */
-exports.list = () => User.find({}, '-password -providerData').sort('-created').exec();
+exports.list = () => User.find({}, '-password -providerData').sort('-createdAt').exec();
 
 /**
  * @desc Function to create a user in db
