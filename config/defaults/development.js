@@ -104,6 +104,7 @@ module.exports = {
   },
   jwt: {
     secret: 'test',
+    expiresIn: 7 * 24 * 60 * 60, // sec
   },
   mailer: {
     from: 'WAOS_NODE_mailer_from',
