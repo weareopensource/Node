@@ -26,10 +26,10 @@ const noReturnUrls = [
 exports.signup = async (req, res) => {
   try {
     const user = await UserService.create(req.body);
-    const token = jwt.sign({ userId: user.id }, config.jwt.secret);
+    const token = jwt.sign({ userId: user.id }, config.jwt.secret, { expiresIn: config.jwt.expiresIn });
     return res.status(200)
       .cookie('TOKEN', token, { httpOnly: true })
-      .json({ user, tokenExpiresIn: Date.now() + (3600 * 24 * 1000) });
+      .json({ user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000) });
   } catch (err) {
     responses.error(res, 422, errors.getMessage(err))(err);
   }
@@ -43,35 +43,36 @@ exports.signup = async (req, res) => {
  */
 exports.signin = async (req, res) => {
   const user = req.user;
-  const token = jwt.sign({ userId: user.id }, configuration.jwt.secret);
+  const token = jwt.sign({ userId: user.id }, configuration.jwt.secret, { expiresIn: config.jwt.expiresIn });
   return res.status(200)
     .cookie('TOKEN', token, { httpOnly: true })
-    .json({ user, tokenExpiresIn: Date.now() + (3600 * 24 * 1000) });
+    .json({ user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000) });
 };
 
 /**
- * @desc Endpoint to generate a token
+ * @desc Endpoint to get a new token if old is ok
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
 exports.token = async (req, res) => {
-  try {
-    // Authenticate the user based on credentials
-    // @TODO be consistent with whether the login field for user identification
-    // is a username or an email
-    const user = await UserService.authenticate(req.body.email, req.body.password);
-    // Create the token and send
-    // @TODO properly create the token with all of its metadata
-    const payload = {
-      id: user.id,
+  let user = null;
+  if (req.user) {
+    user = {
+      id: req.user.id,
+      provider: escape(req.user.provider),
+      username: escape(req.user.username),
+      roles: req.user.roles,
+      profileImageURL: req.user.profileImageURL,
+      email: escape(req.user.email),
+      lastName: escape(req.user.lastName),
+      firstName: escape(req.user.firstName),
+      additionalProvidersData: req.user.additionalProvidersData,
     };
-    // @TODO properly sign the token, not with a shared secret (use pubkey instead),
-    // and specify proper expiration, issuer, algorithm, etc.
-    const token = jwt.sign(payload, config.jwt.secret);
-    return res.status(200).cookies('TOKEN', token);
-  } catch (err) {
-    responses.error(res, 422, errors.getMessage(err))(err);
   }
+  const token = jwt.sign({ userId: user.id }, configuration.jwt.secret, { expiresIn: config.jwt.expiresIn });
+  return res.status(200)
+    .cookie('TOKEN', token, { httpOnly: true })
+    .json({ user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000) });
 };
 
 /**

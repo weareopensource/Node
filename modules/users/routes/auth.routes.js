@@ -19,14 +19,8 @@ module.exports = (app) => {
   app.route('/api/auth/signup').post(model.isValid(usersSchema.User), users.signup);
   app.route('/api/auth/signin').post(passport.authenticate('local'), users.signin);
 
-  // Jwt token
-  app.route('/api/auth/token').post(model.isValid(usersSchema.User), users.token);
-  // Jwt protected route example:
-  // app.route('/api/auth/secretPlace').get(passport.authenticate('jwt'), (req, res) => {
-  //   console.log(req.user)
-  //   console.log(req.isAuthenticated())
-  //   res.status(200).send()
-  // })
+  // Jwt reset token
+  app.route('/api/auth/token').get(passport.authenticate('jwt'), users.token);
 
   // Setting the oauth routes
   app.route('/api/auth/:strategy').get(users.oauthCall);

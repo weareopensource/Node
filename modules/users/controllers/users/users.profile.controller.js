@@ -58,9 +58,9 @@ exports.changeProfilePicture = async (req, res) => {
 exports.me = (req, res) => {
   // Sanitize the user - short term solution. Copied from core.controller.js
   // TODO create proper passport mock: See https://gist.github.com/mweibel/5219403
-  let safeUserObject = null;
+  let user = null;
   if (req.user) {
-    safeUserObject = {
+    user = {
       id: req.user.id,
       provider: escape(req.user.provider),
       username: escape(req.user.username),
@@ -72,7 +72,7 @@ exports.me = (req, res) => {
       additionalProvidersData: req.user.additionalProvidersData,
     };
   }
-  return responses.success(res, 'user get')(safeUserObject);
+  return responses.success(res, 'user get')(user);
 };
 
 /**
@@ -89,9 +89,9 @@ exports.addOAuthProviderUserProfile = async (req, res) => {
   }
   if (!user) return responses.error(res, 404, 'No Oauth found')();
 
-  const token = jwt.sign({ userId: user.id }, config.jwt.secret);
+  const token = jwt.sign({ userId: user.id }, config.jwt.secret, { expiresIn: config.jwt.expiresIn });
 
   res.status(200)
     .cookie('TOKEN', token, { httpOnly: true })
-    .json({ user, tokenExpiresIn: Date.now() + (3600 * 24 * 1000) });
+    .json({ user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000) });
 };

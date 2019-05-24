@@ -15,6 +15,8 @@ const TaskMongoose = new Schema({
     type: Schema.ObjectId,
     ref: 'User',
   },
+}, {
+  timestamps: true,
 });
 
 /**

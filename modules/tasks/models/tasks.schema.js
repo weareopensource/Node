@@ -8,7 +8,7 @@ const Joi = require('joi');
  */
 const TasksSchema = Joi.object().keys({
   title: Joi.string().trim().default('').required(),
-  description: Joi.string().default('').required(),
+  description: Joi.string().allow('').default(''),
   user: Joi.string().trim().default(''),
 });
 
