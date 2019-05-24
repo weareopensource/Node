@@ -11,6 +11,9 @@ Welcome to the Node wiki! Here you will find various information about this repo
 #### Node Wiki 
 
 * [Api](https://github.com/weareopensource/Node/blob/master/WIKI.md#API)
+	* [Success](https://github.com/weareopensource/Node/blob/master/WIKI.md#Success)
+	* [Errors](https://github.com/weareopensource/Node/blob/master/WIKI.md#Errors)
+	* [Authentification](https://github.com/weareopensource/Node/blob/master/WIKI.md#Authentification)
 * [SSL](https://github.com/weareopensource/Node/blob/master/WIKI.md#SSL)
 
 
@@ -32,13 +35,13 @@ Welcome to the Node wiki! Here you will find various information about this repo
 
 ## API
 
-### success
+### Success
 
 `responses.success(res, 'task created')({});`
 
 body : 
 
-```
+```json
 { 
 	type: 'success', 
 	message: 'task created' 
@@ -46,7 +49,7 @@ body :
 }
 ```
 
-### errors
+### Errors
 
 #### default
 
@@ -54,7 +57,7 @@ body :
 
 body : 
 
-```
+```json
 { 
 	type: 'error', 
 	message: 'task creation failed' 
@@ -68,7 +71,7 @@ body :
 
 body : 
 
-```
+```json
 { 
 	type: 'error',
 	message: 'schema validation error',
@@ -91,7 +94,7 @@ body :
 
 body : 
 
-```
+```json
 { 
 	type: 'error',
    message: 'invalid user or password.',
@@ -102,16 +105,92 @@ body :
 }
 ```
 
-#### Authentication
+#### authentication
 
 status : 401 
 error : 
 
-```
+```json
 {
 	text: 'Unauthorized'
 }
 ```
+
+### Authentification
+
+As explained in Readme, we are curently using JWT Stateless, the server is unaware of who sends the request, it don’t maintain the state.
+
+#### How to manage authentification
+
+* **First**, you need to signin (or signup) with a post request :
+ 
+Post : `http://localhost:3000/api/auth/signin`
+with json body :
+
+```json
+{
+	"email": "user@localhost.com",
+	"password": "F5FSpvRGBvtwQWCQJY2Y"
+}
+```
+
+The answer will be something like this :
+
+
+```json
+{
+    "user": {
+        "roles": [
+            "user"
+        ],
+        "_id": "5cdfd9a18da698bacb4ca448",
+        "username": "seeduser",
+        "provider": "local",
+        "email": "user@localhost.com",
+        "firstName": "User",
+        "lastName": "Local",
+        "displayName": "User Local",
+        "password": "$2b$10$gmrfSq32PolvXKgAxt8BK.ic/mliTT3FU5/jE85HlJVjbNYlwjoga",
+        "__v": 0,
+        "id": "5cdfd9a18da698bacb4ca448"
+    },
+    "tokenExpiresIn": 1558263105423
+}
+```
+
+with and header set Cookie like this : 
+
+```json
+Set-Cookie →TOKEN=aaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.ccccccc; Path=/; HttpOnly
+```
+
+* **Second**, you need to set this cookie for api request, it's ok !
+
+* **third**, You can renew the token before it expires as you wish, thanks to the signin you know the expiration date. You can also check the status of the token regularly, via `/users/me` for example. Or simply redirect the user to the sign once the token has expired.
+
+#### Jwt configuration
+
+Two options are available in `config/default/development.js` for the default and `production.js` if you want to override the default values ​​in produciton.
+
+```json
+  // jwt is for token authentification
+  jwt: {
+    secret: 'test', // secret for hash
+    expiresIn: 7 * 24 * 60 * 60, // token expire in x sec
+  },
+```
+
+#### Password configuration
+
+we use the package [zxcvbn](https://github.com/dropbox/zxcvbn) to check package security
+
+```json  
+  // zxcvbn is used to manage password security
+  zxcvbn: {
+    minimumScore: 3,
+  },
+```
+
 
 ## SSL
 

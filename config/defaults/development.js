@@ -102,9 +102,10 @@ module.exports = {
   zxcvbn: {
     minimumScore: 3,
   },
+  // jwt is for token authentification
   jwt: {
-    secret: 'test',
-    expiresIn: 7 * 24 * 60 * 60, // sec
+    secret: 'test', // secret for hash
+    expiresIn: 7 * 24 * 60 * 60, // token expire in x sec
   },
   mailer: {
     from: 'WAOS_NODE_mailer_from',
