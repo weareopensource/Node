@@ -15,7 +15,7 @@ module.exports = () => {
       if (user) return done(null, user);
 
       return done(null, false, {
-        message: 'Invalid username or password',
+        message: 'Invalid email or password',
       });
     } catch (err) {
       return done();

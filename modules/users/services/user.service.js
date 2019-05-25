@@ -62,7 +62,7 @@ exports.create = async (user) => {
 
 /**
  * @desc Function to ask repository to get a user by id or email
- * @param {Object} user.id / user.email / user.username
+ * @param {Object} user.id / user.email
  * @return {Object} user
  */
 exports.get = async (user) => {

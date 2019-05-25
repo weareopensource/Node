@@ -3,7 +3,6 @@ const path = require('path');
 const { OAuth2Client } = require('google-auth-library');
 
 const config = require(path.resolve('./config'));
-const AppError = require(path.resolve('./lib/helpers/AppError'));
 const IdTokenVerifier = require('idtoken-verifier');
 const rp = require('request-promise');
 const UserRepository = require('../repositories/user.repository');
@@ -16,24 +15,6 @@ const microsoftValidator = rp.get(config.microsoft.discovery)
     jwksURI: jwksUri,
     audience: config.microsoft.clientId,
   }));
-
-/**
- * @desc Function to ask repository to generate unique username for one username
- * @param {String} possible username
- * @return {Promise} resolved username
- */
-exports.generateUniqueUsername = async (username, suffix) => {
-  username = (suffix || '');
-
-  const result = await UserRepository.get({ username });
-  if (!result) return Promise.resolve(username);
-
-  try {
-    return await this.generateUniqueUsername(username, (suffix || 0) + 1);
-  } catch (err) {
-    throw new AppError(err, { code: 'SERVICE_ERROR' });
-  }
-};
 
 /**
  * @desc Function to verify Google Token
@@ -52,7 +33,6 @@ const verifyGoogleToken = async (idToken) => {
     lastName: payload.family_name,
     profileImageURL: payload.picture,
   };
-  user.username = `${user.firstName} ${user.lastName}`;
   user.provider = 'google';
   // If request specified a G Suite domain:
   // const domain = payload['hd'];
@@ -76,7 +56,7 @@ const verifyMicrosoftToken = async (idToken) => {
       if (err) return reject(err);
       return resolve({
         sub,
-        username: name,
+        firstName: name,
         email: preferredUsername,
         provider: 'microsoft',
       });

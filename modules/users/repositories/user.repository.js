@@ -26,7 +26,6 @@ exports.create = user => new User(user).save();
 exports.get = (user) => {
   if (user.id && mongoose.Types.ObjectId.isValid(user.id)) return User.findOne({ _id: user.id }).exec();
   if (user.email) return User.findOne({ email: user.email }).exec();
-  if (user.username) return User.findOne({ username: user.username }).exec();
   return null;
 };
 
@@ -52,6 +51,5 @@ exports.update = user => new User(user).save();
 exports.delete = async (user) => {
   if (user.id && mongoose.Types.ObjectId.isValid(user.id)) return User.deleteOne({ _id: user.id }).exec();
   if (user.email) return User.deleteOne({ email: user.email }).exec();
-  if (user.username) return User.deleteOne({ username: user.username }).exec();
   return null;
 };

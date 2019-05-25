@@ -38,7 +38,6 @@ describe('Configuration Tests:', () => {
   describe('Testing default seedDB', () => {
     beforeAll((done) => {
       user1 = {
-        username: 'user_config_test',
         provider: 'local',
         email: 'user_config_test_@localhost.com',
         firstName: 'User',
@@ -48,7 +47,6 @@ describe('Configuration Tests:', () => {
       };
 
       admin1 = {
-        username: 'admin_config_test',
         provider: 'local',
         email: 'admin_config_test_@localhost.com',
         firstName: 'Admin',
@@ -65,14 +63,12 @@ describe('Configuration Tests:', () => {
 
     it('should have seedDB configuration set for user', (done) => {
       expect(userFromSeedConfig).toBeInstanceOf(Object);
-      expect(typeof userFromSeedConfig.username).toBe('string');
       expect(typeof userFromSeedConfig.email).toBe('string');
       done();
     });
 
     it('should have seedDB configuration set for admin user', (done) => {
       expect(userFromSeedConfig).toBeInstanceOf(Object);
-      expect(typeof adminFromSeedConfig.username).toBe('string');
       expect(typeof adminFromSeedConfig.email).toBe('string');
       done();
     });
@@ -179,7 +175,7 @@ describe('Configuration Tests:', () => {
       }
 
       try {
-        const result = await UserService.search({ username: { $in: [adminFromSeedConfig.username, userFromSeedConfig.username] } });
+        const result = await UserService.search({ email: { $in: [adminFromSeedConfig.email, userFromSeedConfig.email] } });
         expect(result).toBeInstanceOf(Array);
         expect(result).toHaveLength(2);
       } catch (err) {
@@ -216,7 +212,7 @@ describe('Configuration Tests:', () => {
         result = await seed.start({ logResults: false, seedAdmin: admin1 }, UserService, TaskService);
         expect(result).toBeInstanceOf(Array);
         expect(result).toHaveLength(1);
-        expect(result[0].username).toBe(admin1.username);
+        expect(result[0].email).toBe(admin1.email);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -241,8 +237,8 @@ describe('Configuration Tests:', () => {
         result = await seed.start({ logResults: false, seedAdmin: admin1, seedUser: user1 }, UserService, TaskService);
         expect(result).toBeInstanceOf(Array);
         expect(result).toHaveLength(2);
-        expect(result[0].username).toBe(user1.username);
-        expect(result[1].username).toBe(admin1.username);
+        expect(result[0].email).toBe(user1.email);
+        expect(result[1].email).toBe(admin1.email);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -275,7 +271,7 @@ describe('Configuration Tests:', () => {
 
       try {
         result = await seed.start({ logResults: false }, UserService, TaskService);
-        expect(result[0].details[0].message).toBe('Failed due to local account already exists: seedadmin');
+        expect(result[0].details[0].message).toBe('Failed due to local account already exists: seedadmin@localhost.com');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();

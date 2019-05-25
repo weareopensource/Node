@@ -10,7 +10,6 @@ const configuration = require(path.resolve('./config'));
 const responses = require(path.resolve('./lib/helpers/responses'));
 const errors = require(path.resolve('./lib/helpers/errors'));
 const UserService = require('../../services/user.service');
-const OAuthService = require('../../services/oAuth.service');
 
 // URLs for which user can't be redirected on signin
 const noReturnUrls = [
@@ -60,7 +59,6 @@ exports.token = async (req, res) => {
     user = {
       id: req.user.id,
       provider: escape(req.user.provider),
-      username: escape(req.user.username),
       roles: req.user.roles,
       profileImageURL: req.user.profileImageURL,
       email: escape(req.user.email),
@@ -145,12 +143,9 @@ exports.saveOAuthUserProfile = async (req, providerUserProfile, done) => {
     }
     // if no, generate the user
     try {
-      const possibleUsername = providerUserProfile.username || ((providerUserProfile.email) ? providerUserProfile.email.split('@')[0] : '');
-      const availableUsername = await OAuthService.generateUniqueUsername(possibleUsername);
       user = {
         firstName: providerUserProfile.firstName,
         lastName: providerUserProfile.lastName,
-        username: availableUsername,
         displayName: providerUserProfile.displayName,
         profileImageURL: providerUserProfile.profileImageURL,
         provider: providerUserProfile.provider,

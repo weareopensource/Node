@@ -75,15 +75,12 @@ module.exports = {
   },
   // Data filter whitelist & Blacklist
   blacklists: {
-    users: {
-      usernames: ['waos', 'weareopensource', 'administrator', 'password', 'admin', 'user', 'unknown', 'anonymous', 'null', 'undefined', 'api'],
-    },
   },
   whitelists: {
     users: {
-      default: ['_id', 'id', 'firstName', 'lastName', 'displayName', 'username', 'email', 'roles', 'profileImageURL', 'resetPasswordToken', 'resetPasswordExpires'],
-      update: ['firstName', 'lastName', 'username', 'email', 'profileImageURL'],
-      updateAdmin: ['firstName', 'lastName', 'username', 'email', 'profileImageURL', 'roles'],
+      default: ['_id', 'id', 'firstName', 'lastName', 'displayName', 'email', 'roles', 'profileImageURL', 'resetPasswordToken', 'resetPasswordExpires'],
+      update: ['firstName', 'lastName', 'email', 'profileImageURL'],
+      updateAdmin: ['firstName', 'lastName', 'email', 'profileImageURL', 'roles'],
       recover: ['password', 'resetPasswordToken', 'resetPasswordExpires'],
       roles: ['user', 'admin'],
     },
@@ -152,18 +149,16 @@ module.exports = {
         description: 'do something about something else',
       }],
       seedUser: {
-        username: 'seeduser',
         provider: 'local',
-        email: 'user@localhost.com',
+        email: 'seeduser@localhost.com',
         firstName: 'User',
         lastName: 'Local',
         displayName: 'User Local',
         roles: ['user'],
       },
       seedAdmin: {
-        username: 'seedadmin',
         provider: 'local',
-        email: 'admin@localhost.com',
+        email: 'seedadmin@localhost.com',
         firstName: 'Admin',
         lastName: 'Local',
         displayName: 'Admin Local',
