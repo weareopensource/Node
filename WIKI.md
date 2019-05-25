@@ -144,7 +144,6 @@ The answer will be something like this :
             "user"
         ],
         "_id": "5cdfd9a18da698bacb4ca448",
-        "username": "seeduser",
         "provider": "local",
         "email": "user@localhost.com",
         "firstName": "User",
