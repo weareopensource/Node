@@ -63,7 +63,6 @@ exports.me = (req, res) => {
     user = {
       id: req.user.id,
       provider: escape(req.user.provider),
-      username: escape(req.user.username),
       roles: req.user.roles,
       profileImageURL: req.user.profileImageURL,
       email: escape(req.user.email),

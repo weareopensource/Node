@@ -59,7 +59,6 @@ describe('User CRUD Unit Tests :', () => {
         firstName: 'Full',
         lastName: 'Name',
         displayName: 'Full Name',
-        username: 'task',
         email: credentials.email,
         password: credentials.password,
         provider: 'local',

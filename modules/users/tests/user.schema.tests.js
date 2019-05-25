@@ -25,7 +25,6 @@ describe('User Schema Unit Tests:', () => {
       lastName: 'Name',
       displayName: 'Full Name',
       email: 'test@test.com',
-      username: 'username',
       password: 'M3@n.jsI$Aw3$0m3',
       provider: 'local',
     };
@@ -36,7 +35,6 @@ describe('User Schema Unit Tests:', () => {
     //   lastName: 'User',
     //   displayName: 'Full Different Name',
     //   email: 'test3@test.com',
-    //   username: 'differentusername',
     //   password: 'Different_Password1!',
     //   provider: 'local',
     // };
@@ -400,80 +398,6 @@ describe('User Schema Unit Tests:', () => {
 
     test('should allow valid email address - "abc-def@abc.com"', (done) => {
       user.email = 'abc-def@abc.com';
-
-      const result = Joi.validate(user, schema.User, options);
-      expect(typeof result).toBe('object');
-      expect(result.error).toBeFalsy();
-      done();
-    });
-  });
-
-  describe('Username Validation', () => {
-    test('should show error to valid username beginning with .', (done) => {
-      user.username = '.login';
-
-      const result = Joi.validate(user, schema.User, options);
-      expect(typeof result).toBe('object');
-      expect(result.error).toBeDefined();
-      done();
-    });
-
-    test('should be able to show an error when try to valid with not allowed username', (done) => {
-      user.username = config.blacklists.users.usernames[Math.floor(Math.random() * config.blacklists.users.usernames.length)];
-
-      const result = Joi.validate(user, schema.User, options);
-      expect(typeof result).toBe('object');
-      expect(result.error).toBeDefined();
-      done();
-    });
-
-    test('should show error to valid username end with .', (done) => {
-      user.username = 'login.';
-
-      const result = Joi.validate(user, schema.User, options);
-      expect(typeof result).toBe('object');
-      expect(result.error).toBeDefined();
-      done();
-    });
-
-    test('should show error to valid username with ..', (done) => {
-      user.username = 'log..in';
-
-      const result = Joi.validate(user, schema.User, options);
-      expect(typeof result).toBe('object');
-      expect(result.error).toBeDefined();
-      done();
-    });
-
-    test('should show error to valid username shorter than 3 character', (done) => {
-      user.username = 'lo';
-
-      const result = Joi.validate(user, schema.User, options);
-      expect(typeof result).toBe('object');
-      expect(result.error).toBeDefined();
-      done();
-    });
-
-    test('should show error to valid a username without at least one alphanumeric character', (done) => {
-      user.username = '-_-';
-
-      const result = Joi.validate(user, schema.User, options);
-      expect(typeof result).toBe('object');
-      expect(result.error).toBeDefined();
-      done();
-    });
-
-    test('should show error to valid a username longer than 34 characters', (done) => {
-      user.username = 'l'.repeat(35);
-
-      const result = Joi.validate(user, schema.User, options);
-      expect(typeof result).toBe('object');
-      expect(result.error).toBeDefined();
-      done();
-    });
-
-    test('should to valid username with dot', (done) => {
-      user.username = 'log.in';
 
       const result = Joi.validate(user, schema.User, options);
       expect(typeof result).toBe('object');

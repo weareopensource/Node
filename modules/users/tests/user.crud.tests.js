@@ -63,13 +63,11 @@ describe('User CRUD Unit Tests :', () => {
         firstName: 'Full',
         lastName: 'Name',
         displayName: 'Full Name',
-        username: 'test',
         email: credentials[0].email,
         password: credentials[0].password,
         provider: 'local',
       };
       _userEdited = _.clone(_user);
-      _userEdited.username = 'test2';
       _userEdited.email = credentials[1].email;
       _userEdited.password = credentials[1].password;
 
@@ -87,7 +85,6 @@ describe('User CRUD Unit Tests :', () => {
 
     test('should not be able to register a new user with weak password', async () => {
       // Init user edited
-      _userEdited.username = 'register_new_user';
       _userEdited.email = 'register_new_user_@test.com';
       _userEdited.password = 'azerty';
 
@@ -106,7 +103,6 @@ describe('User CRUD Unit Tests :', () => {
 
     test('if should not be able to register, should not return sensible data', async () => {
       // Init user edited
-      _userEdited.username = 'register_new_user';
       _userEdited.email = 'register_new_user_@test.com';
       _userEdited.password = 'azerty';
 
@@ -126,7 +122,6 @@ describe('User CRUD Unit Tests :', () => {
 
     test('should be able to register a new user ', async () => {
       // Init user edited
-      _userEdited.username = 'register_new_user';
       _userEdited.email = 'register_new_user_@test.com';
 
       try {
@@ -135,7 +130,6 @@ describe('User CRUD Unit Tests :', () => {
           .expect(200);
         userEdited = result.body.user;
 
-        expect(result.body.user.username).toBe(_userEdited.username);
         expect(result.body.user._id).toBe(result.body.user.id);
         expect(result.body.user.email).toBe(_userEdited.email);
         expect(result.body.user.roles).toBeInstanceOf(Array);
@@ -158,7 +152,6 @@ describe('User CRUD Unit Tests :', () => {
 
     test('should not be able to register a user with same email', async () => {
       // Init user edited
-      _userEdited.username = 'register_new_user';
       _userEdited.email = 'register_new_user_@test.com';
 
       try {
@@ -167,7 +160,6 @@ describe('User CRUD Unit Tests :', () => {
           .expect(200);
         userEdited = result.body.user;
 
-        expect(result.body.user.username).toBe(_userEdited.username);
         expect(result.body.user.email).toBe(_userEdited.email);
         expect(result.body.user.roles).toBeInstanceOf(Array);
         expect(result.body.user.roles).toHaveLength(1);
@@ -615,7 +607,6 @@ describe('User CRUD Unit Tests :', () => {
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('user get');
         expect(result.body.data).toBeInstanceOf(Object);
-        expect(result.body.data.username).toBe(user.username);
         expect(result.body.data.email).toBe(user.email);
         expect(result.body.data.password).toBeFalsy();
       } catch (err) {
@@ -672,41 +663,6 @@ describe('User CRUD Unit Tests :', () => {
           expect.arrayContaining(['user']),
         );
         expect(result.body.data.id).toBe(String(user.id));
-      } catch (err) {
-        console.log(err);
-        expect(err).toBeFalsy();
-      }
-    });
-
-    test('should not be able to update own user details with existing username', async () => {
-      try {
-        const result = await agent.post('/api/auth/signup')
-          .send(_userEdited)
-          .expect(200);
-        userEdited = result.body.user;
-      } catch (err) {
-        console.log(err);
-        expect(err).toBeFalsy();
-      }
-
-      try {
-        const userUpdate = {
-          firstName: _userEdited.firstName,
-          lastName: _userEdited.lastName,
-          username: _user.username,
-        };
-
-        const result = await agent.put('/api/users')
-          .send(userUpdate)
-          .expect(422);
-        expect(result.body.message).toBe('Username already exists.');
-      } catch (err) {
-        console.log(err);
-        expect(err).toBeFalsy();
-      }
-
-      try {
-        await UserService.delete(userEdited);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -771,7 +727,7 @@ describe('User CRUD Unit Tests :', () => {
         const result = await UserService.get(user);
 
         expect(result.password).toBe(user.password);
-        expect(result.created.getTime()).toBe(new Date(user.created).getTime());
+        expect(result.createdAt.getTime()).toBe(new Date(user.createdAt).getTime());
         expect(result.resetPasswordToken).toBeFalsy();
       } catch (err) {
         console.log(err);

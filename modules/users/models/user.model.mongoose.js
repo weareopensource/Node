@@ -18,10 +18,6 @@ const UserMongoose = new Schema({
     type: String,
     unique: 'Email already exists',
   },
-  username: {
-    type: String,
-    unique: 'Username already exists',
-  },
   profileImageURL: String,
   roles: [],
   /* Provider */
