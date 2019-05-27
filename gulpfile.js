@@ -73,7 +73,8 @@ const jest = (done) => {
   jestCli.runCLI(
     {},
     '.',
-  ).then(() => {
+  ).then((result) => {
+    if (result.results && result.results.numFailedTests > 0) process.exit();
     done();
   }).catch((e) => {
     console.log(e);
@@ -106,7 +107,8 @@ const jestCoverage = (done) => {
       ],
     },
     '.',
-  ).then(() => {
+  ).then((result) => {
+    if (result.results && result.results.numFailedTests > 0) process.exit();
     done();
   }).catch((e) => {
     console.log(e);
