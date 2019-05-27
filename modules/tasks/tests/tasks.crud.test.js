@@ -124,8 +124,8 @@ describe('User CRUD Unit Tests :', () => {
           })
           .expect(422);
         expect(result.body.type).toBe('error');
-        expect(result.body.message).toBe('schema validation error');
-        expect(result.body.error.details[0].message).toBe('title must be a string');
+        expect(result.body.message).toEqual('Schema validation error');
+        expect(result.body.description).toBe('Title must be a string. ');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -154,7 +154,8 @@ describe('User CRUD Unit Tests :', () => {
         const result = await agent.get('/api/tasks/test')
           .expect(404);
         expect(result.body.type).toBe('error');
-        expect(result.body.message).toBe('No Task with that identifier has been found');
+        expect(result.body.message).toBe('Not Found');
+        expect(result.body.description).toBe('No Task with that identifier has been found');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -167,7 +168,8 @@ describe('User CRUD Unit Tests :', () => {
         const result = await agent.get('/api/tasks/waos56397898004243871228')
           .expect(404);
         expect(result.body.type).toBe('error');
-        expect(result.body.message).toBe('No Task with that identifier has been found');
+        expect(result.body.message).toBe('Not Found');
+        expect(result.body.description).toBe('No Task with that identifier has been found');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -198,7 +200,8 @@ describe('User CRUD Unit Tests :', () => {
           .send(_tasks[0])
           .expect(404);
         expect(result.body.type).toBe('error');
-        expect(result.body.message).toBe('No Task with that identifier has been found');
+        expect(result.body.message).toBe('Not Found');
+        expect(result.body.description).toBe('No Task with that identifier has been found');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -235,7 +238,8 @@ describe('User CRUD Unit Tests :', () => {
           .send(_tasks[0])
           .expect(404);
         expect(result.body.type).toBe('error');
-        expect(result.body.message).toBe('No Task with that identifier has been found');
+        expect(result.body.message).toBe('Not Found');
+        expect(result.body.description).toBe('No Task with that identifier has been found');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();

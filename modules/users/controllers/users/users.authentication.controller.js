@@ -30,7 +30,7 @@ exports.signup = async (req, res) => {
       .cookie('TOKEN', token, { httpOnly: true })
       .json({ user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000) });
   } catch (err) {
-    responses.error(res, 422, errors.getMessage(err))(err);
+    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
 };
 
@@ -200,8 +200,8 @@ exports.removeOAuthProvider = async (req, res) => {
   let user = req.user;
   const provider = req.query.provider;
 
-  if (!user) return responses.error(res, 422, 'User is not authenticated')();
-  if (!provider) return responses.error(res, 400, 'Provider is not defined')();
+  if (!user) return responses.error(res, 422, 'Unprocessable Entity', 'User is not authenticated')();
+  if (!provider) return responses.error(res, 400, 'Bad Request', 'Provider is not defined')();
 
   // Delete the additional provider and Then tell mongoose that we've updated the additionalProvidersData field
   if (user.additionalProvidersData[provider]) {
@@ -212,10 +212,10 @@ exports.removeOAuthProvider = async (req, res) => {
   try {
     user = await UserService.create(user);
     req.login(user, (errLogin) => {
-      if (errLogin) return responses.error(res, 400, errors.getMessage(errLogin))(errLogin);
+      if (errLogin) return responses.error(res, 400, 'Bad Request ', errors.getMessage(errLogin))(errLogin);
       return responses.success(res, 'oAuth provider removed')(user);
     });
   } catch (err) {
-    return responses.error(res, 422, errors.getMessage(err))(err);
+    return responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
 };

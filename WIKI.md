@@ -41,7 +41,7 @@ Welcome to the Node wiki! Here you will find various information about this repo
 
 body : 
 
-```json
+```
 { 
 	type: 'success', 
 	message: 'task created' 
@@ -53,29 +53,33 @@ body :
 
 #### default
 
-`responses.error(res, 422, 'task creation failed')({err});`
+`responses.error(res, 422, 'Unprocessable Entity', 'task creation failed')({err});`
 
 body : 
 
-```json
+```
 { 
+	code: 422,
+	message: 'Unprocessable Entity'
+	description: 'task creation failed' 
 	type: 'error', 
-	message: 'task creation failed' 
-	error: {err}
+	error: '{err}'
 }
 ```
 
 #### schema
 
-`responses.error(res, 422, errors.getMessage(err))({err});`
+`responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))({err});`
 
 body : 
 
-```json
+```
 { 
+	code: 422,
+	message: 'Unprocessable Entity'
+	description: 'Title must be a string. Name must be a string.',
 	type: 'error',
-	message: 'schema validation error',
-	error: { 
+	error: '{ 
 		original: { 
 			title: 2, 
 			description: 'do something about something else' 
@@ -83,8 +87,12 @@ body :
        details: [{
        	message: 'title must be a string', 
        	type: 'string.base'
+       },
+       {
+       	message: 'name must be a string', 
+       	type: 'string.base'
        }] 
-   } 
+   }'
 }
 ```
 
@@ -94,9 +102,9 @@ body :
 
 body : 
 
-```json
+```
 { 
-	type: 'error',
+   type: 'error',
    message: 'invalid user or password.',
    error: { 
 	   code: 'SERVICE_ERROR',
@@ -110,7 +118,7 @@ body :
 status : 401 
 error : 
 
-```json
+```
 {
 	text: 'Unauthorized'
 }
@@ -127,7 +135,7 @@ As explained in Readme, we are curently using JWT Stateless, the server is unawa
 Post : `http://localhost:3000/api/auth/signin`
 with json body :
 
-```json
+```
 {
 	"email": "user@localhost.com",
 	"password": "F5FSpvRGBvtwQWCQJY2Y"
@@ -137,7 +145,7 @@ with json body :
 The answer will be something like this :
 
 
-```json
+```
 {
     "user": {
         "roles": [
@@ -159,7 +167,7 @@ The answer will be something like this :
 
 with and header set Cookie like this : 
 
-```json
+```
 Set-Cookie →TOKEN=aaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.ccccccc; Path=/; HttpOnly
 ```
 
@@ -171,7 +179,7 @@ Set-Cookie →TOKEN=aaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.cccccc
 
 Two options are available in `config/default/development.js` for the default and `production.js` if you want to override the default values ​​in produciton.
 
-```json
+```
   // jwt is for token authentification
   jwt: {
     secret: 'test', // secret for hash
@@ -183,7 +191,7 @@ Two options are available in `config/default/development.js` for the default and
 
 we use the package [zxcvbn](https://github.com/dropbox/zxcvbn) to check package security
 
-```json  
+``` 
   // zxcvbn is used to manage password security
   zxcvbn: {
     minimumScore: 3,
