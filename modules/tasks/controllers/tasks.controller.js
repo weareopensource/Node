@@ -18,7 +18,7 @@ exports.list = async (req, res) => {
     const tasks = await TasksService.list();
     responses.success(res, 'task list')(tasks);
   } catch (err) {
-    responses.error(res, 422, errors.getMessage(err))(err);
+    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
 };
 
@@ -32,7 +32,7 @@ exports.create = async (req, res) => {
     const task = await TasksService.create(req.body, req.user);
     responses.success(res, 'task created')(task);
   } catch (err) {
-    responses.error(res, 422, errors.getMessage(err))(err);
+    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
 };
 
@@ -56,7 +56,7 @@ exports.update = async (req, res) => {
     const task = await TasksService.update(req.task, req.body);
     responses.success(res, 'task updated')(task);
   } catch (err) {
-    responses.error(res, 422, errors.getMessage(err))(err);
+    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
 };
 
@@ -71,7 +71,7 @@ exports.delete = async (req, res) => {
     result.id = req.task.id;
     responses.success(res, 'task deleted')(result);
   } catch (err) {
-    responses.error(res, 422, errors.getMessage(err))(err);
+    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
 };
 
@@ -86,7 +86,7 @@ exports.delete = async (req, res) => {
 exports.taskByID = async (req, res, next, id) => {
   try {
     const task = await TasksService.get(id);
-    if (!task) responses.error(res, 404, 'No Task with that identifier has been found')();
+    if (!task) responses.error(res, 404, 'Not Found', 'No Task with that identifier has been found')();
     else {
       req.task = task;
       next();

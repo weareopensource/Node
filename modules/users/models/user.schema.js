@@ -13,8 +13,12 @@ const config = require(path.resolve('./config'));
  */
 const UserSchema = Joi.object().keys({
   sub: Joi.string().trim().default(''),
-  firstName: Joi.string().trim().default('').required(),
-  lastName: Joi.string().trim().default('').required(),
+  firstName: Joi.string().alphanum().min(1).max(30)
+    .trim()
+    .required(),
+  lastName: Joi.string().alphanum().min(1).max(30)
+    .trim()
+    .required(),
   displayName: Joi.string().trim(),
   email: Joi.string().email({ minDomainAtoms: 2 }),
   profileImageURL: Joi.string(),
