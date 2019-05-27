@@ -93,8 +93,8 @@ describe('User CRUD Unit Tests :', () => {
           .send(_userEdited)
           .expect(422);
         expect(result.body.type).toBe('error');
-        expect(result.body.message).toBe('schema validation error');
-        expect(result.body.error.details[0].message).toBe('password Password strength score 0 does not suffice the minimum of 3');
+        expect(result.body.message).toBe('Schema validation error');
+        expect(result.body.description).toEqual('Password password strength score 0 does not suffice the minimum of 3. ');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -111,9 +111,9 @@ describe('User CRUD Unit Tests :', () => {
           .send(_userEdited)
           .expect(422);
         expect(result.body.type).toBe('error');
-        expect(result.body.message).toBe('schema validation error');
-        expect(result.body.error.details[0].message).toBe('password Password strength score 0 does not suffice the minimum of 3');
-        expect(result.body.error.original.password).toBeUndefined();
+        expect(result.body.message).toBe('Schema validation error');
+        expect(result.body.description).toEqual('Password password strength score 0 does not suffice the minimum of 3. ');
+        expect(JSON.parse(result.body.error).original.password).toBeUndefined();
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -176,7 +176,8 @@ describe('User CRUD Unit Tests :', () => {
           .send(_userEdited)
           .expect(422);
         expect(result.body.type).toBe('error');
-        expect(result.body.message).toBe('Email already exists.');
+        expect(result.body.message).toEqual('Unprocessable Entity');
+        expect(result.body.description).toBe('Email already exists.');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -349,7 +350,8 @@ describe('User CRUD Unit Tests :', () => {
           })
           .expect(400);
 
-        expect(result.body.message).toBe('No account with that email has been found');
+        expect(result.body.message).toBe('Bad Request');
+        expect(result.body.description).toBe('No account with that email has been found');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -375,7 +377,8 @@ describe('User CRUD Unit Tests :', () => {
             email: '',
           })
           .expect(422);
-        expect(result.body.message).toBe('Mail field must not be blank');
+        expect(result.body.message).toEqual('Unprocessable Entity');
+        expect(result.body.description).toBe('Mail field must not be blank');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -408,7 +411,8 @@ describe('User CRUD Unit Tests :', () => {
             email: userEdited.email,
           })
           .expect(400);
-        expect(result.body.message).toBe(`It seems like you signed up using your ${userEdited.provider} account`);
+        expect(result.body.message).toBe('Bad Request');
+        expect(result.body.description).toBe(`It seems like you signed up using your ${userEdited.provider} account`);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -429,7 +433,8 @@ describe('User CRUD Unit Tests :', () => {
             email: user.email,
           })
           .expect(400);
-        expect(result.body.message).toBe('Failure sending email');
+        expect(result.body.message).toBe('Bad Request');
+        expect(result.body.description).toBe('Failure sending email');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -455,7 +460,9 @@ describe('User CRUD Unit Tests :', () => {
             email: user.email,
           })
           .expect(400);
-        expect(result.body.message).toBe('Failure sending email');
+
+        expect(result.body.message).toBe('Bad Request');
+        expect(result.body.description).toBe('Failure sending email');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -490,7 +497,9 @@ describe('User CRUD Unit Tests :', () => {
             email: user.email,
           })
           .expect(400);
-        expect(result.body.message).toBe('Failure sending email');
+
+        expect(result.body.message).toBe('Bad Request');
+        expect(result.body.description).toBe('Failure sending email');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -544,7 +553,8 @@ describe('User CRUD Unit Tests :', () => {
             currentPassword: credentials[0].password,
           })
           .expect(422);
-        expect(result.body.message).toBe('Passwords do not match');
+        expect(result.body.message).toEqual('Unprocessable Entity');
+        expect(result.body.description).toBe('Passwords do not match');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -560,7 +570,8 @@ describe('User CRUD Unit Tests :', () => {
             currentPassword: 'some_wrong_passwordAa$',
           })
           .expect(422);
-        expect(result.body.message).toBe('Current password is incorrect');
+        expect(result.body.message).toEqual('Unprocessable Entity');
+        expect(result.body.description).toBe('Current password is incorrect');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -575,8 +586,9 @@ describe('User CRUD Unit Tests :', () => {
             verifyPassword: '',
             currentPassword: credentials[0].password,
           })
-          .expect(422);
-        expect(result.body.message).toBe('Please provide a new password');
+          .expect(400);
+        expect(result.body.message).toEqual('Bad Request');
+        expect(result.body.description).toBe('Please provide a new password');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -592,8 +604,9 @@ describe('User CRUD Unit Tests :', () => {
             currentPassword: credentials[0].password,
           })
           .expect(422);
-        expect(result.body.message).toBe('Password too weak.');
-        expect(result.body.error.details).toBeInstanceOf(Array);
+        expect(result.body.message).toEqual('Unprocessable Entity');
+        expect(result.body.description).toBe('Password too weak.');
+        expect(JSON.parse(result.body.error).details).toBeInstanceOf(Array);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -617,8 +630,8 @@ describe('User CRUD Unit Tests :', () => {
 
     test('should be able to update own user details', async () => {
       const userUpdate = {
-        firstName: 'user_update_first',
-        lastName: 'user_update_last',
+        firstName: 'userUpdateFirst',
+        lastName: 'userUpdateLast',
       };
 
       try {
@@ -628,8 +641,8 @@ describe('User CRUD Unit Tests :', () => {
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('user updated');
         expect(result.body.data).toBeInstanceOf(Object);
-        expect(result.body.data.firstName).toBe('user_update_first');
-        expect(result.body.data.lastName).toBe('user_update_last');
+        expect(result.body.data.firstName).toBe('userUpdateFirst');
+        expect(result.body.data.lastName).toBe('userUpdateLast');
         expect(result.body.data.roles).toBeInstanceOf(Array);
         expect(result.body.data.roles).toHaveLength(1);
         expect(result.body.data.roles).toEqual(
@@ -644,8 +657,8 @@ describe('User CRUD Unit Tests :', () => {
 
     test('should not be able to update own user details and add roles if not admin', async () => {
       const userUpdate = {
-        firstName: 'user_update_first',
-        lastName: 'user_update_last',
+        firstName: 'userUpdateFirst',
+        lastName: 'userUpdateLast',
         roles: ['user', 'admin'],
       };
       try {
@@ -655,8 +668,8 @@ describe('User CRUD Unit Tests :', () => {
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('user updated');
         expect(result.body.data).toBeInstanceOf(Object);
-        expect(result.body.data.firstName).toBe('user_update_first');
-        expect(result.body.data.lastName).toBe('user_update_last');
+        expect(result.body.data.firstName).toBe('userUpdateFirst');
+        expect(result.body.data.lastName).toBe('userUpdateLast');
         expect(result.body.data.roles).toBeInstanceOf(Array);
         expect(result.body.data.roles).toHaveLength(1);
         expect(result.body.data.roles).toEqual(
@@ -690,7 +703,8 @@ describe('User CRUD Unit Tests :', () => {
         const result = await agent.put('/api/users')
           .send(userUpdate)
           .expect(422);
-        expect(result.body.message).toBe('Email already exists.');
+        expect(result.body.message).toEqual('Unprocessable Entity');
+        expect(result.body.description).toBe('Email already exists.');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -707,8 +721,8 @@ describe('User CRUD Unit Tests :', () => {
     test('should not be able to update secure fields', async () => {
       try {
         const userUpdate = {
-          firstName: 'admin_update_first',
-          lastName: 'admin_update_last',
+          firstName: 'adminUpdateFirst',
+          lastName: 'adminUpdateLast',
           password: 'Aw3$0m3P@sswordWaos',
           created: new Date(2000, 9, 9),
           resetPasswordToken: 'tweeked-reset-token',
@@ -756,7 +770,8 @@ describe('User CRUD Unit Tests :', () => {
         const result = await agent.post('/api/users/picture')
           .attach('fieldThatDoesntWork', './modules/users/tests/img/default.png')
           .expect(422);
-        expect(result.body.message).toEqual('Missing `newProfilePicture` field.');
+        expect(result.body.message).toEqual('Unprocessable Entity');
+        expect(result.body.description).toEqual('Missing `newProfilePicture` field.');
       } catch (err) {
         expect(err).toBeFalsy();
       }
@@ -767,7 +782,8 @@ describe('User CRUD Unit Tests :', () => {
         const result = await agent.post('/api/users/picture')
           .attach('newProfilePicture', './modules/users/tests/img/text-file.txt')
           .expect(422);
-        expect(result.body.message).toEqual('Unsupported filetype.');
+        expect(result.body.message).toEqual('Unprocessable Entity');
+        expect(result.body.description).toEqual('Unsupported filetype.');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -779,7 +795,8 @@ describe('User CRUD Unit Tests :', () => {
         const result = await agent.post('/api/users/picture')
           .attach('newProfilePicture', './modules/users/tests/img/too-big-file.png')
           .expect(422);
-        expect(result.body.message).toEqual(`Image file too large. Maximum size allowed is ${(config.uploads.profile.avatar.limits.fileSize / (1024 * 1024)).toFixed(2)} Mb files.`);
+        expect(result.body.message).toEqual('Unprocessable Entity');
+        expect(result.body.description).toEqual(`Image file too large. Maximum size allowed is ${(config.uploads.profile.avatar.limits.fileSize / (1024 * 1024)).toFixed(2)} Mb files.`);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
