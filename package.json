@@ -59,7 +59,7 @@
     "express-winston": "^3.1.0",
     "generate-password": "~1.4.1",
     "glob": "~7.1.4",
-    "google-auth-library": "^4.1.0",
+    "google-auth-library": "^4.2.0",
     "helmet": "~3.18.0",
     "idtoken-verifier": "^1.2.0",
     "joi": "^14.3.1",
