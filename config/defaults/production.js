@@ -14,9 +14,8 @@ module.exports = _.merge(defaultConfig, {
     caBundle: './config/sslcerts/cabundle.crt',
   },
   log: {
-    // logging with Morgan - https://github.com/expressjs/morgan
-    // Can specify one of 'combined', 'common', 'dev', 'short', 'tiny'
-    format: 'combined',
+    format: 'custom',
+    pattern: ':id :email :remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"', // only for custom format
   },
   cors: {
     protocol: 'http',

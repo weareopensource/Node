@@ -292,6 +292,34 @@ describe('Configuration Tests:', () => {
       // mock.restore();
     });
 
+    test('should retrieve the log format from the logger configuration', () => {
+      config.log = {
+        format: 'tiny',
+      };
+
+      const format = logger.getLogFormat();
+      expect(format).toBe('tiny');
+    });
+
+    test('should retrieve the log options from the logger configuration for a valid stream object', () => {
+      const options = logger.getMorganOptions();
+
+      expect(options).toBeInstanceOf(Object);
+      expect(options.stream).toBeDefined();
+    });
+
+    test('should use the default log format of "combined" when an invalid format was provided', () => {
+      const _logger = require(path.resolve('./lib/services/logger'));
+
+      // manually set the config log format to be invalid
+      config.log = {
+        format: '_some_invalid_format_',
+      };
+
+      const format = _logger.getLogFormat();
+      expect(format).toBe('combined');
+    });
+
     test('should verify that a file logger object was created using the logger configuration', () => {
       const _dir = process.cwd();
       const _filename = 'unit-test-access.log';
@@ -303,7 +331,7 @@ describe('Configuration Tests:', () => {
         },
       };
 
-      const fileTransport = logger.setupFileLogger(config);
+      const fileTransport = logger.getLogOptions(config);
       expect(fileTransport).toBeInstanceOf(Object);
       expect(fileTransport.filename).toBe(`${_dir}/${_filename}`);
     });
