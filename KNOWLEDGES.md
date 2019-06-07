@@ -97,5 +97,15 @@ Travis, Codeclimate, Coveralls (more details than codeclimate), EsLint, Dependen
 - **[bcrypt](hhttps://www.npmjs.com/package/bcrypt)** - way to test and deploy your projects
 - [crypto-js](https://github.com/brix/crypto-js) - JavaScript library of crypto standards.
 
+## Logs :memo: 
+
+#### Articles :
+- [how to use winston to log node js applications](https://www.digitalocean.com/community/tutorials/how-to-use-winston-to-log-node-js-applications)
+
+#### Tools :
+- **[winston](https://github.com/winstonjs/winston)** - A logger for just about everything.
+- **[morgan](https://github.com/expressjs/morgan)** - HTTP request logger middleware for node.js.
+
+
 #### Conclusion
-We used Bcrypt for more security and simplicity ([trends](https://www.npmtrends.com/bcrypt-vs-crypto-js)).
+winston for everything, morgan for http ([trends](https://www.npmtrends.com/morgan-vs-winston)).
