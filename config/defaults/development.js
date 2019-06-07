@@ -40,6 +40,10 @@ module.exports = {
   //   cert: './config/sslcerts/cert.pem',
   // },
   log: {
+    // logging with Morgan - https://github.com/expressjs/morgan
+    // Can specify one of 'combined', 'common', 'dev', 'short', 'tiny', 'custom'
+    format: 'custom',
+    pattern: ':id :email :method :url :status :response-time ms - :res[content-length]', // only for custom format
     fileLogger: {
       directoryPath: process.cwd(),
       fileName: 'app.log',
