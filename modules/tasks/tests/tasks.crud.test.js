@@ -12,21 +12,7 @@ const mongooseService = require(path.resolve('./lib/services/mongoose'));
  */
 describe('User CRUD Unit Tests :', () => {
   let UserService = null;
-
-  // Mongoose init
-  beforeAll(() => mongooseService.connect()
-    .then(() => {
-      mongooseService.loadModels();
-      UserService = require(path.resolve('./modules/users/services/user.service'));
-    })
-    .catch((e) => {
-      console.log(e);
-    }));
-
-
-  // Globals
   let app;
-
   let agent;
   let credentials;
   let user;
@@ -35,15 +21,18 @@ describe('User CRUD Unit Tests :', () => {
   let task1;
   let task2;
 
-  /**
- * User routes tests
- */
+  // Mongoose init
+  beforeAll(async () => {
+    await mongooseService.connect();
+    await mongooseService.loadModels();
+    UserService = require(path.resolve('./modules/users/services/user.service'));
+  });
+
   describe('Task CRUD User logged', () => {
     beforeAll((done) => {
     // Get application
       app = express.init();
       agent = request.agent(app);
-
       done();
     });
 
@@ -285,7 +274,6 @@ describe('User CRUD Unit Tests :', () => {
     // Get application
       app = express.init();
       agent = request.agent(app);
-
       done();
     });
 
@@ -318,8 +306,7 @@ describe('User CRUD Unit Tests :', () => {
   });
 
   // Mongoose disconnect
-  afterAll(() => mongooseService.disconnect()
-    .catch((e) => {
-      console.log(e);
-    }));
+  afterAll(async () => {
+    await mongooseService.disconnect();
+  });
 });

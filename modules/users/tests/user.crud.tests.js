@@ -16,15 +16,11 @@ describe('User CRUD Unit Tests :', () => {
   let UserService = null;
 
   // Mongoose init
-  beforeAll(() => mongooseService.connect()
-    .then(() => {
-      mongooseService.loadModels();
-      UserService = require('../services/user.service');
-    })
-    .catch((e) => {
-      console.log(e);
-    }));
-
+  beforeAll(async () => {
+    await mongooseService.connect();
+    await mongooseService.loadModels();
+    UserService = require(path.resolve('./modules/users/services/user.service'));
+  });
 
   // Globals
   let app;
@@ -915,8 +911,7 @@ describe('User CRUD Unit Tests :', () => {
   });
 
   // Mongoose disconnect
-  afterAll(() => mongooseService.disconnect()
-    .catch((e) => {
-      console.log(e);
-    }));
+  afterAll(async () => {
+    await mongooseService.disconnect();
+  });
 });
