@@ -132,6 +132,7 @@ describe('User CRUD Unit Tests :', () => {
 
         expect(result.body.user._id).toBe(result.body.user.id);
         expect(result.body.user.email).toBe(_userEdited.email);
+        expect(result.body.user.provider).toBe('local');
         expect(result.body.user.roles).toBeInstanceOf(Array);
         expect(result.body.user.roles).toHaveLength(1);
         expect(result.body.user.roles).toEqual(
