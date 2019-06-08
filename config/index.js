@@ -49,24 +49,6 @@ const getGlobbedPaths = (globPatterns, excludes) => {
   return output;
 };
 
-// /**
-//  * Validate NODE_ENV existence
-//  */
-// const validateEnvironmentVariable = function () {
-//   const environmentFiles = glob.sync('./config/env/' + process.env.NODE_ENV + '.js');
-//   console.log();
-//   if (!environmentFiles.length) {
-//     if (process.env.NODE_ENV) {
-//       console.error(chalk.red('+ Error: No configuration file found for "' + process.env.NODE_ENV + '" environment using development instead'));
-//     } else {
-//       console.error(chalk.red('+ Error: NODE_ENV is not defined! Using default development environment'));
-//     }
-//     process.env.NODE_ENV = 'development';
-//   }
-//   // Reset console color
-//   console.log(chalk.white(''));
-// };
-
 /** Validate config.domain is set
  */
 const validateDomainIsSet = (config) => {
@@ -106,22 +88,16 @@ const initSecureMode = (config) => {
 const initGlobalConfigFiles = (config, assets) => {
   // Appending files
   config.files = {};
-
   // Setting Globbed mongoose model files
   config.files.mongooseModels = getGlobbedPaths(assets.mongooseModels);
-
   // Setting Globbed sequelize model files
   config.files.sequelizeModels = getGlobbedPaths(assets.sequelizeModels);
-
   // Setting Globbed route files
   config.files.routes = getGlobbedPaths(assets.routes);
-
   // Setting Globbed config files
   config.files.configs = getGlobbedPaths(assets.config);
-
   // Setting Globbed socket files
   // config.files.sockets = getGlobbedPaths(assets.sockets);
-
   // Setting Globbed policies files
   config.files.policies = getGlobbedPaths(assets.policies);
 };
@@ -129,16 +105,19 @@ const initGlobalConfigFiles = (config, assets) => {
 /**
  * Initialize global configuration
  */
-const initGlobalConfig = () => {
-  // Validate NODE_ENV existence
-// //  validateEnvironmentVariable();
 
+const initGlobalConfig = () => {
   // Get the default assets
   const assets = require(path.join(process.cwd(), './config/assets'));
 
   // Get the current config
-  const currentEnv = process.env.NODE_ENV || 'development';
-  const defaultConfig = require(path.join(process.cwd(), './config', 'defaults', currentEnv)) || {};
+  const _path = path.join(process.cwd(), './config', 'defaults', process.env.NODE_ENV || 'development');
+  let defaultConfig;
+  if (fs.existsSync(`${_path}.js`)) defaultConfig = require(_path);
+  else {
+    console.error(chalk.red(`+ Error: No configuration file found for "${process.env.NODE_ENV}" environment using development instead`));
+    defaultConfig = require(path.join(process.cwd(), './config', 'defaults', 'development'));
+  }
 
   // Get the config from  process.env.WAOS_NODE_*
   const environmentVars = _.mapKeys(
@@ -147,10 +126,8 @@ const initGlobalConfig = () => {
   );
   const environmentConfigVars = {};
   _.forEach(environmentVars, (v, k) => objectPath.set(environmentConfigVars, k, v));
-
   // Merge config files
   const config = _.merge(defaultConfig, environmentConfigVars);
-
   // read package.json for MEAN.JS project information
   const pkg = require(path.resolve('./package.json'));
   config.meanjs = pkg;
@@ -160,13 +137,10 @@ const initGlobalConfig = () => {
 
   // Initialize global globbed files
   initGlobalConfigFiles(config, assets);
-
   // Init Secure SSL if can be used
   initSecureMode(config);
-
   // Print a warning if config.domain is not set
   validateDomainIsSet(config);
-
   // Expose configuration utilities
   config.utils = {
     getGlobbedPaths,

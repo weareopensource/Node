@@ -6,6 +6,7 @@ module.exports = _.merge(defaultConfig, {
     title: 'WeAreOpenSource Node - Production Environment',
   },
   host: '0.0.0.0',
+  port: 4200,
   db: {
     uri: 'mongodb://localhost/WaosNode',
     debug: false,
