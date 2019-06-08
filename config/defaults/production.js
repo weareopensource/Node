@@ -11,7 +11,7 @@ module.exports = _.merge(defaultConfig, {
     debug: false,
   },
   secure: {
-    ssl: true,
+    ssl: false,
     privateKey: './config/sslcerts/key.pem',
     certificate: './config/sslcerts/cert.pem',
     caBundle: './config/sslcerts/cabundle.crt',
