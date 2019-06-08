@@ -35,6 +35,18 @@ describe('Configuration Tests:', () => {
 
   let originalLogConfig;
 
+  describe('Testing Configurations', () => {
+    test('should load production configuration', async () => {
+      try {
+        const defaultConfig = require(path.join(process.cwd(), './config', 'defaults', 'production')) || {};
+        expect(defaultConfig.app.title.split(' - ')[1]).toBe('Production Environment');
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+  });
+
   describe('Testing default seedDB', () => {
     beforeAll((done) => {
       user1 = {

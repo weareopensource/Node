@@ -1,6 +1,6 @@
 module.exports = {
   app: {
-    title: 'WeAreOpenSource Node',
+    title: 'WeAreOpenSource Node - Development Environment',
     description: 'Full-Stack JavaScript with MongoDB, Express, AngularJS, and Node.js',
     keywords: 'mongodb, express, angularjs, node.js, mongoose, passport',
     googleAnalyticsTrackingID: 'WAOS_NODE_app_googleAnalyticsTrackingID',
