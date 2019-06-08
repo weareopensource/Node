@@ -220,7 +220,6 @@ describe('User CRUD Unit Tests :', () => {
     test('should not be able to retrieve a list of users if not admin', async () => {
       try {
         await agent.get('/api/users')
-          .send(credentials[0])
           .expect(403);
       } catch (err) {
         console.log(err);
@@ -228,6 +227,37 @@ describe('User CRUD Unit Tests :', () => {
       }
     });
 
+    test('should be able to retrieve a list of users if not admin', async () => {
+      _userEdited.roles = ['user', 'admin'];
+
+      try {
+        const result = await agent.post('/api/auth/signup')
+          .send(_userEdited)
+          .expect(200);
+        userEdited = result.body.user;
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+
+      try {
+        const result = await agent.get('/api/users')
+          .expect(200);
+        expect(result.body.type).toBe('success');
+        expect(result.body.message).toBe('user list');
+        expect(result.body.data).toBeInstanceOf(Array);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+
+      try {
+        await UserService.delete(userEdited);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
 
     test('should be able to get a single user details if admin', async () => {
       _userEdited.roles = ['user', 'admin'];
