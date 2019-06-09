@@ -14,17 +14,7 @@ const config = require(path.resolve('./config'));
  */
 describe('User CRUD Unit Tests :', () => {
   let UserService = null;
-
-  // Mongoose init
-  beforeAll(async () => {
-    await mongooseService.connect();
-    await mongooseService.loadModels();
-    UserService = require(path.resolve('./modules/users/services/user.service'));
-  });
-
-  // Globals
   let app;
-
   let agent;
   let credentials;
   let user;
@@ -32,18 +22,25 @@ describe('User CRUD Unit Tests :', () => {
   let _user;
   let _userEdited;
 
+  //  init
+  beforeAll(async () => {
+    try {
+      // init mongo
+      await mongooseService.connect();
+      await mongooseService.loadModels();
+      UserService = require(path.resolve('./modules/users/services/user.service'));
+      // init application
+      app = express.init();
+      agent = request.agent(app);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
   /**
  * User routes tests
  */
   describe('User CRUD logged', () => {
-    beforeAll((done) => {
-    // Get application
-      app = express.init();
-      agent = request.agent(app);
-
-      done();
-    });
-
     beforeEach(async () => {
     // users credentials
       credentials = [{
@@ -841,14 +838,6 @@ describe('User CRUD Unit Tests :', () => {
   });
 
   describe('User CRUD logout', () => {
-    beforeAll((done) => {
-    // Get application
-      app = express.init();
-      agent = request.agent(app);
-
-      done();
-    });
-
     test('should not be able to change user own password if not signed in', async () => {
       try {
         await agent.post('/api/users/password')
@@ -912,6 +901,10 @@ describe('User CRUD Unit Tests :', () => {
 
   // Mongoose disconnect
   afterAll(async () => {
-    await mongooseService.disconnect();
+    try {
+      await mongooseService.disconnect();
+    } catch (err) {
+      console.log(err);
+    }
   });
 });

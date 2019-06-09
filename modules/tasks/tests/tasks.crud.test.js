@@ -10,7 +10,7 @@ const mongooseService = require(path.resolve('./lib/services/mongoose'));
 /**
  * Unit tests
  */
-describe('User CRUD Unit Tests :', () => {
+describe('Tasks CRUD Unit Tests :', () => {
   let UserService = null;
   let app;
   let agent;
@@ -21,21 +21,22 @@ describe('User CRUD Unit Tests :', () => {
   let task1;
   let task2;
 
-  // Mongoose init
+  //  init
   beforeAll(async () => {
-    await mongooseService.connect();
-    await mongooseService.loadModels();
-    UserService = require(path.resolve('./modules/users/services/user.service'));
-  });
-
-  describe('Task CRUD User logged', () => {
-    beforeAll((done) => {
-    // Get application
+    try {
+      // init mongo
+      await mongooseService.connect();
+      await mongooseService.loadModels();
+      UserService = require(path.resolve('./modules/users/services/user.service'));
+      // init application
       app = express.init();
       agent = request.agent(app);
-      done();
-    });
+    } catch (err) {
+      console.log(err);
+    }
+  });
 
+  describe('Tasks CRUD User logged', () => {
     beforeEach(async () => {
     // user credentials
       credentials = {
@@ -269,14 +270,7 @@ describe('User CRUD Unit Tests :', () => {
     });
   });
 
-  describe('Task CRUD user logout', () => {
-    beforeAll((done) => {
-    // Get application
-      app = express.init();
-      agent = request.agent(app);
-      done();
-    });
-
+  describe('Tasks CRUD user logout', () => {
     test('should not be able to save a task', async () => {
       try {
         const result = await agent.post('/api/tasks')
@@ -307,6 +301,10 @@ describe('User CRUD Unit Tests :', () => {
 
   // Mongoose disconnect
   afterAll(async () => {
-    await mongooseService.disconnect();
+    try {
+      await mongooseService.disconnect();
+    } catch (err) {
+      console.log(err);
+    }
   });
 });
