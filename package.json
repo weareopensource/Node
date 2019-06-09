@@ -33,7 +33,7 @@
     "testCoveralls": "cross-env NODE_ENV=test gulp testCoverage && cat ./coverage/lcov.info | coveralls",
     "seedDev": "cross-env NODE_ENV=development gulp seed",
     "seedProd": "cross-env NODE_ENV=production gulp seed",
-    "generateSSLCerts": "lib/scripts/generate-ssl-certs.sh",
+    "generateSSLCerts": "scripts/generate-ssl-certs.sh",
     "lint": "gulp lint",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect",

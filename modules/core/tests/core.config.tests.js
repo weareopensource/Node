@@ -35,7 +35,19 @@ describe('Configuration Tests:', () => {
 
   let originalLogConfig;
 
-  describe('Testing default seedDB', () => {
+  describe('Configurations', () => {
+    test('should load production configuration in production env', async () => {
+      try {
+        const defaultConfig = require(path.join(process.cwd(), './config', 'defaults', 'production')) || {};
+        expect(defaultConfig.app.title.split(' - ')[1]).toBe('Production Environment');
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+  });
+
+  describe('SeedDB', () => {
     beforeAll((done) => {
       user1 = {
         provider: 'local',
@@ -281,7 +293,7 @@ describe('Configuration Tests:', () => {
     });
   });
 
-  describe('Testing Logger Configuration', () => {
+  describe('Logger', () => {
     beforeEach(() => {
       originalLogConfig = _.clone(config.log, true);
       // mock();

@@ -52,6 +52,7 @@ exports.get = (req, res) => {
  * @param {Object} res - Express response object
  */
 exports.update = async (req, res) => {
+  // TODO if (req.task && req.user && req.task.user && req.task.user.id === req.user.id) next();
   try {
     const task = await TasksService.update(req.task, req.body);
     responses.success(res, 'task updated')(task);

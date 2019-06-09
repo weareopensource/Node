@@ -10,23 +10,9 @@ const mongooseService = require(path.resolve('./lib/services/mongoose'));
 /**
  * Unit tests
  */
-describe('User CRUD Unit Tests :', () => {
+describe('Tasks CRUD Tests :', () => {
   let UserService = null;
-
-  // Mongoose init
-  beforeAll(() => mongooseService.connect()
-    .then(() => {
-      mongooseService.loadModels();
-      UserService = require(path.resolve('./modules/users/services/user.service'));
-    })
-    .catch((e) => {
-      console.log(e);
-    }));
-
-
-  // Globals
   let app;
-
   let agent;
   let credentials;
   let user;
@@ -35,18 +21,22 @@ describe('User CRUD Unit Tests :', () => {
   let task1;
   let task2;
 
-  /**
- * User routes tests
- */
-  describe('Task CRUD User logged', () => {
-    beforeAll((done) => {
-    // Get application
+  //  init
+  beforeAll(async () => {
+    try {
+      // init mongo
+      await mongooseService.connect();
+      await mongooseService.loadModels();
+      UserService = require(path.resolve('./modules/users/services/user.service'));
+      // init application
       app = express.init();
       agent = request.agent(app);
+    } catch (err) {
+      console.log(err);
+    }
+  });
 
-      done();
-    });
-
+  describe('Logged', () => {
     beforeEach(async () => {
     // user credentials
       credentials = {
@@ -280,15 +270,7 @@ describe('User CRUD Unit Tests :', () => {
     });
   });
 
-  describe('Task CRUD user logout', () => {
-    beforeAll((done) => {
-    // Get application
-      app = express.init();
-      agent = request.agent(app);
-
-      done();
-    });
-
+  describe('Logout', () => {
     test('should not be able to save a task', async () => {
       try {
         const result = await agent.post('/api/tasks')
@@ -318,8 +300,11 @@ describe('User CRUD Unit Tests :', () => {
   });
 
   // Mongoose disconnect
-  afterAll(() => mongooseService.disconnect()
-    .catch((e) => {
-      console.log(e);
-    }));
+  afterAll(async () => {
+    try {
+      await mongooseService.disconnect();
+    } catch (err) {
+      console.log(err);
+    }
+  });
 });

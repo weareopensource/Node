@@ -12,23 +12,9 @@ const config = require(path.resolve('./config'));
 /**
  * Unit tests
  */
-describe('User CRUD Unit Tests :', () => {
+describe('User CRUD Tests :', () => {
   let UserService = null;
-
-  // Mongoose init
-  beforeAll(() => mongooseService.connect()
-    .then(() => {
-      mongooseService.loadModels();
-      UserService = require('../services/user.service');
-    })
-    .catch((e) => {
-      console.log(e);
-    }));
-
-
-  // Globals
   let app;
-
   let agent;
   let credentials;
   let user;
@@ -36,18 +22,25 @@ describe('User CRUD Unit Tests :', () => {
   let _user;
   let _userEdited;
 
+  //  init
+  beforeAll(async () => {
+    try {
+      // init mongo
+      await mongooseService.connect();
+      await mongooseService.loadModels();
+      UserService = require(path.resolve('./modules/users/services/user.service'));
+      // init application
+      app = express.init();
+      agent = request.agent(app);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
   /**
  * User routes tests
  */
-  describe('User CRUD logged', () => {
-    beforeAll((done) => {
-    // Get application
-      app = express.init();
-      agent = request.agent(app);
-
-      done();
-    });
-
+  describe('Logged', () => {
     beforeEach(async () => {
     // users credentials
       credentials = [{
@@ -132,6 +125,7 @@ describe('User CRUD Unit Tests :', () => {
 
         expect(result.body.user._id).toBe(result.body.user.id);
         expect(result.body.user.email).toBe(_userEdited.email);
+        expect(result.body.user.provider).toBe('local');
         expect(result.body.user.roles).toBeInstanceOf(Array);
         expect(result.body.user.roles).toHaveLength(1);
         expect(result.body.user.roles).toEqual(
@@ -220,7 +214,6 @@ describe('User CRUD Unit Tests :', () => {
     test('should not be able to retrieve a list of users if not admin', async () => {
       try {
         await agent.get('/api/users')
-          .send(credentials[0])
           .expect(403);
       } catch (err) {
         console.log(err);
@@ -228,6 +221,37 @@ describe('User CRUD Unit Tests :', () => {
       }
     });
 
+    test('should be able to retrieve a list of users if not admin', async () => {
+      _userEdited.roles = ['user', 'admin'];
+
+      try {
+        const result = await agent.post('/api/auth/signup')
+          .send(_userEdited)
+          .expect(200);
+        userEdited = result.body.user;
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+
+      try {
+        const result = await agent.get('/api/users')
+          .expect(200);
+        expect(result.body.type).toBe('success');
+        expect(result.body.message).toBe('user list');
+        expect(result.body.data).toBeInstanceOf(Array);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+
+      try {
+        await UserService.delete(userEdited);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
 
     test('should be able to get a single user details if admin', async () => {
       _userEdited.roles = ['user', 'admin'];
@@ -813,15 +837,7 @@ describe('User CRUD Unit Tests :', () => {
     });
   });
 
-  describe('User CRUD logout', () => {
-    beforeAll((done) => {
-    // Get application
-      app = express.init();
-      agent = request.agent(app);
-
-      done();
-    });
-
+  describe('Logout', () => {
     test('should not be able to change user own password if not signed in', async () => {
       try {
         await agent.post('/api/users/password')
@@ -884,8 +900,11 @@ describe('User CRUD Unit Tests :', () => {
   });
 
   // Mongoose disconnect
-  afterAll(() => mongooseService.disconnect()
-    .catch((e) => {
-      console.log(e);
-    }));
+  afterAll(async () => {
+    try {
+      await mongooseService.disconnect();
+    } catch (err) {
+      console.log(err);
+    }
+  });
 });

@@ -42,9 +42,7 @@ exports.list = async () => {
  */
 exports.create = async (user) => {
   // Set provider to local
-  if (!user.provider) {
-    user.provider = 'local';
-  }
+  if (!user.provider) user.provider = 'local';
   // confirming to secure password policies
   if (user.password) {
     // done in model, let this comment for information if one day joi.zxcvbn is not ok / sufficient

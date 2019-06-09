@@ -2,13 +2,17 @@ const _ = require('lodash');
 const defaultConfig = require('./development');
 
 module.exports = _.merge(defaultConfig, {
+  app: {
+    title: 'WeAreOpenSource Node - Production Environment',
+  },
   host: '0.0.0.0',
+  port: 4200,
   db: {
     uri: 'mongodb://localhost/WaosNode',
     debug: false,
   },
   secure: {
-    ssl: true,
+    ssl: false,
     privateKey: './config/sslcerts/key.pem',
     certificate: './config/sslcerts/cert.pem',
     caBundle: './config/sslcerts/cabundle.crt',

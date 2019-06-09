@@ -16,7 +16,7 @@ let task;
 /**
  * Unit tests
  */
-describe('Tasks Schema Unit Tests:', () => {
+describe('Tasks Schema Tests :', () => {
   beforeEach(() => {
     task = {
       title: 'title',
@@ -24,48 +24,46 @@ describe('Tasks Schema Unit Tests:', () => {
     };
   });
 
-  describe('Schema Save', () => {
-    test('should be valid a task example without problems', (done) => {
-      const result = Joi.validate(task, schema.Task, options);
-      expect(typeof result).toBe('object');
-      expect(result.error).toBeFalsy();
-      done();
-    });
+  test('should be valid a task example without problems', (done) => {
+    const result = Joi.validate(task, schema.Task, options);
+    expect(typeof result).toBe('object');
+    expect(result.error).toBeFalsy();
+    done();
+  });
 
-    test('should be able to show an error when trying a schema without title', (done) => {
-      task.title = '';
+  test('should be able to show an error when trying a schema without title', (done) => {
+    task.title = '';
 
-      const result = Joi.validate(task, schema.Task, options);
-      expect(typeof result).toBe('object');
-      expect(result.error).toBeDefined();
-      done();
-    });
+    const result = Joi.validate(task, schema.Task, options);
+    expect(typeof result).toBe('object');
+    expect(result.error).toBeDefined();
+    done();
+  });
 
-    test('should be able to show an error when trying a schema without description', (done) => {
-      task.description = '';
+  test('should be able to show an error when trying a schema without description', (done) => {
+    task.description = '';
 
-      const result = Joi.validate(task, schema.Task, options);
-      expect(typeof result).toBe('object');
-      expect(result.error).toBeDefined();
-      done();
-    });
+    const result = Joi.validate(task, schema.Task, options);
+    expect(typeof result).toBe('object');
+    expect(result.error).toBeDefined();
+    done();
+  });
 
-    test('should not show an error when trying a schema with user', (done) => {
-      task.user = '507f1f77bcf86cd799439011';
+  test('should not show an error when trying a schema with user', (done) => {
+    task.user = '507f1f77bcf86cd799439011';
 
-      const result = Joi.validate(task, schema.Task, options);
-      expect(typeof result).toBe('object');
-      expect(result.error).toBeFalsy();
-      done();
-    });
+    const result = Joi.validate(task, schema.Task, options);
+    expect(typeof result).toBe('object');
+    expect(result.error).toBeFalsy();
+    done();
+  });
 
-    test('should be able to show an error when trying a different schema', (done) => {
-      task.toto = '';
+  test('should be able to show an error when trying a different schema', (done) => {
+    task.toto = '';
 
-      const result = Joi.validate(task, schema.Task, options);
-      expect(typeof result).toBe('object');
-      expect(result.error).toBeDefined();
-      done();
-    });
+    const result = Joi.validate(task, schema.Task, options);
+    expect(typeof result).toBe('object');
+    expect(result.error).toBeDefined();
+    done();
   });
 });
