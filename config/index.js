@@ -16,10 +16,7 @@ const getGlobbedPaths = (globPatterns, excludes) => {
   // URL paths regex
   /* eslint no-useless-escape:0 */
   const urlRegex = new RegExp('^(?:[a-z]+:)?\/\/', 'i');
-
-  // The output array
   let output = [];
-
   // If glob pattern is array then we use each pattern in a recursive way, otherwise we use glob
   if (_.isArray(globPatterns)) {
     globPatterns.forEach((globPattern) => {
@@ -45,7 +42,6 @@ const getGlobbedPaths = (globPatterns, excludes) => {
       output = _.union(output, files);
     }
   }
-
   return output;
 };
 
@@ -62,9 +58,7 @@ const validateDomainIsSet = (config) => {
  * @param config
  */
 const initSecureMode = (config) => {
-  if (!config.secure || config.secure.ssl !== true) {
-    return true;
-  }
+  if (!config.secure || config.secure.ssl !== true) return true;
 
   const key = fs.existsSync(path.resolve(config.secure.key));
   const cert = fs.existsSync(path.resolve(config.secure.cert));
@@ -86,20 +80,13 @@ const initSecureMode = (config) => {
  * Initialize global configuration files
  */
 const initGlobalConfigFiles = (config, assets) => {
-  // Appending files
-  config.files = {};
-  // Setting Globbed mongoose model files
-  config.files.mongooseModels = getGlobbedPaths(assets.mongooseModels);
-  // Setting Globbed sequelize model files
-  config.files.sequelizeModels = getGlobbedPaths(assets.sequelizeModels);
-  // Setting Globbed route files
-  config.files.routes = getGlobbedPaths(assets.routes);
-  // Setting Globbed config files
-  config.files.configs = getGlobbedPaths(assets.config);
-  // Setting Globbed socket files
-  // config.files.sockets = getGlobbedPaths(assets.sockets);
-  // Setting Globbed policies files
-  config.files.policies = getGlobbedPaths(assets.policies);
+  config.files = {}; // Appending files
+  config.files.mongooseModels = getGlobbedPaths(assets.mongooseModels); // Setting Globbed mongoose model files
+  config.files.sequelizeModels = getGlobbedPaths(assets.sequelizeModels); // Setting Globbed sequelize model files
+  config.files.routes = getGlobbedPaths(assets.routes); // Setting Globbed route files
+  config.files.configs = getGlobbedPaths(assets.config); // Setting Globbed config files
+  // config.files.sockets = getGlobbedPaths(assets.sockets); // Setting Globbed socket files
+  config.files.policies = getGlobbedPaths(assets.policies); // Setting Globbed policies files
 };
 
 /**

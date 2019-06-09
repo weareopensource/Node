@@ -18,7 +18,7 @@ let user;
 /**
  * Unit tests
  */
-describe('User Schema Unit Tests:', () => {
+describe('User Schema Tests :', () => {
   beforeEach(() => {
     user = {
       firstName: 'Full',
@@ -40,7 +40,7 @@ describe('User Schema Unit Tests:', () => {
     // };
   });
 
-  describe('Schema Save', () => {
+  describe('Schema', () => {
     test('should be valid a user example without problems', (done) => {
       const result = Joi.validate(user, schema.User, options);
       expect(typeof result).toBe('object');
@@ -183,7 +183,7 @@ describe('User Schema Unit Tests:', () => {
     //   });
   });
 
-  describe('User Password Validation Tests', () => {
+  describe('Password Validation Tests', () => {
     test('should validate when the password strength passes - "P-@-$-$-w-0-r-d-!"', (done) => {
       user.password = 'P-@-$-$-w-0-r-d-!';
 
@@ -268,7 +268,7 @@ describe('User Schema Unit Tests:', () => {
     });
   });
 
-  describe('User E-mail Validation Tests', () => {
+  describe('E-mail Validation Tests', () => {
     test('should not allow invalid email address - "123"', (done) => {
       user.email = '123';
 

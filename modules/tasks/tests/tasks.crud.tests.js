@@ -10,7 +10,7 @@ const mongooseService = require(path.resolve('./lib/services/mongoose'));
 /**
  * Unit tests
  */
-describe('Tasks CRUD Unit Tests :', () => {
+describe('Tasks CRUD Tests :', () => {
   let UserService = null;
   let app;
   let agent;
@@ -36,7 +36,7 @@ describe('Tasks CRUD Unit Tests :', () => {
     }
   });
 
-  describe('Tasks CRUD User logged', () => {
+  describe('Logged', () => {
     beforeEach(async () => {
     // user credentials
       credentials = {
@@ -270,7 +270,7 @@ describe('Tasks CRUD Unit Tests :', () => {
     });
   });
 
-  describe('Tasks CRUD user logout', () => {
+  describe('Logout', () => {
     test('should not be able to save a task', async () => {
       try {
         const result = await agent.post('/api/tasks')

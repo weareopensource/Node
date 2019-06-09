@@ -12,7 +12,7 @@ const config = require(path.resolve('./config'));
 /**
  * Unit tests
  */
-describe('User CRUD Unit Tests :', () => {
+describe('User CRUD Tests :', () => {
   let UserService = null;
   let app;
   let agent;
@@ -40,7 +40,7 @@ describe('User CRUD Unit Tests :', () => {
   /**
  * User routes tests
  */
-  describe('User CRUD logged', () => {
+  describe('Logged', () => {
     beforeEach(async () => {
     // users credentials
       credentials = [{
@@ -837,7 +837,7 @@ describe('User CRUD Unit Tests :', () => {
     });
   });
 
-  describe('User CRUD logout', () => {
+  describe('Logout', () => {
     test('should not be able to change user own password if not signed in', async () => {
       try {
         await agent.post('/api/users/password')
