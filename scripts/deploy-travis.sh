@@ -1,8 +1,8 @@
 #!/bin/bash
 
 eval "$(ssh-agent -s)" # Start ssh-agent cache
-chmod 600 $TRAVIS_BUILD_DIR/.travis/deploy_key # Allow read access to the private key
-ssh-add $TRAVIS_BUILD_DIR/.travis/deploy_key # Add the private key to SSH
+chmod 600 $TRAVIS_BUILD_DIR/deploy_key_node # Allow read access to the private key
+ssh-add $TRAVIS_BUILD_DIR/deploy_key_node # Add the private key to SSH
 
 ssh -p $sshPort $sshUser@$sshHost -o StrictHostKeyChecking=no "$( cat <<EOT
   echo "$(date -u) Deploy '${depProject}'"  >> ./deploy.log
