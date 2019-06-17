@@ -8,9 +8,9 @@
 
 ## Presentation
 
-This project is a stack Node that can be ran as a standalone backend. Or in a fullstack with another of our repo of your choice (ex: [Angular](https://github.com/weareopensource/Angular)). 
+This project is a stack Node that can be ran as a standalone backend. Or in a fullstack with another of our repo of your choice (ex: [Angular](https://github.com/weareopensource/Angular), [Swift](https://github.com/weareopensource/Swift)). 
 
-You can have more informations about us in our [global repo](https://github.com/weareopensource/weareopensource.github.io): 
+You can have more informations about us in our [global repo](https://github.com/weareopensource/weareopensource.github.io) and here : 
 
 * our mindset and what we would like to create in our [introduction](https://weareopensource.me/introduction/) (in construction)
 * how to create a fullstack from our repo in our [global wiki](https://github.com/weareopensource/weareopensource.github.io/wiki) (in construciton).
@@ -21,8 +21,9 @@ Our stack node is actually in Beta.
 
 # Node / Express / Mongoose - Sequelize Orm
 
-* [Node wiki](https://github.com/weareopensource/Node/blob/master/WIKI.md) (in construciton).
-* [Node knowledges](https://github.com/weareopensource/Node/blob/master/KNOWLEDGES.md) (in construciton).
+* [**Wiki**](https://github.com/weareopensource/Node/blob/master/WIKI.md) - wip
+* [**Knowledges**](https://github.com/weareopensource/Node/blob/master/KNOWLEDGES.md) - wip
+* [**Demo**](https://node.weareopensource.me) (email: *test@waos.me*, password: *TestWaos@2019*)
 
 ## Technology Overview
 
@@ -126,7 +127,4 @@ Feel free to discuss, share other kind of bricks, and invite whoever you want wi
 #### Pierre 
 [![Help](https://badges.weareopensource.me/badge/Help-On%20Patreon-052d49.svg?style=flat-square)](https://www.patreon.com/pbrisorgueil) [![Cofee](https://badges.weareopensource.me/badge/Buy-Me%20a%20Coffee-FF813F.svg?style=flat-square)](https://www.buymeacoffee.com/JrSa9tZGO) [![Github](https://badges.weareopensource.me/badge/Follow-me%20on%20Github-25292E.svg?style=flat-square)](https://github.com/PierreBrisorgueil) [![Twitter](https://badges.weareopensource.me/badge/Follow-me%20on%20Twitter-3498db.svg?style=flat-square)](https://twitter.com/pbrisorgueil?lang=fr)  [![Youtube](https://badges.weareopensource.me/badge/Watch-me%20on%20Youtube-e74c3c.svg?style=flat-square)](https://www.youtube.com/channel/UCIIjHtrZL5-rFFupn7c3OtA)
 
-#### techla 
-[![Github](https://badges.weareopensource.me/badge/Follow-me%20on%20Github-25292E.svg?style=flat-square)](https://github.com/techla)
-
-Feel free to come help us ! :) 
+Feel free to help us ! :) 
