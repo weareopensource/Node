@@ -7,7 +7,6 @@ chmod 600 $TRAVIS_BUILD_DIR/deploy_key_node # Allow read access to the private k
 ssh-add $TRAVIS_BUILD_DIR/deploy_key_node # Add the private key to SSH
 
 ssh -p $sshPort $sshUser@$sshHost -o StrictHostKeyChecking=no "$( cat <<EOT
-  echo "$(date -u) Deploy ${depProject} on node $(node -v) with npm $(npm -v)"  >> ./deploy.log
   source .zshrc
   cd '${depPath}'
   pm2 stop '${depProject}'
