@@ -27,5 +27,4 @@ jobs:
       provider: script
       skip_cleanup: true
       script:
-      - openssl aes-256-cbc -K $encrypted_52003b97e11e_key -iv $encrypted_52003b97e11e_iv -in deploy_rsa_node.enc -out deploy_key_node -d
       - scripts/deploy-travis.sh

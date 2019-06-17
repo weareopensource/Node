@@ -1,5 +1,7 @@
 #!/bin/bash
 
+openssl aes-256-cbc -K $encrypted_52003b97e11e_key -iv $encrypted_52003b97e11e_iv -in deploy_rsa_node.enc -out deploy_key_node -d
+
 eval "$(ssh-agent -s)" # Start ssh-agent cache
 chmod 600 $TRAVIS_BUILD_DIR/deploy_key_node # Allow read access to the private key
 ssh-add $TRAVIS_BUILD_DIR/deploy_key_node # Add the private key to SSH
