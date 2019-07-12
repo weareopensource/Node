@@ -100,7 +100,7 @@
     "gulp-nodemon": "~2.4.2",
     "gulp-refresh": "~1.1.0",
     "husky": "^3.0.0",
-    "inquirer": "^6.4.1",
+    "inquirer": "^6.5.0",
     "jest-cli": "^24.8.0",
     "standard-version": "^6.0.1",
     "waos-conventional-changelog": "^1.7.2"
