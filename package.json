@@ -64,7 +64,7 @@
     "joi": "^14.3.1",
     "joi-zxcvbn": "^5.2.0",
     "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.14",
+    "lodash": "^4.17.15",
     "lusca": "~1.6.1",
     "method-override": "~3.0.0",
     "mongoose": "~5.6.5",
