@@ -101,7 +101,7 @@
     "gulp-refresh": "~1.1.0",
     "husky": "^3.0.2",
     "inquirer": "^6.5.0",
-    "jest-cli": "^24.8.0",
+    "jest-cli": "^24.9.0",
     "standard-version": "^7.0.0",
     "waos-conventional-changelog": "^1.7.2"
   },
