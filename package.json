@@ -1,6 +1,6 @@
 {
   "name": "waosNode",
-  "description": "Stack JavaScript with MongoDB, ORM(sequelize ...), Express, and Node.js. (Based on meanjs and riess.js)",
+  "description": "Node - Boilerplate Back : Express, Jwt, Mongo, Sequelize (Beta)  (Based on meanjs and riess.js)",
   "version": "0.3.0",
   "keywords": [
     "node",

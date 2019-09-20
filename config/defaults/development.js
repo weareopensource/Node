@@ -1,8 +1,8 @@
 module.exports = {
   app: {
     title: 'WeAreOpenSource Node - Development Environment',
-    description: 'Full-Stack JavaScript with MongoDB, Express, AngularJS, and Node.js',
-    keywords: 'mongodb, express, angularjs, node.js, mongoose, passport',
+    description: 'Node - Boilerplate Back : Express, Jwt, Mongo, Sequelize (Beta) ',
+    keywords: 'node, express, mongo, jwt, sequelize, stack, boilerplate',
     googleAnalyticsTrackingID: 'WAOS_NODE_app_googleAnalyticsTrackingID',
   },
   port: 3000,
