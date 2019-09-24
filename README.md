@@ -1,5 +1,5 @@
 [![Build Status](https://badges.weareopensource.me/travis/weareopensource/Node.svg?style=flat-square)](https://travis-ci.org/weareopensource/Node) [![Coveralls Status](https://badges.weareopensource.me/coveralls/github/weareopensource/Node.svg?style=flat-square)](https://coveralls.io/github/weareopensource/Node) [![Code Climate](https://badges.weareopensource.me/codeclimate/maintainability-percentage/weareopensource/Node.svg?style=flat-square)](https://codeclimate.com/github/weareopensource/Node/maintainability)
- [![Dependencies Status](https://david-dm.org/weareopensource/node.svg?style=flat-square)](https://david-dm.org/weareopensource/node) [![Greenkeeper badge](https://badges.greenkeeper.io/weareopensource/Node.svg?style=flat-square)](https://greenkeeper.io/)
+ [![Dependencies Status](https://david-dm.org/weareopensource/node.svg?style=flat-square)](https://david-dm.org/weareopensource/node) [![Dependabot badge](https://badges.weareopensource.me/badge/Dependabot-enabled-2768cf.svg?style=flat-square)](https://dependabot.com)
  [![Known Vulnerabilities](https://snyk.io/test/github/weareopensource/node/badge.svg?style=flat-square)](https://snyk.io/test/github/weareopensource/node)
 
 # [WeAreOpenSource](https://weareopensource.me) Node
