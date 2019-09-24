@@ -20,7 +20,7 @@ Our stack node is actually in Beta.
 # Node / Express / Mongoose - Sequelize Orm
 
 * [**Wiki**](https://github.com/weareopensource/Node/blob/master/WIKI.md) - wip
-* [**Knowledges**](https://github.com/weareopensource/Node/blob/master/KNOWLEDGES.md) - wip
+* [**Knowledges JS**](https://github.com/weareopensource/weareopensource.github.io/wiki/Knowledges-JS)
 * [**Demo**](https://node.weareopensource.me) (email: *test@waos.me*, password: *TestWaos@2019*)
 
 ## Technology Overview
@@ -37,8 +37,8 @@ Our stack node is actually in Beta.
 | API | Default answer wrapper (helper) : [jsend](https://github.com/omniti-labs/jsend) like : status, message, data or error <br>  Default error handling (helper) : formatted by the controller, Custom ES6 errors for other layers
 | Logs | [winston](https://github.com/winstonjs/winston) [morgan](https://github.com/expressjs/morgan) *custom example available*
 | CI  | [Travis CI](https://travis-ci.org/weareopensource/Node) 
-| Developer  | [Coveralls](https://coveralls.io/github/weareopensource/Node) - [Code Climate](https://codeclimate.com/github/weareopensource/Node) - [Dependency status](https://david-dm.org/weareopensource/node) - [GreenKeeper](https://greenkeeper.io) - [Snyk](https://snyk.io/test/github/weareopensource/node) <br> [standard-version](https://github.com/conventional-changelog/standard-version) - [commitlint](https://github.com/conventional-changelog/commitlint) - [commitizen](https://github.com/commitizen/cz-cli) - [waos-conventional-changelog](https://github.com/WeAreOpenSourceProjects/waos-conventional-changelog)
-| Dependencies  | [npm](https://www.npmjs.com) or [Yarn](https://yarnpkg.com/en/)
+| Developer  | [Coveralls](https://coveralls.io/github/weareopensource/Node) - [Code Climate](https://codeclimate.com/github/weareopensource/Node) - [Dependency status](https://david-dm.org/weareopensource/node) - [Dependabot](https://dependabot.com/) - [Snyk](https://snyk.io/test/github/weareopensource/node) <br> [standard-version](https://github.com/conventional-changelog/standard-version) - [commitlint](https://github.com/conventional-changelog/commitlint) - [commitizen](https://github.com/commitizen/cz-cli) - [waos-conventional-changelog](https://github.com/WeAreOpenSourceProjects/waos-conventional-changelog)
+| Dependencies  | [npm](https://www.npmjs.com)
 | **Being released** | 
 | Deliver | Docker & Docker-compose
 | **In reflexion** | 
@@ -76,20 +76,20 @@ $ npm i
 ## Running Your Application
 
 ### Development
-* Run `npm start` for a dev server. Available at `http://localhost:3000/`.
+* `npm start` or `npm run serve` to run a dev server. Available at `http://localhost:3000/`.
 
 ### Production
-* Run `npm run prod` for a prod server. Available at `http://localhost:3000/`
+* `npm run prod` to run a prod server. Available at `http://localhost:3000/`
 
 ### others 
 
 * debug : `npm run debug`
 * test : `npm test`
-* test Watch : `npm run testWatch `
-* test Coverage : `npm run testCoverage `
-* seed development= `npm run seedDev`
-* seed Production = `npm run seedProd`
-* generate SSL certs : `npm run generateSSLCerts`
+* test Watch : `npm run test:watch `
+* test Coverage : `npm run test:coverage `
+* seed development= `npm run seed:dev`
+* seed Production = `npm run seed:prod`
+* generate SSL certs : `npm run generate:sslCerts`
 * lint : `npm run lint`
 * commit : `npm run commit`
 * release : `npm run release`
