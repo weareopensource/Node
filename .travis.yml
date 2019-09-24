@@ -17,7 +17,7 @@ services:
 install:
 - npm i
 after_script:
-- npm run testCoveralls
+- npm run test:coveralls
 jobs:
   include:
   - stage: deploy
