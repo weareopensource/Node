@@ -20,7 +20,7 @@ Our stack node is actually in Beta.
 # Node / Express / Mongoose - Sequelize Orm
 
 * [**Wiki**](https://github.com/weareopensource/Node/blob/master/WIKI.md) - wip
-* [**Knowledges**](https://github.com/weareopensource/Node/blob/master/KNOWLEDGES.md) - wip
+* [**Knowledges JS**](https://github.com/weareopensource/weareopensource.github.io/wiki/Knowledges-JS)
 * [**Demo**](https://node.weareopensource.me) (email: *test@waos.me*, password: *TestWaos@2019*)
 
 ## Technology Overview
