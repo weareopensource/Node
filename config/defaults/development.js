@@ -72,11 +72,7 @@ module.exports = {
     p3p: 'ABCDEF',
     xssProtection: true,
   },
-  cors: {
-    protocol: 'http',
-    host: 'localhost',
-    port: '4200',
-  },
+  cors: ['http://localhost:4200'],
   // Data filter whitelist & Blacklist
   blacklists: {
   },
