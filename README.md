@@ -104,7 +104,7 @@ We take into account all system environment variables defined under the form WAO
 So configuration avalable on `config/defaults/development` file are overidable. You can for instance define the app name by defining those system environment variables :
 
 ```
-WAOS_VUE_app_name='my app =)'
+WAOS_NODE_app_name='my app =)'
 ```
 
 ## [Contribute](https://github.com/weareopensource/weareopensource.github.io/blob/master/CONTRIBUTE.md)
