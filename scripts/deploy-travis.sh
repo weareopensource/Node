@@ -15,6 +15,7 @@ ssh -p $sshPort $sshUser@$sshHost -o StrictHostKeyChecking=no "$( cat <<EOT
   nvm install '${depNode}'
   nvm use '${depNode}'
   git pull
+  rm package-lock.json
   npm i
   WAOS_NODE_port='${depPort}' npm run prod
   echo "$(date -u) Deploy ${depProject} on node $(node -v) with npm $(npm -v)"  >> ./deploy.log
