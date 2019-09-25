@@ -25,7 +25,6 @@
   },
   "scripts": {
     "start": "cross-env NODE_ENV=development node server.js",
-    "serve": "cross-env NODE_ENV=development node server.js",
     "debug": "cross-env NODE_ENV=development nodemon --inspect server.js",
     "prod": "cross-env NODE_ENV=production pm2 start server.js --name=waosNode",
     "test": "cross-env NODE_ENV=test gulp test",
