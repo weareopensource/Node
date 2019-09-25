@@ -96,15 +96,16 @@ $ npm i
 
 ### Configuration
 
-The default configuration is : 'config/defaults/development.js'
-The other configurations : 'config/defaults/*.js' overwrite the default configuration named development. 
+The default configuration is : `config/defaults/development.js`
+The other configurations : `config/defaults/*.js` overwrite the default configuration, you can create your own. 
 
-We have a process that take into account all system environment variables defined under the form WAOS_NODE_<path_toVariable>. A script turns under the hood those system environment variables into an object, infering paths from the varialbles name, merged to the environment object defined on 'config/defaults/*.js' to regenerate that file, regardless of the production or developement mode.
+We take into account all system environment variables defined under the form WAOS_VUE_<path_toVariable>. A script turns under the hood those system environment variables into an object, infering paths from the varialbles name, merged to the configuration defined on `config/defaults` to regenerate the config.
 
-To summarize, all configuration avalable on 'config/defaults/*.js' file are overidable. You can for instance define the API porrt by defining those system environment variables:
+So configuration avalable on `config/defaults/development` file are overidable. You can for instance define the app name by defining those system environment variables :
 
--  WAOS_NODE_port=3000
--  WAOS_BACK_db_uri='mongodb://localhost/myDB'
+```
+WAOS_VUE_app_name='my app =)'
+```
 
 ## [Contribute](https://github.com/weareopensource/weareopensource.github.io/blob/master/CONTRIBUTE.md)
 

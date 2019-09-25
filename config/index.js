@@ -96,7 +96,6 @@ const initGlobalConfigFiles = (config, assets) => {
 const initGlobalConfig = () => {
   // Get the default assets
   const assets = require(path.join(process.cwd(), './config/assets'));
-
   // Get the current config
   const _path = path.join(process.cwd(), './config', 'defaults', process.env.NODE_ENV || 'development');
   let defaultConfig;
@@ -105,7 +104,6 @@ const initGlobalConfig = () => {
     console.error(chalk.red(`+ Error: No configuration file found for "${process.env.NODE_ENV}" environment using development instead`));
     defaultConfig = require(path.join(process.cwd(), './config', 'defaults', 'development'));
   }
-
   // Get the config from  process.env.WAOS_NODE_*
   const environmentVars = _.mapKeys(
     _.pickBy(process.env, (_value, key) => key.startsWith('WAOS_NODE_')),
@@ -117,11 +115,7 @@ const initGlobalConfig = () => {
   const config = _.merge(defaultConfig, environmentConfigVars);
   // read package.json for MEAN.JS project information
   const pkg = require(path.resolve('./package.json'));
-  config.meanjs = pkg;
-
-  // Extend the config object with the local-NODE_ENV.js custom/local environment. This will override any settings present in the local configuration.
-  // config = _.merge(config, (fs.existsSync(path.join(process.cwd(), 'config/env/local-' + process.env.NODE_ENV + '.js')) && require(path.join(process.cwd(), 'config/env/local-' + process.env.NODE_ENV + '.js'))) || {});
-
+  config.package = pkg;
   // Initialize global globbed files
   initGlobalConfigFiles(config, assets);
   // Init Secure SSL if can be used
@@ -132,7 +126,6 @@ const initGlobalConfig = () => {
   config.utils = {
     getGlobbedPaths,
   };
-
   return config;
 };
 
