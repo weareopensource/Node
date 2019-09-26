@@ -16,7 +16,7 @@ services:
 - mongodb
 install:
 - npm i
-after_script:
+before_script:
 - npm run test:coveralls
 jobs:
   include:
