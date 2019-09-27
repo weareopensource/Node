@@ -21,7 +21,7 @@ Our stack node is actually in Beta.
 
 * [**Wiki**](https://github.com/weareopensource/Node/blob/master/WIKI.md) - wip
 * [**Knowledges JS**](https://github.com/weareopensource/weareopensource.github.io/wiki/Knowledges-JS)
-* [**Demo**](https://node.weareopensource.me) (email: *test@waos.me*, password: *TestWaos@2019*)
+* [**Demo**](https://node.weareopensource.me) (or working with [Vue](https://github.com/weareopensource/Vue) stack [here](https://vue.weareopensource.me), email: *test@waos.me*, password: *TestWaos@2019*)
 
 ## Technology Overview
 
@@ -57,9 +57,6 @@ Our stack node is actually in Beta.
 #### In reflexion
 
 RGPD conpliance 
-
-## [Demo](http://meanie.weareopensource.me)  
-(This Node stack is used for this demonstration with our [Angular](https://github.com/weareopensource/Angular) Stack)
 
 ## Prerequisites
 Make sure you have installed all of the following prerequisites on your development machine:
