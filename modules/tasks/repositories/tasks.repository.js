@@ -16,7 +16,7 @@ exports.list = () => Task.find().sort('-createdAt').exec();
  * @param {Object} task
  * @return {Object} task
  */
-exports.create = task => new Task(task).save();
+exports.create = (task) => new Task(task).save();
 
 /**
  * @desc Function to get a task from db
@@ -33,11 +33,11 @@ exports.get = (id) => {
  * @param {Object} task
  * @return {Object} task
  */
-exports.update = task => new Task(task).save();
+exports.update = (task) => new Task(task).save();
 
 /**
  * @desc Function to delete a task in db
  * @param {Object} task
  * @return {Object} confirmation of delete
  */
-exports.delete = task => Task.deleteOne({ _id: task.id }).exec();
+exports.delete = (task) => Task.deleteOne({ _id: task.id }).exec();
