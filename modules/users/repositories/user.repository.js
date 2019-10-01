@@ -16,7 +16,7 @@ exports.list = () => User.find({}, '-password -providerData').sort('-createdAt')
  * @param {Object} user
  * @return {Object} user
  */
-exports.create = user => new User(user).save();
+exports.create = (user) => new User(user).save();
 
 /**
  * @desc Function to get a user from db by id or email
@@ -34,14 +34,14 @@ exports.get = (user) => {
  * @param {Object} mongoose input request
  * @return {Array} users
  */
-exports.search = input => User.find(input).exec();
+exports.search = (input) => User.find(input).exec();
 
 /**
  * @desc Function to update a user in db
  * @param {Object} task
  * @return {Object} task
  */
-exports.update = user => new User(user).save();
+exports.update = (user) => new User(user).save();
 
 /**
  * @desc Function to delete a user from db by id or email

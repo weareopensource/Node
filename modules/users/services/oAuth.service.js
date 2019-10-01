@@ -9,7 +9,7 @@ const UserRepository = require('../repositories/user.repository');
 
 const client = new OAuth2Client(config.google.clientId);
 const microsoftValidator = rp.get(config.microsoft.discovery)
-  .then(res => JSON.parse(res))
+  .then((res) => JSON.parse(res))
   .then(({ jwks_uri: jwksUri }) => new IdTokenVerifier({
     issuer: config.microsoft.issuer,
     jwksURI: jwksUri,

@@ -131,7 +131,7 @@ exports.uploadImage = async (req, res, config) => new Promise((resolve, reject) 
  * @param {String} path
  * @return {Promise} result
  */
-exports.deleteImage = async path => fs.unlink(path);
+exports.deleteImage = async (path) => fs.unlink(path);
 
 /**
  * @desc Function to authenticate user)
@@ -159,7 +159,7 @@ exports.comparePassword = async (userPassword, storedPassword) => bcrypt.compare
  * @param {String} password
  * @return {String} password hashed
  */
-exports.hashPassword = password => bcrypt.hash(String(password), saltRounds);
+exports.hashPassword = (password) => bcrypt.hash(String(password), saltRounds);
 
 /**
  * @desc Function to hash passwords
@@ -171,7 +171,7 @@ exports.checkPassword = (password) => {
   if (result.score < config.zxcvbn.minimumScore) {
     throw new AppError('Password too weak.', {
       code: 'SERVICE_ERROR',
-      details: result.feedback.suggestions.map(s => ({ message: s })),
+      details: result.feedback.suggestions.map((s) => ({ message: s })),
     });
   } else {
     return password;
