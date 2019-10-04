@@ -1,8 +1,27 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.13.3
+version: v1.13.5
 ignore: {}
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   'npm:uglify-js:20151024':
     - swig > uglify-js:
         patched: '2019-01-17T09:32:47.576Z'
+  SNYK-JS-HTTPSPROXYAGENT-469131:
+    - google-auth-library > gaxios > https-proxy-agent:
+        patched: '2019-10-04T07:42:56.555Z'
+    - snyk > proxy-agent > https-proxy-agent:
+        patched: '2019-10-04T07:42:56.555Z'
+    - google-auth-library > gcp-metadata > gaxios > https-proxy-agent:
+        patched: '2019-10-04T07:42:56.555Z'
+    - google-auth-library > gtoken > gaxios > https-proxy-agent:
+        patched: '2019-10-04T07:42:56.555Z'
+    - snyk > proxy-agent > pac-proxy-agent > https-proxy-agent:
+        patched: '2019-10-04T07:42:56.555Z'
+    - pm2 > @pm2/agent > proxy-agent > https-proxy-agent:
+        patched: '2019-10-04T07:42:56.555Z'
+    - pm2 > @pm2/agent > proxy-agent > pac-proxy-agent > https-proxy-agent:
+        patched: '2019-10-04T07:42:56.555Z'
+    - pm2 > @pm2/io > @pm2/agent-node > proxy-agent > https-proxy-agent:
+        patched: '2019-10-04T07:42:56.555Z'
+    - pm2 > @pm2/io > @pm2/agent-node > proxy-agent > pac-proxy-agent > https-proxy-agent:
+        patched: '2019-10-04T07:42:56.555Z'
