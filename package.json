@@ -59,7 +59,7 @@
     "generate-password": "~1.4.2",
     "glob": "~7.1.4",
     "google-auth-library": "^5.5.0",
-    "helmet": "~3.21.1",
+    "helmet": "~3.21.2",
     "idtoken-verifier": "^1.4.1",
     "joi": "^14.3.1",
     "joi-zxcvbn": "^5.2.1",
