@@ -14,6 +14,7 @@ module.exports = {
       user: '',
       pass: '',
       useCreateIndex: true,
+      useUnifiedTopology: true,
       useNewUrlParser: true,
       useFindAndModify: false,
       /**
