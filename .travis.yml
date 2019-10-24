@@ -17,6 +17,7 @@ services:
 install:
 - npm i
 before_script:
+- npm rebuild bcrypt --update-binary
 - npm run test:coveralls
 jobs:
   include:
