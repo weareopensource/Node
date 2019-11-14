@@ -114,7 +114,7 @@ exports.reset = async (req, res) => {
 /**
  * Change Password
  */
-exports.changePassword = async (req, res) => {
+exports.updatePassword = async (req, res) => {
   let user;
   let password;
 

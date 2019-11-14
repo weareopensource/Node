@@ -773,6 +773,43 @@ describe('User CRUD Tests :', () => {
       }
     });
 
+    test('should be able to delete current user', async () => {
+      // Init user edited
+      _userEdited.email = 'register_new_user_@test.com';
+
+      try {
+        const result = await agent.post('/api/auth/signup')
+          .send(_userEdited)
+          .expect(200);
+        userEdited = result.body.user;
+
+        expect(result.body.user._id).toBe(result.body.user.id);
+        expect(result.body.user.email).toBe(_userEdited.email);
+        expect(result.body.user.provider).toBe('local');
+        expect(result.body.user.roles).toBeInstanceOf(Array);
+        expect(result.body.user.roles).toHaveLength(1);
+        expect(result.body.user.roles).toEqual(
+          expect.arrayContaining(['user']),
+        );
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+
+      // delete task
+      try {
+        const result = await agent.delete('/api/users')
+          .expect(200);
+        expect(result.body.type).toBe('success');
+        expect(result.body.message).toBe('user deleted');
+        expect(result.body.data.id).toBe(userEdited.id);
+        expect(result.body.data.deletedCount).toBe(1);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+
     test('should be able to change profile picture if signed in', async () => {
       try {
         const result = await agent.post('/api/users/picture')

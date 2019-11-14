@@ -13,9 +13,16 @@ module.exports = (app) => {
 
   // Setting up the users profile api
   app.route('/api/users/me').get(passport.authenticate('jwt'), users.me);
-  app.route('/api/users').put(passport.authenticate('jwt'), model.isValid(usersSchema.User), users.update);
-  app.route('/api/users/accounts').delete(users.removeOAuthProvider);
-  app.route('/api/users/accounts').post(model.isValid(usersSchema.User), users.addOAuthProviderUserProfile);
-  app.route('/api/users/password').post(passport.authenticate('jwt'), users.changePassword);
-  app.route('/api/users/picture').post(passport.authenticate('jwt'), users.changeProfilePicture);
+
+  app.route('/api/users')
+    .put(passport.authenticate('jwt'), model.isValid(usersSchema.User), users.update)
+    .delete(passport.authenticate('jwt'), users.delete);
+
+  app.route('/api/users/accounts')
+    .delete(users.removeOAuthProvider)
+    .post(model.isValid(usersSchema.User), users.addOAuthProviderUserProfile);
+
+  app.route('/api/users/password').post(passport.authenticate('jwt'), users.updatePassword);
+
+  app.route('/api/users/picture').post(passport.authenticate('jwt'), users.updateProfilePicture);
 };

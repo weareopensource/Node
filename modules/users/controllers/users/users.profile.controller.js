@@ -29,11 +29,27 @@ exports.update = async (req, res) => {
 };
 
 /**
+ * @desc Endpoint to ask the service to delete the user connected
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.delete = async (req, res) => {
+  try {
+    const result = await UserService.delete(req.user);
+    result.id = req.user.id;
+    responses.success(res, 'user deleted')(result);
+  } catch (err) {
+    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+  }
+};
+
+
+/**
  * @desc Endpoint to ask the service to update a user profile picture
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.changeProfilePicture = async (req, res) => {
+exports.updateProfilePicture = async (req, res) => {
   try {
     await UserService.uploadImage(req, res, config.uploads.profile.avatar);
     if (req.user.profileImageURL) await UserService.deleteImage(req.user.profileImageURL);
