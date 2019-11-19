@@ -38,8 +38,8 @@ exports.search = (input) => User.find(input).exec();
 
 /**
  * @desc Function to update a user in db
- * @param {Object} task
- * @return {Object} task
+ * @param {Object} user
+ * @return {Object} user
  */
 exports.update = (user) => new User(user).save();
 

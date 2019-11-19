@@ -796,7 +796,7 @@ describe('User CRUD Tests :', () => {
         expect(err).toBeFalsy();
       }
 
-      // delete task
+      // delete user
       try {
         const result = await agent.delete('/api/users')
           .expect(200);
