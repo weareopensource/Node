@@ -74,7 +74,7 @@ module.exports = {
     xssProtection: true,
   },
   cors: {
-    origin: [],
+    origin: ['http://localhost:8080'],
     credentials: true,
   },
   // Data filter whitelist & Blacklist
