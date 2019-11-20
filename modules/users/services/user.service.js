@@ -27,8 +27,8 @@ const removeSensitive = (user) => {
 };
 
 /**
- * @desc Function to get all task in db
- * @return {Promise} All tasks
+ * @desc Function to get all users in db
+ * @return {Promise} All users
  */
 exports.list = async () => {
   const result = await UserRepository.list();
