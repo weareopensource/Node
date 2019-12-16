@@ -80,7 +80,7 @@
     "request": "^2.88.0",
     "request-promise": "^4.2.5",
     "sequelize": "^5.21.2",
-    "snyk": "^1.259.0",
+    "snyk": "^1.260.0",
     "supertest": "^4.0.2",
     "swig": "^1.4.2",
     "winston": "^3.2.1",
