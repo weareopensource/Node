@@ -80,7 +80,7 @@
     "request": "^2.88.0",
     "request-promise": "^4.2.5",
     "sequelize": "^5.21.3",
-    "snyk": "^1.259.0",
+    "snyk": "^1.260.0",
     "supertest": "^4.0.2",
     "swig": "^1.4.2",
     "winston": "^3.2.1",
@@ -100,7 +100,7 @@
     "gulp-nodemon": "~2.4.2",
     "gulp-refresh": "~1.1.0",
     "husky": "^3.1.0",
-    "inquirer": "^7.0.0",
+    "inquirer": "^7.0.1",
     "jest-cli": "^24.9.0",
     "standard-version": "^7.0.1",
     "waos-conventional-changelog": "^1.9.0"
