@@ -99,10 +99,10 @@
     "gulp-load-plugins": "^2.0.2",
     "gulp-nodemon": "~2.4.2",
     "gulp-refresh": "~1.1.0",
-    "husky": "^4.0.10",
+    "husky": "^4.2.0",
     "inquirer": "^7.0.3",
     "jest-cli": "^25.1.0",
-    "standard-version": "^7.0.1",
+    "standard-version": "^7.1.0",
     "waos-conventional-changelog": "^1.9.1"
   },
   "config": {
