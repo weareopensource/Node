@@ -93,7 +93,7 @@
     "coveralls": "~3.0.9",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-import": "^2.20.1",
     "gulp": "~4.0.2",
     "gulp-eslint": "^6.0.0",
     "gulp-load-plugins": "^2.0.2",
