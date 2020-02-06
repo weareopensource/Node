@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "acl": "~0.4.11",
-    "bcrypt": "^3.0.7",
+    "bcrypt": "^3.0.8",
     "body-parser": "^1.19.0",
     "chalk": "~3.0.0",
     "compression": "^1.7.4",
