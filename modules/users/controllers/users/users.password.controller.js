@@ -38,18 +38,23 @@ exports.forgot = async (req, res) => {
   }
 
   // send mail
-  mail.sendMail(
-    res, 'reset-password-email', {
-      displayName: user.displayName,
-      url: `${config.cors.protocol}://${config.cors.host}:${config.cors.port}/auth/password-reset?token=${user.resetPasswordToken}`,
-      appName: config.app.title,
-      appContact: config.app.appContact,
-    },
-    config.mailer.from,
-    user.email,
-    'Password Reset',
-  );
-  responses.success(res, 'An email has been sent to the provided email with further instructions.')();
+  mail.sendMail(res,
+    {
+      template: 'reset-password-email',
+      from: config.mailer.from,
+      to: user.email,
+      subject: 'Password Reset',
+      params: {
+        displayName: user.displayName,
+        url: `${config.cors.protocol}://${config.cors.host}:${config.cors.port}/auth/password-reset?token=${user.resetPasswordToken}`,
+        appName: config.app.title,
+        appContact: config.app.appContact,
+      },
+    }, {
+      success: 'An email has been sent to the provided email with further instructions.',
+      error: 'Failure sending email',
+      data: null,
+    });
 };
 
 /**
@@ -79,11 +84,8 @@ exports.validateResetToken = async (req, res) => {
  */
 exports.reset = async (req, res) => {
   let user;
-  let send;
-
   // check input
   if (!req.body.token || !req.body.newPassword) return responses.error(res, 400, 'Bad Request', 'Password or Token fields must not be blank')();
-
   // get user by token, update with new password, login again
   try {
     user = await UserService.search({
@@ -109,23 +111,23 @@ exports.reset = async (req, res) => {
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
-
   // send mail
-  mail.sendMail(
-    res, 'reset-password-confirm-email', {
-      displayName: user.displayName,
-      appName: config.app.title,
-      appContact: config.app.appContact,
-    },
-    config.mailer.from,
-    user.email,
-    'Your password has been changed',
-  );
-
-  const template = mail.generateTemplate(res, 'reset-password-confirm-email', user.displayName);
-  if (template) send = mail.sendMail(config.mailer.from, user.email, 'Your password has been changed', template);
-  if (!template || !send) return responses.error(res, 400, 'Bad Request', 'Failure sending email')();
-  responses.success(res, 'An email has been sent to the provided email with further instructions.')();
+  mail.sendMail(res,
+    {
+      template: 'reset-password-confirm-email',
+      from: config.mailer.from,
+      to: user.email,
+      subject: 'Your password has been changed',
+      params: {
+        displayName: user.displayName,
+        appName: config.app.title,
+        appContact: config.app.appContact,
+      },
+    }, {
+      success: 'An email has been sent to the provided email with further instructions.',
+      error: 'Failure sending email',
+      data: null,
+    });
 };
 
 /**
