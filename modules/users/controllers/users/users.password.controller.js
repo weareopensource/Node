@@ -6,7 +6,7 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 const UserService = require('../../services/user.service');
 
-const mail = require(path.resolve('./lib/helpers/mail'));
+const mails = require(path.resolve('./lib/helpers/mails'));
 const errors = require(path.resolve('./lib/helpers/errors'));
 const responses = require(path.resolve('./lib/helpers/responses'));
 const configuration = require(path.resolve('./config'));
@@ -38,23 +38,20 @@ exports.forgot = async (req, res) => {
   }
 
   // send mail
-  mail.sendMail(res,
-    {
-      template: 'reset-password-email',
-      from: config.mailer.from,
-      to: user.email,
-      subject: 'Password Reset',
-      params: {
-        displayName: user.displayName,
-        url: `${config.cors.protocol}://${config.cors.host}:${config.cors.port}/auth/password-reset?token=${user.resetPasswordToken}`,
-        appName: config.app.title,
-        appContact: config.app.appContact,
-      },
-    }, {
-      success: 'An email has been sent to the provided email with further instructions.',
-      error: 'Failure sending email',
-      data: null,
-    });
+  const mail = await mails.sendMail({
+    template: 'reset-password-email',
+    from: config.mailer.from,
+    to: user.email,
+    subject: 'Password Reset',
+    params: {
+      displayName: user.displayName,
+      url: `${config.cors.protocol}://${config.cors.host}:${config.cors.port}/auth/password-reset?token=${user.resetPasswordToken}`,
+      appName: config.app.title,
+      appContact: config.app.appContact,
+    },
+  });
+  if (!mail.accepted) return responses.error(res, 400, 'Bad Request', 'Failure sending email')();
+  responses.success(res, 'An email has been sent to the provided email with further instructions')();
 };
 
 /**
@@ -112,22 +109,19 @@ exports.reset = async (req, res) => {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
   // send mail
-  mail.sendMail(res,
-    {
-      template: 'reset-password-confirm-email',
-      from: config.mailer.from,
-      to: user.email,
-      subject: 'Your password has been changed',
-      params: {
-        displayName: user.displayName,
-        appName: config.app.title,
-        appContact: config.app.appContact,
-      },
-    }, {
-      success: 'An email has been sent to the provided email with further instructions.',
-      error: 'Failure sending email',
-      data: null,
-    });
+  const mail = await mails.sendMail({
+    template: 'reset-password-confirm-email',
+    from: config.mailer.from,
+    to: user.email,
+    subject: 'Your password has been changed',
+    params: {
+      displayName: user.displayName,
+      appName: config.app.title,
+      appContact: config.app.appContact,
+    },
+  });
+  if (!mail.accepted) return responses.error(res, 400, 'Bad Request', 'Failure sending email')();
+  responses.success(res, 'An email has been sent to the provided email with further instructions')();
 };
 
 /**
