@@ -4,6 +4,7 @@ module.exports = {
     description: 'Node - Boilerplate Back : Express, Jwt, Mongo, Sequelize (Beta) ',
     keywords: 'node, express, mongo, jwt, sequelize, stack, boilerplate',
     googleAnalyticsTrackingID: 'WAOS_NODE_app_googleAnalyticsTrackingID',
+    contact: 'waos.me@gmail.com',
   },
   port: 3000,
   host: 'localhost',
