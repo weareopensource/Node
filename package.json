@@ -97,7 +97,7 @@
     "gulp": "~4.0.2",
     "gulp-eslint": "^6.0.0",
     "gulp-load-plugins": "^2.0.2",
-    "gulp-nodemon": "~2.4.2",
+    "gulp-nodemon": "~2.5.0",
     "gulp-refresh": "~1.1.0",
     "husky": "^4.2.3",
     "inquirer": "^7.0.5",
