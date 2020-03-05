@@ -28,7 +28,9 @@ exports.signup = async (req, res) => {
     const token = jwt.sign({ userId: user.id }, config.jwt.secret, { expiresIn: config.jwt.expiresIn });
     return res.status(200)
       .cookie('TOKEN', token, { httpOnly: true })
-      .json({ user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000) });
+      .json({
+        user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000), type: 'sucess', message: 'Sign up',
+      });
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
@@ -45,7 +47,9 @@ exports.signin = async (req, res) => {
   const token = jwt.sign({ userId: user.id }, configuration.jwt.secret, { expiresIn: config.jwt.expiresIn });
   return res.status(200)
     .cookie('TOKEN', token, { httpOnly: true })
-    .json({ user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000) });
+    .json({
+      user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000), type: 'sucess', message: 'Sign up',
+    });
 };
 
 /**
