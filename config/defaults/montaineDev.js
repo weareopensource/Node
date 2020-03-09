@@ -8,7 +8,7 @@ module.exports = _.merge(defaultConfig, {
   },
   port: 3011,
   db: {
-    uri: 'mongodb://localhost/LouNodeDev',
+    uri: 'mongodb://localhost/MontaineNodeDev',
     debug: false,
   },
   cors: {
