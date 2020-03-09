@@ -24,6 +24,9 @@ module.exports = (app) => {
     .put(model.isValid(apisSchema.Api), apis.update) // update
     .delete(model.isValid(apisSchema.Api), apis.delete); // delete
 
+  app.route('/api/apis/load/:apiId')
+    .get(apis.load);
+
   // Finish by binding the api middleware
   app.param('apiId', apis.apiByID);
 };

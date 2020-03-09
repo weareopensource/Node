@@ -14,4 +14,12 @@ module.exports = _.merge(defaultConfig, {
   cors: {
     origin: ['http://localhost:8011'],
   },
+  jwt: {
+    secret: 'ComeNodeDevSecret', // secret for hash
+    expiresIn: 7 * 24 * 60 * 60, // token expire in x sec
+  },
+  jwtLou: {
+    secret: 'LouNodeDevSecret', // secret for hash
+    expiresIn: 360, // token expire in x sec
+  },
 });

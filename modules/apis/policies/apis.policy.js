@@ -17,15 +17,9 @@ exports.invokeRolesPolicies = () => {
     }, {
       resources: '/api/apis/:apiId',
       permissions: '*',
-    }],
-  }, {
-    roles: ['guest'],
-    allows: [{
-      resources: '/api/apis',
-      permissions: ['get'],
     }, {
-      resources: '/api/apis/:apiId',
-      permissions: ['get'],
+      resources: '/api/apis/load/:apiId',
+      permissions: '*',
     }],
   }]);
 };

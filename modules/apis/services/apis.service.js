@@ -4,6 +4,7 @@
 const path = require('path');
 
 const UserService = require(path.resolve('./modules/users/services/user.service.js'));
+const montaine = require(path.resolve('./lib/helpers/montaine'));
 const ApisRepository = require('../repositories/apis.repository');
 
 
@@ -48,8 +49,7 @@ exports.update = async (api, body) => {
   api.title = body.title;
   api.url = body.url;
   api.auth = body.auth;
-  api.email = body.email;
-  api.password = body.password;
+  api.serviceId = body.serviceId;
   api.status = body.status;
   api.banner = body.banner;
   api.description = body.description;
@@ -67,4 +67,18 @@ exports.update = async (api, body) => {
 exports.delete = async (api) => {
   const result = await ApisRepository.delete(api);
   return Promise.resolve(result);
+};
+
+
+/**
+ * @desc Functio to ask repository to load an api request
+ * @param {Object} scrap - original scrap
+ * @return {Promise} scrap
+ */
+exports.load = async (api) => {
+  console.log('load');
+  const result = await montaine.request(api);
+  console.log('result', result.data);
+  // return
+  return Promise.resolve(result.data);
 };

@@ -76,6 +76,21 @@ exports.delete = async (req, res) => {
   }
 };
 
+/**
+ * @desc Endpoint to load the request of the api to the api
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.load = async (req, res) => {
+  // TODO if (req.scrap && req.user && req.scrap.user && req.scrap.user.id === req.user.id) next();
+  try {
+    const data = await ApisService.load(req.api);
+    responses.success(res, 'api loaded')(data);
+  } catch (err) {
+    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+  }
+};
+
 
 /**
  * @desc MiddleWare to ask the service the api for this id
