@@ -20,6 +20,10 @@ const ApiMongoose = new Schema({
     type: Schema.ObjectId,
     ref: 'User',
   },
+  history: [{
+    type: Schema.ObjectId,
+    ref: 'History',
+  }],
 }, {
   timestamps: true,
 });

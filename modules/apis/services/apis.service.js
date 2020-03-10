@@ -6,6 +6,7 @@ const path = require('path');
 const UserService = require(path.resolve('./modules/users/services/user.service.js'));
 const montaine = require(path.resolve('./lib/helpers/montaine'));
 const ApisRepository = require('../repositories/apis.repository');
+const HistoryRepository = require('../repositories/history.repository');
 
 
 /**
@@ -76,9 +77,26 @@ exports.delete = async (api) => {
  * @return {Promise} scrap
  */
 exports.load = async (api) => {
-  console.log('load');
-  const result = await montaine.request(api);
-  console.log('result', result.data);
+  const start = new Date();
+
+  let result = await montaine.request(api);
+  result = result.data;
+
+  const history = await HistoryRepository.create(montaine.setScrapHistory(result, api, start));
+  api.status = result.type === 'success';
+  api.history.push(history._id);
+  api = await ApisRepository.update(api);
   // return
-  return Promise.resolve(result.data);
+  return Promise.resolve({
+    result,
+    api,
+  });
 };
+
+
+// const historySchema = Joi.object().keys({
+//   apiId: Joi.string().trim().required(),
+//   result: Joi.object({}).unknown().optional(),
+//   time: Joi.number().default(0).required(),
+//   status: Joi.boolean().default(false).required(),
+// });

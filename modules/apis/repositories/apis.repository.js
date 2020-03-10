@@ -25,7 +25,7 @@ exports.create = (api) => new Api(api).save();
  */
 exports.get = (id) => {
   if (!mongoose.Types.ObjectId.isValid(id)) return null;
-  return Api.findOne({ _id: id }).exec();
+  return Api.findOne({ _id: id }).populate('history').exec();
 };
 
 /**
@@ -33,7 +33,7 @@ exports.get = (id) => {
  * @param {Object} api
  * @return {Object} api
  */
-exports.update = (api) => new Api(api).save();
+exports.update = (api) => new Api(api).save().then((a) => a.populate('history').execPopulate());
 
 /**
  * @desc Function to delete a api in db
