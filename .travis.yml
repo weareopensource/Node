@@ -21,8 +21,8 @@ before_script:
 jobs:
   include:
   - stage: deploy
-    if: branch = master
-    node_js: lts/*
+ #   if: branch = master
+    node_js: 12
     deploy:
       provider: script
       skip_cleanup: true
