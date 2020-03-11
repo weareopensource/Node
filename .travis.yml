@@ -24,3 +24,5 @@ jobs:
       provider: script
       cleanup: true
       script: ./scripts/deploy-travis.sh
+      on:
+        branch: master
