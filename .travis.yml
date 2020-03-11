@@ -21,8 +21,4 @@ before_script:
 jobs:
   include:
   - stage: deploy
-    node_js: lts/*
-    deploy:
-      provider: script
-      script:
-      - scripts/deploy-travis.sh
+    script: ./scripts/deploy-travis.sh
