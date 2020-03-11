@@ -24,6 +24,5 @@ jobs:
     node_js: lts/*
     deploy:
       provider: script
-      skip_cleanup: true
       script:
       - scripts/deploy-travis.sh
