@@ -87,23 +87,29 @@ exports.load = async (api) => {
   const result = {};
   // conf
   const params = montaineRequest.setParams(api.params);
-
+  // request
   const request = await montaineRequest.request(api, params);
   result.request = request;
-
-  // test data
+  // Typing
   if (result.request.data && result.request.type === 'success' && api.typing && api.typing !== '') {
     result.typing = montaineTyping.typing(result.request.data, JSON.parse(api.typing));
+    if (!result.typing) {
+      result.type = 'error';
+      result.message = 'Failed data Typing';
+    }
   }
-
-  // test data
+  // Mapping
   if (result.typing && api.mapping && api.mapping !== '') {
     result.mapping = montaineMapping.mapping(result.typing, JSON.parse(api.mapping));
+    if (!result.mapping) {
+      result.type = 'error';
+      result.message = 'Failed data Mapping';
+    }
   }
 
-
-  const history = await HistoryRepository.create(montaineRequest.setScrapHistory(result, api, start));
-  api.status = result.type === 'success';
+  const history = await HistoryRepository.create(montaineRequest.setScrapHistory(result.request, api, start));
+  api.status = result.request.type === 'success';
+  console.log(api.status);
   api.history.push(history._id);
   api = await ApisRepository.update(api);
   // return
