@@ -4,7 +4,9 @@
 const path = require('path');
 
 const UserService = require(path.resolve('./modules/users/services/user.service.js'));
-const montaine = require(path.resolve('./lib/helpers/montaine'));
+const montaineMapping = require(path.resolve('./lib/helpers/montaineMapping'));
+const montaineTyping = require(path.resolve('./lib/helpers/montaineTyping'));
+const montaineRequest = require(path.resolve('./lib/helpers/montaineRequest'));
 const ApisRepository = require('../repositories/apis.repository');
 const HistoryRepository = require('../repositories/history.repository');
 
@@ -51,10 +53,14 @@ exports.update = async (api, body) => {
   api.url = body.url;
   api.auth = body.auth;
   api.serviceId = body.serviceId;
+  api.params = body.params;
   api.status = body.status;
   api.banner = body.banner;
   api.description = body.description;
-  api.password = await UserService.hashPassword(api.password);
+  if (body.typing && body.typing !== '') api.typing = body.typing;
+  else api.typing = null;
+  if (body.mapping && body.mapping !== '') api.mapping = body.mapping;
+  else api.mapping = null;
 
   const result = await ApisRepository.update(api);
   return Promise.resolve(result);
@@ -78,25 +84,31 @@ exports.delete = async (api) => {
  */
 exports.load = async (api) => {
   const start = new Date();
+  const result = {};
+  // conf
+  const params = montaineRequest.setParams(api.params);
 
-  let result = await montaine.request(api);
-  result = result.data;
+  const request = await montaineRequest.request(api, params);
+  result.request = request;
 
-  const history = await HistoryRepository.create(montaine.setScrapHistory(result, api, start));
+  // test data
+  if (result.request.data && result.request.type === 'success' && api.typing && api.typing !== '') {
+    result.typing = montaineTyping.typing(result.request.data, JSON.parse(api.typing));
+  }
+
+  // test data
+  if (result.typing && api.mapping && api.mapping !== '') {
+    result.mapping = montaineMapping.mapping(result.typing, JSON.parse(api.mapping));
+  }
+
+
+  const history = await HistoryRepository.create(montaineRequest.setScrapHistory(result, api, start));
   api.status = result.type === 'success';
   api.history.push(history._id);
   api = await ApisRepository.update(api);
   // return
   return Promise.resolve({
-    result,
     api,
+    result,
   });
 };
-
-
-// const historySchema = Joi.object().keys({
-//   apiId: Joi.string().trim().required(),
-//   result: Joi.object({}).unknown().optional(),
-//   time: Joi.number().default(0).required(),
-//   status: Joi.boolean().default(false).required(),
-// });
