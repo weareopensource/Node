@@ -9,7 +9,10 @@ const Schema = mongoose.Schema;
  * Data Model Mongoose
  */
 const ApiMongoose = new Schema({
-  title: String,
+  title: {
+    type: String,
+    unique: 'Title already exists',
+  },
   url: String,
   auth: String,
   serviceId: String,

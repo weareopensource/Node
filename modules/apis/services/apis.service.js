@@ -2,6 +2,7 @@
  * Module dependencies
  */
 const path = require('path');
+const _ = require('lodash');
 
 const UserService = require(path.resolve('./modules/users/services/user.service.js'));
 const montaineMapping = require(path.resolve('./lib/helpers/montaineMapping'));
@@ -113,9 +114,8 @@ exports.load = async (api) => {
   // prepare for save
   if (result.result) {
     result.result = montaineSaving.saving(result.result, start);
+    await ApisRepository.import(_.camelCase(api.title), result.result, ['@id', '@date']);
   }
-
-  // Mapping
 
   const history = await HistoryRepository.create(montaineRequest.setScrapHistory(result.request, api, start));
   api.status = result.request.type === 'success';

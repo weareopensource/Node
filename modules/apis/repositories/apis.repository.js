@@ -41,3 +41,36 @@ exports.update = (api) => new Api(api).save().then((a) => a.populate('history').
  * @return {Object} confirmation of delete
  */
 exports.delete = (api) => Api.deleteOne({ _id: api.id }).exec();
+
+/**
+ * @desc Function to import list of locations in db
+ * @param {Object} locations
+ * @return {Object} locations
+ */
+exports.import = (collection, items, filters) => {
+  const _schema = new mongoose.Schema({}, {
+    collection,
+    strict: false,
+  });
+
+  let model;
+  try {
+    model = mongoose.model(collection);
+  } catch (error) {
+    model = mongoose.model(collection, _schema);
+  }
+
+  return model.bulkWrite(items.map((item) => {
+    const filter = {};
+    filters.forEach((value) => {
+      filter[value] = item[value];
+    });
+    return {
+      updateOne: {
+        filter,
+        update: item,
+        upsert: true,
+      },
+    };
+  }));
+};
