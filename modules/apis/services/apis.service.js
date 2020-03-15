@@ -7,6 +7,7 @@ const UserService = require(path.resolve('./modules/users/services/user.service.
 const montaineMapping = require(path.resolve('./lib/helpers/montaineMapping'));
 const montaineTyping = require(path.resolve('./lib/helpers/montaineTyping'));
 const montaineRequest = require(path.resolve('./lib/helpers/montaineRequest'));
+const montaineSaving = require(path.resolve('./lib/helpers/montaineSaving'));
 const ApisRepository = require('../repositories/apis.repository');
 const HistoryRepository = require('../repositories/history.repository');
 
@@ -90,26 +91,34 @@ exports.load = async (api) => {
   // request
   const request = await montaineRequest.request(api, params);
   result.request = request;
-  // Typing
-  if (result.request.data && result.request.type === 'success' && api.typing && api.typing !== '') {
-    result.typing = montaineTyping.typing(result.request.data, JSON.parse(api.typing));
-    if (!result.typing) {
-      result.type = 'error';
-      result.message = 'Failed data Typing';
-    }
-  }
+  result.result = request.data;
   // Mapping
-  if (result.typing && api.mapping && api.mapping !== '') {
-    result.mapping = montaineMapping.mapping(result.typing, JSON.parse(api.mapping));
+  if (result.result && api.mapping && api.mapping !== '') {
+    result.mapping = montaineMapping.mapping(result.result, JSON.parse(api.mapping));
+    result.result = result.mapping;
     if (!result.mapping) {
       result.type = 'error';
       result.message = 'Failed data Mapping';
     }
   }
+  // Typing
+  if (result.result && result.request.type === 'success' && api.typing && api.typing !== '') {
+    result.typing = montaineTyping.typing(result.result, JSON.parse(api.typing));
+    result.result = result.typing;
+    if (!result.typing) {
+      result.type = 'error';
+      result.message = 'Failed data Typing';
+    }
+  }
+  // prepare for save
+  if (result.result) {
+    result.result = montaineSaving.saving(result.result, start);
+  }
+
+  // Mapping
 
   const history = await HistoryRepository.create(montaineRequest.setScrapHistory(result.request, api, start));
   api.status = result.request.type === 'success';
-  console.log(api.status);
   api.history.push(history._id);
   api = await ApisRepository.update(api);
   // return
