@@ -114,7 +114,7 @@ exports.load = async (api) => {
   // prepare for save
   if (result.result) {
     result.result = montaineSaving.saving(result.result, start);
-    await ApisRepository.import(_.camelCase(api.title), result.result, ['@id', '@date']);
+    await ApisRepository.import(_.camelCase(api.title), result.result, montaineSaving.getKeyForMerge(result.result));
   }
 
   const history = await HistoryRepository.create(montaineRequest.setScrapHistory(result.request, api, start));
