@@ -116,7 +116,7 @@ exports.load = async (api) => {
     result.prepare = montaineSave.prepare(result.result, start);
     result.mongo = montaineSave.save(result.prepare, start);
     result.result = result.mongo;
-    await ApisRepository.import(_.camelCase(api.title), result.result);
+    result.result = await ApisRepository.import(_.camelCase(api.title), result.result);
   }
 
   const history = await HistoryRepository.create(montaineRequest.setScrapHistory(result.request, api, start));
