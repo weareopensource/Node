@@ -52,6 +52,7 @@ exports.get = async (id) => {
  */
 exports.update = async (api, body) => {
   api.title = body.title;
+  api.slug = _.camelCase(body.title);
   api.url = body.url;
   api.auth = body.auth;
   api.serviceId = body.serviceId;
@@ -116,7 +117,7 @@ exports.load = async (api) => {
     result.prepare = montaineSave.prepare(result.result, start);
     result.mongo = montaineSave.save(result.prepare, start);
     result.result = result.mongo;
-    result.result = await ApisRepository.import(_.camelCase(api.title), result.result);
+    result.result = await ApisRepository.import(api.slug, result.result);
   }
 
   const history = await HistoryRepository.create(montaineRequest.setScrapHistory(result.request, api, start));

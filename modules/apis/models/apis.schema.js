@@ -12,6 +12,7 @@ const Joi = PlainJoi.extend(joiZxcvbn(PlainJoi));
  */
 const ApiSchema = Joi.object().keys({
   title: Joi.string().trim().default('').required(),
+  slug: Joi.string().trim().optional(),
   url: Joi.string().trim().required(),
   auth: Joi.string().valid(['lou']).required(),
   serviceId: Joi.string().trim().default('').required(),

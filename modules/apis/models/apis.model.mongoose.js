@@ -13,6 +13,10 @@ const ApiMongoose = new Schema({
     type: String,
     unique: 'Title already exists',
   },
+  slug: {
+    type: String,
+    unique: 'slug already exists',
+  },
   url: String,
   auth: String,
   serviceId: String,
