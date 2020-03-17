@@ -5,10 +5,10 @@ const path = require('path');
 const _ = require('lodash');
 
 const UserService = require(path.resolve('./modules/users/services/user.service.js'));
-const montaineMapping = require(path.resolve('./lib/helpers/montaineMapping'));
-const montaineTyping = require(path.resolve('./lib/helpers/montaineTyping'));
+const montaineMap = require(path.resolve('./lib/helpers/montaineMap'));
+const montaineType = require(path.resolve('./lib/helpers/montaineType'));
 const montaineRequest = require(path.resolve('./lib/helpers/montaineRequest'));
-const montaineSaving = require(path.resolve('./lib/helpers/montaineSaving'));
+const montaineSave = require(path.resolve('./lib/helpers/montaineSave'));
 const ApisRepository = require('../repositories/apis.repository');
 const HistoryRepository = require('../repositories/history.repository');
 
@@ -95,7 +95,7 @@ exports.load = async (api) => {
   result.result = request.data;
   // Mapping
   if (result.result && api.mapping && api.mapping !== '') {
-    result.mapping = montaineMapping.mapping(result.result, JSON.parse(api.mapping));
+    result.mapping = montaineMap.map(result.result, JSON.parse(api.mapping));
     result.result = result.mapping;
     if (!result.mapping) {
       result.type = 'error';
@@ -104,7 +104,7 @@ exports.load = async (api) => {
   }
   // Typing
   if (result.result && result.request.type === 'success' && api.typing && api.typing !== '') {
-    result.typing = montaineTyping.typing(result.result, JSON.parse(api.typing));
+    result.typing = montaineType.type(result.result, JSON.parse(api.typing));
     result.result = result.typing;
     if (!result.typing) {
       result.type = 'error';
@@ -113,8 +113,10 @@ exports.load = async (api) => {
   }
   // prepare for save
   if (result.result) {
-    result.result = montaineSaving.saving(result.result, start);
-    await ApisRepository.import(_.camelCase(api.title), result.result, montaineSaving.getKeyForMerge(result.result));
+    result.prepare = montaineSave.prepare(result.result, start);
+    result.mongo = montaineSave.save(result.prepare, start);
+    result.result = result.mongo;
+    await ApisRepository.import(_.camelCase(api.title), result.result);
   }
 
   const history = await HistoryRepository.create(montaineRequest.setScrapHistory(result.request, api, start));

@@ -47,7 +47,7 @@ exports.delete = (api) => Api.deleteOne({ _id: api.id }).exec();
  * @param {Object} locations
  * @return {Object} locations
  */
-exports.import = (collection, items, filters) => {
+exports.import = (collection, items) => {
   const _schema = new mongoose.Schema({}, {
     collection,
     strict: false,
@@ -60,17 +60,11 @@ exports.import = (collection, items, filters) => {
     model = mongoose.model(collection, _schema);
   }
 
-  return model.bulkWrite(items.map((item) => {
-    const filter = {};
-    filters.forEach((value) => {
-      filter[value] = item[value];
-    });
-    return {
-      updateOne: {
-        filter,
-        update: item,
-        upsert: true,
-      },
-    };
-  }));
+  return model.bulkWrite(items.map((item) => ({
+    updateOne: {
+      filter: item.filter,
+      update: item.update,
+      upsert: item.upsert,
+    },
+  })));
 };
