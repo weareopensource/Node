@@ -27,6 +27,9 @@ module.exports = (app) => {
   app.route('/api/apis/load/:apiId')
     .get(apis.load);
 
+  app.route('/api/apis/data/:apiId')
+    .get(apis.getApiData);
+
   // Finish by binding the api middleware
   app.param('apiId', apis.apiByID);
 };

@@ -68,3 +68,25 @@ exports.import = (collection, items) => {
     },
   })));
 };
+
+
+/**
+ * @desc Function to import list of locations in db
+ * @param {Object} locations
+ * @return {Object} locations
+ */
+exports.getApiData = (collection) => {
+  const _schema = new mongoose.Schema({}, {
+    collection,
+    strict: false,
+  });
+
+  let model;
+  try {
+    model = mongoose.model(collection);
+  } catch (error) {
+    model = mongoose.model(collection, _schema);
+  }
+
+  return model.find().sort('-createdAt').exec();
+};

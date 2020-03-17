@@ -91,6 +91,21 @@ exports.load = async (req, res) => {
   }
 };
 
+/**
+ * @desc Endpoint to getData stocked from load
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.getApiData = async (req, res) => {
+  // TODO if (req.scrap && req.user && req.scrap.user && req.scrap.user.id === req.user.id) next();
+  try {
+    const data = await ApisService.getApiData(req.api);
+    responses.success(res, 'api getData')(data);
+  } catch (err) {
+    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+  }
+};
+
 
 /**
  * @desc MiddleWare to ask the service the api for this id

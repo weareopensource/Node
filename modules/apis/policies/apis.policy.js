@@ -20,6 +20,9 @@ exports.invokeRolesPolicies = () => {
     }, {
       resources: '/api/apis/load/:apiId',
       permissions: '*',
+    }, {
+      resources: '/api/apis/data/:apiId',
+      permissions: '*',
     }],
   }]);
 };

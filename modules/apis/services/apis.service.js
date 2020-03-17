@@ -130,3 +130,14 @@ exports.load = async (api) => {
     result,
   });
 };
+
+
+/**
+ * @desc Functio to ask repository to get data stocker from apis request
+ * @param {Object} scrap - original scrap
+ * @return {Promise} scrap
+ */
+exports.getApiData = async (api) => {
+  const result = await ApisRepository.getApiData(api.slug);
+  return Promise.resolve(result);
+};
