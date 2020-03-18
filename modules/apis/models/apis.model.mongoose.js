@@ -26,6 +26,7 @@ const ApiMongoose = new Schema({
   status: Boolean,
   banner: String,
   description: String,
+  savedb: Boolean,
   user: {
     type: Schema.ObjectId,
     ref: 'User',

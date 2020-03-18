@@ -29,6 +29,7 @@ exports.list = async () => {
  */
 exports.create = async (api, user) => {
   api.user = user.id;
+  api.slug = _.camelCase(api.title);
   if (api.password) api.password = await UserService.hashPassword(api.password);
   const result = await ApisRepository.create(api);
   return Promise.resolve(result);
@@ -59,6 +60,7 @@ exports.update = async (api, body) => {
   api.params = body.params;
   api.status = body.status;
   api.banner = body.banner;
+  api.savedb = body.savedb;
   api.description = body.description;
   if (body.typing && body.typing !== '') api.typing = body.typing;
   else api.typing = null;
@@ -117,7 +119,7 @@ exports.load = async (api) => {
     result.prepare = montaineSave.prepare(result.result, start);
     result.mongo = montaineSave.save(result.prepare, start);
     result.result = result.mongo;
-    result.result = await ApisRepository.import(api.slug, result.result);
+    if (api.savedb) result.result = await ApisRepository.import(api.slug, result.result);
   }
 
   const history = await HistoryRepository.create(montaineRequest.setScrapHistory(result.request, api, start));
