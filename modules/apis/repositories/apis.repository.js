@@ -79,6 +79,7 @@ exports.getApiData = (collection) => {
   const _schema = new mongoose.Schema({}, {
     collection,
     strict: false,
+    timestamps: true,
   });
 
   let model;
