@@ -2,10 +2,6 @@ language: node_js
 node_js:
 - 10
 - 12
-- 13
-matrix:
-  allow_failures:
-  - node_js: 13
 os:
 - linux
 cache:
@@ -20,11 +16,13 @@ before_script:
 - npm run test:coveralls
 jobs:
   include:
+  - stage: allow_failures
+    node_js: 13
   - stage: deploy
-    if: branch = master
     node_js: lts/*
     deploy:
       provider: script
-      skip_cleanup: true
-      script:
-      - scripts/deploy-travis.sh
+      cleanup: true
+      script: ./scripts/deploy-travis.sh
+      on:
+        branch: master
