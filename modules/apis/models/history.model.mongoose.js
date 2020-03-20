@@ -10,9 +10,8 @@ const Schema = mongoose.Schema;
  */
 
 const HistoryMongoose = new Schema({
-  apiId: String,
-  result: {},
   status: Boolean,
+  err: {},
   time: Number,
 }, {
   timestamps: true,

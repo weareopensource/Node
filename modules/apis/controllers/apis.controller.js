@@ -83,11 +83,15 @@ exports.delete = async (req, res) => {
  */
 exports.load = async (req, res) => {
   // TODO if (req.scrap && req.user && req.scrap.user && req.scrap.user.id === req.user.id) next();
+  const start = new Date();
   try {
-    const data = await ApisService.load(req.api);
+    const data = await ApisService.load(req.api, start);
+
     responses.success(res, 'api loaded')(data);
+    await ApisService.historize(true, null, start, req.api);
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+    await ApisService.historize(false, err, start, req.api);
   }
 };
 

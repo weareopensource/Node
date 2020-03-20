@@ -83,12 +83,24 @@ exports.delete = async (api) => {
 
 
 /**
+ * @desc Functio to ask repository to add an history
+ * @param {Object} scrap - original scrap
+ * @return {Promise} scrap
+ */
+exports.historize = async (status, err, start, api) => {
+  const history = await HistoryRepository.create(montaineRequest.setApiHistory(status, err, start));
+  api.history.push(history._id);
+  api.status = history.status;
+  api = await ApisRepository.update(api);
+  return Promise.resolve(api);
+};
+
+/**
  * @desc Functio to ask repository to load an api request
  * @param {Object} scrap - original scrap
  * @return {Promise} scrap
  */
-exports.load = async (api) => {
-  const start = new Date();
+exports.load = async (api, start) => {
   const result = {};
   // conf
   const params = montaineRequest.setParams(api.params);
@@ -100,19 +112,12 @@ exports.load = async (api) => {
   if (result.result && api.mapping && api.mapping !== '') {
     result.mapping = montaineMap.map(result.result, JSON.parse(api.mapping));
     result.result = result.mapping;
-    if (!result.mapping) {
-      result.type = 'error';
-      result.message = 'Failed data Mapping';
-    }
   }
+
   // Typing
-  if (result.result && result.request.type === 'success' && api.typing && api.typing !== '') {
+  if (result.result && api.typing && api.typing !== '') {
     result.typing = montaineType.type(result.result, JSON.parse(api.typing));
     result.result = result.typing;
-    if (!result.typing) {
-      result.type = 'error';
-      result.message = 'Failed data Typing';
-    }
   }
   // prepare for save
   if (result.result) {
@@ -122,10 +127,6 @@ exports.load = async (api) => {
     if (api.savedb) result.result = await ApisRepository.import(api.slug, result.result);
   }
 
-  const history = await HistoryRepository.create(montaineRequest.setScrapHistory(result.request, api, start));
-  api.status = result.request.type === 'success';
-  api.history.push(history._id);
-  api = await ApisRepository.update(api);
   // return
   return Promise.resolve({
     api,
