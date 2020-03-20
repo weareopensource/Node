@@ -95,7 +95,7 @@ exports.load = async (api) => {
   // request
   const request = await montaineRequest.request(api, params);
   result.request = request;
-  result.result = request.data;
+  result.result = request.data.result;
   // Mapping
   if (result.result && api.mapping && api.mapping !== '') {
     result.mapping = montaineMap.map(result.result, JSON.parse(api.mapping));
