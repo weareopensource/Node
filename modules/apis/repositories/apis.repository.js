@@ -89,5 +89,5 @@ exports.getApiData = (collection) => {
     model = mongoose.model(collection, _schema);
   }
 
-  return model.find().sort('-createdAt').exec();
+  return model.find().sort('-updatedAt').exec();
 };
