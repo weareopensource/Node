@@ -110,20 +110,21 @@ exports.load = async (api, start) => {
   result.result = request.data.result;
   // Mapping
   if (result.result && api.mapping && api.mapping !== '') {
-    result.mapping = montaineMap.map(_.cloneDeep(result.result), JSON.parse(api.mapping));
-    result.result = result.mapping;
+    result.result = montaineMap.map(_.cloneDeep(result.result), JSON.parse(api.mapping));
+    result.mapping = result.result[0] ? result.result[0] : result.result;
   }
 
   // Typing
   if (result.result && api.typing && api.typing !== '') {
-    result.typing = montaineType.type(_.cloneDeep(result.result), JSON.parse(api.typing));
-    result.result = result.typing;
+    result.result = montaineType.type(_.cloneDeep(result.result), JSON.parse(api.typing));
+    result.typing = result.result[0] ? result.result[0] : result.result;
   }
   // prepare for save
   if (result.result) {
-    result.prepare = montaineSave.prepare(_.cloneDeep(result.result), start);
-    result.mongo = montaineSave.save(_.cloneDeep(result.prepare), start);
-    result.result = result.mongo;
+    result.result = montaineSave.prepare(_.cloneDeep(result.result), start);
+    result.prepare = result.result[0] ? result.result[0] : result.result;
+    result.result = montaineSave.save(_.cloneDeep(result.result), start);
+    result.mongo = result.result;
     if (api.savedb) result.result = await ApisRepository.import(api.slug, result.result);
   }
 
