@@ -86,7 +86,6 @@ exports.load = async (req, res) => {
   const start = new Date();
   try {
     const data = await ApisService.load(req.api, start);
-
     responses.success(res, 'api loaded')(data);
     await ApisService.historize(true, null, start, req.api);
   } catch (err) {

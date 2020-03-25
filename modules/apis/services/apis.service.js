@@ -110,22 +110,22 @@ exports.load = async (api, start) => {
   result.result = request.data.result;
   // Mapping
   if (result.result && api.mapping && api.mapping !== '') {
-    result.result = montaineMap.map(_.cloneDeep(result.result), JSON.parse(api.mapping));
+    result.result = montaineMap.map(result.result, JSON.parse(api.mapping));
     result.mapping = result.result[0] ? result.result[0] : result.result;
   }
 
   // Typing
   if (result.result && api.typing && api.typing !== '') {
-    result.result = montaineType.type(_.cloneDeep(result.result), JSON.parse(api.typing));
+    result.result = montaineType.type(result.result, JSON.parse(api.typing));
     result.typing = result.result[0] ? result.result[0] : result.result;
   }
   // prepare for save
   if (result.result) {
-    result.result = montaineSave.prepare(_.cloneDeep(result.result), start);
+    result.result = montaineSave.prepare(result.result, start);
     result.prepare = result.result[0] ? result.result[0] : result.result;
-    result.result = montaineSave.save(_.cloneDeep(result.result), start);
+    result.result = montaineSave.save(result.result, start);
     result.mongo = result.result;
-    if (api.savedb) result.result = await ApisRepository.import(api.slug, result.result);
+    if (api.savedb) result.result = await ApisRepository.import(api.slug, _.cloneDeep(result.result));
   }
 
   // return
