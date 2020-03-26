@@ -141,7 +141,17 @@ exports.load = async (api, start) => {
  * @param {Object} scrap - original scrap
  * @return {Promise} scrap
  */
-exports.getApiData = async (api) => {
-  const result = await ApisRepository.getApiData(api.slug);
+exports.listApi = async (api) => {
+  const result = await ApisRepository.listApi(api.slug);
+  return Promise.resolve(result);
+};
+
+/**
+ * @desc Functio to ask repository to get data stocker from apis request
+ * @param {Object} scrap - original scrap
+ * @return {Promise} scrap
+ */
+exports.getApi = async (api, body) => {
+  const result = await ApisRepository.getApi(api.slug, body);
   return Promise.resolve(result);
 };

@@ -95,14 +95,30 @@ exports.load = async (req, res) => {
 };
 
 /**
- * @desc Endpoint to getData stocked from load
+ * @desc Endpoint to getData stocked from load on apis
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.getApiData = async (req, res) => {
+exports.listApi = async (req, res) => {
   // TODO if (req.scrap && req.user && req.scrap.user && req.scrap.user.id === req.user.id) next();
   try {
-    const data = await ApisService.getApiData(req.api);
+    const data = await ApisService.listApi(req.api);
+    responses.success(res, 'api getData')(data);
+  } catch (err) {
+    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+  }
+};
+
+
+/**
+ * @desc Endpoint to getData stocked from load on apis
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.getApi = async (req, res) => {
+  // TODO if (req.scrap && req.user && req.scrap.user && req.scrap.user.id === req.user.id) next();
+  try {
+    const data = await ApisService.getApi(req.api, req.body);
     responses.success(res, 'api getData')(data);
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);

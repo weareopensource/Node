@@ -71,11 +71,11 @@ exports.import = (collection, items) => {
 
 
 /**
- * @desc Function to import list of locations in db
- * @param {Object} locations
- * @return {Object} locations
+ * @desc Function to get api data from db
+ * @param {string} colletion name
+ * @return [{Object}] data
  */
-exports.getApiData = (collection) => {
+exports.listApi = (collection) => {
   const _schema = new mongoose.Schema({}, {
     collection,
     strict: false,
@@ -90,4 +90,28 @@ exports.getApiData = (collection) => {
   }
 
   return model.find().sort('-updatedAt').exec();
+};
+
+
+/**
+ * @desc Function to ask for  api data in db
+ * @param {Object} locations
+ * @return {Object} locations
+ */
+exports.getApi = (collection, filters) => {
+  console.log(collection, filters);
+  const _schema = new mongoose.Schema({}, {
+    collection,
+    strict: false,
+    timestamps: true,
+  });
+
+  let model;
+  try {
+    model = mongoose.model(collection);
+  } catch (error) {
+    model = mongoose.model(collection, _schema);
+  }
+
+  return model.findOne(filters).exec();
 };
