@@ -125,6 +125,21 @@ exports.getApi = async (req, res) => {
   }
 };
 
+/**
+ * @desc Endpoint to getData Aggregated saved from load on apis
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.getAggregateApi = async (req, res) => {
+  // TODO if (req.scrap && req.user && req.scrap.user && req.scrap.user.id === req.user.id) next();
+  try {
+    const data = await ApisService.getAggregateApi(req.api, req.body);
+    responses.success(res, 'api getData')(data);
+  } catch (err) {
+    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+  }
+};
+
 
 /**
  * @desc MiddleWare to ask the service the api for this id

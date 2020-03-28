@@ -99,7 +99,6 @@ exports.listApi = (collection) => {
  * @return {Object} locations
  */
 exports.getApi = (collection, filters) => {
-  console.log(collection, filters);
   const _schema = new mongoose.Schema({}, {
     collection,
     strict: false,
@@ -115,3 +114,88 @@ exports.getApi = (collection, filters) => {
 
   return model.findOne(filters).exec();
 };
+
+/**
+ * @desc Function to ask for  api data in db
+ * @param {Object} locations
+ * @return {Object} locations
+ */
+exports.getAggregateApi = (collection) => {
+  const _schema = new mongoose.Schema({}, {
+    collection,
+    strict: false,
+    timestamps: true,
+  });
+
+  let model;
+  try {
+    model = mongoose.model(collection);
+  } catch (error) {
+    model = mongoose.model(collection, _schema);
+  }
+
+  return model.aggregate([
+    {
+      $match: { '@date': '2020-03-26T00:00:00+01:00' },
+    },
+    {
+      $unwind: { path: '$weathers' },
+    },
+    {
+      $project: {
+        status: { $arrayElemAt: ['$weathers.status.value', 0] },
+        temp: { $arrayElemAt: ['$weathers.temp.value', 0] },
+      },
+    },
+    {
+      $group: {
+        _id: '$_id',
+        status: { $avg: '$status' },
+        temp: { $avg: '$temp' },
+      },
+    },
+  ]).sort('-updatedAt').exec();
+};
+
+
+// db.meteoFrance.aggregate([
+//   {
+//     $match: { '@date': '2020-03-26T00:00:00+01:00' },
+//   },
+//   {
+//     $unwind: { path: '$weathers' },
+//   },
+//   {
+//     $project: {
+//       status: { $arrayElemAt: ['$weathers.status.value', 0] },
+//       temp: { $arrayElemAt: ['$weathers.temp.value', 0] },
+//     },
+//   },
+//   {
+//     $group: {
+//       _id: '$_id',
+//       status: { $avg: '$status' },
+//       temp: { $avg: '$temp' },
+//     },
+//   },
+// ]);
+
+
+// db.mareeInfo.aggregate([
+//   {
+//     $match: { '@date': '2020-04-04T00:00:00+02:00' },
+//   },
+//   {
+//     $unwind: { path: '$coeffs' },
+//   },
+//   {
+//     $project: {
+//       coeff: { $arrayElemAt: ['$coeffs.coeff.value', 0] },
+//       height: { $arrayElemAt: ['$coeffs.height.value', 0] },
+//       hour: { $arrayElemAt: ['$coeffs.hour.value', 0] },
+//     },
+//   },
+//   {
+//     $match: { coeff: { $gt: 60 } },
+//   },
+// ]);

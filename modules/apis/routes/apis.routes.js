@@ -31,6 +31,9 @@ module.exports = (app) => {
     .get(apis.listApi)
     .post(apis.getApi);
 
+  app.route('/api/apis/aggregate/:apiId')
+    .post(apis.getAggregateApi);
+
   // Finish by binding the api middleware
   app.param('apiId', apis.apiByID);
 };

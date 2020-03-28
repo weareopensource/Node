@@ -155,3 +155,13 @@ exports.getApi = async (api, body) => {
   const result = await ApisRepository.getApi(api.slug, body);
   return Promise.resolve(result);
 };
+
+/**
+ * @desc Functio to ask repository to get data Aggregated saved from apis request
+ * @param {Object} scrap - original scrap
+ * @return {Promise} scrap
+ */
+exports.getAggregateApi = async (api, body) => {
+  const result = await ApisRepository.getAggregateApi(api.slug, body);
+  return Promise.resolve(result);
+};
