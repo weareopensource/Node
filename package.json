@@ -59,7 +59,7 @@
     "generate-password": "~1.5.1",
     "glob": "~7.1.6",
     "google-auth-library": "^6.0.0",
-    "handlebars": "^4.7.3",
+    "handlebars": "^4.7.4",
     "helmet": "~3.22.0",
     "idtoken-verifier": "^2.0.2",
     "joi": "^14.3.1",
