@@ -64,7 +64,8 @@ exports.import = (collection, items) => {
     updateOne: {
       filter: item.filter,
       update: item.update,
-      upsert: item.upsert,
+      arrayFilters: item.arrayFilters ? item.arrayFilters : [],
+      upsert: item.upsert ? item.upsert : false,
     },
   })));
 };
