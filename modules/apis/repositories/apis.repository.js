@@ -9,7 +9,7 @@ const Api = mongoose.model('Api');
  * @desc Function to get all api in db
  * @return {Array} All apis
  */
-exports.list = () => Api.find().sort('-createdAt').exec();
+exports.list = () => Api.find().select('-history').sort('-createdAt').exec();
 
 /**
  * @desc Function to create a api in db
@@ -25,7 +25,13 @@ exports.create = (api) => new Api(api).save();
  */
 exports.get = (id) => {
   if (!mongoose.Types.ObjectId.isValid(id)) return null;
-  return Api.findOne({ _id: id }).populate('history').exec();
+  return Api.findOne({ _id: id }).populate([{
+    path: 'history',
+    options: {
+      limit: 100,
+      sort: { createdAt: -1 },
+    },
+  }]).exec();
 };
 
 /**
@@ -33,7 +39,13 @@ exports.get = (id) => {
  * @param {Object} api
  * @return {Object} api
  */
-exports.update = (api) => new Api(api).save().then((a) => a.populate('history').execPopulate());
+exports.update = (api) => new Api(api).save().then((a) => a.populate([{
+  path: 'history',
+  options: {
+    limit: 100,
+    sort: { createdAt: -1 },
+  },
+}]).execPopulate());
 
 /**
  * @desc Function to delete a api in db
