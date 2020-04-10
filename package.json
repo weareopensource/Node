@@ -100,7 +100,7 @@
     "gulp-load-plugins": "^2.0.3",
     "gulp-nodemon": "~2.5.0",
     "gulp-refresh": "~1.1.0",
-    "husky": "^4.2.3",
+    "husky": "^4.2.5",
     "inquirer": "^7.1.0",
     "jest-cli": "24.9.0",
     "standard-version": "^7.1.0",
