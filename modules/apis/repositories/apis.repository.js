@@ -146,10 +146,12 @@ exports.getAggregateApi = (collection) => {
   } catch (error) {
     model = mongoose.model(collection, _schema);
   }
-
   return model.aggregate([
     {
-      $match: { '@date': '2020-03-26T00:00:00+01:00' },
+      $match: {
+        $gte: '2020-04-16T00:00:01+02:00',
+        $lt: '2020-04-17T23:59:59+02:00',
+      },
     },
     {
       $unwind: { path: '$weathers' },
@@ -192,8 +194,6 @@ exports.getAggregateApi = (collection) => {
 //     },
 //   },
 // ]);
-
-
 // db.mareeInfo.aggregate([
 //   {
 //     $match: { '@date': '2020-04-04T00:00:00+02:00' },
