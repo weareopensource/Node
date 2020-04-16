@@ -15,7 +15,7 @@ const ApiSchema = Joi.object().keys({
   slug: Joi.string().trim().optional(),
   url: Joi.string().trim().required(),
   auth: Joi.string().valid(['lou']).required(),
-  serviceId: Joi.string().trim().default('').required(),
+  serviceKey: Joi.string().trim().default('').required(),
   params: Joi.object({}).unknown().optional(),
   typing: Joi.string().trim().allow('').optional(),
   mapping: Joi.string().trim().allow('').optional(),

@@ -19,7 +19,7 @@ const ApiMongoose = new Schema({
   },
   url: String,
   auth: String,
-  serviceId: String,
+  serviceKey: String,
   params: {},
   typing: String,
   mapping: String,

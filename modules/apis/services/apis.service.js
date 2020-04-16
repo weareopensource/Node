@@ -56,7 +56,7 @@ exports.update = async (api, body) => {
   api.slug = _.camelCase(body.title);
   api.url = body.url;
   api.auth = body.auth;
-  api.serviceId = body.serviceId;
+  api.serviceKey = body.serviceKey;
   api.params = body.params;
   api.status = body.status;
   api.banner = body.banner;
