@@ -15,7 +15,7 @@ module.exports = _.merge(defaultConfig, {
     origin: ['http://localhost:8011'],
   },
   jwt: {
-    secret: 'ComeNodeDevSecret', // secret for hash
+    secret: 'MontaineNodeDevSecret', // secret for hash
     expiresIn: 7 * 24 * 60 * 60, // token expire in x sec
   },
   jwtLou: {
