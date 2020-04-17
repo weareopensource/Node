@@ -62,8 +62,9 @@ exports.update = async (api, body) => {
   api.params = body.params;
   api.status = body.status;
   api.banner = body.banner;
-  api.savedb = body.savedb;
   api.description = body.description;
+  api.savedb = body.savedb;
+  api.autoRequest = body.autoRequest;
   if (body.typing && body.typing !== '') api.typing = body.typing;
   else api.typing = null;
   if (body.mapping && body.mapping !== '') api.mapping = body.mapping;
