@@ -218,9 +218,8 @@ exports.getAggregateApi = async (api, body) => {
   const result = await ApisRepository.getAggregateApi(api.slug, body);
   // check if no data return, then we probably have no data :)
   // ask for it !
-  if (result.length === 0) {
+  if (result.length === 0 && api.autoRequest) {
     this.workerAuto(api, body, new Date());
-    console.log('worker auto start', body);
   }
   return Promise.resolve(result);
 };
