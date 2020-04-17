@@ -3,7 +3,9 @@
  */
 const path = require('path');
 const _ = require('lodash');
+const Joi = require('joi');
 
+const AppError = require(path.resolve('./lib/helpers/AppError'));
 const UserService = require(path.resolve('./modules/users/services/user.service.js'));
 const montaineMap = require(path.resolve('./lib/helpers/montaineMap'));
 const montaineType = require(path.resolve('./lib/helpers/montaineType'));
@@ -135,6 +137,56 @@ exports.load = async (api, start) => {
   });
 };
 
+/**
+ * @desc Functio to ask repository to load an api request
+ * @param {Object} scrap - original scrap
+ * @return {Promise} scrap
+ */
+exports.workerAuto = async (api, body, start) => {
+  const result = {};
+
+  // generate params
+  const params = {};
+  body.forEach((el) => {
+    if (el.$match) {
+      Object.keys(api.params).forEach((key) => {
+        params[key] = el.$match[key];
+      });
+    }
+  });
+
+  // dynamic schema test on params
+  const schema = {};
+  Object.keys(api.params).forEach((key) => {
+    schema[key] = Joi.string().trim().required();
+  });
+  const paramsSchema = Joi.object().keys(schema);
+  const testedSchema = montaineRequest.isValidDynamicSchema(paramsSchema, params);
+  if (testedSchema.error) throw new AppError('Schema validation error', { code: 'SERVICE_ERROR', details: testedSchema.error });
+
+
+  // request
+  const request = await montaineRequest.request(api, params);
+  result.result = request.data.result;
+
+  // Mapping
+  if (result.result && api.mapping && api.mapping !== '') {
+    result.result = montaineMap.map(result.result, JSON.parse(api.mapping));
+  }
+
+  // Typing
+  if (result.result && api.typing && api.typing !== '') {
+    result.result = montaineType.type(result.result, JSON.parse(api.typing));
+  }
+
+  // prepare for save
+  if (result.result) {
+    result.result = montaineSave.prepare(result.result, start);
+    result.result = montaineSave.save(result.result, start);
+    if (api.savedb) result.result = await ApisRepository.import(api.slug, _.cloneDeep(result.result));
+  }
+};
+
 
 /**
  * @desc Functio to ask repository to get data stocker from apis request
@@ -163,5 +215,11 @@ exports.getApi = async (api, body) => {
  */
 exports.getAggregateApi = async (api, body) => {
   const result = await ApisRepository.getAggregateApi(api.slug, body);
+  // check if no data return, then we probably have no data :)
+  // ask for it !
+  if (result.length === 0) {
+    this.workerAuto(api, body, new Date());
+    console.log('worker auto start', body);
+  }
   return Promise.resolve(result);
 };

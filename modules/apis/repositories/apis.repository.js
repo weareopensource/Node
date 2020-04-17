@@ -133,7 +133,7 @@ exports.getApi = (collection, filters) => {
  * @param {Object} locations
  * @return {Object} locations
  */
-exports.getAggregateApi = (collection) => {
+exports.getAggregateApi = (collection, request) => {
   const _schema = new mongoose.Schema({}, {
     collection,
     strict: false,
@@ -146,69 +146,5 @@ exports.getAggregateApi = (collection) => {
   } catch (error) {
     model = mongoose.model(collection, _schema);
   }
-  return model.aggregate([
-    {
-      $match: {
-        $gte: '2020-04-16T00:00:01+02:00',
-        $lt: '2020-04-17T23:59:59+02:00',
-      },
-    },
-    {
-      $unwind: { path: '$weathers' },
-    },
-    {
-      $project: {
-        status: { $arrayElemAt: ['$weathers.status.value', 0] },
-        temp: { $arrayElemAt: ['$weathers.temp.value', 0] },
-      },
-    },
-    {
-      $group: {
-        _id: '$_id',
-        status: { $avg: '$status' },
-        temp: { $avg: '$temp' },
-      },
-    },
-  ]).sort('-updatedAt').exec();
+  return model.aggregate(request).exec();
 };
-
-
-// db.meteoFrance.aggregate([
-//   {
-//     $match: { '@date': '2020-03-26T00:00:00+01:00' },
-//   },
-//   {
-//     $unwind: { path: '$weathers' },
-//   },
-//   {
-//     $project: {
-//       status: { $arrayElemAt: ['$weathers.status.value', 0] },
-//       temp: { $arrayElemAt: ['$weathers.temp.value', 0] },
-//     },
-//   },
-//   {
-//     $group: {
-//       _id: '$_id',
-//       status: { $avg: '$status' },
-//       temp: { $avg: '$temp' },
-//     },
-//   },
-// ]);
-// db.mareeInfo.aggregate([
-//   {
-//     $match: { '@date': '2020-04-04T00:00:00+02:00' },
-//   },
-//   {
-//     $unwind: { path: '$coeffs' },
-//   },
-//   {
-//     $project: {
-//       coeff: { $arrayElemAt: ['$coeffs.coeff.value', 0] },
-//       height: { $arrayElemAt: ['$coeffs.height.value', 0] },
-//       hour: { $arrayElemAt: ['$coeffs.hour.value', 0] },
-//     },
-//   },
-//   {
-//     $match: { coeff: { $gt: 60 } },
-//   },
-// ]);
