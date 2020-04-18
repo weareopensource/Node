@@ -65,6 +65,8 @@ exports.update = async (api, body) => {
   api.description = body.description;
   api.savedb = body.savedb;
   api.autoRequest = body.autoRequest;
+  if (body.expiration && body.expiration !== '') api.expiration = body.expiration;
+  else api.expiration = null;
   if (body.typing && body.typing !== '') api.typing = body.typing;
   else api.typing = null;
   if (body.mapping && body.mapping !== '') api.mapping = body.mapping;
@@ -215,11 +217,16 @@ exports.getApi = async (api, body) => {
  * @return {Promise} scrap
  */
 exports.getAggregateApi = async (api, body) => {
-  const result = await ApisRepository.getAggregateApi(api.slug, body);
-  // check if no data return, then we probably have no data :)
-  // ask for it !
+  let result = await ApisRepository.getAggregateApi(api.slug, body);
+
   if (result.length === 0 && api.autoRequest) {
+    // check if no data return, then we probably have no data :) ask for it !
     this.workerAuto(api, body, new Date());
+  } else if (Date.now() - Date.parse(result[0]._updatedAt) > Date.parse(api.expiration)) {
+    // check if data but data expired, ask for refresh !
+    this.workerAuto(api, body, new Date());
+    result = [];
   }
+
   return Promise.resolve(result);
 };

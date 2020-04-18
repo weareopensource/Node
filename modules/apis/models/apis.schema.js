@@ -27,6 +27,7 @@ const ApiSchema = Joi.object().keys({
   history: Joi.array().items(historySchema).optional(),
   savedb: Joi.boolean().default(false).required(),
   autoRequest: Joi.boolean().default(false).required(),
+  expiration: Joi.date().optional(),
 });
 
 module.exports = {

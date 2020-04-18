@@ -28,6 +28,7 @@ const ApiMongoose = new Schema({
   description: String,
   savedb: Boolean,
   autoRequest: Boolean,
+  expiration: Date,
   user: {
     type: Schema.ObjectId,
     ref: 'User',
