@@ -92,11 +92,10 @@ exports.delete = async (api) => {
  * @param {Object} scrap - original scrap
  * @return {Promise} scrap
  */
-exports.historize = async (status, err, start, api) => {
-  const history = await HistoryRepository.create(montaineRequest.setApiHistory(status, err, start));
-  api.history.push(history._id);
-  api.status = history.status;
-  api = await ApisRepository.update(api);
+exports.historize = async (result, start, api) => {
+  const history = await HistoryRepository.create(montaineRequest.setApiHistory(result, start));
+  await ApisRepository.historize(api, history);
+  api.history.push(history);
   return Promise.resolve(api);
 };
 
@@ -105,39 +104,51 @@ exports.historize = async (status, err, start, api) => {
  * @param {Object} scrap - original scrap
  * @return {Promise} scrap
  */
-exports.load = async (api, start) => {
-  const result = {};
-  // conf
-  const params = montaineRequest.setParams(api.params);
-  // request
-  const request = await montaineRequest.request(api, params);
-  result.request = request;
-  result.result = request.data.result;
-  // Mapping
-  if (result.result && api.mapping && api.mapping !== '') {
-    result.result = montaineMap.map(result.result, JSON.parse(api.mapping));
-    result.mapping = result.result[0] ? result.result[0] : result.result;
-  }
+exports.load = async (api) => {
+  const start = new Date();
+  try {
+    const result = {};
 
-  // Typing
-  if (result.result && api.typing && api.typing !== '') {
-    result.result = montaineType.type(result.result, JSON.parse(api.typing));
-    result.typing = result.result[0] ? result.result[0] : result.result;
-  }
-  // prepare for save
-  if (result.result) {
-    result.result = montaineSave.prepare(result.result, start);
-    result.prepare = result.result[0] ? result.result[0] : result.result;
-    result.result = montaineSave.save(result.result, start);
-    result.mongo = result.result;
-    if (api.savedb) result.result = await ApisRepository.import(api.slug, _.cloneDeep(result.result));
-  }
+    // conf
+    const params = montaineRequest.setParams(api.params);
 
-  // return
-  return Promise.resolve({
-    api,
-    result,
-  });
+    // request
+    const request = await montaineRequest.request(api, params);
+    result.request = request;
+    result.result = request.data.result;
+
+    // Mapping
+    if (result.result && api.mapping && api.mapping !== '') {
+      result.result = montaineMap.map(result.result, JSON.parse(api.mapping));
+      result.mapping = result.result[0] ? result.result[0] : result.result;
+    }
+
+    // Typing
+    if (result.result && api.typing && api.typing !== '') {
+      result.result = montaineType.type(result.result, JSON.parse(api.typing));
+      result.typing = result.result[0] ? result.result[0] : result.result;
+    }
+    // prepare for save
+    if (result.result) {
+      result.result = montaineSave.prepare(result.result, start);
+      result.prepare = result.result[0] ? result.result[0] : result.result;
+      result.result = montaineSave.save(result.result, start);
+      result.mongo = result.result;
+      if (api.savedb) result.result = await ApisRepository.import(api.slug, _.cloneDeep(result.result));
+    }
+
+    // historize
+    await this.historize({ request: result.request, mongo: result.mongo, result: result.result }, start, api);
+
+    // return
+    return Promise.resolve({
+      api,
+      result,
+    });
+  } catch (err) {
+    await this.historize(err, start, api);
+    return Promise.resolve({ err, api });
+  }
 };
 
 /**
@@ -145,48 +156,57 @@ exports.load = async (api, start) => {
  * @param {Object} scrap - original scrap
  * @return {Promise} scrap
  */
-exports.workerAuto = async (api, body, start) => {
-  const result = {};
+exports.workerAuto = async (api, body) => {
+  const start = new Date();
+  try {
+    const result = {};
 
-  // generate params
-  const params = {};
-  body.forEach((el) => {
-    if (el.$match) {
-      Object.keys(api.params).forEach((key) => {
-        params[key] = el.$match[key];
-      });
+    // generate params
+    const params = {};
+    body.forEach((el) => {
+      if (el.$match) {
+        Object.keys(api.params).forEach((key) => {
+          params[key] = el.$match[key];
+        });
+      }
+    });
+
+    // dynamic schema test on params
+    const schema = {};
+    Object.keys(api.params).forEach((key) => {
+      schema[key] = Joi.string().trim().required();
+    });
+    const paramsSchema = Joi.object().keys(schema);
+    const testedSchema = montaineRequest.isValidDynamicSchema(paramsSchema, params);
+    if (testedSchema.error) throw new AppError('Schema validation error', { code: 'SERVICE_ERROR', details: testedSchema.error });
+
+
+    // request
+    const request = await montaineRequest.request(api, params);
+    result.result = request.data.result;
+
+    // Mapping
+    if (result.result && api.mapping && api.mapping !== '') {
+      result.result = montaineMap.map(result.result, JSON.parse(api.mapping));
     }
-  });
 
-  // dynamic schema test on params
-  const schema = {};
-  Object.keys(api.params).forEach((key) => {
-    schema[key] = Joi.string().trim().required();
-  });
-  const paramsSchema = Joi.object().keys(schema);
-  const testedSchema = montaineRequest.isValidDynamicSchema(paramsSchema, params);
-  if (testedSchema.error) throw new AppError('Schema validation error', { code: 'SERVICE_ERROR', details: testedSchema.error });
+    // Typing
+    if (result.result && api.typing && api.typing !== '') {
+      result.result = montaineType.type(result.result, JSON.parse(api.typing));
+    }
 
+    // prepare for save
+    if (result.result) {
+      result.result = montaineSave.prepare(result.result, start);
+      result.result = montaineSave.save(result.result, start);
+      if (api.savedb) result.result = await ApisRepository.import(api.slug, _.cloneDeep(result.result));
+    }
 
-  // request
-  const request = await montaineRequest.request(api, params);
-  result.result = request.data.result;
-
-  // Mapping
-  if (result.result && api.mapping && api.mapping !== '') {
-    result.result = montaineMap.map(result.result, JSON.parse(api.mapping));
-  }
-
-  // Typing
-  if (result.result && api.typing && api.typing !== '') {
-    result.result = montaineType.type(result.result, JSON.parse(api.typing));
-  }
-
-  // prepare for save
-  if (result.result) {
-    result.result = montaineSave.prepare(result.result, start);
-    result.result = montaineSave.save(result.result, start);
-    if (api.savedb) result.result = await ApisRepository.import(api.slug, _.cloneDeep(result.result));
+    // historize
+    await this.historize(_.clone({ request, result }), start, api);
+  } catch (err) {
+    await this.historize(err, start, api);
+    return Promise.resolve({ err, api });
   }
 };
 

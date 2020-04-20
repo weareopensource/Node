@@ -11,7 +11,7 @@ const Schema = mongoose.Schema;
 
 const HistoryMongoose = new Schema({
   status: Boolean,
-  err: {},
+  data: String,
   time: Number,
 }, {
   timestamps: true,

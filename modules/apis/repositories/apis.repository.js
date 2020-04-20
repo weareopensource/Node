@@ -5,6 +5,14 @@ const mongoose = require('mongoose');
 
 const Api = mongoose.model('Api');
 
+const defaultPopulate = [{
+  path: 'history',
+  options: {
+    limit: 100,
+    sort: { createdAt: -1 },
+  },
+}];
+
 /**
  * @desc Function to get all api in db
  * @return {Array} All apis
@@ -25,13 +33,7 @@ exports.create = (api) => new Api(api).save();
  */
 exports.get = (id) => {
   if (!mongoose.Types.ObjectId.isValid(id)) return null;
-  return Api.findOne({ _id: id }).populate([{
-    path: 'history',
-    options: {
-      limit: 100,
-      sort: { createdAt: -1 },
-    },
-  }]).exec();
+  return Api.findOne({ _id: id }).populate(defaultPopulate).exec();
 };
 
 /**
@@ -39,13 +41,22 @@ exports.get = (id) => {
  * @param {Object} api
  * @return {Object} api
  */
-exports.update = (api) => new Api(api).save().then((a) => a.populate([{
-  path: 'history',
-  options: {
-    limit: 100,
-    sort: { createdAt: -1 },
+exports.update = (api) => new Api(api).save().then((a) => a.populate(defaultPopulate).execPopulate());
+
+
+/**
+ * @desc Function to update scrap history in db
+ * @param {Object} scrap
+ * @param {Object} history
+ * @return {Object} scrap
+ */
+exports.historize = (api, history) => Api.updateOne(
+  { _id: api._id },
+  {
+    $push: { history: history._id },
+    $set: { status: history.status },
   },
-}]).execPopulate());
+);
 
 /**
  * @desc Function to delete a api in db
@@ -64,14 +75,12 @@ exports.import = (collection, items) => {
     collection,
     strict: false,
   });
-
   let model;
   try {
     model = mongoose.model(collection);
   } catch (error) {
     model = mongoose.model(collection, _schema);
   }
-
   return model.bulkWrite(items.map((item) => ({
     updateOne: {
       filter: item.filter,
@@ -94,14 +103,12 @@ exports.listApi = (collection) => {
     strict: false,
     timestamps: true,
   });
-
   let model;
   try {
     model = mongoose.model(collection);
   } catch (error) {
     model = mongoose.model(collection, _schema);
   }
-
   return model.find().sort('-updatedAt').exec();
 };
 
@@ -117,14 +124,12 @@ exports.getApi = (collection, filters) => {
     strict: false,
     timestamps: true,
   });
-
   let model;
   try {
     model = mongoose.model(collection);
   } catch (error) {
     model = mongoose.model(collection, _schema);
   }
-
   return model.findOne(filters).exec();
 };
 
@@ -139,7 +144,6 @@ exports.getAggregateApi = (collection, request) => {
     strict: false,
     timestamps: true,
   });
-
   let model;
   try {
     model = mongoose.model(collection);

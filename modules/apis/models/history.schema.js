@@ -8,7 +8,7 @@ const Joi = require('joi');
  */
 const historySchema = Joi.object().keys({
   status: Joi.boolean().default(false).required(),
-  err: Joi.object({}).unknown().optional(),
+  data: Joi.string().optional(),
   time: Joi.number().default(0).required(),
 });
 
