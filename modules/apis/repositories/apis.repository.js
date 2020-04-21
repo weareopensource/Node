@@ -17,7 +17,7 @@ const defaultPopulate = [{
  * @desc Function to get all api in db
  * @return {Array} All apis
  */
-exports.list = () => Api.find().select('-history').sort('-createdAt').exec();
+exports.list = (user) => Api.find({ user: user._id }).select('-history').sort('-createdAt').exec();
 
 /**
  * @desc Function to create a api in db

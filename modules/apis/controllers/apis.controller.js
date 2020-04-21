@@ -15,7 +15,7 @@ const ApisService = require('../services/apis.service');
  */
 exports.list = async (req, res) => {
   try {
-    const apis = await ApisService.list();
+    const apis = await ApisService.list(req.user);
     responses.success(res, 'api list')(apis);
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
@@ -151,6 +151,7 @@ exports.apiByID = async (req, res, next, id) => {
     if (!api) responses.error(res, 404, 'Not Found', 'No Api with that identifier has been found')();
     else {
       req.api = api;
+      req.isOwner = api.user;
       next();
     }
   } catch (err) {

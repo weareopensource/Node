@@ -19,8 +19,8 @@ const HistoryRepository = require('../repositories/history.repository');
  * @desc Function to get all api in db
  * @return {Promise} All apis
  */
-exports.list = async () => {
-  const result = await ApisRepository.list();
+exports.list = async (user) => {
+  const result = await ApisRepository.list(user);
   return Promise.resolve(result);
 };
 

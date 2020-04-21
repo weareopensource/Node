@@ -13,19 +13,19 @@ exports.invokeRolesPolicies = () => {
     roles: ['user'],
     allows: [{
       resources: '/api/apis',
-      permissions: '*',
+      permissions: ['get', 'post'],
     }, {
       resources: '/api/apis/:apiId',
-      permissions: '*',
+      permissions: ['get', 'put', 'delete'],
     }, {
       resources: '/api/apis/load/:apiId',
-      permissions: '*',
+      permissions: ['get'],
     }, {
       resources: '/api/apis/data/:apiId',
-      permissions: '*',
+      permissions: ['get', 'post'],
     }, {
       resources: '/api/apis/aggregate/:apiId',
-      permissions: '*',
+      permissions: ['post'],
     }],
   }]);
 };
