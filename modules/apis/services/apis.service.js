@@ -11,8 +11,8 @@ const montaineMap = require(path.resolve('./lib/helpers/montaineMap'));
 const montaineType = require(path.resolve('./lib/helpers/montaineType'));
 const montaineRequest = require(path.resolve('./lib/helpers/montaineRequest'));
 const montaineSave = require(path.resolve('./lib/helpers/montaineSave'));
+const HistorysService = require(path.resolve('./modules/history/services/historys.service'));
 const ApisRepository = require('../repositories/apis.repository');
-const HistoryRepository = require('../repositories/history.repository');
 
 
 /**
@@ -86,19 +86,6 @@ exports.delete = async (api) => {
   return Promise.resolve(result);
 };
 
-
-/**
- * @desc Functio to ask repository to add an history
- * @param {Object} scrap - original scrap
- * @return {Promise} scrap
- */
-exports.historize = async (result, start, api, user) => {
-  const history = await HistoryRepository.create(montaineRequest.setApiHistory(result, start, user));
-  await ApisRepository.historize(api, history);
-  api.history.push(history);
-  return Promise.resolve(api);
-};
-
 /**
  * @desc Functio to ask repository to load an api request
  * @param {Object} scrap - original scrap
@@ -138,7 +125,7 @@ exports.load = async (api, user) => {
     }
 
     // historize
-    await this.historize({ request: result.request, mongo: result.mongo, result: result.result }, start, api, user);
+    await HistorysService.historize({ request: result.request, mongo: result.mongo, result: result.result }, start, api, user);
 
     // return
     return Promise.resolve({
@@ -146,7 +133,7 @@ exports.load = async (api, user) => {
       result,
     });
   } catch (err) {
-    await this.historize(err, start, api, user);
+    await HistorysService.historize(err, start, api, user);
     return Promise.resolve({ err, api });
   }
 };
@@ -203,9 +190,9 @@ exports.workerAuto = async (api, body, user) => {
     }
 
     // historize
-    await this.historize(_.clone({ request, result }), start, api, user);
+    await HistorysService.historize(_.clone({ request, result }), start, api, user);
   } catch (err) {
-    await this.historize(err, start, api, user);
+    await HistorysService.historize(err, start, api, user);
     return Promise.resolve({ err, api });
   }
 };

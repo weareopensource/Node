@@ -43,21 +43,6 @@ exports.get = (id) => {
  */
 exports.update = (api) => new Api(api).save().then((a) => a.populate(defaultPopulate).execPopulate());
 
-
-/**
- * @desc Function to update scrap history in db
- * @param {Object} scrap
- * @param {Object} history
- * @return {Object} scrap
- */
-exports.historize = (api, history) => Api.updateOne(
-  { _id: api._id },
-  {
-    $push: { history: history._id },
-    $set: { status: history.status },
-  },
-);
-
 /**
  * @desc Function to delete a api in db
  * @param {Object} api
@@ -71,10 +56,7 @@ exports.delete = (api) => Api.deleteOne({ _id: api.id }).exec();
  * @return {Object} locations
  */
 exports.import = (collection, items) => {
-  const _schema = new mongoose.Schema({}, {
-    collection,
-    strict: false,
-  });
+  const _schema = new mongoose.Schema({}, { collection, strict: false });
   let model;
   try {
     model = mongoose.model(collection);
@@ -91,18 +73,13 @@ exports.import = (collection, items) => {
   })));
 };
 
-
 /**
  * @desc Function to get api data from db
  * @param {string} colletion name
  * @return [{Object}] data
  */
 exports.listApi = (collection) => {
-  const _schema = new mongoose.Schema({}, {
-    collection,
-    strict: false,
-    timestamps: true,
-  });
+  const _schema = new mongoose.Schema({}, { collection, strict: false, timestamps: true });
   let model;
   try {
     model = mongoose.model(collection);
@@ -112,18 +89,13 @@ exports.listApi = (collection) => {
   return model.find().sort('-updatedAt').limit(100).exec();
 };
 
-
 /**
- * @desc Function to ask for  api data in db
+ * @desc Function to ask for api data in db
  * @param {Object} locations
  * @return {Object} locations
  */
 exports.getApi = (collection, filters) => {
-  const _schema = new mongoose.Schema({}, {
-    collection,
-    strict: false,
-    timestamps: true,
-  });
+  const _schema = new mongoose.Schema({}, { collection, strict: false, timestamps: true });
   let model;
   try {
     model = mongoose.model(collection);
@@ -134,16 +106,12 @@ exports.getApi = (collection, filters) => {
 };
 
 /**
- * @desc Function to ask for  api data in db
+ * @desc Function to make aggregate on api data in db
  * @param {Object} locations
  * @return {Object} locations
  */
 exports.getAggregateApi = (collection, request) => {
-  const _schema = new mongoose.Schema({}, {
-    collection,
-    strict: false,
-    timestamps: true,
-  });
+  const _schema = new mongoose.Schema({}, { collection, strict: false, timestamps: true });
   let model;
   try {
     model = mongoose.model(collection);

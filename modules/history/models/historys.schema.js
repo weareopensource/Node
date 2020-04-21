@@ -6,7 +6,7 @@ const Joi = require('joi');
 /**
  *  Data Schema
  */
-const historySchema = Joi.object().keys({
+const HistorySchema = Joi.object().keys({
   status: Joi.boolean().default(false).required(),
   data: Joi.string().optional(),
   time: Joi.number().default(0).required(),
@@ -14,5 +14,5 @@ const historySchema = Joi.object().keys({
 });
 
 module.exports = {
-  Scrap: historySchema,
+  History: HistorySchema,
 };

@@ -1,11 +1,7 @@
 /**
  * Module dependencies
  */
-const joiZxcvbn = require('joi-zxcvbn');
-const PlainJoi = require('joi');
-const historySchema = require('./history.schema');
-
-const Joi = PlainJoi.extend(joiZxcvbn(PlainJoi));
+const Joi = require('joi');
 
 /**
  *  Data Schema
@@ -24,7 +20,7 @@ const ApiSchema = Joi.object().keys({
     .optional(),
   description: Joi.string().allow('').default('').optional(),
   user: Joi.string().trim().default(''),
-  history: Joi.array().items(historySchema).optional(),
+  history: Joi.array().items(Joi.string().trim()).optional(),
   savedb: Joi.boolean().default(false).required(),
   autoRequest: Joi.boolean().default(false).required(),
   expiration: Joi.date().optional(),

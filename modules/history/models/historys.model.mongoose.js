@@ -8,7 +8,6 @@ const Schema = mongoose.Schema;
 /**
  * Data Model Mongoose
  */
-
 const HistoryMongoose = new Schema({
   status: Boolean,
   data: String,
@@ -23,8 +22,8 @@ const HistoryMongoose = new Schema({
 
 /**
  * @desc Function to add id (+ _id) to all objects
- * @param {Object} scrap
- * @return {Object} Scrap
+ * @param {Object} history
+ * @return {Object} History
  */
 function addID() {
   return this._id.toHexString();
