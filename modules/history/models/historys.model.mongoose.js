@@ -16,6 +16,10 @@ const HistoryMongoose = new Schema({
     type: Schema.ObjectId,
     ref: 'User',
   },
+  api: {
+    type: Schema.ObjectId,
+    ref: 'Api',
+  },
 }, {
   timestamps: true,
 });

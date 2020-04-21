@@ -16,4 +16,11 @@ module.exports = (app) => {
   // list & post
   app.route('/api/historys').all(passport.authenticate('jwt'), policy.isAllowed)
     .get(historys.list); // list
+
+  // classic crud
+  app.route('/api/historys/:historyId').all(passport.authenticate('jwt'), policy.isAllowed) // policy.isOwner available
+    .get(historys.get); // get
+
+  // Finish by binding the historys middleware
+  app.param('historyId', historys.historyByID);
 };

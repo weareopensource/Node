@@ -21,3 +21,34 @@ exports.list = async (req, res) => {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
 };
+
+/**
+ * @desc Endpoint to show the current history
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.get = (req, res) => {
+  const history = req.history ? req.history.toJSON() : {};
+  responses.success(res, 'history get')(history);
+};
+
+/**
+ * @desc MiddleWare to ask the service the history for this id
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @param {String} id - history id
+ */
+exports.historyByID = async (req, res, next, id) => {
+  try {
+    const history = await HistorysService.get(id);
+    if (!history) responses.error(res, 404, 'Not Found', 'No history with that identifier has been found')();
+    else {
+      req.history = history;
+      req.isOwner = history.user; // used if we proteck road by isOwner policy
+      next();
+    }
+  } catch (err) {
+    next(err);
+  }
+};

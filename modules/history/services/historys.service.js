@@ -16,6 +16,17 @@ exports.list = async (user) => {
 };
 
 /**
+ * @desc Function to ask repository to get an history
+ * @param {String} id
+ * @return {Promise} task
+ */
+exports.get = async (id) => {
+  const result = await HistorysRepository.get(id);
+  return Promise.resolve(result);
+};
+
+
+/**
  * @desc Functio to ask repository to add an history
  * @param {Object} scrap - original scrap
  * @return {Promise} scrap

@@ -14,6 +14,9 @@ exports.invokeRolesPolicies = () => {
     allows: [{
       resources: '/api/historys',
       permissions: ['get'],
+    }, {
+      resources: '/api/historys/:historyId',
+      permissions: ['get'],
     }],
   }]);
 };
