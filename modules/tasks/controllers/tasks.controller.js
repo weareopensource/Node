@@ -90,7 +90,7 @@ exports.taskByID = async (req, res, next, id) => {
     if (!task) responses.error(res, 404, 'Not Found', 'No Task with that identifier has been found')();
     else {
       req.task = task;
-      req.isOwner = 'task.user'; // used if we proteck road by isOwner policy
+      req.isOwner = task.user; // used if we proteck road by isOwner policy
       next();
     }
   } catch (err) {
