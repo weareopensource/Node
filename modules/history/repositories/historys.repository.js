@@ -17,7 +17,8 @@ const defaultPopulate = [{
  * @return {Array} All historys
  */
 exports.list = (user) => History.find({ user: user._id }).sort('-createdAt').populate(defaultPopulate).limit(500)
-  .exec;
+  .exec();
+
 /**
  * @desc Function to create a scrap in db
  * @param {Object} scrap

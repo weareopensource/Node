@@ -32,7 +32,7 @@ exports.get = async (id) => {
  * @return {Promise} scrap
  */
 exports.historize = async (result, start, api, user) => {
-  const history = await HistorysRepository.create(montaineRequest.setApiHistory(result, start, user));
+  const history = await HistorysRepository.create(montaineRequest.setApiHistory(result, start, user, api));
   await HistorysRepository.apiHistorize(api, history);
   api.history.push(history);
   return Promise.resolve(api);
