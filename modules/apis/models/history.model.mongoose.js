@@ -13,6 +13,10 @@ const HistoryMongoose = new Schema({
   status: Boolean,
   data: String,
   time: Number,
+  user: {
+    type: Schema.ObjectId,
+    ref: 'User',
+  },
 }, {
   timestamps: true,
 });

@@ -92,8 +92,8 @@ exports.delete = async (api) => {
  * @param {Object} scrap - original scrap
  * @return {Promise} scrap
  */
-exports.historize = async (result, start, api) => {
-  const history = await HistoryRepository.create(montaineRequest.setApiHistory(result, start));
+exports.historize = async (result, start, api, user) => {
+  const history = await HistoryRepository.create(montaineRequest.setApiHistory(result, start, user));
   await ApisRepository.historize(api, history);
   api.history.push(history);
   return Promise.resolve(api);
@@ -104,7 +104,7 @@ exports.historize = async (result, start, api) => {
  * @param {Object} scrap - original scrap
  * @return {Promise} scrap
  */
-exports.load = async (api) => {
+exports.load = async (api, user) => {
   const start = new Date();
   try {
     const result = {};
@@ -138,7 +138,7 @@ exports.load = async (api) => {
     }
 
     // historize
-    await this.historize({ request: result.request, mongo: result.mongo, result: result.result }, start, api);
+    await this.historize({ request: result.request, mongo: result.mongo, result: result.result }, start, api, user);
 
     // return
     return Promise.resolve({
@@ -146,7 +146,7 @@ exports.load = async (api) => {
       result,
     });
   } catch (err) {
-    await this.historize(err, start, api);
+    await this.historize(err, start, api, user);
     return Promise.resolve({ err, api });
   }
 };
@@ -156,7 +156,7 @@ exports.load = async (api) => {
  * @param {Object} scrap - original scrap
  * @return {Promise} scrap
  */
-exports.workerAuto = async (api, body) => {
+exports.workerAuto = async (api, body, user) => {
   const start = new Date();
   try {
     const result = {};
@@ -203,9 +203,9 @@ exports.workerAuto = async (api, body) => {
     }
 
     // historize
-    await this.historize(_.clone({ request, result }), start, api);
+    await this.historize(_.clone({ request, result }), start, api, user);
   } catch (err) {
-    await this.historize(err, start, api);
+    await this.historize(err, start, api, user);
     return Promise.resolve({ err, api });
   }
 };
@@ -236,15 +236,15 @@ exports.getApi = async (api, body) => {
  * @param {Object} scrap - original scrap
  * @return {Promise} scrap
  */
-exports.getAggregateApi = async (api, body) => {
+exports.getAggregateApi = async (api, body, user) => {
   let result = await ApisRepository.getAggregateApi(api.slug, body);
 
   if (result.length === 0 && api.autoRequest) {
     // check if no data return, then we probably have no data :) ask for it !
-    this.workerAuto(api, body, new Date());
+    this.workerAuto(api, body, user);
   } else if (Date.now() - Date.parse(result[0]._updatedAt) > Date.parse(api.expiration)) {
     // check if data but data expired, ask for refresh !
-    this.workerAuto(api, body, new Date());
+    this.workerAuto(api, body, user);
     result = [];
   }
 

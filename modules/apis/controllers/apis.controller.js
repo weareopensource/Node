@@ -83,7 +83,7 @@ exports.delete = async (req, res) => {
  */
 exports.load = async (req, res) => {
   // TODO if (req.scrap && req.user && req.scrap.user && req.scrap.user.id === req.user.id) next();
-  const data = await ApisService.load(req.api);
+  const data = await ApisService.load(req.api, req.user);
   if (!data.err) {
     responses.success(res, 'api loaded')(data);
   } else {
@@ -130,7 +130,7 @@ exports.getApi = async (req, res) => {
 exports.getAggregateApi = async (req, res) => {
   // TODO if (req.scrap && req.user && req.scrap.user && req.scrap.user.id === req.user.id) next();
   try {
-    const data = await ApisService.getAggregateApi(req.api, req.body);
+    const data = await ApisService.getAggregateApi(req.api, req.body, req.user);
     responses.success(res, 'api getData')(data);
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
