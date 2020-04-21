@@ -109,7 +109,7 @@ exports.listApi = (collection) => {
   } catch (error) {
     model = mongoose.model(collection, _schema);
   }
-  return model.find().sort('-updatedAt').exec();
+  return model.find().sort('-updatedAt').limit(100).exec();
 };
 
 
