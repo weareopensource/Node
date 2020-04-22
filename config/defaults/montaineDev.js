@@ -22,4 +22,14 @@ module.exports = _.merge(defaultConfig, {
     secret: 'LouNodeDevSecret', // secret for hash
     expiresIn: 360, // token expire in x sec
   },
+  mailer: {
+    from: 'lou.worker@gmail.com',
+    options: {
+      service: 'gmail',
+      auth: {
+        user: 'lou.worker@gmail.com',
+        pass: 'zmvhmfqjzuzftpth',
+      },
+    },
+  },
 });
