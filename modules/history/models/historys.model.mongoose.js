@@ -12,6 +12,7 @@ const HistoryMongoose = new Schema({
   status: Boolean,
   data: String,
   time: Number,
+  username: String,
   user: {
     type: Schema.ObjectId,
     ref: 'User',
