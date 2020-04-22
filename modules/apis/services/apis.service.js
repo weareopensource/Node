@@ -196,9 +196,9 @@ exports.workerAuto = async (api, body, user) => {
     }
 
     // historize
-    await HistorysService.historize(_.clone({ request, result }), start, api, user);
+    await HistorysService.historize(_.clone({ request, result }), start, api, 'auto request');
   } catch (err) {
-    await HistorysService.historize(err, start, api, user);
+    await HistorysService.historize(err, start, api, 'auto request');
     return Promise.resolve({ err, api });
   }
 };
