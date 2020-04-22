@@ -4,9 +4,7 @@ const _ = require('lodash');
 const cron = require('node-cron');
 const mongoose = require('mongoose');
 
-const config = require(path.resolve('./config'));
 const mongooseService = require(path.resolve('./lib/services/mongoose'));
-const mails = require(path.resolve('./lib/helpers/mails'));
 
 const cronJobs = async () => {
   try {
@@ -16,40 +14,24 @@ const cronJobs = async () => {
     await mongooseService.loadModels();
     mongoose.set('debug', false);
 
-    const ScrapService = require(path.resolve('./modules/scraps/services/scraps.service'));
-    let scraps = await ScrapService.list();
-    scraps = _.remove(scraps, (scrap) => scrap.cron);
-    console.log(chalk.green(`Scraps cron list requested: ${scraps.length}`));
+    const ApiService = require(path.resolve('./modules/apis/services/apis.service'));
+    const apis = await ApiService.cron();
+    console.log(chalk.green(`Apis cron list requested: ${apis.length}`));
 
-    _.forEach(scraps, (_scrap) => {
-      if (cron.validate(_scrap.cron)) {
-        console.log(chalk.blue(`- Init ${_scrap.title} (${_scrap.id}) : ${_scrap.cron}`));
+    _.forEach(apis, (_api) => {
+      if (cron.validate(_api.cron)) {
+        console.log(chalk.blue(`- Init ${_api.title} (${_api.id}) : ${_api.cron}`));
 
-        cron.schedule(_scrap.cron, async () => {
-          console.log(chalk.blue(`- Running ${_scrap.title} (${_scrap.id}) : ${_scrap.cron}`));
+        cron.schedule(_api.cron, async () => {
+          console.log(chalk.blue(`- Running ${_api.title} (${_api.id}) : ${_api.cron}`));
 
-          const scrap = await ScrapService.get(_scrap.id);
-          const load = await ScrapService.load(scrap);
-
-          if (load.result.type !== 'success' && load.scrap.alert && load.scrap.alert !== '') {
-            mails.sendMail({
-              template: 'scrap-failed-alert',
-              from: config.mailer.from,
-              to: load.scrap.alert,
-              subject: `Scrap Failed : ${load.scrap.title}`,
-              params: {
-                result: JSON.stringify(load.result, null, 2),
-                scrapTitle: load.scrap.title,
-                appName: config.app.title,
-                appContact: config.app.appContact,
-              },
-            });
-          }
+          const api = await ApiService.get(_api.id);
+          await ApiService.load(api, 'cron');
         });
       }
     });
 
-    console.log(chalk.green(`Scraps cron list Charged: ${scraps.length}`));
+    console.log(chalk.green(`Apis cron list Charged: ${apis.length}`));
   } catch (err) {
     console.log(chalk.bold.red(`Error ${err}`));
   }

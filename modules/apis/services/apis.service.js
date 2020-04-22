@@ -159,7 +159,7 @@ exports.load = async (api, user) => {
  * @param {Object} scrap - original scrap
  * @return {Promise} scrap
  */
-exports.workerAuto = async (api, body, user) => {
+exports.workerAuto = async (api, body) => {
   const start = new Date();
   try {
     const result = {};
@@ -239,15 +239,15 @@ exports.getApi = async (api, body) => {
  * @param {Object} scrap - original scrap
  * @return {Promise} scrap
  */
-exports.getAggregateApi = async (api, body, user) => {
+exports.getAggregateApi = async (api, body) => {
   let result = await ApisRepository.getAggregateApi(api.slug, body);
 
   if (result.length === 0 && api.autoRequest) {
     // check if no data return, then we probably have no data :) ask for it !
-    this.workerAuto(api, body, user);
+    this.workerAuto(api, body);
   } else if (Date.now() - Date.parse(result[0]._updatedAt) > Date.parse(api.expiration)) {
     // check if data but data expired, ask for refresh !
-    this.workerAuto(api, body, user);
+    this.workerAuto(api, body);
     result = [];
   }
 
