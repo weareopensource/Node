@@ -25,6 +25,16 @@ exports.list = async (user) => {
 };
 
 /**
+ * @desc Function to get all scrap to cron in db
+ * @return {Promise} All scraps
+ */
+exports.cron = async () => {
+  const result = await ApisRepository.cron();
+  return Promise.resolve(result);
+};
+
+
+/**
  * @desc Function to ask repository to create a api
  * @param {Object} api
  * @return {Promise} api

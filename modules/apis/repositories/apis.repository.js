@@ -20,6 +20,14 @@ const defaultPopulate = [{
 exports.list = (user) => Api.find({ user: user._id }).select('-history').sort('-createdAt').exec();
 
 /**
+ * @desc Function to get all scrap to cron in db
+ * @return {Array} All scraps
+ */
+exports.cron = () => Api.find({ cron: { $ne: null, $exists: true } }).populate('containers')
+  .exec();
+
+
+/**
  * @desc Function to create a api in db
  * @param {Object} api
  * @return {Object} api
