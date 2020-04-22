@@ -65,8 +65,14 @@ exports.update = async (api, body) => {
   api.description = body.description;
   api.savedb = body.savedb;
   api.autoRequest = body.autoRequest;
+
   if (body.expiration && body.expiration !== '') api.expiration = body.expiration;
   else api.expiration = null;
+  if (body.cron && body.cron !== '') api.cron = body.cron;
+  else api.cron = null;
+  if (body.alert && body.alert !== '') api.alert = body.alert;
+  else api.alert = null;
+
   if (body.typing && body.typing !== '') api.typing = body.typing;
   else api.typing = null;
   if (body.mapping && body.mapping !== '') api.mapping = body.mapping;

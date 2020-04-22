@@ -19,11 +19,14 @@ const ApiSchema = Joi.object().keys({
   banner: Joi.string().trim().default('').allow('')
     .optional(),
   description: Joi.string().allow('').default('').optional(),
-  user: Joi.string().trim().default(''),
-  history: Joi.array().items(Joi.string().trim()).optional(),
   savedb: Joi.boolean().default(false).required(),
   autoRequest: Joi.boolean().default(false).required(),
   expiration: Joi.date().optional(),
+  cron: Joi.string().trim().allow(null).optional(),
+  alert: Joi.string().email({ minDomainAtoms: 2 }).trim().allow(null)
+    .optional(),
+  user: Joi.string().trim().default(''),
+  history: Joi.array().items(Joi.string().trim()).optional(),
 });
 
 module.exports = {
