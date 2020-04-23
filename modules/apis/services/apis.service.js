@@ -11,7 +11,7 @@ const montaineMap = require(path.resolve('./lib/helpers/montaineMap'));
 const montaineType = require(path.resolve('./lib/helpers/montaineType'));
 const montaineRequest = require(path.resolve('./lib/helpers/montaineRequest'));
 const montaineSave = require(path.resolve('./lib/helpers/montaineSave'));
-const HistorysService = require(path.resolve('./modules/history/services/historys.service'));
+const HistorysService = require(path.resolve('./modules/historys/services/historys.service'));
 const ApisRepository = require('../repositories/apis.repository');
 
 
