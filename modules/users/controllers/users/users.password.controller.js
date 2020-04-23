@@ -47,7 +47,7 @@ exports.forgot = async (req, res) => {
       displayName: user.displayName,
       url: `${config.cors.protocol}://${config.cors.host}:${config.cors.port}/auth/password-reset?token=${user.resetPasswordToken}`,
       appName: config.app.title,
-      appContact: config.app.appContact,
+      appContact: config.app.contact,
     },
   });
   if (!mail.accepted) return responses.error(res, 400, 'Bad Request', 'Failure sending email')();
@@ -117,7 +117,7 @@ exports.reset = async (req, res) => {
     params: {
       displayName: user.displayName,
       appName: config.app.title,
-      appContact: config.app.appContact,
+      appContact: config.app.contact,
     },
   });
   if (!mail.accepted) return responses.error(res, 400, 'Bad Request', 'Failure sending email')();
