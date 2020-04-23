@@ -27,8 +27,8 @@ module.exports = _.merge(defaultConfig, {
     options: {
       service: 'gmail',
       auth: {
-        user: 'lou.worker@gmail.com',
-        pass: 'zmvhmfqjzuzftpth',
+        user: 'montaine.worker@gmail.com',
+        pass: 'pyicsdyqmfooayby',
       },
     },
   },
