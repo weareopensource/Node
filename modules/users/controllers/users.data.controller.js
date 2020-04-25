@@ -21,7 +21,7 @@ exports.delete = async (req, res) => {
   try {
     const result = {
       user: await UserService.delete(req.user),
-      tasks: await TaskDataService.userDelete(req.user),
+      tasks: await TaskDataService.delete(req.user),
     };
     result.user.id = req.user.id;
     responses.success(res, 'user and his data were deleted')(result);
@@ -39,7 +39,7 @@ exports.get = async (req, res) => {
   try {
     const result = {
       user: await UserService.get(req.user),
-      tasks: await TaskDataService.userList(req.user),
+      tasks: await TaskDataService.list(req.user),
     };
     responses.success(res, 'user data')(result);
   } catch (err) {
@@ -56,7 +56,7 @@ exports.getMail = async (req, res) => {
   try {
     const result = {
       user: await UserService.get(req.user),
-      tasks: await TaskDataService.userList(req.user),
+      tasks: await TaskDataService.list(req.user),
     };
 
     // send mail
