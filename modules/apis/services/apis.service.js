@@ -69,6 +69,7 @@ exports.update = async (api, body) => {
   api.url = body.url;
   api.auth = body.auth;
   api.serviceKey = body.serviceKey;
+  api.path = body.path;
   api.params = body.params;
   api.status = body.status;
   api.banner = body.banner;
@@ -118,26 +119,28 @@ exports.load = async (api, user) => {
     // request
     const request = await montaineRequest.request(api, params);
     result.request = request;
-    result.result = request.data.result;
+    if (api.path && api.path === '') result.temp = request;
+    else result.temp = _.get(request, api.path);
 
     // Mapping
-    if (result.result && api.mapping && api.mapping !== '') {
-      result.result = montaineMap.map(result.result, JSON.parse(api.mapping));
-      result.mapping = result.result[0] ? result.result[0] : result.result;
+    if (result.temp && api.mapping && api.mapping !== '') {
+      result.temp = montaineMap.map(result.temp, JSON.parse(api.mapping));
+      result.mapping = result.temp;
     }
 
     // Typing
-    if (result.result && api.typing && api.typing !== '') {
-      result.result = montaineType.type(result.result, JSON.parse(api.typing));
-      result.typing = result.result[0] ? result.result[0] : result.result;
+    if (result.temp && api.typing && api.typing !== '') {
+      result.temp = montaineType.type(result.temp, JSON.parse(api.typing));
+      result.typing = result.temp;
     }
     // prepare for save
-    if (result.result) {
-      result.result = montaineSave.prepare(result.result, start);
-      result.prepare = result.result[0] ? result.result[0] : result.result;
-      result.result = montaineSave.save(result.result, start);
-      result.mongo = result.result;
-      if (api.savedb) result.result = await ApisRepository.import(api.slug, _.cloneDeep(result.result));
+    if (result.temp) {
+      result.temp = montaineSave.prepare(result.temp, start);
+      result.prepare = result.temp;
+      result.temp = montaineSave.save(result.temp, start);
+      result.mongo = result.temp;
+      if (api.savedb) result.result = await ApisRepository.import(api.slug, _.cloneDeep(result.temp));
+      delete result.temp;
     }
 
     // historize
@@ -186,23 +189,25 @@ exports.workerAuto = async (api, body) => {
 
     // request
     const request = await montaineRequest.request(api, params);
-    result.result = request.data.result;
+    if (api.path && api.path === '') result.temp = request;
+    else result.temp = _.get(request, api.path);
+
 
     // Mapping
-    if (result.result && api.mapping && api.mapping !== '') {
-      result.result = montaineMap.map(result.result, JSON.parse(api.mapping));
+    if (result.temp && api.mapping && api.mapping !== '') {
+      result.temp = montaineMap.map(result.temp, JSON.parse(api.mapping));
     }
 
     // Typing
-    if (result.result && api.typing && api.typing !== '') {
-      result.result = montaineType.type(result.result, JSON.parse(api.typing));
+    if (result.temp && api.typing && api.typing !== '') {
+      result.temp = montaineType.type(result.temp, JSON.parse(api.typing));
     }
 
     // prepare for save
-    if (result.result) {
-      result.result = montaineSave.prepare(result.result, start);
-      result.result = montaineSave.save(result.result, start);
-      if (api.savedb) result.result = await ApisRepository.import(api.slug, _.cloneDeep(result.result));
+    if (result.temp) {
+      result.temp = montaineSave.prepare(result.temp, start);
+      result.temp = montaineSave.save(result.temp, start);
+      if (api.savedb) result.result = await ApisRepository.import(api.slug, _.cloneDeep(result.temp));
     }
 
     // historize
