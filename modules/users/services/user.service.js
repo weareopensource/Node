@@ -91,7 +91,6 @@ exports.update = async (user, body, option) => {
   else if (option === 'recover') user = _.assignIn(user, _.pick(body, config.whitelists.users.recover));
 
   user.updated = Date.now();
-  user.displayName = `${user.firstName} ${user.lastName}`;
 
   const result = await UserRepository.update(user);
   return Promise.resolve(removeSensitive(result));

@@ -54,7 +54,6 @@ describe('Configuration Tests:', () => {
         email: 'user_config_test_@localhost.com',
         firstName: 'User',
         lastName: 'Local',
-        displayName: 'User Local',
         roles: ['user'],
       };
 
@@ -63,7 +62,6 @@ describe('Configuration Tests:', () => {
         email: 'admin_config_test_@localhost.com',
         firstName: 'Admin',
         lastName: 'Local',
-        displayName: 'Admin Local',
         roles: ['user', 'admin'],
       };
 

@@ -55,7 +55,6 @@ describe('User CRUD Tests :', () => {
       _user = {
         firstName: 'Full',
         lastName: 'Name',
-        displayName: 'Full Name',
         email: credentials[0].email,
         password: credentials[0].password,
         provider: 'local',
