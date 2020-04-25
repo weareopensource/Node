@@ -8,8 +8,8 @@ const TasksRepository = require('../repositories/tasks.repository');
  * @param {Object} user
  * @return {Promise} user tasks
  */
-exports.userList = async (user) => {
-  const result = await TasksRepository.userlist(user);
+exports.list = async (user) => {
+  const result = await TasksRepository.list({ user: user._id });
   return Promise.resolve(result);
 };
 
@@ -18,7 +18,7 @@ exports.userList = async (user) => {
  * @param {Object} user
  * @return {Promise} confirmation of delete
  */
-exports.userDelete = async (user) => {
-  const result = await TasksRepository.userdelete(user);
+exports.delete = async (user) => {
+  const result = await TasksRepository.deleteMany({ user: user._id });
   return Promise.resolve(result);
 };
