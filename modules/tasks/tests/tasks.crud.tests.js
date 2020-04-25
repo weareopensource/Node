@@ -48,7 +48,6 @@ describe('Tasks CRUD Tests :', () => {
       _user = {
         firstName: 'Full',
         lastName: 'Name',
-        displayName: 'Full Name',
         email: credentials.email,
         password: credentials.password,
         provider: 'local',

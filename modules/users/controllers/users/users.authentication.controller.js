@@ -150,7 +150,6 @@ exports.saveOAuthUserProfile = async (req, providerUserProfile, done) => {
       user = {
         firstName: providerUserProfile.firstName,
         lastName: providerUserProfile.lastName,
-        displayName: providerUserProfile.displayName,
         profileImageURL: providerUserProfile.profileImageURL,
         provider: providerUserProfile.provider,
         providerData: providerUserProfile.providerData,

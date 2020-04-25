@@ -10,6 +10,7 @@ const usersSchema = require('../models/user.schema');
 
 module.exports = (app) => {
   const users = require('../controllers/users.controller');
+  const usersData = require('../controllers/users.data.controller');
 
   // Setting up the users profile api
   app.route('/api/users/me').get(passport.authenticate('jwt'), users.me);
@@ -17,6 +18,10 @@ module.exports = (app) => {
   app.route('/api/users')
     .put(passport.authenticate('jwt'), model.isValid(usersSchema.User), users.update)
     .delete(passport.authenticate('jwt'), users.delete);
+
+  app.route('/api/users/data')
+    .get(passport.authenticate('jwt'), usersData.getMail)
+    .delete(passport.authenticate('jwt'), usersData.delete);
 
   app.route('/api/users/accounts')
     .delete(users.removeOAuthProvider)
