@@ -6,8 +6,8 @@ const mongoose = require('mongoose');
 const Task = mongoose.model('Task');
 
 /**
- * @desc Function to get all task in db
- * @return {Array} All tasks
+ * @desc Function to get all task in db with filter or not
+ * @return {Array} tasks
  */
 exports.list = (filter) => Task.find(filter).sort('-createdAt').exec();
 
@@ -43,8 +43,8 @@ exports.update = (task) => new Task(task).save();
 exports.delete = (task) => Task.deleteOne({ _id: task.id }).exec();
 
 /**
- * @desc Function to delete all task of one user in db
- * @param {Object} task
+ * @desc Function to delete tasks of one user in db
+ * @param {Object} filter
  * @return {Object} confirmation of delete
  */
 exports.deleteMany = (filter) => {
