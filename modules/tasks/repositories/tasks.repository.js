@@ -12,6 +12,12 @@ const Task = mongoose.model('Task');
 exports.list = () => Task.find().sort('-createdAt').exec();
 
 /**
+ * @desc Function to get all task of one user in db
+ * @return {Array} All tasks
+ */
+exports.userlist = (user) => Task.find({ user: user._id }).sort('-createdAt').exec();
+
+/**
  * @desc Function to create a task in db
  * @param {Object} task
  * @return {Object} task
@@ -41,3 +47,10 @@ exports.update = (task) => new Task(task).save();
  * @return {Object} confirmation of delete
  */
 exports.delete = (task) => Task.deleteOne({ _id: task.id }).exec();
+
+/**
+ * @desc Function to delete all task of one user in db
+ * @param {Object} task
+ * @return {Object} confirmation of delete
+ */
+exports.userdelete = (user) => Task.deleteMany({ user: user._id }).exec();
