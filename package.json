@@ -61,7 +61,7 @@
     "google-auth-library": "^6.0.0",
     "handlebars": "^4.7.6",
     "helmet": "~3.22.0",
-    "idtoken-verifier": "^2.0.2",
+    "idtoken-verifier": "^2.0.3",
     "joi": "^14.3.1",
     "joi-zxcvbn": "^5.2.1",
     "jsonwebtoken": "^8.5.1",
