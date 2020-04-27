@@ -2,7 +2,7 @@ version: '3'
 
 services:
 
-  waosnode:
+  weareopensourceNode:
     container_name: weareopensourceNode
     image: weareopensource/node:latest
     restart: always
