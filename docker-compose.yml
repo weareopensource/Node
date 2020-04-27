@@ -3,8 +3,8 @@ version: '3'
 services:
 
   waosnode:
-    container_name: waosnode
-    image: waosnode:latest
+    container_name: weareopensourceNode
+    image: weareopensource/node:latest
     restart: always
     ports:
       - 3000:3000
