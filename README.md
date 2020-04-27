@@ -41,11 +41,10 @@ Our stack node is actually in Beta.
 | CI  | [Travis CI](https://travis-ci.org/weareopensource/Node)
 | Developer  | [Coveralls](https://coveralls.io/github/weareopensource/Node) - [Code Climate](https://codeclimate.com/github/weareopensource/Node) - [Dependency status](https://david-dm.org/weareopensource/node) - [Dependabot](https://dependabot.com/) - [Snyk](https://snyk.io/test/github/weareopensource/node) <br> [standard-version](https://github.com/conventional-changelog/standard-version) - [commitlint](https://github.com/conventional-changelog/commitlint) - [commitizen](https://github.com/commitizen/cz-cli) - [waos-conventional-changelog](https://github.com/WeAreOpenSourceProjects/waos-conventional-changelog)
 | Dependencies  | [npm](https://www.npmjs.com)
-| **Being released** |
 | Deliver | Docker & Docker-compose
 | **In reflexion** |
 | Documentation  | Swagger <br> Docco
-| Developer  | uses v8's builtin `debug` and `inspect` optionse
+| Developer  | uses v8's builtin `debug` and `inspect` options
 | API | evolution & version guideline
 
 ## Features Overview
@@ -94,6 +93,18 @@ npm i
 * lint : `npm run lint`
 * commit : `npm run commit`
 * release : `npm run release`
+
+## Docker Way
+
+### docker
+
+* `docker build -t waosnode .`
+* `docker run --env WAOS_NODE_db_uri=mongodb://host.docker.internal/WaosNodeDev WAOS_NODE_host=0.0.0.0 --rm -p 3000:3000 waosnod`
+
+### docker-compose
+
+* `docker build -t waosnode .`
+* `docker-compose up`
 
 ### Configuration
 
