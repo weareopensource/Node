@@ -13,7 +13,6 @@ const UserMongoose = new Schema({
   sub: String,
   firstName: String,
   lastName: String,
-  displayName: String,
   email: {
     type: String,
     unique: 'Email already exists',

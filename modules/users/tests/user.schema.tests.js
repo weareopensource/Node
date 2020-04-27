@@ -23,7 +23,6 @@ describe('User Schema Tests :', () => {
     user = {
       firstName: 'Full',
       lastName: 'Name',
-      displayName: 'Full Name',
       email: 'test@test.com',
       password: 'M3@n.jsI$Aw3$0m3',
       provider: 'local',
@@ -33,7 +32,6 @@ describe('User Schema Tests :', () => {
     // user3 = {
     //   firstName: 'Different',
     //   lastName: 'User',
-    //   displayName: 'Full Different Name',
     //   email: 'test3@test.com',
     //   password: 'Different_Password1!',
     //   provider: 'local',

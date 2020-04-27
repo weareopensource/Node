@@ -44,10 +44,10 @@ exports.forgot = async (req, res) => {
     to: user.email,
     subject: 'Password Reset',
     params: {
-      displayName: user.displayName,
+      displayName: `${user.firstName} ${user.lastName}`,
       url: `${config.cors.protocol}://${config.cors.host}:${config.cors.port}/auth/password-reset?token=${user.resetPasswordToken}`,
       appName: config.app.title,
-      appContact: config.app.appContact,
+      appContact: config.app.contact,
     },
   });
   if (!mail.accepted) return responses.error(res, 400, 'Bad Request', 'Failure sending email')();
@@ -115,9 +115,9 @@ exports.reset = async (req, res) => {
     to: user.email,
     subject: 'Your password has been changed',
     params: {
-      displayName: user.displayName,
+      displayName: `${user.firstName} ${user.lastName}`,
       appName: config.app.title,
-      appContact: config.app.appContact,
+      appContact: config.app.contact,
     },
   });
   if (!mail.accepted) return responses.error(res, 400, 'Bad Request', 'Failure sending email')();

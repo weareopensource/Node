@@ -43,7 +43,6 @@ exports.delete = async (req, res) => {
   }
 };
 
-
 /**
  * @desc Endpoint to ask the service to update a user profile picture
  * @param {Object} req - Express request object
