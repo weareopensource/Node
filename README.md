@@ -98,12 +98,12 @@ npm i
 
 ### docker
 
-* `docker build -t waosnode .`
-* `docker run --env WAOS_NODE_db_uri=mongodb://host.docker.internal/WaosNodeDev WAOS_NODE_host=0.0.0.0 --rm -p 3000:3000 waosnod`
+* `docker build -t weareopensource/node .`
+* `docker run --env WAOS_NODE_db_uri=mongodb://host.docker.internal/WaosNodeDev WAOS_NODE_host=0.0.0.0 --rm -p 3000:3000 weareopensource/node`
 
 ### docker-compose
 
-* `docker build -t waosnode .`
+* `docker build -t weareopensource/node .`
 * `docker-compose up`
 
 ### Configuration
