@@ -7,7 +7,7 @@ const _ = require('lodash');
 
 const express = require(path.resolve('./lib/services/express'));
 const mongooseService = require(path.resolve('./lib/services/mongoose'));
-const config = require(path.resolve('./config'));
+const multerService = require(path.resolve('./lib/services/multer'));
 
 /**
  * Unit tests
@@ -26,7 +26,8 @@ describe('User CRUD Tests :', () => {
   beforeAll(async () => {
     try {
       // init mongo
-      await mongooseService.connect();
+      const dbconnection = await mongooseService.connect();
+      await multerService.setStorage(dbconnection);
       await mongooseService.loadModels();
       UserService = require(path.resolve('./modules/users/services/user.service'));
       // init application
@@ -170,7 +171,7 @@ describe('User CRUD Tests :', () => {
           .expect(422);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toEqual('Unprocessable Entity');
-        expect(result.body.description).toBe('Email already exists.');
+        expect(result.body.description).toBe('Validation failed.');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -727,7 +728,7 @@ describe('User CRUD Tests :', () => {
           .send(userUpdate)
           .expect(422);
         expect(result.body.message).toEqual('Unprocessable Entity');
-        expect(result.body.description).toBe('Email already exists.');
+        expect(result.body.description).toBe('Validation failed.');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -799,10 +800,13 @@ describe('User CRUD Tests :', () => {
       try {
         const result = await agent.delete('/api/users')
           .expect(200);
+
         expect(result.body.type).toBe('success');
-        expect(result.body.message).toBe('user deleted');
-        expect(result.body.data.id).toBe(userEdited.id);
-        expect(result.body.data.deletedCount).toBe(1);
+        expect(result.body.message).toBe('user and his data were deleted');
+        expect(result.body.data.user.id).toBe(userEdited.id);
+        expect(result.body.data.user.deletedCount).toBe(1);
+        expect(result.body.data.tasks.deletedCount).toBe(0);
+        expect(result.body.data.uploads.deletedCount).toBe(0);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -812,12 +816,12 @@ describe('User CRUD Tests :', () => {
     test('should be able to change profile picture if signed in', async () => {
       try {
         const result = await agent.post('/api/users/picture')
-          .attach('newProfilePicture', './modules/users/tests/img/default.png')
+          .attach('img', './modules/users/tests/img/default.png')
           .expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('profile picture updated');
         expect(result.body.data).toBeInstanceOf(Object);
-        expect(typeof result.body.data.profileImageURL).toBe('string');
+        expect(typeof result.body.data.avatar).toBe('string');
         expect(result.body.data.id).toBe(String(user.id));
       } catch (err) {
         console.log(err);
@@ -831,7 +835,7 @@ describe('User CRUD Tests :', () => {
           .attach('fieldThatDoesntWork', './modules/users/tests/img/default.png')
           .expect(422);
         expect(result.body.message).toEqual('Unprocessable Entity');
-        expect(result.body.description).toEqual('Missing `newProfilePicture` field.');
+        expect(result.body.description).toEqual('Unexpected field.');
       } catch (err) {
         expect(err).toBeFalsy();
       }
@@ -840,10 +844,10 @@ describe('User CRUD Tests :', () => {
     test('should not be able to upload a non-image file as a profile picture', async () => {
       try {
         const result = await agent.post('/api/users/picture')
-          .attach('newProfilePicture', './modules/users/tests/img/text-file.txt')
+          .attach('img', './modules/users/tests/img/text-file.txt')
           .expect(422);
         expect(result.body.message).toEqual('Unprocessable Entity');
-        expect(result.body.description).toEqual('Unsupported filetype.');
+        expect(result.body.description).toEqual('Only image/png,image/jpeg,image/jpg images allowed.');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -853,10 +857,11 @@ describe('User CRUD Tests :', () => {
     test('should not be able to change profile picture to too big of a file', async () => {
       try {
         const result = await agent.post('/api/users/picture')
-          .attach('newProfilePicture', './modules/users/tests/img/too-big-file.png')
+          .attach('img', './modules/users/tests/img/too-big-file.png')
           .expect(422);
+
         expect(result.body.message).toEqual('Unprocessable Entity');
-        expect(result.body.description).toEqual(`Image file too large. Maximum size allowed is ${(config.uploads.profile.avatar.limits.fileSize / (1024 * 1024)).toFixed(2)} Mb files.`);
+        expect(result.body.description).toEqual('File too large.');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();

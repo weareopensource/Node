@@ -83,17 +83,17 @@ module.exports = {
   },
   whitelists: {
     users: {
-      default: ['_id', 'id', 'firstName', 'lastName', 'displayName', 'email', 'roles', 'profileImageURL', 'resetPasswordToken', 'resetPasswordExpires'],
-      update: ['firstName', 'lastName', 'email', 'profileImageURL'],
-      updateAdmin: ['firstName', 'lastName', 'email', 'profileImageURL', 'roles'],
+      default: ['_id', 'id', 'firstName', 'lastName', 'displayName', 'email', 'roles', 'avatar', 'resetPasswordToken', 'resetPasswordExpires'],
+      update: ['firstName', 'lastName', 'email', 'avatar'],
+      updateAdmin: ['firstName', 'lastName', 'email', 'avatar', 'roles'],
       recover: ['password', 'resetPasswordToken', 'resetPasswordExpires'],
       roles: ['user', 'admin'],
     },
   },
   uploads: {
-    profile: {
+    users: {
       avatar: {
-        dest: './uploads',
+        formats: ['image/png', 'image/jpeg', 'image/jpg'],
         limits: {
           fileSize: 1 * 1024 * 1024, // Max file size in bytes (1 MB)
         },

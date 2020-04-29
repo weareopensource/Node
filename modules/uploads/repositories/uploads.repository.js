@@ -1,0 +1,70 @@
+/**
+ * Module dependencies
+ */
+const mongoose = require('mongoose');
+const { createModel } = require('mongoose-gridfs');
+const path = require('path');
+
+const AppError = require(path.resolve('./lib/helpers/AppError'));
+const Attachment = createModel({ bucketName: 'uploads' });
+const Uploads = mongoose.model('Uploads');
+
+
+/**
+ * @desc Function to get all upload in db with filter or not
+ * @return {Array} uploads
+ */
+exports.list = (filter) => Uploads.find(filter).select('filename uploadDate contentType').sort('-createdAt').exec();
+
+/**
+ * @desc Function to get an upload from db
+ * @param {String} id
+ * @return {Stream} upload
+ */
+exports.get = (uploadName) => Uploads.findOne({ filename: uploadName }).exec();
+
+/**
+ * @desc Function to get an upload from db
+ * @param {String} id
+ * @return {Stream} upload
+ */
+exports.getStream = (upload) => Attachment.read(upload);
+
+/**
+ * @desc Function to update an upload in db
+ * @param {ObjectID} upload ID
+ * @param {Object} update
+ * @return {Object} upload updated
+ */
+exports.update = (id, update) => Uploads.findOneAndUpdate({ _id: id }, update, { new: true }).exec();
+
+/**
+ * @desc Function to delete an upload from db
+ * @param {String} id
+ * @return {Object} confirmation of delete
+ */
+exports.delete = async (upload) => {
+  if (!upload._id) upload = await Uploads.findOne({ filename: upload.filename }).exec();
+  if (upload) {
+    Attachment.unlink(upload._id, (err, unlinked) => {
+      if (err) throw new AppError('Upload: delete error', { code: 'REPOSITORY_ERROR', details: err });
+      return unlinked;
+    });
+  }
+};
+
+/**
+ * @desc Function to delete uploads of one user in db
+ * @param {Object} filter
+ * @return {Object} confirmation of delete
+ */
+exports.deleteMany = async (filter) => {
+  const uploads = await this.list(filter);
+  uploads.forEach((upload) => {
+    Attachment.unlink(upload._id, (err, unlinked) => {
+      if (err) throw new AppError('Upload: delete error', { code: 'REPOSITORY_ERROR', details: err });
+      return unlinked;
+    });
+  });
+  return { deletedCount: uploads.length };
+};
