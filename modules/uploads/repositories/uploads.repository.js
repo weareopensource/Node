@@ -6,7 +6,7 @@ const { createModel } = require('mongoose-gridfs');
 const path = require('path');
 
 const AppError = require(path.resolve('./lib/helpers/AppError'));
-const Attachment = createModel({ bucketName: 'uploads' });
+const Attachment = createModel({ bucketName: 'uploads', model: 'Uploads' });
 const Uploads = mongoose.model('Uploads');
 
 

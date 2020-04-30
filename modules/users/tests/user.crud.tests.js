@@ -221,7 +221,7 @@ describe('User CRUD Tests :', () => {
       }
     });
 
-    test('should be able to retrieve a list of users if not admin', async () => {
+    test('should be able to retrieve a list of users if admin', async () => {
       _userEdited.roles = ['user', 'admin'];
 
       try {
