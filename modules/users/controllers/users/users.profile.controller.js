@@ -44,28 +44,6 @@ exports.delete = async (req, res) => {
 };
 
 /**
- * @desc Endpoint to ask the service to update a user profile picture
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
-exports.updateProfilePicture = async (req, res) => {
-  try {
-    await UserService.uploadImage(req, res, config.uploads.profile.avatar);
-    if (req.user.profileImageURL) await UserService.deleteImage(req.user.profileImageURL);
-    // add new image path to user
-    const profileImageURL = config.uploads.profile.avatar.dest + req.file.filename;
-    const user = await UserService.update(req.user, { profileImageURL });
-    // reset login
-    req.login(user, (errLogin) => {
-      if (errLogin) return responses.error(res, 400, 'Bad Request', errors.getMessage(errLogin))(errLogin);
-      return responses.success(res, 'profile picture updated')(user);
-    });
-  } catch (err) {
-    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
-  }
-};
-
-/**
  * @desc Endpoint to ask the service to sanitize the user
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
@@ -79,7 +57,7 @@ exports.me = (req, res) => {
       id: req.user.id,
       provider: escape(req.user.provider),
       roles: req.user.roles,
-      profileImageURL: req.user.profileImageURL,
+      avatar: req.user.avatar,
       email: escape(req.user.email),
       lastName: escape(req.user.lastName),
       firstName: escape(req.user.firstName),

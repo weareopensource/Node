@@ -4,15 +4,17 @@
 const passport = require('passport');
 const path = require('path');
 
+const multer = require(path.resolve('./lib/services/multer'));
 const model = require(path.resolve('./lib/middlewares/model'));
 const usersSchema = require('../models/user.schema');
 
 
+const config = require(path.resolve('./config'));
+
 module.exports = (app) => {
   const users = require('../controllers/users.controller');
-  const usersData = require('../controllers/users.data.controller');
+  const usersData = require('../controllers/users/users.data.controller');
 
-  // Setting up the users profile api
   app.route('/api/users/me').get(passport.authenticate('jwt'), users.me);
 
   app.route('/api/users')
@@ -29,5 +31,5 @@ module.exports = (app) => {
 
   app.route('/api/users/password').post(passport.authenticate('jwt'), users.updatePassword);
 
-  app.route('/api/users/picture').post(passport.authenticate('jwt'), users.updateProfilePicture);
+  app.route('/api/users/picture').post(passport.authenticate('jwt'), multer.create('img', config.uploads.avatar), users.updateProfilePicture);
 };

@@ -6,12 +6,9 @@ const _ = require('lodash');
 const bcrypt = require('bcrypt');
 const generatePassword = require('generate-password');
 const zxcvbn = require('zxcvbn');
-const fs = require('fs');
-const multer = require('multer');
 
 const config = require(path.resolve('./config'));
 const AppError = require(path.resolve('./lib/helpers/AppError'));
-const imageFileFilter = require(path.resolve('./lib/services/multer')).imageFileFilter;
 const UserRepository = require('../repositories/user.repository');
 
 const saltRounds = 10;
@@ -105,32 +102,6 @@ exports.delete = async (user) => {
   const result = await UserRepository.delete(user);
   return Promise.resolve(result);
 };
-
-/**
- * @desc Upload new image based on multer configuration
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @return {Promise} result
- */
-exports.uploadImage = async (req, res, config) => new Promise((resolve, reject) => {
-  // upload
-  const multerConfig = config;
-  multerConfig.fileFilter = imageFileFilter;
-  const upload = multer(multerConfig)
-    .single('newProfilePicture');
-
-  upload(req, res, (uploadError) => {
-    if (uploadError) reject(uploadError);
-    else resolve();
-  });
-});
-
-/**
- * @desc Delete image at this pa†h
- * @param {String} path
- * @return {Promise} result
- */
-exports.deleteImage = async (path) => fs.unlink(path);
 
 /**
  * @desc Function to authenticate user)

@@ -83,20 +83,22 @@ module.exports = {
   },
   whitelists: {
     users: {
-      default: ['_id', 'id', 'firstName', 'lastName', 'displayName', 'email', 'roles', 'profileImageURL', 'resetPasswordToken', 'resetPasswordExpires'],
-      update: ['firstName', 'lastName', 'email', 'profileImageURL'],
-      updateAdmin: ['firstName', 'lastName', 'email', 'profileImageURL', 'roles'],
+      default: ['_id', 'id', 'firstName', 'lastName', 'displayName', 'email', 'roles', 'avatar', 'resetPasswordToken', 'resetPasswordExpires'],
+      update: ['firstName', 'lastName', 'email', 'avatar'],
+      updateAdmin: ['firstName', 'lastName', 'email', 'avatar', 'roles'],
       recover: ['password', 'resetPasswordToken', 'resetPasswordExpires'],
       roles: ['user', 'admin'],
     },
   },
   uploads: {
-    profile: {
-      avatar: {
-        dest: './uploads',
-        limits: {
-          fileSize: 1 * 1024 * 1024, // Max file size in bytes (1 MB)
-        },
+    avatar: {
+      formats: ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'],
+      limits: {
+        fileSize: 1 * 1024 * 1024, // Max file size in bytes (1 MB)
+      },
+      sharp: {
+        sizes: ['128', '256', '512', '1024'],
+        operations: ['blur', 'bw', 'blur&bw'],
       },
     },
   },
