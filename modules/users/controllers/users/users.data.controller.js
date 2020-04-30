@@ -59,6 +59,7 @@ exports.getMail = async (req, res) => {
     const result = {
       user: await UserService.get(req.user),
       tasks: await TaskDataService.list(req.user),
+      uploads: await UploadDataService.list(req.user),
     };
 
     // send mail
