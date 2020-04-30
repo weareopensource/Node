@@ -32,13 +32,13 @@ Our stack node is actually in Beta.
 | **Available** |
 | Architecture | Layered Architecture : everything is separated in layers, and the upper layers are abstractions of the lower ones, that's why every layer should only reference the immediate lower layer (vertical modules architecture with Repository and Services Pattern)
 | Server  | [Node v12.x LTS](https://nodejs.org/en/) <br> [Express](https://github.com/expressjs/express) - [body-parser](https://github.com/expressjs/body-parser) - [compression](https://github.com/expressjs/compression) - [CORS](https://github.com/expressjs/cors) - [method-override](https://github.com/expressjs/method-override) <br> [gulp 4](https://github.com/gulpjs/gulp) - [nodemon](https://github.com/remy/nodemon) - [pm2](https://github.com/Unitech/pm2)
-| DataBase  | [Mongo 4.x LTS](https://www.mongodb.com/download-center/community) &  [mongoose](https://github.com/Automattic/mongoose) (user management & crud Task example) <br> [Sequelize](https://github.com/sequelize/sequelize) : PostgreSQL, MySQL, SQLit 4.x (option - crud Task example) <br> [JOI](https://github.com/hapijs/joi) Models & Repository for database code abstraction <br> seed functions
-| Testing |  [Jest](https://github.com/facebook/jest) & [SuperTest](https://github.com/visionmedia/supertest) (Coverage & Watch) <br> *example of mocha with gulp available*
-| Linter  | [ESLint](https://github.com/eslint/eslint) ecmaVersion 10 (2019)
-| Security | JWT Stateless - [passport-jwt](https://github.com/themikenicholson/passport-jwt) <br> Passwords: [bcrypt](https://en.wikipedia.org/wiki/Bcrypt) - [zxcvbn](https://github.com/dropbox/zxcvbn) <br> DataBases options available (auth, ssl ..) <br> [SSL](https://github.com/weareopensource/Node/blob/master/WIKI.md#SSL) Express / Reverse Proxy (must be activated, otherwise => plain text password)
-| API | Default answer wrapper (helper) : [jsend](https://github.com/omniti-labs/jsend) like : status, message, data or error <br>  Default errors handling (helper) : formatted by the controller, Custom ES6 errors for other layers
-| Upload | Example : [Mongo gridfs](https://docs.mongodb.com/manual/core/gridfs/) - [mongoose-gridfs](https://github.com/lykmapipo/mongoose-gridfs) - [Multer](https://github.com/expressjs/multer) - [Sharp](https://github.com/lovell/sharp)<br> Avatar stream example available, with sharp options <br /> example could catch all contentType
-| Logs | [winston](https://github.com/winstonjs/winston) [morgan](https://github.com/expressjs/morgan) *custom example available*
+| DataBase  | [Mongo 4.x LTS](https://www.mongodb.com/download-center/community) - [mongoose](https://github.com/Automattic/mongoose) - *User, Crud, Seed, Gridf upload, Options (auth, ssl ..)* <br> [Sequelize](https://github.com/sequelize/sequelize) - *PostgreSQL, MySQL, SQLit 4.x (option - crud Task example)* <br> [JOI](https://github.com/hapijs/joi) - *Models & Repository for database code abstraction*
+| Testing |  [Jest](https://github.com/facebook/jest) - [SuperTest](https://github.com/visionmedia/supertest) - *Coverage & Watch* <br> *example of mocha with gulp available*
+| Linter  | [ESLint](https://github.com/eslint/eslint) - *ecmaVersion 10 (2019)*
+| Security | [passport-jwt](https://github.com/themikenicholson/passport-jwt) - *JWT Stateless* <br> [bcrypt](https://en.wikipedia.org/wiki/Bcrypt) - [zxcvbn](https://github.com/dropbox/zxcvbn) - *Passwords*  <br> [SSL](https://github.com/weareopensource/Node/blob/master/WIKI.md#SSL) - *Express / Reverse Proxy (must be activated, otherwise => plain text password)*
+| API | [jsend](https://github.com/omniti-labs/jsend) - *Default answer wrapper (helper) : status, message, data or error* <br>  *Helper: default errors handling : formatted by the controller, Custom ES6 errors for other layers*
+| Upload | [Mongo gridfs](https://docs.mongodb.com/manual/core/gridfs/) - [mongoose-gridfs](https://github.com/lykmapipo/mongoose-gridfs) - [Multer](https://github.com/expressjs/multer) - [Sharp](https://github.com/lovell/sharp) - *Image stream example, all contentType, image video ..*
+| Logs | [winston](https://github.com/winstonjs/winston) - [morgan](https://github.com/expressjs/morgan) *custom example available*
 | CI  | [Travis CI](https://travis-ci.org/weareopensource/Node)
 | Developer  | [Coveralls](https://coveralls.io/github/weareopensource/Node) - [Code Climate](https://codeclimate.com/github/weareopensource/Node) - [Dependency status](https://david-dm.org/weareopensource/node) - [Dependabot](https://dependabot.com/) - [Snyk](https://snyk.io/test/github/weareopensource/node) <br> [standard-version](https://github.com/conventional-changelog/standard-version) - [commitlint](https://github.com/conventional-changelog/commitlint) - [commitizen](https://github.com/commitizen/cz-cli) - [waos-conventional-changelog](https://github.com/WeAreOpenSourceProjects/waos-conventional-changelog)
 | Dependencies  | [npm](https://www.npmjs.com)
@@ -52,10 +52,11 @@ Our stack node is actually in Beta.
 
 #### Available
 
-* **User** : classic register / auth or oAuth(microsoft, google) - profile management (update, avatar upload ...) - **data privacy ok** (delete all data, get all data, send all by mail data)
+* **User** : classic register / auth or oAuth(microsoft, google) - profile management (update, avatar upload ...) 
+* **User data privacy** : delete all data - get all data - send all data by mail
 * **Admin** : list users - get user - edit user - delete user
-* **Tasks** : list tasks - get task - add tasks - edit tasks - delete tasks - **data privacy ok**
-* **Uploads** : get upload stream - add upload - delete upload  - get image upload stream & sharp operations  **data privacy ok**
+* **Tasks** : list tasks - get task - add tasks - edit tasks - delete tasks
+* **Uploads** : get upload stream - add upload - delete upload  - get image upload stream & sharp operations
 
 ## :pushpin: Prerequisites
 
@@ -64,7 +65,7 @@ Make sure you have installed all of the following prerequisites on your developm
 * Git - [Download & Install Git](https://git-scm.com/downloads)
 * Node.js (10.x) - [Download & Install Node.js](https://nodejs.org/en/download/)
 
-## :shipit: Installation
+## :boom: Installation
 
 It's straightforward (you can use yarn if you want)
 
@@ -121,7 +122,7 @@ So configuration avalable on `config/defaults/development` file are overidable. 
 WAOS_NODE_app_name='my app =)'
 ```
 
-## :octocat: [Contribute](https://github.com/weareopensource/weareopensource.github.io/blob/master/CONTRIBUTE.md)
+## :pencil2: [Contribute](https://github.com/weareopensource/weareopensource.github.io/blob/master/CONTRIBUTE.md)
 
 ## :scroll: History
 
