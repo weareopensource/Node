@@ -20,7 +20,7 @@ const UserSchema = Joi.object().keys({
     .trim()
     .required(),
   email: Joi.string().email({ minDomainAtoms: 2 }),
-  profileImageURL: Joi.string(),
+  avatar: Joi.string(),
   roles: Joi.array().items(Joi.string().valid(config.whitelists.users.roles)).min(1).default(['user']),
   /* Extra */
   updated: Joi.date(),

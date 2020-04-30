@@ -36,7 +36,8 @@ Our stack node is actually in Beta.
 | Testing |  [Jest](https://github.com/facebook/jest) & [SuperTest](https://github.com/visionmedia/supertest) (Coverage & Watch) <br> *example of mocha with gulp available*
 | Linter  | [ESLint](https://github.com/eslint/eslint) ecmaVersion 10 (2019)
 | Security | JWT Stateless - [passport-jwt](https://github.com/themikenicholson/passport-jwt) <br> Passwords: [bcrypt](https://en.wikipedia.org/wiki/Bcrypt) - [zxcvbn](https://github.com/dropbox/zxcvbn) <br> DataBases options available (auth, ssl ..) <br> [SSL](https://github.com/weareopensource/Node/blob/master/WIKI.md#SSL) Express / Reverse Proxy (must be activated, otherwise => plain text password)
-| API | Default answer wrapper (helper) : [jsend](https://github.com/omniti-labs/jsend) like : status, message, data or error <br>  Default error handling (helper) : formatted by the controller, Custom ES6 errors for other layers
+| API | Default answer wrapper (helper) : [jsend](https://github.com/omniti-labs/jsend) like : status, message, data or error <br>  Default errors handling (helper) : formatted by the controller, Custom ES6 errors for other layers
+| Upload | Example : [Mongo gridfs](https://docs.mongodb.com/manual/core/gridfs/) - [mongoose-gridfs](https://github.com/lykmapipo/mongoose-gridfs) - [Multer](https://github.com/expressjs/multer) - [Sharp](https://github.com/lovell/sharp)<br> Avatar stream example available, with sharp options <br /> example could catch all contentType
 | Logs | [winston](https://github.com/winstonjs/winston) [morgan](https://github.com/expressjs/morgan) *custom example available*
 | CI  | [Travis CI](https://travis-ci.org/weareopensource/Node)
 | Developer  | [Coveralls](https://coveralls.io/github/weareopensource/Node) - [Code Climate](https://codeclimate.com/github/weareopensource/Node) - [Dependency status](https://david-dm.org/weareopensource/node) - [Dependabot](https://dependabot.com/) - [Snyk](https://snyk.io/test/github/weareopensource/node) <br> [standard-version](https://github.com/conventional-changelog/standard-version) - [commitlint](https://github.com/conventional-changelog/commitlint) - [commitizen](https://github.com/commitizen/cz-cli) - [waos-conventional-changelog](https://github.com/WeAreOpenSourceProjects/waos-conventional-changelog)
@@ -51,9 +52,10 @@ Our stack node is actually in Beta.
 
 #### Available
 
-* **User** : classic register / auth or oAuth(microsoft, google) - profile management (update, avatar upload ...) - **data privacy** (delete all, get all, send all by mail)
-* **Admin** : list users - edit user - delete user
-* **Tasks** : list tasks - add tasks - edit tasks - delete tasks
+* **User** : classic register / auth or oAuth(microsoft, google) - profile management (update, avatar upload ...) - **data privacy ok** (delete all data, get all data, send all by mail data)
+* **Admin** : list users - get user - edit user - delete user
+* **Tasks** : list tasks - get task - add tasks - edit tasks - delete tasks - **data privacy ok**
+* **Uploads** : get upload stream - add upload - delete upload  - get image upload stream & sharp operations  **data privacy ok**
 
 ## Prerequisites
 

@@ -6,6 +6,7 @@ const path = require('path');
 
 const express = require(path.resolve('./lib/services/express'));
 const mongooseService = require(path.resolve('./lib/services/mongoose'));
+const multerService = require(path.resolve('./lib/services/multer'));
 
 /**
  * Unit tests
@@ -26,6 +27,7 @@ describe('Tasks CRUD Tests :', () => {
     try {
       // init mongo
       await mongooseService.connect();
+      await multerService.storage();
       await mongooseService.loadModels();
       UserService = require(path.resolve('./modules/users/services/user.service'));
       // init application

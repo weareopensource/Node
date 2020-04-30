@@ -8,6 +8,7 @@ const path = require('path');
 const config = require(path.resolve('./config'));
 const logger = require(path.resolve('./lib/services/logger'));
 const mongooseService = require(path.resolve('./lib/services/mongoose'));
+const multerService = require(path.resolve('./lib/services/multer'));
 const seed = require(path.resolve('./lib/services/seed'));
 
 /**
@@ -18,7 +19,8 @@ describe('Configuration Tests:', () => {
   let TaskService = null;
 
   beforeAll(() => mongooseService.connect()
-    .then(() => {
+    .then(async () => {
+      await multerService.storage();
       mongooseService.loadModels();
       UserService = require(path.resolve('./modules/users/services/user.service'));
       TaskService = require(path.resolve('./modules/tasks/services/tasks.service'));
@@ -376,6 +378,20 @@ describe('Configuration Tests:', () => {
 
       const fileTransport = logger.setupFileLogger(config);
       expect(fileTransport).toBe(false);
+    });
+  });
+
+  describe('Multer', () => {
+    test('should be able to get multer avatar configuration', () => {
+      const userAvatarConfig = config.uploads.avatar;
+      expect(userAvatarConfig).toBeDefined();
+      expect(userAvatarConfig.formats).toBeInstanceOf(Array);
+      expect(userAvatarConfig.limits.fileSize).toBe(1048576);
+    });
+
+    test('should be able to generate 32 bytes file name', async () => {
+      const filename = await multerService.generateFileName('filename.png');
+      expect(filename).toHaveLength(68);
     });
   });
 

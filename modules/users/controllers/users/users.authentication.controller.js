@@ -64,7 +64,7 @@ exports.token = async (req, res) => {
       id: req.user.id,
       provider: escape(req.user.provider),
       roles: req.user.roles,
-      profileImageURL: req.user.profileImageURL,
+      avatar: req.user.avatar,
       email: escape(req.user.email),
       lastName: escape(req.user.lastName),
       firstName: escape(req.user.firstName),
@@ -150,7 +150,7 @@ exports.saveOAuthUserProfile = async (req, providerUserProfile, done) => {
       user = {
         firstName: providerUserProfile.firstName,
         lastName: providerUserProfile.lastName,
-        profileImageURL: providerUserProfile.profileImageURL,
+        avatar: providerUserProfile.avatar,
         provider: providerUserProfile.provider,
         providerData: providerUserProfile.providerData,
       };

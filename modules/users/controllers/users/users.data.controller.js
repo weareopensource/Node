@@ -7,10 +7,10 @@ const errors = require(path.resolve('./lib/helpers/errors'));
 const responses = require(path.resolve('./lib/helpers/responses'));
 const mails = require(path.resolve('./lib/helpers/mails'));
 const config = require(path.resolve('./config'));
-const UserService = require('../services/user.service');
-
+const UserService = require('../../services/user.service');
 
 const TaskDataService = require(path.resolve('./modules/tasks/services/tasks.data.service'));
+const UploadDataService = require(path.resolve('./modules/uploads/services/uploads.data.service'));
 
 /**
  * @desc Endpoint to ask the service to delete the user connected and all his data
@@ -22,6 +22,7 @@ exports.delete = async (req, res) => {
     const result = {
       user: await UserService.delete(req.user),
       tasks: await TaskDataService.delete(req.user),
+      uploads: await UploadDataService.delete(req.user),
     };
     result.user.id = req.user.id;
     responses.success(res, 'user and his data were deleted')(result);
@@ -40,6 +41,7 @@ exports.get = async (req, res) => {
     const result = {
       user: await UserService.get(req.user),
       tasks: await TaskDataService.list(req.user),
+      uploads: await UploadDataService.list(req.user),
     };
     responses.success(res, 'user data')(result);
   } catch (err) {
