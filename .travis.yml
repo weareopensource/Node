@@ -18,6 +18,7 @@ jobs:
   include:
   - stage: allow_failures
     node_js: 13
+    node_js: 14
   - stage: deploy
     node_js: lts/*
     deploy:
