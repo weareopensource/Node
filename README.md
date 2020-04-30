@@ -2,9 +2,9 @@
  [![Dependencies Status](https://david-dm.org/weareopensource/node.svg?style=flat-square)](https://david-dm.org/weareopensource/node) [![Dependabot badge](https://badges.weareopensource.me/badge/Dependabot-enabled-2768cf.svg?style=flat-square)](https://dependabot.com)
  [![Known Vulnerabilities](https://snyk.io/test/github/weareopensource/node/badge.svg?style=flat-square)](https://snyk.io/test/github/weareopensource/node)
 
-# [WeAreOpenSource](https://weareopensource.me) Node
+# :globe_with_meridians: [WeAreOpenSource](https://weareopensource.me) Node
 
-## Presentation
+## :book: Presentation
 
 This project is a Node stack that can be ran as a standalone BackEnd. Or in a fullstack with another repo of your choice (ex: [Vue](https://github.com/weareopensource/Vue), [Swift](https://github.com/weareopensource/Swift)).
 
@@ -19,13 +19,13 @@ Quick links :
 
 Our stack node is actually in Beta.
 
-# Node / Express / Mongoose - Sequelize Orm
+# :computer: Node / Express / Mongoose - Sequelize Orm
 
 * [**Wiki**](https://github.com/weareopensource/Node/blob/master/WIKI.md) - wip
 * [**Knowledges JS**](https://github.com/weareopensource/weareopensource.github.io/wiki/Knowledges-JS)
 * [**Demo**](https://node.weareopensource.me) (or working with [Vue](https://github.com/weareopensource/Vue) stack [here](https://vue.weareopensource.me), email: *test@waos.me*, password: *TestWaos@2019*)
 
-## Technology Overview
+## :package: Technology Overview
 
 | Subject | Informations
 | ------- | --------
@@ -48,7 +48,7 @@ Our stack node is actually in Beta.
 | Developer  | uses v8's builtin `debug` and `inspect` options
 | API | evolution & version guideline
 
-## Features Overview
+## :tada: Features Overview
 
 #### Available
 
@@ -57,14 +57,14 @@ Our stack node is actually in Beta.
 * **Tasks** : list tasks - get task - add tasks - edit tasks - delete tasks - **data privacy ok**
 * **Uploads** : get upload stream - add upload - delete upload  - get image upload stream & sharp operations  **data privacy ok**
 
-## Prerequisites
+## :pushpin: Prerequisites
 
 Make sure you have installed all of the following prerequisites on your development machine:
 
 * Git - [Download & Install Git](https://git-scm.com/downloads)
 * Node.js (10.x) - [Download & Install Node.js](https://nodejs.org/en/download/)
 
-## Installation
+## :shipit: Installation
 
 It's straightforward (you can use yarn if you want)
 
@@ -73,7 +73,7 @@ git clone https://github.com/weareopensource/node.git && cd Node
 npm i
 ```
 
-## Running Your Application
+## :runner: Running Your Application
 
 ### Development
 
@@ -96,7 +96,7 @@ npm i
 * commit : `npm run commit`
 * release : `npm run release`
 
-## Docker Way
+## :whale: Docker Way
 
 ### docker
 
@@ -121,22 +121,22 @@ So configuration avalable on `config/defaults/development` file are overidable. 
 WAOS_NODE_app_name='my app =)'
 ```
 
-## [Contribute](https://github.com/weareopensource/weareopensource.github.io/blob/master/CONTRIBUTE.md)
+## :octocat: [Contribute](https://github.com/weareopensource/weareopensource.github.io/blob/master/CONTRIBUTE.md)
 
-## History
+## :scroll: History
 
 This work is based on [MEAN.js](http://meanjs.org) and more precisely on a fork of the developers named [Riess.js](https://github.com/lirantal/Riess.js). The work being stopped we wished to take it back, we want to create updated stack with same mindset "simple", "easy to use". The toolbox needed to start projects, but not only with Node and Angular ...
 
-## [We Are Open Source, Who we are ?](https://weareopensource.me)
+## :globe_with_meridians: [We Are Open Source, Who we are ?](https://weareopensource.me)
 
 Today, we dreams to create Backs/Fronts, aligns on feats, in multiple languages, in order to allow anyone to compose fullstack on demand (React, Angular, VusJS, Node, Nest, Swift, Go).
 Feel free to discuss, share other kind of bricks, and invite whoever you want with this mindset to come help us.
 
-## Licence
+## :clipboard: Licence
 
 [![Packagist](https://badges.weareopensource.me/packagist/l/doctrine/orm.svg?style=flat-square)](/LICENSE.md)
 
-## Dev
+## :family: Main Team
 
 Pierre
 
