@@ -31,5 +31,5 @@ module.exports = (app) => {
 
   app.route('/api/users/password').post(passport.authenticate('jwt'), users.updatePassword);
 
-  app.route('/api/users/picture').post(passport.authenticate('jwt'), multer.create('img', config.uploads.users.avatar), users.updateProfilePicture);
+  app.route('/api/users/picture').post(passport.authenticate('jwt'), multer.create('img', config.uploads.avatar), users.updateProfilePicture);
 };

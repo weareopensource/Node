@@ -24,8 +24,8 @@ describe('Uploads CRUD Tests :', () => {
   beforeAll(async () => {
     try {
       // init mongo
-      const dbconnection = await mongooseService.connect();
-      await multerService.setStorage(dbconnection);
+      await mongooseService.connect();
+      await multerService.storage();
       await mongooseService.loadModels();
       UserService = require(path.resolve('./modules/users/services/user.service'));
       // init application
@@ -81,7 +81,7 @@ describe('Uploads CRUD Tests :', () => {
       try {
         const result = await agent.get(`/api/uploads/${upload1}`)
           .expect(200);
-        expect(result.body).toBeDefined();
+        expect(result.body).toBeInstanceOf(Buffer);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -108,6 +108,111 @@ describe('Uploads CRUD Tests :', () => {
         expect(_old.body).toBeDefined();
         expect(_old.body.type).toBe('error');
         expect(_old.body.message).toBe('Not Found');
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+
+    test('should be able to read an image upload', async () => {
+      // add upload
+      try {
+        const result = await agent.get(`/api/uploads/images/${upload1}`)
+          .expect(200);
+        expect(result.body).toBeInstanceOf(Buffer);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+
+    test('should be able to read an image upload with size option', async () => {
+      // add upload
+      try {
+        const input = upload1.split('.');
+        const result = await agent.get(`/api/uploads/images/${input[0]}-512.${input[1]}`)
+          .expect(200);
+        expect(result.body).toBeInstanceOf(Buffer);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+
+    test('should be able to read an image upload with size option and effect', async () => {
+      // add upload
+      try {
+        const input = upload1.split('.');
+        const result = await agent.get(`/api/uploads/images/${input[0]}-512-blur.${input[1]}`)
+          .expect(200);
+        expect(result.body).toBeInstanceOf(Buffer);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+
+    test('should not be able to read an image upload with wrong file name schema', async () => {
+      // add upload
+      try {
+        const result = await agent.get('/api/uploads/images/test')
+          .expect(404);
+        expect(result.body.message).toEqual('Not Found');
+        expect(result.body.description).toEqual('Wrong name schema');
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+
+    test('should not be able to read an image upload with too much params', async () => {
+      // add upload
+      try {
+        const result = await agent.get('/api/uploads/images/filename-400-blur-test.png')
+          .expect(404);
+        expect(result.body.message).toEqual('Not Found');
+        expect(result.body.description).toEqual('Too much params');
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+
+    test('should not be able to read an image upload with wrong name', async () => {
+      // add upload
+      try {
+        const result = await agent.get('/api/uploads/images/filename-400-blur.png')
+          .expect(404);
+        expect(result.body.message).toEqual('Not Found');
+        expect(result.body.description).toEqual('No Upload with that name has been found');
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+
+    test('should not be able to read an image upload with wrong size option', async () => {
+      // add upload
+      try {
+        const input = upload1.split('.');
+        const result = await agent.get(`/api/uploads/images/${input[0]}-300.${input[1]}`)
+          .expect(422);
+        expect(result.body.message).toEqual('Unprocessable Entity');
+        expect(result.body.description).toEqual('Wrong size param');
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+
+    test('should not be able to read an image upload with wrong size option', async () => {
+      // add upload
+      try {
+        const input = upload1.split('.');
+        const result = await agent.get(`/api/uploads/images/${input[0]}-512-toto.${input[1]}`)
+          .expect(422);
+        expect(result.body.message).toEqual('Unprocessable Entity');
+        expect(result.body.description).toEqual('Operation param not available');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();

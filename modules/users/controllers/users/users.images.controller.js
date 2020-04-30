@@ -22,7 +22,7 @@ exports.updateProfilePicture = async (req, res) => {
     // delete old image
     if (req.user.avatar) await UploadsService.delete({ filename: req.user.avatar });
     // update document uploaded (metadata ...)
-    const result = await UploadsService.update(req.file, req.user);
+    const result = await UploadsService.update(req.file, req.user, 'avatar');
     // update user
     const user = await UserService.update(req.user, { avatar: result.filename });
     // reload playload

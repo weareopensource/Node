@@ -14,6 +14,9 @@ exports.invokeRolesPolicies = () => {
     allows: [{
       resources: '/api/uploads/:uploadName',
       permissions: ['get', 'delete'],
+    }, {
+      resources: '/api/uploads/images/:imageName',
+      permissions: ['get'],
     }],
   }]);
 };

@@ -26,8 +26,8 @@ describe('Tasks CRUD Tests :', () => {
   beforeAll(async () => {
     try {
       // init mongo
-      const dbconnection = await mongooseService.connect();
-      await multerService.setStorage(dbconnection);
+      await mongooseService.connect();
+      await multerService.storage();
       await mongooseService.loadModels();
       UserService = require(path.resolve('./modules/users/services/user.service'));
       // init application

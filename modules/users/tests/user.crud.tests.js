@@ -26,8 +26,8 @@ describe('User CRUD Tests :', () => {
   beforeAll(async () => {
     try {
       // init mongo
-      const dbconnection = await mongooseService.connect();
-      await multerService.setStorage(dbconnection);
+      await mongooseService.connect();
+      await multerService.storage();
       await mongooseService.loadModels();
       UserService = require(path.resolve('./modules/users/services/user.service'));
       // init application
@@ -847,7 +847,7 @@ describe('User CRUD Tests :', () => {
           .attach('img', './modules/users/tests/img/text-file.txt')
           .expect(422);
         expect(result.body.message).toEqual('Unprocessable Entity');
-        expect(result.body.description).toEqual('Only image/png,image/jpeg,image/jpg images allowed.');
+        expect(result.body.description).toEqual('Only image/png,image/jpeg,image/jpg,image/gif images allowed.');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();

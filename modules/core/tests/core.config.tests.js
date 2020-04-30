@@ -19,8 +19,8 @@ describe('Configuration Tests:', () => {
   let TaskService = null;
 
   beforeAll(() => mongooseService.connect()
-    .then((dbconnection) => {
-      multerService.setStorage(dbconnection);
+    .then(async () => {
+      await multerService.storage();
       mongooseService.loadModels();
       UserService = require(path.resolve('./modules/users/services/user.service'));
       TaskService = require(path.resolve('./modules/tasks/services/tasks.service'));
@@ -383,7 +383,7 @@ describe('Configuration Tests:', () => {
 
   describe('Multer', () => {
     test('should be able to get multer avatar configuration', () => {
-      const userAvatarConfig = config.uploads.users.avatar;
+      const userAvatarConfig = config.uploads.avatar;
       expect(userAvatarConfig).toBeDefined();
       expect(userAvatarConfig.formats).toBeInstanceOf(Array);
       expect(userAvatarConfig.limits.fileSize).toBe(1048576);

@@ -20,6 +20,7 @@ const UploadsMongoose = new Schema({
       type: Schema.ObjectId,
       ref: 'User',
     },
+    kind: String,
   },
 }, { strict: false });
 

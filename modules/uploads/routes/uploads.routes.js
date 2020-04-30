@@ -16,6 +16,11 @@ module.exports = (app) => {
     .get(uploads.get)
     .delete(policy.isOwner, uploads.delete); // delete
 
+  // classic crud
+  app.route('/api/uploads/images/:imageName').all(passport.authenticate('jwt'), policy.isAllowed)
+    .get(uploads.getSharp);
+
   // Finish by binding the task middleware
   app.param('uploadName', uploads.uploadByName);
+  app.param('imageName', uploads.uploadByImageName);
 };

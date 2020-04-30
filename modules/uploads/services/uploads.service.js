@@ -8,8 +8,8 @@ const UploadRepository = require('../repositories/uploads.repository');
 
 /**
  * @desc Function to ask repository to get an upload
- * @param {String} id
- * @return {Stream} upload
+ * @param {String} uploadName
+ * @return {Promise} Upload
  */
 exports.get = async (uploadName) => {
   const result = await UploadRepository.get(uploadName);
@@ -18,8 +18,8 @@ exports.get = async (uploadName) => {
 
 /**
  * @desc Function to ask repository to get stream of chunks data
- * @param {String} id
- * @return {Stream} upload
+ * @param {Object} Upload
+ * @return {Promise} result stream
  */
 exports.getStream = async (upload) => {
   const result = await UploadRepository.getStream(upload);
@@ -28,14 +28,17 @@ exports.getStream = async (upload) => {
 
 /**
  * @desc Function to ask repository to get an upload
- * @param {String} id
- * @return {Stream} upload
+ * @param {Object} req.file
+ * @param {Object} User
+ * @param {String} kind, upload configuration path (important for futur transformations)
+ * @return {Promise} Upload
  */
-exports.update = async (file, user) => {
+exports.update = async (file, user, kind) => {
   const update = {
     filename: await multer.generateFileName(file.filename || file.originalname),
     metadata: {
       user: user.id,
+      kind: kind || null,
     },
   };
   const result = await UploadRepository.update(file._id, update);
@@ -44,7 +47,7 @@ exports.update = async (file, user) => {
 
 /**
  * @desc Function to ask repository to delete chunks data
- * @param {String} id
+ * @param {Object} Upload
  * @return {Promise} confirmation of delete
  */
 exports.delete = async (upload) => {

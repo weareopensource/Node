@@ -1,31 +1,31 @@
 /**
  * Module dependencies
  */
+const path = require('path');
 const mongoose = require('mongoose');
 const { createModel } = require('mongoose-gridfs');
-const path = require('path');
 
 const AppError = require(path.resolve('./lib/helpers/AppError'));
 const Attachment = createModel({ bucketName: 'uploads', model: 'Uploads' });
 const Uploads = mongoose.model('Uploads');
 
-
 /**
  * @desc Function to get all upload in db with filter or not
+ * @param {Object} Filter
  * @return {Array} uploads
  */
 exports.list = (filter) => Uploads.find(filter).select('filename uploadDate contentType').sort('-createdAt').exec();
 
 /**
  * @desc Function to get an upload from db
- * @param {String} id
+ * @param {String} uploadName
  * @return {Stream} upload
  */
 exports.get = (uploadName) => Uploads.findOne({ filename: uploadName }).exec();
 
 /**
- * @desc Function to get an upload from db
- * @param {String} id
+ * @desc Function to get an upload stream from db
+ * @param {Object} Upload
  * @return {Stream} upload
  */
 exports.getStream = (upload) => Attachment.read(upload);
@@ -40,7 +40,7 @@ exports.update = (id, update) => Uploads.findOneAndUpdate({ _id: id }, update, {
 
 /**
  * @desc Function to delete an upload from db
- * @param {String} id
+ * @param {Object} upload
  * @return {Object} confirmation of delete
  */
 exports.delete = async (upload) => {
