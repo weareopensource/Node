@@ -7,7 +7,7 @@ const errors = require(path.resolve('./lib/helpers/errors'));
 const responses = require(path.resolve('./lib/helpers/responses'));
 const mails = require(path.resolve('./lib/helpers/mails'));
 const config = require(path.resolve('./config'));
-const UserService = require('../../services/user.service');
+const UserService = require('../services/user.service');
 
 const TaskDataService = require(path.resolve('./modules/tasks/services/tasks.data.service'));
 const UploadDataService = require(path.resolve('./modules/uploads/services/uploads.data.service'));
@@ -77,7 +77,7 @@ exports.getMail = async (req, res) => {
     });
 
     if (!mail.accepted) return responses.error(res, 400, 'Bad Request', 'Failure sending email')();
-    responses.success(res, 'An email has been sent to the user email with data')();
+    responses.success(res, 'An email has been sent to the user email with data')({ status: true });
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
