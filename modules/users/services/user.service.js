@@ -18,9 +18,10 @@ const saltRounds = 10;
  * @param {Object} user
  * @return {Object} user
  */
-const removeSensitive = (user) => {
+const removeSensitive = (user, conf) => {
   if (!user || typeof user !== 'object') return null;
-  return _.assignIn(user, _.pick(user, config.whitelists.users.default));
+  const keys = conf || config.whitelists.users.default;
+  return _.pick(user, keys);
 };
 
 /**
@@ -29,7 +30,7 @@ const removeSensitive = (user) => {
  */
 exports.list = async () => {
   const result = await UserRepository.list();
-  return Promise.resolve(result);
+  return Promise.resolve(result.map((user) => removeSensitive(user)));
 };
 
 /**
@@ -66,13 +67,23 @@ exports.get = async (user) => {
 };
 
 /**
+ * @desc Function to ask repository to get a user by id or email without filter data return (test & intern usage)
+ * @param {Object} user.id / user.email
+ * @return {Object} user
+ */
+exports.getBrut = async (user) => {
+  const result = await UserRepository.get(user);
+  return Promise.resolve(result);
+};
+
+/**
  * @desc Function to ask repository to search users by request
  * @param {Object} mongoose input request
  * @return {Array} users
  */
 exports.search = async (input) => {
   const result = await UserRepository.search(input);
-  return Promise.resolve(removeSensitive(result));
+  return Promise.resolve(result.map((user) => removeSensitive(user)));
 };
 
 /**
@@ -83,9 +94,9 @@ exports.search = async (input) => {
  * @return {Promise} user -
  */
 exports.update = async (user, body, option) => {
-  if (!option) user = _.assignIn(user, _.pick(body, config.whitelists.users.update));
-  else if (option === 'admin') user = _.assignIn(user, _.pick(body, config.whitelists.users.updateAdmin));
-  else if (option === 'recover') user = _.assignIn(user, _.pick(body, config.whitelists.users.recover));
+  if (!option) user = _.assignIn(user, removeSensitive(body, config.whitelists.users.update));
+  else if (option === 'admin') user = _.assignIn(user, removeSensitive(body, config.whitelists.users.updateAdmin));
+  else if (option === 'recover') user = _.assignIn(user, removeSensitive(body, config.whitelists.users.recover));
 
   user.updated = Date.now();
 
