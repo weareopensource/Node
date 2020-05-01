@@ -30,7 +30,7 @@ exports.invokeRolesPolicies = () => {
       resources: '/api/users/password',
       permissions: ['post'],
     }, {
-      resources: '/api/users/picture',
+      resources: '/api/users/avatar',
       permissions: ['post'],
     }, {
       resources: '/api/users/accounts',

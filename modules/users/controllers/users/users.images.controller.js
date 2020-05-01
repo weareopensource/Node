@@ -11,7 +11,7 @@ const UserService = require('../../services/user.service');
 
 
 /**
- * @desc Endpoint to ask the service to update a user profile picture
+ * @desc Endpoint to ask the service to update a user profile avatar
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
@@ -28,7 +28,7 @@ exports.updateProfilePicture = async (req, res) => {
     // reload playload
     req.login(user, (errLogin) => {
       if (errLogin) return responses.error(res, 400, 'Bad Request', errors.getMessage(errLogin))(errLogin);
-      return responses.success(res, 'profile picture updated')(user);
+      return responses.success(res, 'profile avatar updated')(user);
     });
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
