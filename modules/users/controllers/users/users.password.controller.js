@@ -51,7 +51,7 @@ exports.forgot = async (req, res) => {
     },
   });
   if (!mail.accepted) return responses.error(res, 400, 'Bad Request', 'Failure sending email')();
-  responses.success(res, 'An email has been sent to the provided email with further instructions')();
+  responses.success(res, 'An email has been sent to the provided email with further instructions')({ status: true });
 };
 
 /**
@@ -121,7 +121,7 @@ exports.reset = async (req, res) => {
     },
   });
   if (!mail.accepted) return responses.error(res, 400, 'Bad Request', 'Failure sending email')();
-  responses.success(res, 'An email has been sent to the provided email with further instructions')();
+  responses.success(res, 'An email has been sent to the provided email with further instructions')({ status: true });
 };
 
 /**

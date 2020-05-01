@@ -77,7 +77,7 @@ exports.getMail = async (req, res) => {
     });
 
     if (!mail.accepted) return responses.error(res, 400, 'Bad Request', 'Failure sending email')();
-    responses.success(res, 'An email has been sent to the user email with data')();
+    responses.success(res, 'An email has been sent to the user email with data')({ status: true });
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }

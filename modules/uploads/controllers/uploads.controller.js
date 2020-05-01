@@ -107,29 +107,26 @@ exports.uploadByImageName = async (req, res, next, uploadImageName) => {
     // Name
     const imageName = uploadImageName.split('.');
     const opts = imageName[0].split('-');
-    if (imageName.length !== 2) responses.error(res, 404, 'Not Found', 'Wrong name schema')();
-    else if (opts.length > 3) responses.error(res, 404, 'Not Found', 'Too much params')();
-    else {
-      // data work
-      const upload = await UploadsService.get(`${opts[0]}.${imageName[1]}`);
-      if (!upload) responses.error(res, 404, 'Not Found', 'No Upload with that name has been found')();
-      else {
-        // options
-        const sharp = _.get(config, `uploads.${upload.metadata.kind}.sharp`);
-        if (opts[1] && (!sharp || !sharp.sizes)) responses.error(res, 422, 'Unprocessable Entity', 'Size param not available')();
-        else if (opts[1] && (!/^\d+$/.test(opts[1]) || !sharp.sizes.includes(opts[1]))) responses.error(res, 422, 'Unprocessable Entity', 'Wrong size param')();
-        else if (opts[2] && (!sharp || !sharp.operations)) responses.error(res, 422, 'Unprocessable Entity', 'Operations param not available')();
-        else if (opts[2] && !sharp.operations.includes(opts[2])) responses.error(res, 422, 'Unprocessable Entity', 'Operation param not available')();
-        else {
-          // return
-          req.upload = upload;
-          req.isOwner = upload.metadata.user; // used if we proteck road by isOwner policy
-          req.sharpSize = parseInt(opts[1], 0) || null;
-          req.sharpOption = opts[2] || null;
-          next();
-        }
-      }
-    }
+    if (imageName.length !== 2) return responses.error(res, 404, 'Not Found', 'Wrong name schema')();
+    if (opts.length > 3) return responses.error(res, 404, 'Not Found', 'Too much params')();
+
+    // data work
+    const upload = await UploadsService.get(`${opts[0]}.${imageName[1]}`);
+    if (!upload) return responses.error(res, 404, 'Not Found', 'No Upload with that name has been found')();
+
+    // options
+    const sharp = _.get(config, `uploads.${upload.metadata.kind}.sharp`);
+    if (opts[1] && (!sharp || !sharp.sizes)) return responses.error(res, 422, 'Unprocessable Entity', 'Size param not available')();
+    if (opts[1] && (!/^\d+$/.test(opts[1]) || !sharp.sizes.includes(opts[1]))) return responses.error(res, 422, 'Unprocessable Entity', 'Wrong size param')();
+    if (opts[2] && (!sharp || !sharp.operations)) return responses.error(res, 422, 'Unprocessable Entity', 'Operations param not available')();
+    if (opts[2] && !sharp.operations.includes(opts[2])) return responses.error(res, 422, 'Unprocessable Entity', 'Operation param not available')();
+
+    // return
+    req.upload = upload;
+    req.isOwner = upload.metadata.user; // used if we proteck road by isOwner policy
+    req.sharpSize = parseInt(opts[1], 0) || null;
+    req.sharpOption = opts[2] || null;
+    next();
   } catch (err) {
     console.log('err', err);
     next(err);
