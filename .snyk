@@ -1,5 +1,5 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.13.5
+version: v1.14.1
 ignore: {}
 # patches apply the minimum changes required to fix a vulnerability
 patch:
@@ -25,3 +25,38 @@ patch:
         patched: '2019-10-04T07:42:56.555Z'
     - pm2 > @pm2/io > @pm2/agent-node > proxy-agent > pac-proxy-agent > https-proxy-agent:
         patched: '2019-10-04T07:42:56.555Z'
+  SNYK-JS-LODASH-567746:
+    - lodash:
+        patched: '2020-05-01T07:43:20.755Z'
+    - acl > lodash:
+        patched: '2020-05-01T07:43:20.755Z'
+    - mongoose-gridfs > lodash:
+        patched: '2020-05-01T07:43:20.755Z'
+    - sequelize > lodash:
+        patched: '2020-05-01T07:43:20.755Z'
+    - acl > async > lodash:
+        patched: '2020-05-01T07:43:20.755Z'
+    - save > async > lodash:
+        patched: '2020-05-01T07:43:20.755Z'
+    - winston > async > lodash:
+        patched: '2020-05-01T07:43:20.755Z'
+    - mongoose-gridfs > @lykmapipo/mongoose-common > lodash:
+        patched: '2020-05-01T07:43:20.755Z'
+    - request-promise > request-promise-core > lodash:
+        patched: '2020-05-01T07:43:20.755Z'
+    - pm2 > @pm2/js-api > async > lodash:
+        patched: '2020-05-01T07:43:20.755Z'
+    - mongoose-gridfs > @lykmapipo/mongoose-common > @lykmapipo/env > lodash:
+        patched: '2020-05-01T07:43:20.755Z'
+    - mongoose-gridfs > @lykmapipo/mongoose-common > mongoose-valid8 > lodash:
+        patched: '2020-05-01T07:43:20.755Z'
+    - mongoose-gridfs > @lykmapipo/mongoose-common > @lykmapipo/env > @lykmapipo/common > lodash:
+        patched: '2020-05-01T07:43:20.755Z'
+    - mongoose-gridfs > @lykmapipo/mongoose-common > mongoose-valid8 > @lykmapipo/phone > lodash:
+        patched: '2020-05-01T07:43:20.755Z'
+    - pm2 > cli-tableau > mocha > yargs-unparser > lodash:
+        patched: '2020-05-01T07:43:20.755Z'
+    - mongoose-gridfs > @lykmapipo/mongoose-common > mongoose-valid8 > @lykmapipo/phone > @lykmapipo/env > lodash:
+        patched: '2020-05-01T07:43:20.755Z'
+    - mongoose-gridfs > @lykmapipo/mongoose-common > mongoose-valid8 > @lykmapipo/phone > @lykmapipo/env > @lykmapipo/common > lodash:
+        patched: '2020-05-01T07:43:20.755Z'
