@@ -31,7 +31,7 @@ const verifyGoogleToken = async (idToken) => {
     email: payload.email,
     firstName: payload.given_name,
     lastName: payload.family_name,
-    avatar: payload.picture,
+    avatar: payload.avatar,
   };
   user.provider = 'google';
   // If request specified a G Suite domain:
