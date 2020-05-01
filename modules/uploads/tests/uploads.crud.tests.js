@@ -66,7 +66,7 @@ describe('Uploads CRUD Tests :', () => {
 
       // add a upload
       try {
-        const result = await agent.post('/api/users/picture')
+        const result = await agent.post('/api/users/avatar')
           .attach('img', './modules/users/tests/img/default.png')
           .expect(200);
         upload1 = result.body.data.avatar;
@@ -90,11 +90,11 @@ describe('Uploads CRUD Tests :', () => {
 
     test('should not be able to read old upload if we update it', async () => {
       try {
-        const result = await agent.post('/api/users/picture')
+        const result = await agent.post('/api/users/avatar')
           .attach('img', './modules/users/tests/img/default.png')
           .expect(200);
         expect(result.body.type).toBe('success');
-        expect(result.body.message).toBe('profile picture updated');
+        expect(result.body.message).toBe('profile avatar updated');
         expect(result.body.data).toBeInstanceOf(Object);
         expect(typeof result.body.data.avatar).toBe('string');
         expect(result.body.data.id).toBe(String(user.id));

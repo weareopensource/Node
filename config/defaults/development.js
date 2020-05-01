@@ -83,7 +83,7 @@ module.exports = {
   },
   whitelists: {
     users: {
-      default: ['_id', 'id', 'firstName', 'lastName', 'displayName', 'email', 'roles', 'avatar', 'resetPasswordToken', 'resetPasswordExpires'],
+      default: ['_id', 'id', 'firstName', 'lastName', 'displayName', 'email', 'roles', 'avatar', 'provider', 'updatedAt', 'createdAt', 'resetPasswordToken', 'resetPasswordExpires'],
       update: ['firstName', 'lastName', 'email', 'avatar'],
       updateAdmin: ['firstName', 'lastName', 'email', 'avatar', 'roles'],
       recover: ['password', 'resetPasswordToken', 'resetPasswordExpires'],
@@ -108,7 +108,7 @@ module.exports = {
   },
   // jwt is for token authentification
   jwt: {
-    secret: 'test', // secret for hash
+    secret: 'WaosSecretKeyExampleToChnageAbsolutely', // secret for hash
     expiresIn: 7 * 24 * 60 * 60, // token expire in x sec
   },
   mailer: {

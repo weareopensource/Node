@@ -24,7 +24,7 @@ exports.forgot = async (req, res) => {
 
   // get user generate and add token
   try {
-    user = await UserService.get({ email: req.body.email });
+    user = await UserService.getBrut({ email: req.body.email });
     if (!user) return responses.error(res, 400, 'Bad Request', 'No account with that email has been found')();
     if (user.provider !== 'local') return responses.error(res, 400, 'Bad Request', `It seems like you signed up using your ${user.provider} account`)();
 
@@ -136,7 +136,7 @@ exports.updatePassword = async (req, res) => {
 
   // get user, check password, update user, login again
   try {
-    user = await UserService.get({ id: req.user.id });
+    user = await UserService.getBrut({ id: req.user.id });
     if (!user) return responses.error(res, 400, 'Bad Request', 'User is not found')();
 
     if (!await UserService.comparePassword(req.body.currentPassword, user.password)) return responses.error(res, 422, 'Unprocessable Entity', 'Current password is incorrect')();

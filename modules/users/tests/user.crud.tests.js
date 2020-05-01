@@ -865,13 +865,13 @@ describe('User CRUD Tests :', () => {
       }
     });
 
-    test('should be able to change profile picture if signed in', async () => {
+    test('should be able to change profile avatar if signed in', async () => {
       try {
-        const result = await agent.post('/api/users/picture')
+        const result = await agent.post('/api/users/avatar')
           .attach('img', './modules/users/tests/img/default.png')
           .expect(200);
         expect(result.body.type).toBe('success');
-        expect(result.body.message).toBe('profile picture updated');
+        expect(result.body.message).toBe('profile avatar updated');
         expect(result.body.data).toBeInstanceOf(Object);
         expect(typeof result.body.data.avatar).toBe('string');
         expect(result.body.data.id).toBe(String(user.id));
@@ -881,9 +881,9 @@ describe('User CRUD Tests :', () => {
       }
     });
 
-    test('should not be able to change profile picture if attach a picture with a different field name', async () => {
+    test('should not be able to change profile avatar if attach a avatar with a different field name', async () => {
       try {
-        const result = await agent.post('/api/users/picture')
+        const result = await agent.post('/api/users/avatar')
           .attach('fieldThatDoesntWork', './modules/users/tests/img/default.png')
           .expect(422);
         expect(result.body.message).toEqual('Unprocessable Entity');
@@ -893,9 +893,9 @@ describe('User CRUD Tests :', () => {
       }
     });
 
-    test('should not be able to upload a non-image file as a profile picture', async () => {
+    test('should not be able to upload a non-image file as a profile avatar', async () => {
       try {
-        const result = await agent.post('/api/users/picture')
+        const result = await agent.post('/api/users/avatar')
           .attach('img', './modules/users/tests/img/text-file.txt')
           .expect(422);
         expect(result.body.message).toEqual('Unprocessable Entity');
@@ -906,9 +906,9 @@ describe('User CRUD Tests :', () => {
       }
     });
 
-    test('should not be able to change profile picture to too big of a file', async () => {
+    test('should not be able to change profile avatar to too big of a file', async () => {
       try {
-        const result = await agent.post('/api/users/picture')
+        const result = await agent.post('/api/users/avatar')
           .attach('img', './modules/users/tests/img/too-big-file.png')
           .expect(422);
 
@@ -978,9 +978,9 @@ describe('User CRUD Tests :', () => {
       }
     });
 
-    test('should not be able to update own user profile picture without being logged-in', async () => {
+    test('should not be able to update own user profile avatar without being logged-in', async () => {
       try {
-        await agent.post('/api/users/picture')
+        await agent.post('/api/users/avatar')
           .send({})
           .expect(401);
         // TODO error message
