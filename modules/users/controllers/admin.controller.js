@@ -70,7 +70,7 @@ exports.delete = async (req, res) => {
  */
 exports.userByID = async (req, res, next, id) => {
   try {
-    const user = await UserService.get({ id });
+    const user = await UserService.getBrut({ id });
     if (!user) responses.error(res, 404, 'Not Found', 'No User with that identifier has been found')();
     else {
       req.model = user;
