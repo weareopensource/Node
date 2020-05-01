@@ -652,6 +652,21 @@ describe('User CRUD Tests :', () => {
       }
     });
 
+    test('should be able to get all user data successfully', async () => {
+      try {
+        const result = await agent.get('/api/users/data')
+          .expect(200);
+        expect(result.body.type).toBe('success');
+        expect(result.body.message).toBe('user data');
+        expect(result.body.data.user.id).toBe(user.id);
+        expect(result.body.data.tasks).toBeInstanceOf(Array);
+        expect(result.body.data.tasks).toBeInstanceOf(Array);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+
     test('should be able to update own user details', async () => {
       const userUpdate = {
         firstName: 'userUpdateFirst',
@@ -801,6 +816,43 @@ describe('User CRUD Tests :', () => {
         const result = await agent.delete('/api/users')
           .expect(200);
 
+        expect(result.body.type).toBe('success');
+        expect(result.body.message).toBe('user deleted');
+        expect(result.body.data.id).toBe(userEdited.id);
+        expect(result.body.data.deletedCount).toBe(1);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+
+    test('should be able to delete current user and all his data', async () => {
+      // Init user edited
+      _userEdited.email = 'register_new_user_@test.com';
+
+      try {
+        const result = await agent.post('/api/auth/signup')
+          .send(_userEdited)
+          .expect(200);
+        userEdited = result.body.user;
+
+        expect(result.body.user._id).toBe(result.body.user.id);
+        expect(result.body.user.email).toBe(_userEdited.email);
+        expect(result.body.user.provider).toBe('local');
+        expect(result.body.user.roles).toBeInstanceOf(Array);
+        expect(result.body.user.roles).toHaveLength(1);
+        expect(result.body.user.roles).toEqual(
+          expect.arrayContaining(['user']),
+        );
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+
+      // delete user
+      try {
+        const result = await agent.delete('/api/users/data')
+          .expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('user and his data were deleted');
         expect(result.body.data.user.id).toBe(userEdited.id);
