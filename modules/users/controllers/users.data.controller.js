@@ -7,7 +7,7 @@ const errors = require(path.resolve('./lib/helpers/errors'));
 const responses = require(path.resolve('./lib/helpers/responses'));
 const mails = require(path.resolve('./lib/helpers/mails'));
 const config = require(path.resolve('./config'));
-const UserService = require('../../services/user.service');
+const UserService = require('../services/user.service');
 
 const TaskDataService = require(path.resolve('./modules/tasks/services/tasks.data.service'));
 const UploadDataService = require(path.resolve('./modules/uploads/services/uploads.data.service'));
