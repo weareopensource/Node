@@ -98,7 +98,7 @@ describe('Tasks CRUD Tests :', () => {
         expect(result.body.message).toBe('task created');
         expect(result.body.data.title).toBe(_tasks[1].title);
         expect(result.body.data.description).toBe(_tasks[1].description);
-        expect(result.body.data.user).toBe(user.id);
+        expect(result.body.data.user.id).toBe(user.id);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();

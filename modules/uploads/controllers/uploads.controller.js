@@ -87,7 +87,7 @@ exports.uploadByName = async (req, res, next, uploadName) => {
     if (!upload) responses.error(res, 404, 'Not Found', 'No Upload with that name has been found')();
     else {
       req.upload = upload;
-      req.isOwner = upload.metadata.user; // used if we proteck road by isOwner policy
+      if (upload.metadata && upload.metadata.user) req.isOwner = upload.metadata.user; // user id if we proteck road by isOwner policy
       next();
     }
   } catch (err) {
@@ -123,7 +123,7 @@ exports.uploadByImageName = async (req, res, next, uploadImageName) => {
 
     // return
     req.upload = upload;
-    req.isOwner = upload.metadata.user; // used if we proteck road by isOwner policy
+    if (upload.metadata && upload.metadata.user) req.isOwner = upload.metadata.user; // user id if we proteck road by isOwner policy
     req.sharpSize = parseInt(opts[1], 0) || null;
     req.sharpOption = opts[2] || null;
     next();
