@@ -31,7 +31,7 @@ exports.invokeRolesPolicies = () => {
       permissions: ['post'],
     }, {
       resources: '/api/users/avatar',
-      permissions: ['post'],
+      permissions: ['post', 'delete'],
     }, {
       resources: '/api/users/accounts',
       permissions: ['post', 'delete'],

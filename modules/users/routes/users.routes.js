@@ -25,8 +25,9 @@ module.exports = (app) => {
   app.route('/api/users/password')
     .post(passport.authenticate('jwt'), users.updatePassword);
 
-  app.route('/api/users/avatar')
-    .post(passport.authenticate('jwt'), multer.create('img', config.uploads.avatar), users.updateProfilePicture);
+  app.route('/api/users/avatar').all(passport.authenticate('jwt'))
+    .post(multer.create('img', config.uploads.avatar), users.updateAvatar)
+    .delete(users.deleteAvatar);
 
   app.route('/api/users/accounts')
     .delete(users.removeOAuthProvider)
