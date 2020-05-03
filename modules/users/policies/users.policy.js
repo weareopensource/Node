@@ -10,21 +10,12 @@ const policy = require(path.resolve('./lib/middlewares/policy'));
  */
 exports.invokeRolesPolicies = () => {
   policy.Acl.allow([{
-    roles: ['admin'],
-    allows: [{
-      resources: '/api/users',
-      permissions: ['get'],
-    }, {
-      resources: '/api/users/:userId',
-      permissions: ['get', 'put', 'delete'],
-    }],
-  }, {
     roles: ['user'],
     allows: [{
       resources: '/api/users/me',
       permissions: ['get'],
     }, {
-      resources: '/api/users/',
+      resources: '/api/users',
       permissions: ['put', 'delete'],
     }, {
       resources: '/api/users/password',
@@ -41,6 +32,15 @@ exports.invokeRolesPolicies = () => {
     }, {
       resources: '/api/users/data/mail',
       permissions: ['get'],
+    }],
+  }, {
+    roles: ['admin'],
+    allows: [{
+      resources: '/api/users',
+      permissions: ['get'],
+    }, {
+      resources: '/api/users/:userId',
+      permissions: ['get', 'put', 'delete'],
     }],
   },
   ]);
