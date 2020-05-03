@@ -5,18 +5,26 @@ const mongoose = require('mongoose');
 
 const Task = mongoose.model('Task');
 
+
+const defaultPopulate = [{
+  path: 'user',
+  select: 'email firstName lastName',
+},
+];
+
+
 /**
  * @desc Function to get all task in db with filter or not
  * @return {Array} tasks
  */
-exports.list = (filter) => Task.find(filter).sort('-createdAt').exec();
+exports.list = (filter) => Task.find(filter).populate(defaultPopulate).sort('-createdAt').exec();
 
 /**
  * @desc Function to create a task in db
  * @param {Object} task
  * @return {Object} task
  */
-exports.create = (task) => new Task(task).save();
+exports.create = (task) => new Task(task).save().then((doc) => doc.populate(defaultPopulate).execPopulate());
 
 /**
  * @desc Function to get a task from db
@@ -25,7 +33,7 @@ exports.create = (task) => new Task(task).save();
  */
 exports.get = (id) => {
   if (!mongoose.Types.ObjectId.isValid(id)) return null;
-  return Task.findOne({ _id: id }).exec();
+  return Task.findOne({ _id: id }).populate(defaultPopulate).exec();
 };
 
 /**
@@ -33,7 +41,7 @@ exports.get = (id) => {
  * @param {Object} task
  * @return {Object} task
  */
-exports.update = (task) => new Task(task).save();
+exports.update = (task) => new Task(task).save().then((doc) => doc.populate(defaultPopulate).execPopulate());
 
 /**
  * @desc Function to delete a task in db

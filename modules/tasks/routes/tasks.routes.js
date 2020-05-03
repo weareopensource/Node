@@ -19,7 +19,7 @@ module.exports = (app) => {
     .post(passport.authenticate('jwt'), policy.isAllowed, model.isValid(tasksSchema.Task), tasks.create); // create
 
   // classic crud
-  app.route('/api/tasks/:taskId').all(passport.authenticate('jwt'), policy.isAllowed) // policy.isOwner available
+  app.route('/api/tasks/:taskId').all(passport.authenticate('jwt'), policy.isAllowed) // policy.isOwner available (require set in middleWare)
     .get(tasks.get) // get
     .put(model.isValid(tasksSchema.Task), tasks.update) // update
     .delete(model.isValid(tasksSchema.Task), tasks.delete); // delete
