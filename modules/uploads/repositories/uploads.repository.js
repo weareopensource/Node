@@ -68,3 +68,42 @@ exports.deleteMany = async (filter) => {
   });
   return { deletedCount: uploads.length };
 };
+
+/**
+ * @desc Function to purge uploads by kind if they are not referenced in another collection
+ * @param {String} kind - metadata kind to match
+ * @param {collection} collection - name of the collection to check reference presence
+ * @param {String} key - name of the key to check id
+ * @return {Object} confirmation of delete
+ */
+exports.purge = async (kind, collection, key) => {
+  const toDelete = await Uploads.aggregate(
+    [
+      {
+        $match: {
+          'metadata.kind': kind,
+        },
+      },
+      {
+        $lookup: {
+          from: collection,
+          localField: 'filename',
+          foreignField: key,
+          as: 'references',
+        },
+      },
+      {
+        $match: {
+          references: [],
+        },
+      },
+    ],
+  );
+  toDelete.forEach(async (id) => {
+    Attachment.unlink(id, (err, unlinked) => {
+      if (err) throw new AppError('Upload: delete error', { code: 'REPOSITORY_ERROR', details: err });
+      return unlinked;
+    });
+  });
+  return { deletedCount: toDelete.length };
+};

@@ -71,7 +71,7 @@
     "method-override": "~3.0.0",
     "moment": "^2.24.0",
     "mongoose": "~5.9.11",
-    "mongoose-gridfs": "^1.2.38",
+    "mongoose-gridfs": "^1.2.40",
     "morgan": "^1.10.0",
     "multer": "~1.4.2",
     "node-cron": "^2.0.3",
@@ -87,7 +87,7 @@
     "save": "^2.4.0",
     "sequelize": "^5.21.7",
     "sharp": "^0.25.2",
-    "snyk": "^1.316.1",
+    "snyk": "^1.317.0",
     "supertest": "^4.0.2",
     "swig": "^1.4.2",
     "winston": "^3.2.1",
@@ -110,7 +110,7 @@
     "inquirer": "^7.1.0",
     "jest-cli": "24.9.0",
     "standard-version": "^7.1.0",
-    "waos-conventional-changelog": "^1.9.1"
+    "waos-conventional-changelog": "^1.10.0"
   },
   "config": {
     "commitizen": {
