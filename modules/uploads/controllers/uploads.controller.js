@@ -23,6 +23,7 @@ exports.get = async (req, res) => {
       responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
     });
     res.set('Content-Type', req.upload.contentType);
+    res.set('Content-Length', req.upload.length);
     stream.pipe(res);
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
