@@ -19,6 +19,10 @@ const UserSchema = Joi.object().keys({
   lastName: Joi.string().alphanum().min(1).max(30)
     .trim()
     .required(),
+  bio: Joi.string().alphanum().min(1).max(200)
+    .trim()
+    .default('')
+    .optionnal(),
   email: Joi.string().email({ minDomainAtoms: 2 }),
   avatar: Joi.string().trim().default(''),
   roles: Joi.array().items(Joi.string().valid(config.whitelists.users.roles)).min(1).default(['user']),
