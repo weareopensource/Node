@@ -70,7 +70,7 @@
     "lusca": "~1.6.1",
     "method-override": "~3.0.0",
     "moment": "^2.24.0",
-    "mongoose": "~5.9.11",
+    "mongoose": "~5.9.12",
     "mongoose-gridfs": "^1.2.40",
     "morgan": "^1.10.0",
     "multer": "~1.4.2",
@@ -96,7 +96,7 @@
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
-    "commitizen": "^4.0.5",
+    "commitizen": "^4.1.0",
     "coveralls": "~3.1.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.1.0",
