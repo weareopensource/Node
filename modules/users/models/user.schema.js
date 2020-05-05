@@ -19,9 +19,9 @@ const UserSchema = Joi.object().keys({
   lastName: Joi.string().alphanum().min(1).max(30)
     .trim()
     .required(),
-  bio: Joi.string().alphanum().min(1).max(200)
+  bio: Joi.string().max(200)
     .trim()
-    .default('')
+    .allow('')
     .optional(),
   email: Joi.string().email({ minDomainAtoms: 2 }),
   avatar: Joi.string().trim().default(''),
