@@ -61,6 +61,7 @@ exports.me = (req, res) => {
       email: escape(req.user.email),
       lastName: escape(req.user.lastName),
       firstName: escape(req.user.firstName),
+      bio: escape(req.user.bio),
       additionalProvidersData: req.user.additionalProvidersData,
     };
   }
