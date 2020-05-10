@@ -45,13 +45,13 @@ exports.getSharp = async (req, res) => {
     res.set('Content-Type', req.upload.contentType);
     switch (req.sharpOption) {
       case 'blur':
-        stream.pipe(sharp().resize(req.sharpSize).blur(20)).pipe(res);
+        stream.pipe(sharp().resize(req.sharpSize).blur(config.uploads.sharp.blur)).pipe(res);
         break;
       case 'bw':
         stream.pipe(sharp().resize(req.sharpSize).grayscale()).pipe(res);
         break;
       case 'blur&bw':
-        stream.pipe(sharp().resize(req.sharpSize).grayscale().blur(20)).pipe(res);
+        stream.pipe(sharp().resize(req.sharpSize).grayscale().blur(config.uploads.sharp.blur)).pipe(res);
         break;
       default:
         stream.pipe(sharp().resize(req.sharpSize)).pipe(res);

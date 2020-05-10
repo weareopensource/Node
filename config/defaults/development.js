@@ -91,6 +91,9 @@ module.exports = {
     },
   },
   uploads: {
+    sharp: { // default sharp settings for all uploads
+      blur: 8,
+    },
     avatar: {
       formats: ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'],
       limits: {
