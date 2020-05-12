@@ -186,7 +186,6 @@ exports.workerAuto = async (api, body) => {
     const testedSchema = montaineRequest.isValidDynamicSchema(paramsSchema, params);
     if (testedSchema.error) throw new AppError('Schema validation error', { code: 'SERVICE_ERROR', details: testedSchema.error });
 
-
     // request
     const request = await montaineRequest.request(api, params);
     if (api.path && api.path === '') result.temp = request;
@@ -250,7 +249,7 @@ exports.getAggregateApi = async (api, body) => {
   if (result.length === 0 && api.autoRequest) {
     // check if no data return, then we probably have no data :) ask for it !
     this.workerAuto(api, body);
-  } else if (Date.now() - Date.parse(result[0]._updatedAt) > Date.parse(api.expiration)) {
+  } else if (api.autoRequest && Date.now() - Date.parse(result[0]._updatedAt) > Date.parse(api.expiration)) {
     // check if data but data expired, ask for refresh !
     this.workerAuto(api, body);
     result = [];
