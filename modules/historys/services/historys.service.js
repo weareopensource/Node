@@ -33,7 +33,7 @@ exports.get = async (id) => {
  */
 exports.historize = async (result, start, api, user) => {
   try {
-    const history = await HistorysRepository.create(montaineRequest.setApiHistory(result, start, user, api));
+    const history = await HistorysRepository.create(montaineRequest.setHistory(result, start, api, user));
     await HistorysRepository.apiHistorize(api, history);
     api.history.push(history);
     if (!history.status) await montaineRequest.sendMailAlert(result, api, history);
