@@ -4,8 +4,6 @@
 const mongoose = require('mongoose');
 
 const History = mongoose.model('History');
-const Api = mongoose.model('Api');
-
 
 const defaultPopulate = [{
   path: 'api',
@@ -35,17 +33,3 @@ exports.get = (id) => {
   if (!mongoose.Types.ObjectId.isValid(id)) return null;
   return History.findOne({ _id: id }).exec();
 };
-
-/**
- * @desc Function to update scrap history in db
- * @param {Object} scrap
- * @param {Object} history
- * @return {Object} scrap
- */
-exports.apiHistorize = (api, history) => Api.updateOne(
-  { _id: api._id },
-  {
-    $push: { history: history._id },
-    $set: { status: history.status },
-  },
-);

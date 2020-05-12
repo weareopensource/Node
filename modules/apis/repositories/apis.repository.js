@@ -59,6 +59,20 @@ exports.update = (api) => new Api(api).save().then((a) => a.populate(defaultPopu
 exports.delete = (api) => Api.deleteOne({ _id: api.id }).exec();
 
 /**
+ * @desc Function to update scrap history in db
+ * @param {Object} scrap
+ * @param {Object} history
+ * @return {Object} scrap
+ */
+exports.historize = (api, history) => Api.updateOne(
+  { _id: api._id },
+  {
+    $push: { history: history._id },
+    $set: { status: history.status },
+  },
+);
+
+/**
  * @desc Function to import list of locations in db
  * @param {Object} locations
  * @return {Object} locations
