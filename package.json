@@ -26,7 +26,7 @@
   "scripts": {
     "start": "node server.js",
     "debug": "nodemon --inspect server.js",
-    "prod": "cross-env NODE_ENV=production pm2 start server.js --name=waosNode",
+    "prod": "cross-env NODE_ENV=production node start server.js --name=waosNode",
     "test": "cross-env NODE_ENV=test gulp test",
     "test:watch": "cross-env NODE_ENV=test gulp testWatch",
     "test:coverage": "cross-env NODE_ENV=test gulp testCoverage",
@@ -78,7 +78,6 @@
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "~1.0.0",
-    "pm2": "^4.4.0",
     "request": "^2.88.2",
     "request-promise": "^4.2.5",
     "save": "^2.4.0",
