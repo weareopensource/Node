@@ -125,13 +125,13 @@ exports.load = async (api, user) => {
     // Mapping
     if (result.temp && api.mapping && api.mapping !== '') {
       result.temp = montaineMap.map(result.temp, JSON.parse(api.mapping));
-      result.mapping = result.temp;
+      result.mapping = _.cloneDeep(result.temp);
     }
 
     // Typing
     if (result.temp && api.typing && api.typing !== '') {
       result.temp = montaineType.type(result.temp, JSON.parse(api.typing));
-      result.typing = result.temp;
+      result.typing = _.cloneDeep(result.temp);
     }
     // prepare for save
     if (result.temp) {
