@@ -1,6 +1,6 @@
 [![Build Status](https://badges.weareopensource.me/travis/weareopensource/Node.svg?style=flat-square)](https://travis-ci.org/weareopensource/Node) [![Coveralls Status](https://badges.weareopensource.me/coveralls/github/weareopensource/Node.svg?style=flat-square)](https://coveralls.io/github/weareopensource/Node) [![Code Climate](https://badges.weareopensource.me/codeclimate/maintainability-percentage/weareopensource/Node.svg?style=flat-square)](https://codeclimate.com/github/weareopensource/Node/maintainability)
  [![Dependencies Status](https://david-dm.org/weareopensource/node.svg?style=flat-square)](https://david-dm.org/weareopensource/node) [![Dependabot badge](https://badges.weareopensource.me/badge/Dependabot-enabled-2768cf.svg?style=flat-square)](https://dependabot.com)
- [![Known Vulnerabilities](https://snyk.io/test/github/weareopensource/node/badge.svg?style=flat-square)](https://snyk.io/test/github/weareopensource/node)
+ [![Known Vulnerabilities](https://snyk.io/test/github/weareopensource/node/badge.svg?style=flat-square)](https://snyk.io/test/github/weareopensource/node) [![Docker Build Status](https://badges.weareopensource.me/docker/cloud/build/weareopensource/node.svg?style=flat-square)](https://hub.docker.com/repository/docker/weareopensource/node)
 
 # :globe_with_meridians: [WeAreOpenSource](https://weareopensource.me) Node
 
@@ -52,7 +52,7 @@ Our stack node is actually in Beta.
 
 #### Available
 
-* **User** : classic register / auth or oAuth(microsoft, google) - profile management (update, avatar upload ...) 
+* **User** : classic register / auth or oAuth(microsoft, google) - profile management (update, avatar upload ...)
 * **User data privacy** : delete all data - get all data - send all data by mail
 * **Admin** : list users - get user - edit user - delete user
 * **Tasks** : list tasks - get task - add tasks - edit tasks - delete tasks
