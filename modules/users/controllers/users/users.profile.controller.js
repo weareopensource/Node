@@ -63,6 +63,7 @@ exports.me = (req, res) => {
       firstName: escape(req.user.firstName),
       additionalProvidersData: req.user.additionalProvidersData,
     };
+    if (req.user.bio) user.bio = req.user.bio;
   }
   return responses.success(res, 'user get')(user);
 };

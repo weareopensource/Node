@@ -27,7 +27,7 @@ exports.getStream = async (upload) => {
 };
 
 /**
- * @desc Function to ask repository to get an upload
+ * @desc Function to ask repository to update an upload
  * @param {Object} req.file
  * @param {Object} User
  * @param {String} kind, upload configuration path (important for futur transformations)

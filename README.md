@@ -1,6 +1,6 @@
 [![Build Status](https://badges.weareopensource.me/travis/weareopensource/Node.svg?style=flat-square)](https://travis-ci.org/weareopensource/Node) [![Coveralls Status](https://badges.weareopensource.me/coveralls/github/weareopensource/Node.svg?style=flat-square)](https://coveralls.io/github/weareopensource/Node) [![Code Climate](https://badges.weareopensource.me/codeclimate/maintainability-percentage/weareopensource/Node.svg?style=flat-square)](https://codeclimate.com/github/weareopensource/Node/maintainability)
  [![Dependencies Status](https://david-dm.org/weareopensource/node.svg?style=flat-square)](https://david-dm.org/weareopensource/node) [![Dependabot badge](https://badges.weareopensource.me/badge/Dependabot-enabled-2768cf.svg?style=flat-square)](https://dependabot.com)
- [![Known Vulnerabilities](https://snyk.io/test/github/weareopensource/node/badge.svg?style=flat-square)](https://snyk.io/test/github/weareopensource/node)
+ [![Known Vulnerabilities](https://snyk.io/test/github/weareopensource/node/badge.svg?style=flat-square)](https://snyk.io/test/github/weareopensource/node) [![Docker Build Status](https://badges.weareopensource.me/docker/cloud/build/weareopensource/node.svg?style=flat-square)](https://hub.docker.com/repository/docker/weareopensource/node)
 
 # :globe_with_meridians: [WeAreOpenSource](https://weareopensource.me) Node
 
@@ -31,15 +31,15 @@ Our stack node is actually in Beta.
 | ------- | --------
 | **Available** |
 | Architecture | Layered Architecture : everything is separated in layers, and the upper layers are abstractions of the lower ones, that's why every layer should only reference the immediate lower layer (vertical modules architecture with Repository and Services Pattern)
-| Server  | [Node v12.x LTS](https://nodejs.org/en/) <br> [Express](https://github.com/expressjs/express) - [body-parser](https://github.com/expressjs/body-parser) - [compression](https://github.com/expressjs/compression) - [CORS](https://github.com/expressjs/cors) - [method-override](https://github.com/expressjs/method-override) <br> [gulp 4](https://github.com/gulpjs/gulp) - [nodemon](https://github.com/remy/nodemon) - [pm2](https://github.com/Unitech/pm2)
+| Server  | [Node v12.x LTS](https://nodejs.org/en/) <br> [Express](https://github.com/expressjs/express) - [body-parser](https://github.com/expressjs/body-parser) - [compression](https://github.com/expressjs/compression) - [CORS](https://github.com/expressjs/cors) - [method-override](https://github.com/expressjs/method-override) <br> [gulp 4](https://github.com/gulpjs/gulp) - [nodemon](https://github.com/remy/nodemon)
 | DataBase  | [Mongo 4.x LTS](https://www.mongodb.com/download-center/community) - [mongoose](https://github.com/Automattic/mongoose) - *User, Crud, Seed, Gridf upload, Options (auth, ssl ..)* <br> [Sequelize](https://github.com/sequelize/sequelize) - *PostgreSQL, MySQL, SQLit 4.x (option - crud Task example)* <br> [JOI](https://github.com/hapijs/joi) - *Models & Repository for database code abstraction*
 | Testing |  [Jest](https://github.com/facebook/jest) - [SuperTest](https://github.com/visionmedia/supertest) - *Coverage & Watch* <br> *example of mocha with gulp available*
-| Linter  | [ESLint](https://github.com/eslint/eslint) - *ecmaVersion 10 (2019)*
 | Security | [passport-jwt](https://github.com/themikenicholson/passport-jwt) - *JWT Stateless* <br> [bcrypt](https://en.wikipedia.org/wiki/Bcrypt) - [zxcvbn](https://github.com/dropbox/zxcvbn) - *Passwords*  <br> [SSL](https://github.com/weareopensource/Node/blob/master/WIKI.md#SSL) - *Express / Reverse Proxy (must be activated, otherwise => plain text password)*
 | API | [jsend](https://github.com/omniti-labs/jsend) - *Default answer wrapper (helper) : status, message, data or error* <br>  *Helper: default errors handling : formatted by the controller, Custom ES6 errors for other layers*
 | Upload | [Mongo gridfs](https://docs.mongodb.com/manual/core/gridfs/) - [mongoose-gridfs](https://github.com/lykmapipo/mongoose-gridfs) - [Multer](https://github.com/expressjs/multer) - [Sharp](https://github.com/lovell/sharp) - *Image stream example, all contentType, image video ..*
 | Logs | [winston](https://github.com/winstonjs/winston) - [morgan](https://github.com/expressjs/morgan) *custom example available*
 | CI  | [Travis CI](https://travis-ci.org/weareopensource/Node)
+| Linter  | [ESLint](https://github.com/eslint/eslint) - *ecmaVersion 10 (2019)*
 | Developer  | [Coveralls](https://coveralls.io/github/weareopensource/Node) - [Code Climate](https://codeclimate.com/github/weareopensource/Node) - [Dependency status](https://david-dm.org/weareopensource/node) - [Dependabot](https://dependabot.com/) - [Snyk](https://snyk.io/test/github/weareopensource/node) <br> [standard-version](https://github.com/conventional-changelog/standard-version) - [commitlint](https://github.com/conventional-changelog/commitlint) - [commitizen](https://github.com/commitizen/cz-cli) - [waos-conventional-changelog](https://github.com/WeAreOpenSourceProjects/waos-conventional-changelog)
 | Dependencies  | [npm](https://www.npmjs.com)
 | Deliver | Docker & Docker-compose
@@ -52,7 +52,7 @@ Our stack node is actually in Beta.
 
 #### Available
 
-* **User** : classic register / auth or oAuth(microsoft, google) - profile management (update, avatar upload ...) 
+* **User** : classic register / auth or oAuth(microsoft, google) - profile management (update, avatar upload ...)
 * **User data privacy** : delete all data - get all data - send all data by mail
 * **Admin** : list users - get user - edit user - delete user
 * **Tasks** : list tasks - get task - add tasks - edit tasks - delete tasks
@@ -139,8 +139,12 @@ Feel free to discuss, share other kind of bricks, and invite whoever you want wi
 
 ## :family: Main Team
 
-Pierre
+* Pierre Brisorgueil
 
-[![Blog](https://badges.weareopensource.me/badge/Read-WAOS%20Blog-1abc9c.svg?style=flat-square)](https://weareopensource.me) [![Slack](https://badges.weareopensource.me/badge/Chat-WAOS%20Slack-d0355b.svg?style=flat-square)](mailto:weareopensource.me@gmail.com?subject=Join%20Slack&body=Hi,%20I%20found%20your%20community%20We%20Are%20Open%20Source.%20I%20would%20be%20interested%20to%20join%20the%20Slack%20to%20share%20and%20discuss,%20Thanks) [![Mail](https://badges.weareopensource.me/badge/Contact-me%20by%20mail-00a8ff.svg?style=flat-square)](mailto:weareopensource.me@gmail.com?subject=Contact) [![Twitter](https://badges.weareopensource.me/badge/Follow-me%20on%20Twitter-3498db.svg?style=flat-square)](https://twitter.com/pbrisorgueil?lang=fr)  [![Youtube](https://badges.weareopensource.me/badge/Watch-me%20on%20Youtube-e74c3c.svg?style=flat-square)](https://www.youtube.com/channel/UCIIjHtrZL5-rFFupn7c3OtA)
+[![Github](https://badges.weareopensource.me/badge/Follow-me%20on%20Github-282828.svg?style=flat-square)](https://github.com/PierreBrisorgueil) [![Twitter](https://badges.weareopensource.me/badge/Follow-me%20on%20Twitter-3498db.svg?style=flat-square)](https://twitter.com/pbrisorgueil?lang=fr) [![Youtube](https://badges.weareopensource.me/badge/Watch-me%20on%20Youtube-e74c3c.svg?style=flat-square)](https://www.youtube.com/channel/UCIIjHtrZL5-rFFupn7c3OtA) [![Instagram](https://badges.weareopensource.me/badge/Follow-me%20on%20Instagram-f27231.svg?style=flat-square)](https://www.instagram.com/pierre_brsrgl/) [![Linkedin](https://badges.weareopensource.me/badge/Add-me%20on%20linkedin-006DA9.svg?style=flat-square)](https://www.linkedin.com/in/pierre-brisorgueil/)
 
 Feel free to help us ! :)
+
+## :link: Links
+
+[![Blog](https://badges.weareopensource.me/badge/Read-our%20Blog-1abc9c.svg?style=flat-square)](https://weareopensource.me) [![Slack](https://badges.weareopensource.me/badge/Chat-on%20our%20Slack-d0355b.svg?style=flat-square)](https://join.slack.com/t/weareopensource/shared_invite/zt-62p1qxna-PEQn289qx6mmHobzKW8QFw) [![Discord](https://badges.weareopensource.me/badge/Chat-on%20our%20Discord-516DB9.svg?style=flat-square)](https://discord.gg/U2a2vVm)  [![Mail](https://badges.weareopensource.me/badge/Contact-us%20by%20mail-00a8ff.svg?style=flat-square)](mailto:weareopensource.me@gmail.com?subject=Contact)
