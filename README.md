@@ -101,12 +101,12 @@ npm i
 
 ### docker
 
-* `docker build -t weareopensource/node .`
 * `docker run --env WAOS_NODE_db_uri=mongodb://host.docker.internal/WaosNodeDev WAOS_NODE_host=0.0.0.0 --rm -p 3000:3000 weareopensource/node`
+
+if you want to build yourself : `docker build -t weareopensource/node .`
 
 ### docker-compose
 
-* `docker build -t weareopensource/node .`
 * `docker-compose up`
 
 ### Configuration
@@ -119,7 +119,7 @@ We take into account all system environment variables defined under the form WAO
 So configuration avalable on `config/defaults/development` file are overidable. You can for instance define the app name by defining those system environment variables :
 
 ```
-WAOS_NODE_app_name='my app =)'
+WAOS_NODE_app_title='my app =)'
 ```
 
 ## :pencil2: [Contribute](https://github.com/weareopensource/weareopensource.github.io/blob/master/CONTRIBUTE.md)

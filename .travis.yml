@@ -19,11 +19,11 @@ jobs:
   include:
   - stage: allow_failures
     node_js: 14
-  - stage: deploy
-    node_js: lts/*
-    deploy:
-      provider: script
-      cleanup: true
-      script: ./scripts/deploy-travis.sh
-      on:
-        branch: master
+#  - stage: deploy
+#    node_js: lts/*
+#    deploy:
+#      provider: script
+#      cleanup: true
+#      script: ./scripts/deploy-travis.sh
+#      on:
+#        branch: master
