@@ -60,7 +60,7 @@
     "glob": "~7.1.6",
     "google-auth-library": "^6.0.1",
     "handlebars": "^4.7.6",
-    "helmet": "~3.22.0",
+    "helmet": "~3.22.1",
     "idtoken-verifier": "^2.0.3",
     "joi": "^14.3.1",
     "joi-zxcvbn": "^5.2.1",
