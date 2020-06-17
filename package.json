@@ -58,7 +58,7 @@
     "express": "^4.17.1",
     "generate-password": "~1.5.1",
     "glob": "~7.1.6",
-    "google-auth-library": "^6.0.1",
+    "google-auth-library": "^6.0.2",
     "handlebars": "^4.7.6",
     "helmet": "~3.23.0",
     "idtoken-verifier": "^2.0.3",
