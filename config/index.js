@@ -112,7 +112,12 @@ const initGlobalConfig = () => {
   // convert string array from sys  to real array
   environmentVars = _.mapValues(environmentVars, (v) => ((v[0] === '[' && v[v.length - 1] === ']') ? v.replace(/'/g, '').slice(1, -1).split(',') : v));
   const environmentConfigVars = {};
-  _.forEach(environmentVars, (v, k) => objectPath.set(environmentConfigVars, k, v));
+  _.forEach(environmentVars, (v, k) => {
+    let value = v;
+    if (value === 'true') value = true;
+    if (value === 'false') value = false;
+    return objectPath.set(environmentConfigVars, k, value);
+  });
   // Merge config files
   const config = _.merge(defaultConfig, environmentConfigVars);
   // read package.json for MEAN.JS project information
