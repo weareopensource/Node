@@ -1,5 +1,3 @@
-// const fs = require('fs');
-
 module.exports = {
   app: {
     title: 'WeAreOpenSource Node - Development Environment',
@@ -27,9 +25,9 @@ module.exports = {
       ssl: true,
       sslValidate: false,
       checkServerIdentity: false,
-      sslCA: fs.readFileSync('./config/sslcerts/ssl-ca.pem'),
-      sslCert: fs.readFileSync('./config/sslcerts/ssl-cert.pem'),
-      sslKey: fs.readFileSync('./config/sslcerts/ssl-key.pem'),
+      sslCA: './config/sslcerts/ssl-ca.pem',
+      sslCert: './config/sslcerts/ssl-cert.pem',
+      sslKey: './config/sslcerts/ssl-key.pem',
       sslPass: '1234'
       */
     },
