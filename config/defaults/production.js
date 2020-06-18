@@ -1,6 +1,6 @@
 const _ = require('lodash');
+const fs = require('fs'); // eslint-disable-line no-unused-vars
 const defaultConfig = require('./development');
-// const fs = require('fs');
 
 module.exports = _.merge(defaultConfig, {
   app: {
