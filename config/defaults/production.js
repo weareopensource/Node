@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const defaultConfig = require('./development');
+// const fs = require('fs');
 
 module.exports = _.merge(defaultConfig, {
   app: {
