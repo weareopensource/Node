@@ -9,7 +9,6 @@ const path = require('path');
 const jestCli = require('jest-cli');
 const inquirer = require('inquirer');
 
-
 const plugins = gulpLoadPlugins();
 const defaultAssets = require('./config/assets');
 
@@ -42,7 +41,6 @@ const nodemon = (done) => {
   done();
 };
 exports.nodemon = nodemon;
-
 
 // Nodemon (task without verbosity or debugging)
 const nodemonDebug = (done) => {
@@ -91,7 +89,6 @@ const jestWatch = (done) => {
   done();
 };
 exports.jestWatch = jestWatch;
-
 
 // Jest UT
 const jestCoverage = (done) => {
@@ -198,6 +195,10 @@ exports.testCoverage = testCoverage;
 // Run Mongoose Seed
 const seed = gulp.series(dropDB, seedMongoose);
 exports.seed = seed;
+
+// Run Mongoose drop
+const drop = gulp.series(dropDB);
+exports.drop = drop;
 
 // Run project in development mode
 const dev = gulp.series(lint, gulp.parallel(nodemon, watch));

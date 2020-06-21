@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
 const chalk = require('chalk');
 const config = require('../config/config');
-const mg = require('../lib/services/mongoose');
+const mg = require('../../lib/services/mongoose');
 
 const transporter = nodemailer.createTransport(config.mailer.options);
 const link = 'reset link here'; // PUT reset link here
