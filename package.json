@@ -52,6 +52,7 @@
     "acl": "~0.4.11",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
+    "bson": "^4.0.4",
     "chalk": "~4.1.0",
     "compression": "^1.7.4",
     "consolidate": "^0.15.1",
@@ -95,7 +96,6 @@
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
-    "bson": "^4.0.4",
     "commitizen": "^4.1.2",
     "coveralls": "~3.1.0",
     "eslint": "^7.2.0",
