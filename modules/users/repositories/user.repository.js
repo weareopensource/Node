@@ -53,3 +53,23 @@ exports.delete = async (user) => {
   if (user.email) return User.deleteOne({ email: user.email }).exec();
   return null;
 };
+
+/**
+ * @desc Function to import list of users in db
+ * @param {[Object]} users
+ * @param {[String]} filters
+ * @return {Object} locations
+ */
+exports.import = (users, filters) => User.bulkWrite(users.map((user) => {
+  const filter = {};
+  filters.forEach((value) => {
+    filter[value] = user[value];
+  });
+  return {
+    updateOne: {
+      filter,
+      update: user,
+      upsert: true,
+    },
+  };
+}));

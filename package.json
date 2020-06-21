@@ -33,6 +33,9 @@
     "test:coveralls": "cross-env NODE_ENV=test gulp testCoverage && cat ./coverage/lcov.info | coveralls",
     "seed:dev": "cross-env NODE_ENV=development gulp seed",
     "seed:prod": "cross-env NODE_ENV=production gulp seed",
+    "seed:mongodump": "./scripts/data/mongoDump.sh",
+    "seed:mongorestore": "node ./scripts/data/mongoRestore.js",
+    "seed:mongodrop": "gulp drop",
     "generate:sllCerts": "scripts/generate-ssl-certs.sh",
     "lint": "gulp lint",
     "snyk-protect": "snyk protect",
@@ -92,6 +95,7 @@
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
+    "bson": "^4.0.4",
     "commitizen": "^4.1.2",
     "coveralls": "~3.1.0",
     "eslint": "^7.2.0",

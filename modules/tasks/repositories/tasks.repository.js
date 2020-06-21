@@ -58,3 +58,23 @@ exports.delete = (task) => Task.deleteOne({ _id: task.id }).exec();
 exports.deleteMany = (filter) => {
   if (filter) return Task.deleteMany(filter).exec();
 };
+
+/**
+ * @desc Function to import list of tasks in db
+ * @param {[Object]} tasks
+ * @param {[String]} filters
+ * @return {Object} locations
+ */
+exports.import = (tasks, filters) => Task.bulkWrite(tasks.map((task) => {
+  const filter = {};
+  filters.forEach((value) => {
+    filter[value] = task[value];
+  });
+  return {
+    updateOne: {
+      filter,
+      update: task,
+      upsert: true,
+    },
+  };
+}));
