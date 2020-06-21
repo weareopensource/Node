@@ -5,13 +5,11 @@ const mongoose = require('mongoose');
 
 const Task = mongoose.model('Task');
 
-
 const defaultPopulate = [{
   path: 'user',
   select: 'email firstName lastName',
 },
 ];
-
 
 /**
  * @desc Function to get all task in db with filter or not
@@ -63,7 +61,7 @@ exports.deleteMany = (filter) => {
  * @desc Function to import list of tasks in db
  * @param {[Object]} tasks
  * @param {[String]} filters
- * @return {Object} locations
+ * @return {Object} tasks
  */
 exports.import = (tasks, filters) => Task.bulkWrite(tasks.map((task) => {
   const filter = {};
