@@ -22,3 +22,14 @@ exports.delete = async (user) => {
   const result = await TasksRepository.deleteMany({ user: user._id });
   return Promise.resolve(result);
 };
+
+/**
+ * @desc Function to ask repository to import a list of tasks
+ * @param {[Object]} tasks
+ * @param {[String]} filters
+ * @return {Promise} tasks
+ */
+exports.import = (tasks, filters) => {
+  const result = TasksRepository.import(tasks, filters);
+  return result;
+};

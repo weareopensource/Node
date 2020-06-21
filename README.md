@@ -92,6 +92,9 @@ npm i
 * test Coverage : `npm run test:coverage`
 * seed development= `npm run seed:dev`
 * seed Production = `npm run seed:prod`
+* seed Dump Mongo (Dev Team sample) = `npm run seed:mongodump` **be careful to not upload sample in public repo**
+* seed Restore Mongo (Dev Team sample) = `npm run seed:mongorestore` **create or update data based on _id, no purge**
+* seed Drop Mongo = `npm run seed:mongodrop`
 * generate SSL certs : `npm run generate:sslCerts`
 * lint : `npm run lint`
 * commit : `npm run commit`
