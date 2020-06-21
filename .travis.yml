@@ -24,6 +24,6 @@ jobs:
 #    deploy:
 #      provider: script
 #      cleanup: true
-#      script: ./scripts/deploy-travis.sh
+#      script: ./scripts/ci/deploy-travis.sh
 #      on:
 #        branch: master
