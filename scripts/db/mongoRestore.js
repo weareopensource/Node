@@ -27,11 +27,11 @@ const seedData = async () => {
     const database = config.db.uri.split('/')[config.db.uri.split('/').length - 1];
     console.log(chalk.bold.green(`database selected: ${database}`));
 
-    fs.readdirSync(path.resolve(`./scripts/data/dump/${database}`)).forEach((file) => {
+    fs.readdirSync(path.resolve(`./scripts/db/dump/${database}`)).forEach((file) => {
       if (file.slice(-4) === 'bson' && !exceptions.includes(file.split('.')[0])) {
         const collection = file.slice(0, -5);
 
-        const buffer = fs.readFileSync(path.resolve(`./scripts/data/dump/${database}/${collection}.bson`));
+        const buffer = fs.readFileSync(path.resolve(`./scripts/db/dump/${database}/${collection}.bson`));
         let bfIdx = 0;
         const items = [];
         while (bfIdx < buffer.length) bfIdx = bson.deserializeStream(buffer, bfIdx, 1, items, items.length);
