@@ -1,4 +1,3 @@
-
 const path = require('path');
 const { OAuth2Client } = require('google-auth-library');
 

@@ -45,7 +45,6 @@ exports.update = async (req, res) => {
   }
 };
 
-
 /**
  * @desc Endpoint to ask the service to delete a user
  * @param {Object} req - Express request object

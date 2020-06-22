@@ -1,11 +1,11 @@
 /**
  * Module dependencies
  */
-const joiZxcvbn = require('joi-zxcvbn');
-const PlainJoi = require('joi');
+const PlainJoi = require('@hapi/joi');
 const path = require('path');
 
-const Joi = PlainJoi.extend(joiZxcvbn(PlainJoi));
+const joiHelpers = require(path.resolve('./lib/helpers/joi'));
+const Joi = PlainJoi.extend(joiHelpers.joiZxcvbn(PlainJoi));
 const config = require(path.resolve('./config'));
 
 /**
@@ -23,19 +23,19 @@ const UserSchema = Joi.object().keys({
     .trim()
     .allow('')
     .optional(),
-  email: Joi.string().email({ minDomainAtoms: 2 }),
+  email: Joi.string().email(),
   avatar: Joi.string().trim().default(''),
-  roles: Joi.array().items(Joi.string().valid(config.whitelists.users.roles)).min(1).default(['user']),
+  roles: Joi.array().items(Joi.string().valid(...config.whitelists.users.roles)).min(1).default(['user']),
   /* Extra */
   updated: Joi.date(),
-  created: Joi.date().default(Date.now, 'current date'),
+  created: Joi.date(),
   /* Provider */
   provider: Joi.string(),
   providerData: Joi.object(),
   additionalProvidersData: Joi.object(),
   /* Password */
-  password: Joi.string().min(4).max(128).default('')
-    .zxcvbn(config.zxcvbn.minimumScore),
+  password: Joi.zxcvbn().strength(config.zxcvbn.minimumScore).min(config.zxcvbn.minSize).max(config.zxcvbn.maxSize)
+    .default(''),
   resetPasswordToken: Joi.string(),
   resetPasswordExpires: Joi.date(),
 });
