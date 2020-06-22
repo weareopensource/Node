@@ -105,6 +105,9 @@ module.exports = {
   },
   // zxcvbn is used to manage password security
   zxcvbn: {
+    forbiddenPasswords: ['12345678', 'azertyui', 'qwertyui', 'azertyuiop', 'qwertyuiop'],
+    minSize: 8,
+    maxSize: 126,
     minimumScore: 3,
   },
   // jwt is for token authentification

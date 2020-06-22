@@ -87,7 +87,7 @@ describe('User CRUD Tests :', () => {
           .expect(422);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toBe('Schema validation error');
-        expect(result.body.description).toEqual('Password password strength score 0 does not suffice the minimum of 3. ');
+        expect(result.body.description).toEqual('Password must have a strength of at least 3. "password" length must be at least 8 characters long. ');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -105,8 +105,8 @@ describe('User CRUD Tests :', () => {
           .expect(422);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toBe('Schema validation error');
-        expect(result.body.description).toEqual('Password password strength score 0 does not suffice the minimum of 3. ');
-        expect(JSON.parse(result.body.error).original.password).toBeUndefined();
+        expect(result.body.description).toEqual('Password must have a strength of at least 3. "password" length must be at least 8 characters long. ');
+        expect(JSON.parse(result.body.error)._original.password).toBeUndefined();
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -774,7 +774,6 @@ describe('User CRUD Tests :', () => {
         console.log(err);
         expect(err).toBeFalsy();
       }
-
 
       try {
         const result = await UserService.get(user);

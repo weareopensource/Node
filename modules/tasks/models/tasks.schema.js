@@ -1,14 +1,14 @@
 /**
  * Module dependencies
  */
-const Joi = require('joi');
+const Joi = require('@hapi/joi');
 
 /**
  *  Data Schema
  */
 const TaskSchema = Joi.object().keys({
   title: Joi.string().trim().default('').required(),
-  description: Joi.string().allow('').default(''),
+  description: Joi.string().allow('').default('').required(),
   user: Joi.string().trim().default(''),
 });
 

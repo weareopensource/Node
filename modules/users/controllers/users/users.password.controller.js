@@ -142,7 +142,6 @@ exports.updatePassword = async (req, res) => {
     if (!await UserService.comparePassword(req.body.currentPassword, user.password)) return responses.error(res, 422, 'Unprocessable Entity', 'Current password is incorrect')();
     if (req.body.newPassword !== req.body.verifyPassword) return responses.error(res, 422, 'Unprocessable Entity', 'Passwords do not match')();
 
-
     password = UserService.checkPassword(req.body.newPassword);
 
     user = await UserService.update(user, { password }, 'recover');

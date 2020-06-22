@@ -76,7 +76,6 @@ exports.delete = async (req, res) => {
   }
 };
 
-
 /**
  * @desc MiddleWare to ask the service the task for this id
  * @param {Object} req - Express request object
