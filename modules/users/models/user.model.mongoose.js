@@ -19,7 +19,7 @@ const UserMongoose = new Schema({
     unique: 'Email already exists',
   },
   avatar: String,
-  roles: [],
+  roles: [String],
   /* Provider */
   provider: String,
   providerData: {},
@@ -47,7 +47,6 @@ UserMongoose.set('toJSON', {
  * Create instance method for authenticating user
  */
 // UserMongoose.methods.authenticate = password => this.password === this.hashPassword(password);
-
 
 // UserMongoose.static('findOneOrCreate', async (condition, doc) => {
 //   const one = await this.findOne(condition);

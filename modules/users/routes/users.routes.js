@@ -9,7 +9,6 @@ const model = require(path.resolve('./lib/middlewares/model'));
 const policy = require(path.resolve('./lib/middlewares/policy'));
 const usersSchema = require('../models/user.schema');
 
-
 const config = require(path.resolve('./config'));
 
 module.exports = (app) => {

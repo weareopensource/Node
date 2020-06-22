@@ -168,7 +168,6 @@ describe('Configuration Tests:', () => {
       process.env.NODE_ENV = nodeEnv;
     });
 
-
     it('should seed admin, and "regular" user accounts when NODE_ENV is set to "test" when they already exist', async () => {
       const nodeEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = 'test';

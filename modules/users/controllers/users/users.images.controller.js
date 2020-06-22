@@ -9,7 +9,6 @@ const responses = require(path.resolve('./lib/helpers/responses'));
 const UploadsService = require(path.resolve('./modules/uploads/services/uploads.service'));
 const UserService = require('../../services/user.service');
 
-
 /**
  * @desc Endpoint to ask the service to update a user profile avatar
  * @param {Object} req - Express request object
@@ -34,7 +33,6 @@ exports.updateAvatar = async (req, res) => {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
 };
-
 
 /**
  * @desc Endpoint to ask the service to delete a user profile avatar
