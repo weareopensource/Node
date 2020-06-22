@@ -24,7 +24,9 @@ const seedData = async () => {
     await mongooseService.connect();
     await mongooseService.loadModels();
 
-    const database = config.db.uri.split('/')[config.db.uri.split('/').length - 1];
+    let database = config.db.uri.split('/')[config.db.uri.split('/').length - 1];
+    database = database.split('?')[0];
+
     console.log(chalk.bold.green(`database selected: ${database}`));
 
     fs.readdirSync(path.resolve(`./scripts/db/dump/${database}`)).forEach((file) => {
