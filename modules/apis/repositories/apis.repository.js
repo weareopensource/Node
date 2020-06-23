@@ -58,6 +58,27 @@ exports.update = (api) => new Api(api).save().then((a) => a.populate(defaultPopu
 exports.delete = (api) => Api.deleteOne({ _id: api.id }).exec();
 
 /**
+ * @desc Function to import list of apis in db
+ * @param {[Object]} apis
+ * @param {[String]} filters
+ * @return {Object} apis
+ */
+exports.import = (apis, filters) => Api.bulkWrite(apis.map((api) => {
+  const filter = {};
+  filters.forEach((value) => {
+    filter[value] = api[value];
+  });
+  return {
+    updateOne: {
+      filter,
+      update: api,
+      upsert: true,
+    },
+  };
+}));
+
+
+/**
  * @desc Function to update scrap history in db
  * @param {Object} scrap
  * @param {Object} history
@@ -72,11 +93,12 @@ exports.historize = (api, history) => Api.updateOne(
 );
 
 /**
- * @desc Function to import list of locations in db
- * @param {Object} locations
- * @return {Object} locations
+ * @desc Function to insert list of data in db
+ * @param {Object} collection
+ * @param {Object} items
+ * @return {Object} updateOne result
  */
-exports.import = (collection, items) => {
+exports.insert = (collection, items) => {
   const _schema = new mongoose.Schema({}, { collection, strict: false });
   let model;
   try {

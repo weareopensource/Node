@@ -137,7 +137,7 @@ exports.load = async (api, user) => {
       result.prepare = result.temp;
       result.temp = montaineSave.save(result.temp, start);
       result.mongo = result.temp;
-      if (api.savedb) result.result = await ApisRepository.import(api.slug, _.cloneDeep(result.temp));
+      if (api.savedb) result.result = await ApisRepository.insert(api.slug, _.cloneDeep(result.temp));
       delete result.temp;
     }
 
@@ -203,7 +203,7 @@ exports.workerAuto = async (api, body) => {
     if (result.temp) {
       result.temp = montaineSave.prepare(result.temp, start);
       result.temp = montaineSave.save(result.temp, start);
-      if (api.savedb) result.result = await ApisRepository.import(api.slug, _.cloneDeep(result.temp));
+      if (api.savedb) result.result = await ApisRepository.insert(api.slug, _.cloneDeep(result.temp));
     }
 
     // historize
