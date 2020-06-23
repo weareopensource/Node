@@ -32,6 +32,7 @@ module.exports = {
       */
     },
     promise: global.Promise,
+    restoreExceptions: ['uploads'],
   },
   // SSL on express server (FYI : Wiki)
   // secure: {
