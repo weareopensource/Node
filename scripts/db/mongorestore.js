@@ -10,8 +10,6 @@ const bson = require('bson');
 const config = require(path.resolve('./config'));
 const mongooseService = require(path.resolve('./lib/services/mongoose'));
 
-const exceptions = ['uploads'];
-
 /**
  * Work
  */
@@ -30,7 +28,7 @@ const seedData = async () => {
     console.log(chalk.bold.green(`database selected: ${database}`));
 
     fs.readdirSync(path.resolve(`./scripts/db/dump/${database}`)).forEach((file) => {
-      if (file.slice(-4) === 'bson' && !exceptions.includes(file.split('.')[0])) {
+      if (file.slice(-4) === 'bson' && !config.db.restoreExceptions.includes(file.split('.')[0])) {
         const collection = file.slice(0, -5);
 
         const buffer = fs.readFileSync(path.resolve(`./scripts/db/dump/${database}/${collection}.bson`));
