@@ -26,7 +26,6 @@ exports.get = async (id) => {
   return Promise.resolve(result);
 };
 
-
 /**
  * @desc Functio to ask repository to add an history
  * @param {Object} scrap - original scrap

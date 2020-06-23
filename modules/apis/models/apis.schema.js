@@ -1,7 +1,7 @@
 /**
  * Module dependencies
  */
-const Joi = require('joi');
+const Joi = require('@hapi/joi');
 
 /**
  *  Data Schema
@@ -24,7 +24,7 @@ const ApiSchema = Joi.object().keys({
   autoRequest: Joi.boolean().default(false).required(),
   expiration: Joi.date().optional(),
   cron: Joi.string().trim().allow(null).optional(),
-  alert: Joi.string().email({ minDomainAtoms: 2 }).trim().allow(null)
+  alert: Joi.string().email().trim().allow(null)
     .optional(),
   user: Joi.string().trim().default(''),
   history: Joi.array().items(Joi.string().trim()).optional(),

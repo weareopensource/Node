@@ -4,10 +4,8 @@
 const passport = require('passport');
 const path = require('path');
 
-const model = require(path.resolve('./lib/middlewares/model'));
 const policy = require(path.resolve('./lib/middlewares/policy'));
 const historys = require('../controllers/historys.controller');
-const historysSchema = require('../models/historys.schema');
 
 /**
  * Routes

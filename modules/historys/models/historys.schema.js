@@ -1,7 +1,7 @@
 /**
  * Module dependencies
  */
-const Joi = require('joi');
+const Joi = require('@hapi/joi');
 
 /**
  *  Data Schema

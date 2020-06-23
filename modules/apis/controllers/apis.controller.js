@@ -106,7 +106,6 @@ exports.listApi = async (req, res) => {
   }
 };
 
-
 /**
  * @desc Endpoint to getData stocked from load on apis
  * @param {Object} req - Express request object
@@ -136,7 +135,6 @@ exports.getAggregateApi = async (req, res) => {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
 };
-
 
 /**
  * @desc MiddleWare to ask the service the api for this id

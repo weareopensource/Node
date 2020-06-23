@@ -3,7 +3,7 @@
  */
 const path = require('path');
 const _ = require('lodash');
-const Joi = require('joi');
+const Joi = require('@hapi/joi');
 
 const AppError = require(path.resolve('./lib/helpers/AppError'));
 const UserService = require(path.resolve('./modules/users/services/user.service.js'));
@@ -13,7 +13,6 @@ const montaineRequest = require(path.resolve('./lib/helpers/montaineRequest'));
 const montaineSave = require(path.resolve('./lib/helpers/montaineSave'));
 const HistorysService = require(path.resolve('./modules/historys/services/historys.service'));
 const ApisRepository = require('../repositories/apis.repository');
-
 
 /**
  * @desc Function to get all api in db
@@ -32,7 +31,6 @@ exports.cron = async () => {
   const result = await ApisRepository.cron();
   return Promise.resolve(result);
 };
-
 
 /**
  * @desc Function to ask repository to create a api
@@ -191,7 +189,6 @@ exports.workerAuto = async (api, body) => {
     if (api.path && api.path === '') result.temp = request;
     else result.temp = _.get(request, api.path);
 
-
     // Mapping
     if (result.temp && api.mapping && api.mapping !== '') {
       result.temp = montaineMap.map(result.temp, JSON.parse(api.mapping));
@@ -216,7 +213,6 @@ exports.workerAuto = async (api, body) => {
     return Promise.resolve({ err, api });
   }
 };
-
 
 /**
  * @desc Functio to ask repository to get data stocker from apis request

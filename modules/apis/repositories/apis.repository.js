@@ -26,7 +26,6 @@ exports.list = (user) => Api.find({ user: user._id }).select('-history').sort('-
 exports.cron = () => Api.find({ cron: { $ne: null, $exists: true } }).populate('containers')
   .exec();
 
-
 /**
  * @desc Function to create a api in db
  * @param {Object} api
