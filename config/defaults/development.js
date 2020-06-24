@@ -32,7 +32,7 @@ module.exports = {
       */
     },
     promise: global.Promise,
-    restoreExceptions: ['uploads'],
+    restoreExceptions: [], // collections exceptions for db restore : npm run seed:mongorestore
   },
   // SSL on express server (FYI : Wiki)
   // secure: {
@@ -106,10 +106,10 @@ module.exports = {
   },
   // zxcvbn is used to manage password security
   zxcvbn: {
-    forbiddenPasswords: ['12345678', 'azertyui', 'qwertyui', 'azertyuiop', 'qwertyuiop'],
-    minSize: 8,
-    maxSize: 126,
-    minimumScore: 3,
+    forbiddenPasswords: ['12345678', 'azertyui', 'qwertyui', 'azertyuiop', 'qwertyuiop'], // passwords forbidden
+    minSize: 8, // min password size
+    maxSize: 126, // max password size
+    minimumScore: 3, // min password complexity score
   },
   // jwt is for token authentification
   jwt: {
