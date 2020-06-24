@@ -107,3 +107,32 @@ exports.purge = async (kind, collection, key) => {
   });
   return { deletedCount: toDelete.length };
 };
+
+/**
+ * @desc Function to import list of uploads in db
+ * @param {[Object]} uploads
+ * @param {[String]} filters
+ * @return {Object} uploads
+ */
+exports.import = (uploads, filters, collection) => {
+  const _schema = new mongoose.Schema({}, { collection, strict: false });
+  let model;
+  try {
+    model = mongoose.model(collection);
+  } catch (error) {
+    model = mongoose.model(collection, _schema);
+  }
+  return model.bulkWrite(uploads.map((upload) => {
+    const filter = {};
+    filters.forEach((value) => {
+      filter[value] = upload[value];
+    });
+    return {
+      updateOne: {
+        filter,
+        update: upload,
+        upsert: true,
+      },
+    };
+  }));
+};
