@@ -10,7 +10,7 @@ module.exports = _.merge(defaultConfig, {
   db: {
     uri: 'mongodb://localhost/MontaineNodeDev',
     debug: false,
-    restoreExceptions: ['uploads', 'histories'],
+    restoreExceptions: ['histories'],
   },
   cors: {
     origin: ['http://localhost:8011'],

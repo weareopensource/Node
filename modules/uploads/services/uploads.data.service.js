@@ -22,3 +22,14 @@ exports.delete = async (user) => {
   const result = await UploadRepository.deleteMany({ 'metadata.user': user._id });
   return Promise.resolve(result);
 };
+
+/**
+ * @desc Function to ask repository to import a list of uploads
+ * @param {[Object]} uploads
+ * @param {[String]} filters
+ * @return {Promise} uploads
+ */
+exports.import = (uploads, filters, collection) => {
+  const result = UploadRepository.import(uploads, filters, collection);
+  return result;
+};
