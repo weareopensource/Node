@@ -20,9 +20,9 @@ const cronJobs = async () => {
 
     _.forEach(apis, (_api) => {
       if (cron.validate(_api.cron)) {
-        console.log(chalk.blue(`- Init ${_api.title} (${_api.id}) : ${_api.cron}`));
+        console.log(chalk.cyan(`- Init ${_api.title} (${_api.id}) : ${_api.cron}`));
         cron.schedule(_api.cron, async () => {
-          console.log(chalk.blue(`- Running ${_api.title} (${_api.id}) : ${_api.cron}`));
+          console.log(chalk.yellow(`- Running ${_api.title} (${_api.id}) : ${_api.cron}`));
           const api = await ApiService.get(_api.id);
           await ApiService.load(api, 'cron');
         });
