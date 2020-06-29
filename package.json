@@ -84,7 +84,7 @@
     "request": "^2.88.2",
     "request-promise": "^4.2.5",
     "save": "^2.4.0",
-    "sequelize": "^6.1.0",
+    "sequelize": "^6.2.3",
     "sharp": "^0.25.4",
     "snyk": "^1.349.0",
     "supertest": "^4.0.2",
