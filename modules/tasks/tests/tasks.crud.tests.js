@@ -167,7 +167,7 @@ describe('Tasks CRUD Tests :', () => {
       }
     });
 
-    test('should be able to update a task if', async () => {
+    test('should be able to update a task', async () => {
       // edit task
       try {
         const result = await agent.put(`/api/tasks/${task2.id}`)
