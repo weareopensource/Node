@@ -68,7 +68,7 @@
     "idtoken-verifier": "^2.0.3",
     "@hapi/joi": "^17.1.1",
     "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "lusca": "~1.6.1",
     "method-override": "~3.0.0",
     "mongoose": "~5.9.22",
