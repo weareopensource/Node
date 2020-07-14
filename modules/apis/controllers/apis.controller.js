@@ -77,6 +77,20 @@ exports.delete = async (req, res) => {
 };
 
 /**
+ * @desc Endpoint to get  stats of apis and return data
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.stats = async (req, res) => {
+  const data = await ApisService.stats();
+  if (!data.err) {
+    responses.success(res, 'apis stats')(data);
+  } else {
+    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(data.err))(data.err);
+  }
+};
+
+/**
  * @desc Endpoint to load the request of the api to the api
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object

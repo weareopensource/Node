@@ -27,5 +27,11 @@ exports.invokeRolesPolicies = () => {
       resources: '/api/apis/aggregate/:apiId',
       permissions: ['post'],
     }],
+  }, {
+    roles: ['guest'],
+    allows: [{
+      resources: '/api/apis/stats',
+      permissions: ['get'],
+    }],
   }]);
 };

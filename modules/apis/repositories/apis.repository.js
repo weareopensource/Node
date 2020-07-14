@@ -77,7 +77,6 @@ exports.import = (apis, filters) => Api.bulkWrite(apis.map((api) => {
   };
 }));
 
-
 /**
  * @desc Function to update scrap history in db
  * @param {Object} scrap
@@ -91,6 +90,12 @@ exports.historize = (api, history) => Api.updateOne(
     $set: { status: history.status },
   },
 );
+
+/**
+ * @desc Function to get collection stats
+ * @return {Object} scrap
+ */
+exports.stats = () => Api.count();
 
 /**
  * @desc Function to insert list of data in db

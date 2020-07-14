@@ -33,3 +33,9 @@ exports.get = (id) => {
   if (!mongoose.Types.ObjectId.isValid(id)) return null;
   return History.findOne({ _id: id }).exec();
 };
+
+/**
+ * @desc Function to get collection stats
+ * @return {Object} scrap
+ */
+exports.stats = () => History.count();

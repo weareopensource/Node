@@ -11,6 +11,10 @@ const historys = require('../controllers/historys.controller');
  * Routes
  */
 module.exports = (app) => {
+  // stats
+  app.route('/api/historys/stats').all(policy.isAllowed)
+    .get(historys.stats);
+
   // list & post
   app.route('/api/historys').all(passport.authenticate('jwt'), policy.isAllowed)
     .get(historys.list); // list

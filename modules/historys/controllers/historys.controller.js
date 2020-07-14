@@ -33,6 +33,20 @@ exports.get = (req, res) => {
 };
 
 /**
+ * @desc Endpoint to get stats of historys and return data
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.stats = async (req, res) => {
+  const data = await HistorysService.stats();
+  if (!data.err) {
+    responses.success(res, 'Historys stats')(data);
+  } else {
+    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(data.err))(data.err);
+  }
+};
+
+/**
  * @desc MiddleWare to ask the service the history for this id
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object

@@ -102,6 +102,15 @@ exports.delete = async (api) => {
 };
 
 /**
+ * @desc Function to get all stats of db
+ * @return {Promise} All stats
+ */
+exports.stats = async () => {
+  const result = await ApisRepository.stats();
+  return Promise.resolve(result);
+};
+
+/**
  * @desc Functio to ask repository to load an api request
  * @param {Object} scrap - original scrap
  * @return {Promise} scrap

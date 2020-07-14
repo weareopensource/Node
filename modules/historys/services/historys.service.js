@@ -43,3 +43,12 @@ exports.historize = async (result, start, api, user) => {
     console.log(err);
   }
 };
+
+/**
+ * @desc Function to get all stats of db
+ * @return {Promise} All stats
+ */
+exports.stats = async () => {
+  const result = await HistorysRepository.stats();
+  return Promise.resolve(result);
+};

@@ -13,6 +13,10 @@ const apisSchema = require('../models/apis.schema');
  * Routes
  */
 module.exports = (app) => {
+  // stats
+  app.route('/api/apis/stats').all(policy.isAllowed)
+    .get(apis.stats);
+
   // list & post
   app.route('/api/apis').all(passport.authenticate('jwt'), policy.isAllowed)
     .get(apis.list) // list
