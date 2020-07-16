@@ -42,6 +42,11 @@ exports.invokeRolesPolicies = () => {
       resources: '/api/users/:userId',
       permissions: ['get', 'put', 'delete'],
     }],
-  },
-  ]);
+  }, {
+    roles: ['guest'],
+    allows: [{
+      resources: '/api/users/stats',
+      permissions: ['get'],
+    }],
+  }]);
 };

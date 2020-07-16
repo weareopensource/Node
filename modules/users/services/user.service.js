@@ -115,6 +115,15 @@ exports.delete = async (user) => {
 };
 
 /**
+ * @desc Function to get all stats of db
+ * @return {Promise} All stats
+ */
+exports.stats = async () => {
+  const result = await UserRepository.stats();
+  return Promise.resolve(result);
+};
+
+/**
  * @desc Function to authenticate user)
  * @param {String} email
  * @param {String} password
