@@ -50,13 +50,17 @@ Our stack node is actually in Beta.
 
 ## :tada: Features Overview
 
-#### Available
+### Core
 
 * **User** : classic register / auth or oAuth(microsoft, google) - profile management (update, avatar upload ...)
-* **User data privacy** : delete all data - get all data - send all data by mail
+* **User data privacy** : delete all - get all - send all by mail
 * **Admin** : list users - get user - edit user - delete user
-* **Tasks** : list tasks - get task - add tasks - edit tasks - delete tasks
-* **Uploads** : get upload stream - add upload - delete upload  - get image upload stream & sharp operations
+
+### Examples
+
+* **Tasks** : list - get - add - edit - delete
+* **Files Uploads** : get stream - add - delete  - get image stream & sharp operations
+* **Mails Subscriptions** : list - get - add - edit - delete  
 
 ## :pushpin: Prerequisites
 

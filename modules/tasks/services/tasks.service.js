@@ -57,3 +57,12 @@ exports.delete = async (task) => {
   const result = await TasksRepository.delete(task);
   return Promise.resolve(result);
 };
+
+/**
+ * @desc Function to get all stats of db
+ * @return {Promise} All stats
+ */
+exports.stats = async () => {
+  const result = await TasksRepository.stats();
+  return Promise.resolve(result);
+};

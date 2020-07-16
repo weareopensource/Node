@@ -21,6 +21,9 @@ exports.invokeRolesPolicies = () => {
   }, {
     roles: ['guest'],
     allows: [{
+      resources: '/api/tasks/stats',
+      permissions: ['get'],
+    }, {
       resources: '/api/tasks',
       permissions: ['get'],
     }, {

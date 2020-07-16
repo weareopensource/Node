@@ -13,6 +13,10 @@ const tasksSchema = require('../models/tasks.schema');
  * Routes
  */
 module.exports = (app) => {
+  // stats
+  app.route('/api/tasks/stats').all(policy.isAllowed)
+    .get(tasks.stats);
+
   // list & post
   app.route('/api/tasks')
     .get(tasks.list) // list

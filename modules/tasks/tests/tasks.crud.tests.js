@@ -167,7 +167,7 @@ describe('Tasks CRUD Tests :', () => {
       }
     });
 
-    test('should be able to update a task if', async () => {
+    test('should be able to update a task', async () => {
       // edit task
       try {
         const result = await agent.put(`/api/tasks/${task2.id}`)
@@ -295,6 +295,18 @@ describe('Tasks CRUD Tests :', () => {
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
+      }
+    });
+
+    test('should be able to get a tasks stats', async () => {
+      try {
+        const result = await agent.get('/api/tasks/stats')
+          .expect(200);
+        expect(result.body.type).toBe('success');
+        expect(result.body.message).toBe('tasks stats');
+      } catch (err) {
+        expect(err).toBeFalsy();
+        console.log(err);
       }
     });
   });
