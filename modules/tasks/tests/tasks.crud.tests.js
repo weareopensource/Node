@@ -297,6 +297,18 @@ describe('Tasks CRUD Tests :', () => {
         expect(err).toBeFalsy();
       }
     });
+
+    test('should be able to get a tasks stats', async () => {
+      try {
+        const result = await agent.get('/api/tasks/stats')
+          .expect(200);
+        expect(result.body.type).toBe('success');
+        expect(result.body.message).toBe('tasks stats');
+      } catch (err) {
+        expect(err).toBeFalsy();
+        console.log(err);
+      }
+    });
   });
 
   // Mongoose disconnect
