@@ -38,4 +38,4 @@ exports.get = (id) => {
  * @desc Function to get collection stats
  * @return {Object} scrap
  */
-exports.stats = () => History.count();
+exports.stats = () => History.countDocuments();

@@ -95,7 +95,7 @@ exports.historize = (api, history) => Api.updateOne(
  * @desc Function to get collection stats
  * @return {Object} scrap
  */
-exports.stats = () => Api.count();
+exports.stats = () => Api.countDocuments();
 
 /**
  * @desc Function to insert list of data in db
