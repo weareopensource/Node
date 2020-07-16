@@ -55,6 +55,12 @@ exports.delete = async (user) => {
 };
 
 /**
+ * @desc Function to get collection stats
+ * @return {Object} scrap
+ */
+exports.stats = () => User.countDocuments();
+
+/**
  * @desc Function to import list of users in db
  * @param {[Object]} users
  * @param {[String]} filters
