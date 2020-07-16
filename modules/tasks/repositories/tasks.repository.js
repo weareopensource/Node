@@ -58,6 +58,12 @@ exports.deleteMany = (filter) => {
 };
 
 /**
+ * @desc Function to get collection stats
+ * @return {Object} scrap
+ */
+exports.stats = () => Task.countDocuments();
+
+/**
  * @desc Function to import list of tasks in db
  * @param {[Object]} tasks
  * @param {[String]} filters
