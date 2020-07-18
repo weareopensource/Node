@@ -90,12 +90,6 @@ module.exports = {
     repo: 'vue',
     changelog: 'CHANGELOG.md',
     token: null,
-  }, {
-    title: 'Swift',
-    owner: 'weareopensource',
-    repo: 'swift',
-    changelog: 'CHANGELOG.md',
-    token: null,
   }],
   // Data filter whitelist & Blacklist
   blacklists: {
