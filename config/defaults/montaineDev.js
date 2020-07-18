@@ -15,6 +15,19 @@ module.exports = _.merge(defaultConfig, {
   cors: {
     origin: ['http://localhost:8011'],
   },
+  repos: [{ // generate releases and changelogs list auto /api/core/changelogs /api/core/releases
+    title: 'Server',
+    owner: 'PierreBrisorgueil',
+    repo: 'montaine_node',
+    changelog: 'CHANGELOG.md',
+    token: null,
+  }, {
+    title: 'Web',
+    owner: 'PierreBrisorgueil',
+    repo: 'montaine_vue',
+    changelog: 'CHANGELOG.md',
+    token: null,
+  }],
   jwt: {
     secret: 'MontaineNodeDevSecret', // secret for hash
     expiresIn: 7 * 24 * 60 * 60, // token expire in x sec
