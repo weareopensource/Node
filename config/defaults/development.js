@@ -77,6 +77,26 @@ module.exports = {
     origin: ['http://localhost:8080'],
     credentials: true,
   },
+  domain: '',
+  repos: [{ // generate releases and changelogs list auto /api/core/changelogs /api/core/releases
+    title: 'Node',
+    owner: 'weareopensource',
+    repo: 'node',
+    changelog: 'CHANGELOG.md',
+    token: null,
+  }, {
+    title: 'Vue',
+    owner: 'weareopensource',
+    repo: 'vue',
+    changelog: 'CHANGELOG.md',
+    token: null,
+  }, {
+    title: 'Swift',
+    owner: 'weareopensource',
+    repo: 'swift',
+    changelog: 'CHANGELOG.md',
+    token: null,
+  }],
   // Data filter whitelist & Blacklist
   blacklists: {
   },
@@ -148,7 +168,6 @@ module.exports = {
       noDefaults: false, // automatically set to true for put method (update)
     },
   },
-  domain: '',
   seedDB: {
     seed: true,
     options: {
