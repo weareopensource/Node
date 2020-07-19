@@ -4,10 +4,6 @@ Welcome to the Node wiki! Here you will find various information about this repo
 
 ## Menu
 
-#### Global Wiki
-
-* [home](https://github.com/weareopensource/weareopensource.github.io/wiki)
-
 #### Node Wiki
 
 * [Api](https://github.com/weareopensource/Node/blob/master/WIKI.md#API)
