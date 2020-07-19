@@ -8,21 +8,18 @@
 
 This project is a Node stack that can be ran as a standalone BackEnd. Or in a fullstack with another repo of your choice (ex: [Vue](https://github.com/weareopensource/Vue), [Swift](https://github.com/weareopensource/Swift)).
 
-More informations about us in our [global repo](https://github.com/weareopensource/weareopensource.github.io)
-
 Quick links :
 
-* Mindset and what we would like to create : [introduction](https://weareopensource.me/introduction/) (in construction)
-* How to create a fullstack from our repo : [global wiki](https://github.com/weareopensource/weareopensource.github.io/wiki) (in construciton).
-* Global roadmap and  ideas about stacks : [board](https://github.com/weareopensource/weareopensource.github.io/projects/1)
-* How to contribute and help us : [here](https://github.com/weareopensource/weareopensource.github.io/blob/master/CONTRIBUTE.md)
-
+* [Mindset and what we would like to create](https://weareopensource.me/)
+* [How to start a project and maintain updates from stacks](https://blog.weareopensource.me/start-a-project-and-maintain-updates/)
+* [Global roadmap and  ideas about stacks](https://github.com/weareopensource/weareopensource.github.io/projects/1)
+* [How to contribute and help us](https://blog.weareopensource.me/how-to-contribute/)
 Our stack node is actually in Beta.
 
 # :computer: Node / Express / Mongoose - Sequelize Orm
 
 * [**Wiki**](https://github.com/weareopensource/Node/blob/master/WIKI.md) - wip
-* [**Knowledges JS**](https://github.com/weareopensource/weareopensource.github.io/wiki/Knowledges-JS)
+* [**Knowledges JS**](https://blog.weareopensource.me/js-knwoledges/)
 * [**Demo**](https://node.weareopensource.me) (or working with [Vue](https://github.com/weareopensource/Vue) stack [here](https://vue.weareopensource.me), email: *test@waos.me*, password: *TestWaos@2019*)
 
 ## :package: Technology Overview
@@ -129,7 +126,7 @@ So configuration avalable on `config/defaults/development` file are overidable. 
 WAOS_NODE_app_title='my app =)'
 ```
 
-## :pencil2: [Contribute](https://github.com/weareopensource/weareopensource.github.io/blob/master/CONTRIBUTE.md)
+## :pencil2: [Contribute](https://blog.weareopensource.me/how-to-contribute/)
 
 ## :scroll: History
 
@@ -154,4 +151,4 @@ Feel free to help us ! :)
 
 ## :link: Links
 
-[![Blog](https://badges.weareopensource.me/badge/Read-our%20Blog-1abc9c.svg?style=flat-square)](https://weareopensource.me) [![Slack](https://badges.weareopensource.me/badge/Chat-on%20our%20Slack-d0355b.svg?style=flat-square)](https://join.slack.com/t/weareopensource/shared_invite/zt-62p1qxna-PEQn289qx6mmHobzKW8QFw) [![Discord](https://badges.weareopensource.me/badge/Chat-on%20our%20Discord-516DB9.svg?style=flat-square)](https://discord.gg/U2a2vVm)  [![Mail](https://badges.weareopensource.me/badge/Contact-us%20by%20mail-00a8ff.svg?style=flat-square)](mailto:weareopensource.me@gmail.com?subject=Contact)
+[![Blog](https://badges.weareopensource.me/badge/Read-our%20Blog-1abc9c.svg?style=flat-square)](https://blog.weareopensource.me) [![Slack](https://badges.weareopensource.me/badge/Chat-on%20our%20Slack-d0355b.svg?style=flat-square)](https://join.slack.com/t/weareopensource/shared_invite/zt-62p1qxna-PEQn289qx6mmHobzKW8QFw) [![Discord](https://badges.weareopensource.me/badge/Chat-on%20our%20Discord-516DB9.svg?style=flat-square)](https://discord.gg/U2a2vVm)  [![Mail](https://badges.weareopensource.me/badge/Contact-us%20by%20mail-00a8ff.svg?style=flat-square)](mailto:weareopensource.me@gmail.com?subject=Contact)
