@@ -4,7 +4,7 @@ const defaultConfig = require('./development');
 module.exports = _.merge(defaultConfig, {
   app: {
     title: 'Montaine Node (Dev Environment)',
-    contact: 'brisorgueilp@gmail.com',
+    contact: 'pierre@weareopensource.me',
   },
   port: 3011,
   db: {
