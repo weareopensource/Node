@@ -8,8 +8,6 @@
 
 This project is a Node stack that can be ran as a standalone BackEnd. Or in a fullstack with another repo of your choice (ex: [Vue](https://github.com/weareopensource/Vue), [Swift](https://github.com/weareopensource/Swift)).
 
-More informations about us in our [global repo](https://github.com/weareopensource/weareopensource.github.io)
-
 Quick links :
 
 * [Mindset and what we would like to create](https://weareopensource.me/)
@@ -128,7 +126,7 @@ So configuration avalable on `config/defaults/development` file are overidable. 
 WAOS_NODE_app_title='my app =)'
 ```
 
-## :pencil2: [Contribute](https://github.com/weareopensource/weareopensource.github.io/blob/master/CONTRIBUTE.md)
+## :pencil2: [Contribute](https://blog.weareopensource.me/how-to-contribute/)
 
 ## :scroll: History
 
