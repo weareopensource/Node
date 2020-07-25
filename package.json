@@ -1,5 +1,5 @@
 {
-  "name": "waosNode",
+  "name": "@weareopensource/node",
   "description": "Node - Boilerplate Back : Express, Jwt, Mongo, Sequelize (Beta)  (Based on meanjs and riess.js)",
   "version": "0.4.0",
   "keywords": [
@@ -41,7 +41,8 @@
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect",
     "commit": "npx git-cz",
-    "release": "standard-version"
+    "release": "standard-version",
+    "release:auto": "npx semantic-release"
   },
   "husky": {
     "hooks": {
@@ -87,7 +88,7 @@
     "save": "^2.4.0",
     "sequelize": "^6.3.3",
     "sharp": "^0.25.4",
-    "snyk": "^1.363.0",
+    "snyk": "^1.366.2",
     "supertest": "^4.0.2",
     "swig": "^1.4.2",
     "winston": "3.3.3",
@@ -96,6 +97,9 @@
   "devDependencies": {
     "@commitlint/cli": "^9.1.1",
     "@commitlint/config-conventional": "^9.1.1",
+    "@semantic-release/changelog": "^5.0.1",
+    "@semantic-release/git": "^9.0.0",
+    "@weareopensource/conventional-changelog": "^1.7.0",
     "commitizen": "^4.1.2",
     "coveralls": "~3.1.0",
     "eslint": "^7.5.0",
@@ -107,14 +111,35 @@
     "gulp-nodemon": "~2.5.0",
     "gulp-refresh": "~1.1.0",
     "husky": "^4.2.5",
-    "inquirer": "^7.3.2",
+    "inquirer": "^7.3.3",
     "jest-cli": "24.9.0",
-    "standard-version": "^8.0.2",
-    "waos-conventional-changelog": "^1.10.0"
+    "semantic-release": "^17.1.1",
+    "standard-version": "^8.0.2"
+  },
+  "release": {
+    "branches": [
+      {
+        "name": "master"
+      }
+    ],
+    "ci": false,
+    "repositoryUrl": "https://github.com/weareopensource/Node.git",
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/changelog",
+      [
+        "@semantic-release/github",
+        {
+          "successComment": false,
+          "failComment": false
+        }
+      ]
+    ]
   },
   "config": {
     "commitizen": {
-      "path": "./node_modules/waos-conventional-changelog"
+      "path": "./node_modules/@weareopensource/conventional-changelog"
     }
   },
   "snyk": true
