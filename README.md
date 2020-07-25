@@ -37,7 +37,7 @@ Our stack node is actually in Beta.
 | Logs | [winston](https://github.com/winstonjs/winston) - [morgan](https://github.com/expressjs/morgan) *custom example available*
 | CI  | [Travis CI](https://travis-ci.org/weareopensource/Node)
 | Linter  | [ESLint](https://github.com/eslint/eslint) - *ecmaVersion 10 (2019)*
-| Developer  | [Coveralls](https://coveralls.io/github/weareopensource/Node) - [Code Climate](https://codeclimate.com/github/weareopensource/Node) - [Dependency status](https://david-dm.org/weareopensource/node) - [Dependabot](https://dependabot.com/) - [Snyk](https://snyk.io/test/github/weareopensource/node) <br> [standard-version](https://github.com/conventional-changelog/standard-version) - [commitlint](https://github.com/conventional-changelog/commitlint) - [commitizen](https://github.com/commitizen/cz-cli) - [waos-conventional-changelog](https://github.com/WeAreOpenSourceProjects/waos-conventional-changelog)
+| Developer  | [Coveralls](https://coveralls.io/github/weareopensource/Node) - [Code Climate](https://codeclimate.com/github/weareopensource/Node) - [Dependency status](https://david-dm.org/weareopensource/node) - [Dependabot](https://dependabot.com/) - [Snyk](https://snyk.io/test/github/weareopensource/node) <br> [standard-version](https://github.com/conventional-changelog/standard-version) / [semantic-release](https://github.com/semantic-release/semantic-release) - [commitlint](https://github.com/conventional-changelog/commitlint) - [commitizen](https://github.com/commitizen/cz-cli) - [@weareopensource/conventional-changelog](https://github.com/weareopensource/conventional-changelog)
 | Dependencies  | [npm](https://www.npmjs.com)
 | Deliver | Docker & Docker-compose
 | **In reflexion** |
@@ -99,7 +99,8 @@ npm i
 * generate SSL certs : `npm run generate:sslCerts`
 * lint : `npm run lint`
 * commit : `npm run commit`
-* release : `npm run release`
+* release : `npm run release -- --first-release` **standard version, changelog, tag & choose version number : -- --release-as 1.1.1**
+* release:auto : `GITHUB_TOKEN=XXXXX npm run release:auto` **semantic release, changelog, tag, release**
 
 ## :whale: Docker Way
 
