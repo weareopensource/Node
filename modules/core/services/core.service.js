@@ -3,6 +3,7 @@
  */
 const axios = require('axios');
 const path = require('path');
+const _ = require('lodash');
 
 const config = require(path.resolve('./config'));
 /**
@@ -30,7 +31,8 @@ exports.releases = async () => {
  * @return {Promise} All changelogs
  */
 exports.changelogs = async () => {
-  const requests = config.repos.map((item) => axios.get(`https://api.github.com/repos/${item.owner}/${item.repo}/contents/${item.changelog}`, {
+  const repos = _.filter(config.repos, (repo) => repo.changelog);
+  const requests = repos.map((item) => axios.get(`https://api.github.com/repos/${item.owner}/${item.repo}/contents/${item.changelog}`, {
     headers: item.token ? { Authorization: `token ${item.token}` } : {},
   }));
   let results = await axios.all(requests);
