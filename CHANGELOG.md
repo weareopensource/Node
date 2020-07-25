@@ -1,6 +1,5 @@
 # 1.0.0 (2020-07-25)
 
-
 ### Bug Fixes
 
 * **auth:** message sign in 🐛 ([96f8435](https://github.com/weareopensource/Node/commit/96f8435a113fc44aac2b5767d6aff60f8e039617))
