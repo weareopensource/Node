@@ -12,10 +12,7 @@ const errors = require(path.resolve('./lib/helpers/errors'));
 const UserService = require('../../services/user.service');
 
 // URLs for which user can't be redirected on signin
-const noReturnUrls = [
-  '/authentication/signin',
-  '/authentication/signup',
-];
+const noReturnUrls = ['/authentication/signin', '/authentication/signup'];
 
 /**
  * @desc Endpoint to ask the service to create a user
@@ -25,14 +22,25 @@ const noReturnUrls = [
 exports.signup = async (req, res) => {
   try {
     const user = await UserService.create(req.body);
-    const token = jwt.sign({ userId: user.id }, config.jwt.secret, { expiresIn: config.jwt.expiresIn });
-    return res.status(200)
+    const token = jwt.sign({ userId: user.id }, config.jwt.secret, {
+      expiresIn: config.jwt.expiresIn,
+    });
+    return res
+      .status(200)
       .cookie('TOKEN', token, { httpOnly: true })
       .json({
-        user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000), type: 'sucess', message: 'Sign up',
+        user,
+        tokenExpiresIn: Date.now() + config.jwt.expiresIn * 1000,
+        type: 'sucess',
+        message: 'Sign up',
       });
   } catch (err) {
-    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+    responses.error(
+      res,
+      422,
+      'Unprocessable Entity',
+      errors.getMessage(err),
+    )(err);
   }
 };
 
@@ -44,11 +52,17 @@ exports.signup = async (req, res) => {
  */
 exports.signin = async (req, res) => {
   const user = req.user;
-  const token = jwt.sign({ userId: user.id }, configuration.jwt.secret, { expiresIn: config.jwt.expiresIn });
-  return res.status(200)
+  const token = jwt.sign({ userId: user.id }, configuration.jwt.secret, {
+    expiresIn: config.jwt.expiresIn,
+  });
+  return res
+    .status(200)
     .cookie('TOKEN', token, { httpOnly: true })
     .json({
-      user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000), type: 'sucess', message: 'Sign in',
+      user,
+      tokenExpiresIn: Date.now() + config.jwt.expiresIn * 1000,
+      type: 'sucess',
+      message: 'Sign in',
     });
 };
 
@@ -71,10 +85,13 @@ exports.token = async (req, res) => {
       additionalProvidersData: req.user.additionalProvidersData,
     };
   }
-  const token = jwt.sign({ userId: user.id }, configuration.jwt.secret, { expiresIn: config.jwt.expiresIn });
-  return res.status(200)
+  const token = jwt.sign({ userId: user.id }, configuration.jwt.secret, {
+    expiresIn: config.jwt.expiresIn,
+  });
+  return res
+    .status(200)
     .cookie('TOKEN', token, { httpOnly: true })
-    .json({ user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000) });
+    .json({ user, tokenExpiresIn: Date.now() + config.jwt.expiresIn * 1000 });
 };
 
 /**
@@ -99,7 +116,12 @@ exports.oauthCallback = (req, res, next) => {
 
   // info.redirect_to contains intended redirect path
   passport.authenticate(strategy, (err, user, { redirectTo }) => {
-    if (err) return res.redirect(`/authentication/signin?err=${encodeURIComponent(errors.getMessage(err))}`);
+    if (err)
+      return res.redirect(
+        `/authentication/signin?err=${encodeURIComponent(
+          errors.getMessage(err),
+        )}`,
+      );
     if (!user) return res.redirect('/authentication/signin');
     req.login(user, (errLogin) => {
       if (errLogin) return res.redirect('/authentication/signin');
@@ -120,7 +142,8 @@ exports.saveOAuthUserProfile = async (req, providerUserProfile, done) => {
 
   // Set redirection path on session.
   // Do not redirect to a signin or signup page
-  if (noReturnUrls.indexOf(req.session.redirect_to) === -1) info.redirect_to = req.session.redirect_to;
+  if (noReturnUrls.indexOf(req.session.redirect_to) === -1)
+    info.redirect_to = req.session.redirect_to;
   if (!req.user) {
     // Define a search query fields
     const searchMainProviderIdentifierField = `providerData.${providerUserProfile.providerIdentifierField}`;
@@ -128,10 +151,16 @@ exports.saveOAuthUserProfile = async (req, providerUserProfile, done) => {
     // Define main provider search query
     const mainProviderSearchQuery = {};
     mainProviderSearchQuery.provider = providerUserProfile.provider;
-    mainProviderSearchQuery[searchMainProviderIdentifierField] = providerUserProfile.providerData[providerUserProfile.providerIdentifierField];
+    mainProviderSearchQuery[searchMainProviderIdentifierField] =
+      providerUserProfile.providerData[
+        providerUserProfile.providerIdentifierField
+      ];
     // Define additional provider search query
     const additionalProviderSearchQuery = {};
-    additionalProviderSearchQuery[searchAdditionalProviderIdentifierField] = providerUserProfile.providerData[providerUserProfile.providerIdentifierField];
+    additionalProviderSearchQuery[searchAdditionalProviderIdentifierField] =
+      providerUserProfile.providerData[
+        providerUserProfile.providerIdentifierField
+      ];
     // Define a search query to find existing user with current provider profile
     const searchQuery = {
       $or: [mainProviderSearchQuery, additionalProviderSearchQuery],
@@ -172,12 +201,17 @@ exports.saveOAuthUserProfile = async (req, providerUserProfile, done) => {
     // User is already logged in, join the provider data to the existing user
     let user = req.user;
     // Check if user exists, is not signed in using this provider, and doesn't have that provider data already configured
-    if (user.provider !== providerUserProfile.provider && (!user.additionalProvidersData || !user.additionalProvidersData[providerUserProfile.provider])) {
+    if (
+      user.provider !== providerUserProfile.provider &&
+      (!user.additionalProvidersData ||
+        !user.additionalProvidersData[providerUserProfile.provider])
+    ) {
       // Add the provider data to the additional provider data field
       if (!user.additionalProvidersData) {
         user.additionalProvidersData = {};
       }
-      user.additionalProvidersData[providerUserProfile.provider] = providerUserProfile.providerData;
+      user.additionalProvidersData[providerUserProfile.provider] =
+        providerUserProfile.providerData;
       // Then tell mongoose that we've updated the additionalProvidersData field
       user.markModified('additionalProvidersData');
       // And save the user
@@ -203,8 +237,20 @@ exports.removeOAuthProvider = async (req, res) => {
   let user = req.user;
   const provider = req.query.provider;
 
-  if (!user) return responses.error(res, 422, 'Unprocessable Entity', 'User is not authenticated')();
-  if (!provider) return responses.error(res, 400, 'Bad Request', 'Provider is not defined')();
+  if (!user)
+    return responses.error(
+      res,
+      422,
+      'Unprocessable Entity',
+      'User is not authenticated',
+    )();
+  if (!provider)
+    return responses.error(
+      res,
+      400,
+      'Bad Request',
+      'Provider is not defined',
+    )();
 
   // Delete the additional provider and Then tell mongoose that we've updated the additionalProvidersData field
   if (user.additionalProvidersData[provider]) {
@@ -215,10 +261,21 @@ exports.removeOAuthProvider = async (req, res) => {
   try {
     user = await UserService.create(user);
     req.login(user, (errLogin) => {
-      if (errLogin) return responses.error(res, 400, 'Bad Request ', errors.getMessage(errLogin))(errLogin);
+      if (errLogin)
+        return responses.error(
+          res,
+          400,
+          'Bad Request ',
+          errors.getMessage(errLogin),
+        )(errLogin);
       return responses.success(res, 'oAuth provider removed')(user);
     });
   } catch (err) {
-    return responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+    return responses.error(
+      res,
+      422,
+      'Unprocessable Entity',
+      errors.getMessage(err),
+    )(err);
   }
 };

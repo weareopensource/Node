@@ -16,8 +16,12 @@ module.exports = (app) => {
   app.route('/api/auth/reset').post(users.reset);
 
   // Setting up the users authentication api
-  app.route('/api/auth/signup').post(model.isValid(usersSchema.User), users.signup);
-  app.route('/api/auth/signin').post(passport.authenticate('local'), users.signin);
+  app
+    .route('/api/auth/signup')
+    .post(model.isValid(usersSchema.User), users.signup);
+  app
+    .route('/api/auth/signin')
+    .post(passport.authenticate('local'), users.signin);
 
   // Jwt reset token
   app.route('/api/auth/token').get(passport.authenticate('jwt'), users.token);

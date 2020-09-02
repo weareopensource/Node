@@ -29,7 +29,9 @@ describe('User CRUD Tests :', () => {
       await mongooseService.connect();
       await multerService.storage();
       await mongooseService.loadModels();
-      UserService = require(path.resolve('./modules/users/services/user.service'));
+      UserService = require(path.resolve(
+        './modules/users/services/user.service',
+      ));
       // init application
       app = express.init();
       agent = request.agent(app);
@@ -39,18 +41,21 @@ describe('User CRUD Tests :', () => {
   });
 
   /**
- * User routes tests
- */
+   * User routes tests
+   */
   describe('Logged', () => {
     beforeEach(async () => {
-    // users credentials
-      credentials = [{
-        email: 'test@test.com',
-        password: 'W@os.jsI$Aw3$0m3',
-      }, {
-        email: 'test2@test.com',
-        password: 'W@os.jsI$Aw3$0m3',
-      }];
+      // users credentials
+      credentials = [
+        {
+          email: 'test@test.com',
+          password: 'W@os.jsI$Aw3$0m3',
+        },
+        {
+          email: 'test2@test.com',
+          password: 'W@os.jsI$Aw3$0m3',
+        },
+      ];
 
       // users
       _user = {
@@ -66,7 +71,8 @@ describe('User CRUD Tests :', () => {
 
       // add user
       try {
-        const result = await agent.post('/api/auth/signup')
+        const result = await agent
+          .post('/api/auth/signup')
           .send(_user)
           .expect(200);
         user = result.body.user;
@@ -82,12 +88,15 @@ describe('User CRUD Tests :', () => {
       _userEdited.password = 'azerty';
 
       try {
-        const result = await agent.post('/api/auth/signup')
+        const result = await agent
+          .post('/api/auth/signup')
           .send(_userEdited)
           .expect(422);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toBe('Schema validation error');
-        expect(result.body.description).toEqual('Password must have a strength of at least 3. "password" length must be at least 8 characters long. ');
+        expect(result.body.description).toEqual(
+          'Password must have a strength of at least 3. "password" length must be at least 8 characters long. ',
+        );
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -100,13 +109,18 @@ describe('User CRUD Tests :', () => {
       _userEdited.password = 'azerty';
 
       try {
-        const result = await agent.post('/api/auth/signup')
+        const result = await agent
+          .post('/api/auth/signup')
           .send(_userEdited)
           .expect(422);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toBe('Schema validation error');
-        expect(result.body.description).toEqual('Password must have a strength of at least 3. "password" length must be at least 8 characters long. ');
-        expect(JSON.parse(result.body.error)._original.password).toBeUndefined();
+        expect(result.body.description).toEqual(
+          'Password must have a strength of at least 3. "password" length must be at least 8 characters long. ',
+        );
+        expect(
+          JSON.parse(result.body.error)._original.password,
+        ).toBeUndefined();
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -118,7 +132,8 @@ describe('User CRUD Tests :', () => {
       _userEdited.email = 'register_new_user_@test.com';
 
       try {
-        const result = await agent.post('/api/auth/signup')
+        const result = await agent
+          .post('/api/auth/signup')
           .send(_userEdited)
           .expect(200);
         userEdited = result.body.user;
@@ -149,7 +164,8 @@ describe('User CRUD Tests :', () => {
       _userEdited.email = 'register_new_user_@test.com';
 
       try {
-        const result = await agent.post('/api/auth/signup')
+        const result = await agent
+          .post('/api/auth/signup')
           .send(_userEdited)
           .expect(200);
         userEdited = result.body.user;
@@ -166,7 +182,8 @@ describe('User CRUD Tests :', () => {
       }
 
       try {
-        const result = await agent.post('/api/auth/signup')
+        const result = await agent
+          .post('/api/auth/signup')
           .send(_userEdited)
           .expect(422);
         expect(result.body.type).toBe('error');
@@ -187,7 +204,8 @@ describe('User CRUD Tests :', () => {
 
     test('should not be able to login with wrong email', async () => {
       try {
-        const result = await agent.post('/api/auth/signin')
+        const result = await agent
+          .post('/api/auth/signin')
           .send({
             email: 'test51@test.com',
             password: 'W@os.jsI$Aw3$0m3',
@@ -202,9 +220,7 @@ describe('User CRUD Tests :', () => {
 
     test('should be able to login with email successfully', async () => {
       try {
-        await agent.post('/api/auth/signin')
-          .send(credentials[0])
-          .expect(200);
+        await agent.post('/api/auth/signin').send(credentials[0]).expect(200);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -213,8 +229,7 @@ describe('User CRUD Tests :', () => {
 
     test('should not be able to retrieve a list of users if not admin', async () => {
       try {
-        await agent.get('/api/users')
-          .expect(403);
+        await agent.get('/api/users').expect(403);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -225,7 +240,8 @@ describe('User CRUD Tests :', () => {
       _userEdited.roles = ['user', 'admin'];
 
       try {
-        const result = await agent.post('/api/auth/signup')
+        const result = await agent
+          .post('/api/auth/signup')
           .send(_userEdited)
           .expect(200);
         userEdited = result.body.user;
@@ -235,8 +251,7 @@ describe('User CRUD Tests :', () => {
       }
 
       try {
-        const result = await agent.get('/api/users')
-          .expect(200);
+        const result = await agent.get('/api/users').expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('user list');
         expect(result.body.data).toBeInstanceOf(Array);
@@ -257,7 +272,8 @@ describe('User CRUD Tests :', () => {
       _userEdited.roles = ['user', 'admin'];
 
       try {
-        const result = await agent.post('/api/auth/signup')
+        const result = await agent
+          .post('/api/auth/signup')
           .send(_userEdited)
           .expect(200);
         userEdited = result.body.user;
@@ -267,7 +283,8 @@ describe('User CRUD Tests :', () => {
       }
 
       try {
-        const result = await agent.get(`/api/users/${userEdited._id}`)
+        const result = await agent
+          .get(`/api/users/${userEdited._id}`)
           .expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('user get');
@@ -290,7 +307,8 @@ describe('User CRUD Tests :', () => {
       _userEdited.roles = ['user', 'admin'];
 
       try {
-        const result = await agent.post('/api/auth/signup')
+        const result = await agent
+          .post('/api/auth/signup')
           .send(_userEdited)
           .expect(200);
         userEdited = result.body.user;
@@ -306,7 +324,8 @@ describe('User CRUD Tests :', () => {
           roles: ['admin'],
         };
 
-        const result = await agent.put(`/api/users/${userEdited._id}`)
+        const result = await agent
+          .put(`/api/users/${userEdited._id}`)
           .send(userUpdate)
           .expect(200);
         expect(result.body.type).toBe('success');
@@ -337,7 +356,8 @@ describe('User CRUD Tests :', () => {
       _userEdited.roles = ['user', 'admin'];
 
       try {
-        const result = await agent.post('/api/auth/signup')
+        const result = await agent
+          .post('/api/auth/signup')
           .send(_userEdited)
           .expect(200);
         userEdited = result.body.user;
@@ -347,7 +367,8 @@ describe('User CRUD Tests :', () => {
       }
 
       try {
-        const result = await agent.delete(`/api/users/${userEdited._id}`)
+        const result = await agent
+          .delete(`/api/users/${userEdited._id}`)
           .expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('user deleted');
@@ -368,14 +389,17 @@ describe('User CRUD Tests :', () => {
 
     test('forgot password should return 400 for non-existent mail', async () => {
       try {
-        const result = await agent.post('/api/auth/forgot')
+        const result = await agent
+          .post('/api/auth/forgot')
           .send({
             email: 'falseemail@gmail.com',
           })
           .expect(400);
 
         expect(result.body.message).toBe('Bad Request');
-        expect(result.body.description).toBe('No account with that email has been found');
+        expect(result.body.description).toBe(
+          'No account with that email has been found',
+        );
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -386,7 +410,8 @@ describe('User CRUD Tests :', () => {
       _userEdited.provider = 'facebook';
 
       try {
-        const result = await agent.post('/api/auth/signup')
+        const result = await agent
+          .post('/api/auth/signup')
           .send(_userEdited)
           .expect(200);
         userEdited = result.body.user;
@@ -396,7 +421,8 @@ describe('User CRUD Tests :', () => {
       }
 
       try {
-        const result = await agent.post('/api/auth/forgot')
+        const result = await agent
+          .post('/api/auth/forgot')
           .send({
             email: '',
           })
@@ -420,7 +446,8 @@ describe('User CRUD Tests :', () => {
       _userEdited.provider = 'facebook';
 
       try {
-        const result = await agent.post('/api/auth/signup')
+        const result = await agent
+          .post('/api/auth/signup')
           .send(_userEdited)
           .expect(200);
         userEdited = result.body.user;
@@ -430,13 +457,16 @@ describe('User CRUD Tests :', () => {
       }
 
       try {
-        const result = await agent.post('/api/auth/forgot')
+        const result = await agent
+          .post('/api/auth/forgot')
           .send({
             email: userEdited.email,
           })
           .expect(400);
         expect(result.body.message).toBe('Bad Request');
-        expect(result.body.description).toBe(`It seems like you signed up using your ${userEdited.provider} account`);
+        expect(result.body.description).toBe(
+          `It seems like you signed up using your ${userEdited.provider} account`,
+        );
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -452,7 +482,8 @@ describe('User CRUD Tests :', () => {
 
     test('forgot password should be able to reset password for user password reset request', async () => {
       try {
-        const result = await agent.post('/api/auth/forgot')
+        const result = await agent
+          .post('/api/auth/forgot')
           .send({
             email: user.email,
           })
@@ -479,7 +510,8 @@ describe('User CRUD Tests :', () => {
 
     test('forgot password should be able to reset the password using reset token', async () => {
       try {
-        const result = await agent.post('/api/auth/forgot')
+        const result = await agent
+          .post('/api/auth/forgot')
           .send({
             email: user.email,
           })
@@ -501,9 +533,12 @@ describe('User CRUD Tests :', () => {
         expect(result.resetPasswordExpires).toBeDefined();
 
         try {
-          const result2 = await agent.get(`/api/auth/reset/${result.resetPasswordToken}`)
+          const result2 = await agent
+            .get(`/api/auth/reset/${result.resetPasswordToken}`)
             .expect(302);
-          expect(result2.headers.location).toBe(`/password/reset/${result.resetPasswordToken}`);
+          expect(result2.headers.location).toBe(
+            `/password/reset/${result.resetPasswordToken}`,
+          );
         } catch (err) {
           console.log(err);
           expect(err).toBeFalsy();
@@ -516,7 +551,8 @@ describe('User CRUD Tests :', () => {
 
     test('forgot password should return error when using invalid reset token', async () => {
       try {
-        const result = await agent.post('/api/auth/forgot')
+        const result = await agent
+          .post('/api/auth/forgot')
           .send({
             email: user.email,
           })
@@ -539,7 +575,8 @@ describe('User CRUD Tests :', () => {
 
         try {
           const invalidToken = 'someTOKEN1234567890';
-          const result2 = await agent.get(`/api/auth/reset/${invalidToken}`)
+          const result2 = await agent
+            .get(`/api/auth/reset/${invalidToken}`)
             .expect(302);
           expect(result2.headers.location).toBe('/password/reset/invalid');
         } catch (err) {
@@ -554,7 +591,8 @@ describe('User CRUD Tests :', () => {
 
     test('should be able to change user own password successfully', async () => {
       try {
-        const result = await agent.post('/api/users/password')
+        const result = await agent
+          .post('/api/users/password')
           .send({
             newPassword: 'WeAreOpenSource$&2',
             verifyPassword: 'WeAreOpenSource$&2',
@@ -570,7 +608,8 @@ describe('User CRUD Tests :', () => {
 
     test('should not be able to change user own password if wrong verifyPassword is given', async () => {
       try {
-        const result = await agent.post('/api/users/password')
+        const result = await agent
+          .post('/api/users/password')
           .send({
             newPassword: '1234567890Aa$',
             verifyPassword: '1234567890-ABC-123-Aa$',
@@ -587,7 +626,8 @@ describe('User CRUD Tests :', () => {
 
     test('should not be able to change user own password if wrong currentPassword is given', async () => {
       try {
-        const result = await agent.post('/api/users/password')
+        const result = await agent
+          .post('/api/users/password')
           .send({
             newPassword: '1234567890Aa$',
             verifyPassword: '1234567890Aa$',
@@ -604,7 +644,8 @@ describe('User CRUD Tests :', () => {
 
     test('should not be able to change user own password if no new password is at all given', async () => {
       try {
-        const result = await agent.post('/api/users/password')
+        const result = await agent
+          .post('/api/users/password')
           .send({
             newPassword: '',
             verifyPassword: '',
@@ -621,7 +662,8 @@ describe('User CRUD Tests :', () => {
 
     test('should not be able to change user own password successfully if new password is too easy', async () => {
       try {
-        const result = await agent.post('/api/users/password')
+        const result = await agent
+          .post('/api/users/password')
           .send({
             newPassword: 'OpenSource',
             verifyPassword: 'OpenSource',
@@ -639,8 +681,7 @@ describe('User CRUD Tests :', () => {
 
     test('should be able to get own user details successfully', async () => {
       try {
-        const result = await agent.get('/api/users/me')
-          .expect(200);
+        const result = await agent.get('/api/users/me').expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('user get');
         expect(result.body.data).toBeInstanceOf(Object);
@@ -654,8 +695,7 @@ describe('User CRUD Tests :', () => {
 
     test('should be able to get all user data successfully', async () => {
       try {
-        const result = await agent.get('/api/users/data')
-          .expect(200);
+        const result = await agent.get('/api/users/data').expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('user data');
         expect(result.body.data.user.id).toBe(user.id);
@@ -674,7 +714,8 @@ describe('User CRUD Tests :', () => {
       };
 
       try {
-        const result = await agent.put('/api/users')
+        const result = await agent
+          .put('/api/users')
           .send(userUpdate)
           .expect(200);
         expect(result.body.type).toBe('success');
@@ -701,7 +742,8 @@ describe('User CRUD Tests :', () => {
         roles: ['user', 'admin'],
       };
       try {
-        const result = await agent.put('/api/users')
+        const result = await agent
+          .put('/api/users')
           .send(userUpdate)
           .expect(200);
         expect(result.body.type).toBe('success');
@@ -723,7 +765,8 @@ describe('User CRUD Tests :', () => {
 
     test('should not be able to update own user details with existing email', async () => {
       try {
-        const result = await agent.post('/api/auth/signup')
+        const result = await agent
+          .post('/api/auth/signup')
           .send(_userEdited)
           .expect(200);
         userEdited = result.body.user;
@@ -739,7 +782,8 @@ describe('User CRUD Tests :', () => {
           email: _user.email,
         };
 
-        const result = await agent.put('/api/users')
+        const result = await agent
+          .put('/api/users')
           .send(userUpdate)
           .expect(422);
         expect(result.body.message).toEqual('Unprocessable Entity');
@@ -767,9 +811,7 @@ describe('User CRUD Tests :', () => {
           resetPasswordToken: 'tweeked-reset-token',
         };
 
-        await agent.put('/api/users')
-          .send(userUpdate)
-          .expect(200);
+        await agent.put('/api/users').send(userUpdate).expect(200);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -779,7 +821,9 @@ describe('User CRUD Tests :', () => {
         const result = await UserService.get(user);
 
         expect(result.password).toBe(user.password);
-        expect(result.createdAt.getTime()).toBe(new Date(user.createdAt).getTime());
+        expect(result.createdAt.getTime()).toBe(
+          new Date(user.createdAt).getTime(),
+        );
         expect(result.resetPasswordToken).toBeFalsy();
       } catch (err) {
         console.log(err);
@@ -792,7 +836,8 @@ describe('User CRUD Tests :', () => {
       _userEdited.email = 'register_new_user_@test.com';
 
       try {
-        const result = await agent.post('/api/auth/signup')
+        const result = await agent
+          .post('/api/auth/signup')
           .send(_userEdited)
           .expect(200);
         userEdited = result.body.user;
@@ -812,8 +857,7 @@ describe('User CRUD Tests :', () => {
 
       // delete user
       try {
-        const result = await agent.delete('/api/users')
-          .expect(200);
+        const result = await agent.delete('/api/users').expect(200);
 
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('user deleted');
@@ -830,7 +874,8 @@ describe('User CRUD Tests :', () => {
       _userEdited.email = 'register_new_user_@test.com';
 
       try {
-        const result = await agent.post('/api/auth/signup')
+        const result = await agent
+          .post('/api/auth/signup')
           .send(_userEdited)
           .expect(200);
         userEdited = result.body.user;
@@ -850,8 +895,7 @@ describe('User CRUD Tests :', () => {
 
       // delete user
       try {
-        const result = await agent.delete('/api/users/data')
-          .expect(200);
+        const result = await agent.delete('/api/users/data').expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('user and his data were deleted');
         expect(result.body.data.user.id).toBe(userEdited.id);
@@ -866,7 +910,8 @@ describe('User CRUD Tests :', () => {
 
     test('should be able to change profile avatar if signed in', async () => {
       try {
-        const result = await agent.post('/api/users/avatar')
+        const result = await agent
+          .post('/api/users/avatar')
           .attach('img', './modules/users/tests/img/default.png')
           .expect(200);
         expect(result.body.type).toBe('success');
@@ -882,8 +927,12 @@ describe('User CRUD Tests :', () => {
 
     test('should not be able to change profile avatar if attach a avatar with a different field name', async () => {
       try {
-        const result = await agent.post('/api/users/avatar')
-          .attach('fieldThatDoesntWork', './modules/users/tests/img/default.png')
+        const result = await agent
+          .post('/api/users/avatar')
+          .attach(
+            'fieldThatDoesntWork',
+            './modules/users/tests/img/default.png',
+          )
           .expect(422);
         expect(result.body.message).toEqual('Unprocessable Entity');
         expect(result.body.description).toEqual('Unexpected field.');
@@ -894,11 +943,14 @@ describe('User CRUD Tests :', () => {
 
     test('should not be able to upload a non-image file as a profile avatar', async () => {
       try {
-        const result = await agent.post('/api/users/avatar')
+        const result = await agent
+          .post('/api/users/avatar')
           .attach('img', './modules/users/tests/img/text-file.txt')
           .expect(422);
         expect(result.body.message).toEqual('Unprocessable Entity');
-        expect(result.body.description).toEqual('Only image/png,image/jpeg,image/jpg,image/gif images allowed.');
+        expect(result.body.description).toEqual(
+          'Only image/png,image/jpeg,image/jpg,image/gif images allowed.',
+        );
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -907,7 +959,8 @@ describe('User CRUD Tests :', () => {
 
     test('should not be able to change profile avatar to too big of a file', async () => {
       try {
-        const result = await agent.post('/api/users/avatar')
+        const result = await agent
+          .post('/api/users/avatar')
           .attach('img', './modules/users/tests/img/too-big-file.png')
           .expect(422);
 
@@ -932,7 +985,8 @@ describe('User CRUD Tests :', () => {
   describe('Logout', () => {
     test('should not be able to change user own password if not signed in', async () => {
       try {
-        await agent.post('/api/users/password')
+        await agent
+          .post('/api/users/password')
           .send({
             newPassword: '1234567890Aa$',
             verifyPassword: '1234567890Aa$',
@@ -949,8 +1003,7 @@ describe('User CRUD Tests :', () => {
 
     test('should not be able to get any user details if not logged in', async () => {
       try {
-        await agent.get('/api/users/me')
-          .expect(401);
+        await agent.get('/api/users/me').expect(401);
         // TODO error message
         // result.body.message.should.equal('User is not signed in');
       } catch (err) {
@@ -966,9 +1019,7 @@ describe('User CRUD Tests :', () => {
           lastName: 'user_update_last',
         };
 
-        await agent.put('/api/users')
-          .send(userUpdate)
-          .expect(401);
+        await agent.put('/api/users').send(userUpdate).expect(401);
         // TODO error message
         // result.body.message.should.equal('User is not signed in');
       } catch (err) {
@@ -979,9 +1030,7 @@ describe('User CRUD Tests :', () => {
 
     test('should not be able to update own user profile avatar without being logged-in', async () => {
       try {
-        await agent.post('/api/users/avatar')
-          .send({})
-          .expect(401);
+        await agent.post('/api/users/avatar').send({}).expect(401);
         // TODO error message
         // result.body.message.should.equal('User is not signed in');
       } catch (err) {
@@ -992,8 +1041,7 @@ describe('User CRUD Tests :', () => {
 
     test('should be able to get a users stats', async () => {
       try {
-        const result = await agent.get('/api/users/stats')
-          .expect(200);
+        const result = await agent.get('/api/users/stats').expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('users stats');
       } catch (err) {

@@ -14,15 +14,25 @@ const subscriptionsSchema = require('../models/subscriptions.schema');
  */
 module.exports = (app) => {
   // list & post
-  app.route('/api/subscriptions')
+  app
+    .route('/api/subscriptions')
     .get(passport.authenticate('jwt'), policy.isAllowed, subscriptions.list) // list
-    .post(policy.isAllowed, model.isValid(subscriptionsSchema.Subscription), subscriptions.create); // create
+    .post(
+      policy.isAllowed,
+      model.isValid(subscriptionsSchema.Subscription),
+      subscriptions.create,
+    ); // create
 
   // classic crud
-  app.route('/api/subscriptions/:subscriptionId').all(policy.isAllowed) // policy.isOwner available (require set in middleWare)
+  app
+    .route('/api/subscriptions/:subscriptionId')
+    .all(policy.isAllowed) // policy.isOwner available (require set in middleWare)
     .get(subscriptions.get) // get
     .put(model.isValid(subscriptionsSchema.Subscription), subscriptions.update) // update
-    .delete(model.isValid(subscriptionsSchema.Subscription), subscriptions.delete); // delete
+    .delete(
+      model.isValid(subscriptionsSchema.Subscription),
+      subscriptions.delete,
+    ); // delete
 
   // Finish by binding the subscription middleware
   app.param('subscriptionId', subscriptions.subscriptionByID);

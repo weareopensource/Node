@@ -23,9 +23,7 @@ const lint = () => {
     defaultAssets.tests,
   );
 
-  return gulp.src(assets)
-    .pipe(plugins.eslint())
-    .pipe(plugins.eslint.format());
+  return gulp.src(assets).pipe(plugins.eslint()).pipe(plugins.eslint.format());
 };
 exports.lint = lint;
 
@@ -36,7 +34,11 @@ const nodemon = (done) => {
     nodeArgs: ['--harmony'],
     ext: 'js,html',
     verbose: true,
-    watch: _.union(defaultAssets.views, defaultAssets.allJS, defaultAssets.config),
+    watch: _.union(
+      defaultAssets.views,
+      defaultAssets.allJS,
+      defaultAssets.config,
+    ),
   });
   done();
 };
@@ -48,7 +50,11 @@ const nodemonDebug = (done) => {
     script: 'server.js',
     nodeArgs: ['--harmony', '--debug', '--inspect'],
     ext: 'js,html',
-    watch: _.union(defaultAssets.views, defaultAssets.allJS, defaultAssets.config),
+    watch: _.union(
+      defaultAssets.views,
+      defaultAssets.allJS,
+      defaultAssets.config,
+    ),
   });
   done();
 };
@@ -60,7 +66,9 @@ const watch = (done) => {
   plugins.refresh.listen();
   // Add watch rules
   gulp.watch(defaultAssets.views).on('change', plugins.refresh.changed);
-  gulp.watch(defaultAssets.allJS, gulp.series(lint)).on('change', plugins.refresh.changed);
+  gulp
+    .watch(defaultAssets.allJS, gulp.series(lint))
+    .on('change', plugins.refresh.changed);
   gulp.watch(defaultAssets.gulpConfig, gulp.series(lint));
   done();
 };
@@ -68,55 +76,52 @@ exports.watch = watch;
 
 // Jest UT
 const jest = (done) => {
-  jestCli.runCLI(
-    {},
-    '.',
-  ).then((result) => {
-    if (result.results && result.results.numFailedTests > 0) process.exit();
-    done();
-  }).catch((e) => {
-    console.log(e);
-  });
+  jestCli
+    .runCLI({}, '.')
+    .then((result) => {
+      if (result.results && result.results.numFailedTests > 0) process.exit();
+      done();
+    })
+    .catch((e) => {
+      console.log(e);
+    });
 };
 exports.jest = jest;
 
 // Jest Watch
 const jestWatch = (done) => {
-  jestCli.runCLI(
-    { watch: true },
-    '.',
-  );
+  jestCli.runCLI({ watch: true }, '.');
   done();
 };
 exports.jestWatch = jestWatch;
 
 // Jest UT
 const jestCoverage = (done) => {
-  jestCli.runCLI(
-    {
-      collectCoverage: true,
-      collectCoverageFrom: defaultAssets.allJS,
-      coverageDirectory: 'coverage',
-      coverageReporters: [
-        'json',
-        'lcov',
-        'text',
-      ],
-    },
-    '.',
-  ).then((result) => {
-    if (result.results && result.results.numFailedTests > 0) process.exit();
-    done();
-  }).catch((e) => {
-    console.log(e);
-  });
+  jestCli
+    .runCLI(
+      {
+        collectCoverage: true,
+        collectCoverageFrom: defaultAssets.allJS,
+        coverageDirectory: 'coverage',
+        coverageReporters: ['json', 'lcov', 'text'],
+      },
+      '.',
+    )
+    .then((result) => {
+      if (result.results && result.results.numFailedTests > 0) process.exit();
+      done();
+    })
+    .catch((e) => {
+      console.log(e);
+    });
 };
 exports.jestCoverage = jestCoverage;
 
 // Drops the MongoDB database, used in e2e testing by security
 const dropMongo = (done) => {
   const mongooseService = require(path.resolve('./lib/services/mongoose'));
-  mongooseService.connect()
+  mongooseService
+    .connect()
     .then((db) => {
       db.connection.dropDatabase((err) => {
         if (err) console.error(err);
@@ -156,14 +161,24 @@ const seedMongoose = async () => {
     const mongooseService = require(path.resolve('./lib/services/mongoose'));
     await mongooseService.connect();
     await mongooseService.loadModels();
-    const UserService = require(path.resolve('./modules/users/services/user.service'));
-    const TaskService = require(path.resolve('./modules/tasks/services/tasks.service'));
+    const UserService = require(path.resolve(
+      './modules/users/services/user.service',
+    ));
+    const TaskService = require(path.resolve(
+      './modules/tasks/services/tasks.service',
+    ));
     const seed = require(path.resolve('./lib/services/seed'));
-    await seed.start({
-      logResults: true,
-    }, UserService, TaskService).catch((e) => {
-      console.log(e);
-    });
+    await seed
+      .start(
+        {
+          logResults: true,
+        },
+        UserService,
+        TaskService,
+      )
+      .catch((e) => {
+        console.log(e);
+      });
     await mongooseService.disconnect();
   } catch (err) {
     console.log(err);

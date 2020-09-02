@@ -15,7 +15,7 @@ const objectPath = require('object-path');
 const getGlobbedPaths = (globPatterns, excludes) => {
   // URL paths regex
   /* eslint no-useless-escape:0 */
-  const urlRegex = new RegExp('^(?:[a-z]+:)?\/\/', 'i');
+  const urlRegex = new RegExp('^(?:[a-z]+:)?//', 'i');
   let output = [];
   // If glob pattern is array then we use each pattern in a recursive way, otherwise we use glob
   if (_.isArray(globPatterns)) {
@@ -49,7 +49,11 @@ const getGlobbedPaths = (globPatterns, excludes) => {
  */
 const validateDomainIsSet = (config) => {
   if (!config.domain) {
-    console.log(chalk.red('+ Important warning: config.domain is empty. It should be set to the fully qualified domain of the app.'));
+    console.log(
+      chalk.red(
+        '+ Important warning: config.domain is empty. It should be set to the fully qualified domain of the app.',
+      ),
+    );
   }
 };
 
@@ -64,8 +68,16 @@ const initSecureMode = (config) => {
   const cert = fs.existsSync(path.resolve(config.secure.cert));
 
   if (!key || !cert) {
-    console.log(chalk.red('+ Error: Certificate file or key file is missing, falling back to non-SSL mode'));
-    console.log(chalk.red('  To create them, simply run the following from your shell: sh ./scripts/generate-ssl-certs.sh'));
+    console.log(
+      chalk.red(
+        '+ Error: Certificate file or key file is missing, falling back to non-SSL mode',
+      ),
+    );
+    console.log(
+      chalk.red(
+        '  To create them, simply run the following from your shell: sh ./scripts/generate-ssl-certs.sh',
+      ),
+    );
     console.log();
     config.secure.ssl = false;
   } else {
@@ -97,12 +109,26 @@ const initGlobalConfig = () => {
   // Get the default assets
   const assets = require(path.join(process.cwd(), './config/assets'));
   // Get the current config
-  const _path = path.join(process.cwd(), './config', 'defaults', process.env.NODE_ENV || 'development');
+  const _path = path.join(
+    process.cwd(),
+    './config',
+    'defaults',
+    process.env.NODE_ENV || 'development',
+  );
   let defaultConfig;
   if (fs.existsSync(`${_path}.js`)) defaultConfig = require(_path);
   else {
-    console.error(chalk.red(`+ Error: No configuration file found for "${process.env.NODE_ENV}" environment using development instead`));
-    defaultConfig = require(path.join(process.cwd(), './config', 'defaults', 'development'));
+    console.error(
+      chalk.red(
+        `+ Error: No configuration file found for "${process.env.NODE_ENV}" environment using development instead`,
+      ),
+    );
+    defaultConfig = require(path.join(
+      process.cwd(),
+      './config',
+      'defaults',
+      'development',
+    ));
   }
   // Get the config from  process.env.WAOS_NODE_*
   let environmentVars = _.mapKeys(
@@ -110,7 +136,11 @@ const initGlobalConfig = () => {
     (_v, k) => k.split('_').slice(2).join('.'),
   );
   // convert string array from sys  to real array
-  environmentVars = _.mapValues(environmentVars, (v) => ((v[0] === '[' && v[v.length - 1] === ']') ? v.replace(/'/g, '').slice(1, -1).split(',') : v));
+  environmentVars = _.mapValues(environmentVars, (v) =>
+    v[0] === '[' && v[v.length - 1] === ']'
+      ? v.replace(/'/g, '').slice(1, -1).split(',')
+      : v,
+  );
   const environmentConfigVars = {};
   _.forEach(environmentVars, (v, k) => {
     let value = v;

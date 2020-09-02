@@ -1,7 +1,6 @@
 version: '3'
 
 services:
-
   weareopensourceNode:
     container_name: weareopensourceNode
     image: weareopensource/node:latest
@@ -15,8 +14,8 @@ services:
     depends_on:
       - mongo
     environment:
-      - "WAOS_NODE_db_uri=mongodb://mongo:27017/WaosNodeDev"
-      - "WAOS_NODE_host=0.0.0.0"
+      - 'WAOS_NODE_db_uri=mongodb://mongo:27017/WaosNodeDev'
+      - 'WAOS_NODE_host=0.0.0.0'
 
   mongo:
     container_name: mongo
@@ -26,10 +25,10 @@ services:
       - mongo:/data
     networks:
       - mongo
-      
+
 networks:
-    mongo:
-      driver: bridge
+  mongo:
+    driver: bridge
 
 volumes:
   weareopensourceNode:

@@ -18,16 +18,23 @@ describe('Configuration Tests:', () => {
   let UserService = null;
   let TaskService = null;
 
-  beforeAll(() => mongooseService.connect()
-    .then(async () => {
-      await multerService.storage();
-      mongooseService.loadModels();
-      UserService = require(path.resolve('./modules/users/services/user.service'));
-      TaskService = require(path.resolve('./modules/tasks/services/tasks.service'));
-    })
-    .catch((e) => {
-      console.log(e);
-    }));
+  beforeAll(() =>
+    mongooseService
+      .connect()
+      .then(async () => {
+        await multerService.storage();
+        mongooseService.loadModels();
+        UserService = require(path.resolve(
+          './modules/users/services/user.service',
+        ));
+        TaskService = require(path.resolve(
+          './modules/tasks/services/tasks.service',
+        ));
+      })
+      .catch((e) => {
+        console.log(e);
+      }),
+  );
 
   let user1;
   let admin1;
@@ -40,8 +47,16 @@ describe('Configuration Tests:', () => {
   describe('Configurations', () => {
     test('should load production configuration in production env', async () => {
       try {
-        const defaultConfig = require(path.join(process.cwd(), './config', 'defaults', 'production')) || {};
-        expect(defaultConfig.app.title.split(' - ')[1]).toBe('Production Environment');
+        const defaultConfig =
+          require(path.join(
+            process.cwd(),
+            './config',
+            'defaults',
+            'production',
+          )) || {};
+        expect(defaultConfig.app.title.split(' - ')[1]).toBe(
+          'Production Environment',
+        );
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -98,7 +113,11 @@ describe('Configuration Tests:', () => {
       let result;
 
       try {
-        result = await seed.start({ logResults: false }, UserService, TaskService);
+        result = await seed.start(
+          { logResults: false },
+          UserService,
+          TaskService,
+        );
         expect(result).toBeInstanceOf(Array);
         expect(result).toHaveLength(1);
       } catch (err) {
@@ -122,7 +141,11 @@ describe('Configuration Tests:', () => {
       let result;
 
       try {
-        result = await seed.start({ logResults: false }, UserService, TaskService);
+        result = await seed.start(
+          { logResults: false },
+          UserService,
+          TaskService,
+        );
         expect(result).toBeInstanceOf(Array);
         expect(result).toHaveLength(2);
       } catch (err) {
@@ -147,7 +170,11 @@ describe('Configuration Tests:', () => {
       let result;
 
       try {
-        result = await seed.start({ logResults: false }, UserService, TaskService);
+        result = await seed.start(
+          { logResults: false },
+          UserService,
+          TaskService,
+        );
         expect(result).toBeInstanceOf(Array);
         expect(result).toHaveLength(4);
       } catch (err) {
@@ -186,7 +213,9 @@ describe('Configuration Tests:', () => {
       }
 
       try {
-        const result = await UserService.search({ email: { $in: [adminFromSeedConfig.email, userFromSeedConfig.email] } });
+        const result = await UserService.search({
+          email: { $in: [adminFromSeedConfig.email, userFromSeedConfig.email] },
+        });
         expect(result).toBeInstanceOf(Array);
         expect(result).toHaveLength(2);
       } catch (err) {
@@ -195,7 +224,11 @@ describe('Configuration Tests:', () => {
       }
 
       try {
-        result = await seed.start({ logResults: false }, UserService, TaskService);
+        result = await seed.start(
+          { logResults: false },
+          UserService,
+          TaskService,
+        );
         expect(result).toBeInstanceOf(Array);
         expect(result).toHaveLength(2);
       } catch (err) {
@@ -220,7 +253,11 @@ describe('Configuration Tests:', () => {
       let result;
 
       try {
-        result = await seed.start({ logResults: false, seedAdmin: admin1 }, UserService, TaskService);
+        result = await seed.start(
+          { logResults: false, seedAdmin: admin1 },
+          UserService,
+          TaskService,
+        );
         expect(result).toBeInstanceOf(Array);
         expect(result).toHaveLength(1);
         expect(result[0].email).toBe(admin1.email);
@@ -245,7 +282,11 @@ describe('Configuration Tests:', () => {
       let result;
 
       try {
-        result = await seed.start({ logResults: false, seedAdmin: admin1, seedUser: user1 }, UserService, TaskService);
+        result = await seed.start(
+          { logResults: false, seedAdmin: admin1, seedUser: user1 },
+          UserService,
+          TaskService,
+        );
         expect(result).toBeInstanceOf(Array);
         expect(result).toHaveLength(2);
         expect(result[0].email).toBe(user1.email);
@@ -281,8 +322,14 @@ describe('Configuration Tests:', () => {
       }
 
       try {
-        result = await seed.start({ logResults: false }, UserService, TaskService);
-        expect(result[0].details[0].message).toBe('Failed due to local account already exists: seedadmin@localhost.com');
+        result = await seed.start(
+          { logResults: false },
+          UserService,
+          TaskService,
+        );
+        expect(result[0].details[0].message).toBe(
+          'Failed due to local account already exists: seedadmin@localhost.com',
+        );
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -395,8 +442,9 @@ describe('Configuration Tests:', () => {
   });
 
   // Mongoose disconnect
-  afterAll(() => mongooseService.disconnect()
-    .catch((e) => {
+  afterAll(() =>
+    mongooseService.disconnect().catch((e) => {
       console.log(e);
-    }));
+    }),
+  );
 });

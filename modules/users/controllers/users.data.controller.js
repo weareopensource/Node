@@ -9,8 +9,12 @@ const mails = require(path.resolve('./lib/helpers/mails'));
 const config = require(path.resolve('./config'));
 const UserService = require('../services/user.service');
 
-const TaskDataService = require(path.resolve('./modules/tasks/services/tasks.data.service'));
-const UploadDataService = require(path.resolve('./modules/uploads/services/uploads.data.service'));
+const TaskDataService = require(path.resolve(
+  './modules/tasks/services/tasks.data.service',
+));
+const UploadDataService = require(path.resolve(
+  './modules/uploads/services/uploads.data.service',
+));
 
 /**
  * @desc Endpoint to ask the service to delete the user connected and all his data
@@ -27,7 +31,12 @@ exports.delete = async (req, res) => {
     result.user.id = req.user.id;
     responses.success(res, 'user and his data were deleted')(result);
   } catch (err) {
-    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+    responses.error(
+      res,
+      422,
+      'Unprocessable Entity',
+      errors.getMessage(err),
+    )(err);
   }
 };
 
@@ -45,7 +54,12 @@ exports.get = async (req, res) => {
     };
     responses.success(res, 'user data')(result);
   } catch (err) {
-    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+    responses.error(
+      res,
+      422,
+      'Unprocessable Entity',
+      errors.getMessage(err),
+    )(err);
   }
 };
 
@@ -76,9 +90,23 @@ exports.getMail = async (req, res) => {
       },
     });
 
-    if (!mail.accepted) return responses.error(res, 400, 'Bad Request', 'Failure sending email')();
-    responses.success(res, 'An email has been sent to the user email with data')({ status: true });
+    if (!mail.accepted)
+      return responses.error(
+        res,
+        400,
+        'Bad Request',
+        'Failure sending email',
+      )();
+    responses.success(
+      res,
+      'An email has been sent to the user email with data',
+    )({ status: true });
   } catch (err) {
-    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+    responses.error(
+      res,
+      422,
+      'Unprocessable Entity',
+      errors.getMessage(err),
+    )(err);
   }
 };

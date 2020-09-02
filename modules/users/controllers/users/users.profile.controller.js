@@ -20,11 +20,22 @@ exports.update = async (req, res) => {
     const user = await UserService.update(req.user, req.body);
     // reset login
     req.login(user, (errLogin) => {
-      if (errLogin) return responses.error(res, 400, 'Bad Request', errors.getMessage(errLogin))(errLogin);
+      if (errLogin)
+        return responses.error(
+          res,
+          400,
+          'Bad Request',
+          errors.getMessage(errLogin),
+        )(errLogin);
       return responses.success(res, 'user updated')(user);
     });
   } catch (err) {
-    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+    responses.error(
+      res,
+      422,
+      'Unprocessable Entity',
+      errors.getMessage(err),
+    )(err);
   }
 };
 
@@ -39,7 +50,12 @@ exports.delete = async (req, res) => {
     result.id = req.user.id;
     responses.success(res, 'user deleted')(result);
   } catch (err) {
-    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+    responses.error(
+      res,
+      422,
+      'Unprocessable Entity',
+      errors.getMessage(err),
+    )(err);
   }
 };
 
@@ -78,13 +94,21 @@ exports.addOAuthProviderUserProfile = async (req, res) => {
   try {
     user = await oAuthService.addUser(req.body.provider, req.body.idToken);
   } catch (err) {
-    return responses.error(res, 304, 'Not Modified', errors.getMessage(err))(err);
+    return responses.error(
+      res,
+      304,
+      'Not Modified',
+      errors.getMessage(err),
+    )(err);
   }
   if (!user) return responses.error(res, 404, 'Not Found', 'No Oauth found')();
 
-  const token = jwt.sign({ userId: user.id }, config.jwt.secret, { expiresIn: config.jwt.expiresIn });
+  const token = jwt.sign({ userId: user.id }, config.jwt.secret, {
+    expiresIn: config.jwt.expiresIn,
+  });
 
-  res.status(200)
+  res
+    .status(200)
     .cookie('TOKEN', token, { httpOnly: true })
-    .json({ user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000) });
+    .json({ user, tokenExpiresIn: Date.now() + config.jwt.expiresIn * 1000 });
 };

@@ -11,9 +11,7 @@ const core = require('../controllers/core.controller');
  */
 module.exports = (app) => {
   // changelogs
-  app.route('/api/core/releases').all(policy.isAllowed)
-    .get(core.releases);
+  app.route('/api/core/releases').all(policy.isAllowed).get(core.releases);
   // changelogs
-  app.route('/api/core/changelogs').all(policy.isAllowed)
-    .get(core.changelogs);
+  app.route('/api/core/changelogs').all(policy.isAllowed).get(core.changelogs);
 };

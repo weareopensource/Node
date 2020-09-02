@@ -33,8 +33,7 @@ describe('Tasks CRUD Tests :', () => {
   describe('Logout', () => {
     test('should not be able to save a task', async () => {
       try {
-        const result = await agent.get('/api/core/releases')
-          .expect(200);
+        const result = await agent.get('/api/core/releases').expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('releases');
         expect(result.body.data).toBeInstanceOf(Array);
@@ -46,8 +45,7 @@ describe('Tasks CRUD Tests :', () => {
 
     test('should not be able to save a task', async () => {
       try {
-        const result = await agent.get('/api/core/changelogs')
-          .expect(200);
+        const result = await agent.get('/api/core/changelogs').expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('changelogs');
         expect(result.body.data).toBeInstanceOf(Array);

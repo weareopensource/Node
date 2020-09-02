@@ -27,7 +27,9 @@ describe('Uploads CRUD Tests :', () => {
       await mongooseService.connect();
       await multerService.storage();
       await mongooseService.loadModels();
-      UserService = require(path.resolve('./modules/users/services/user.service'));
+      UserService = require(path.resolve(
+        './modules/users/services/user.service',
+      ));
       // init application
       app = express.init();
       agent = request.agent(app);
@@ -38,7 +40,7 @@ describe('Uploads CRUD Tests :', () => {
 
   describe('Logged', () => {
     beforeEach(async () => {
-    // user credentials
+      // user credentials
       credentials = {
         email: 'upload@test.com',
         password: 'W@os.jsI$Aw3$0m3',
@@ -55,7 +57,8 @@ describe('Uploads CRUD Tests :', () => {
 
       // add user
       try {
-        const result = await agent.post('/api/auth/signup')
+        const result = await agent
+          .post('/api/auth/signup')
           .send(_user)
           .expect(200);
         user = result.body.user;
@@ -66,7 +69,8 @@ describe('Uploads CRUD Tests :', () => {
 
       // add a upload
       try {
-        const result = await agent.post('/api/users/avatar')
+        const result = await agent
+          .post('/api/users/avatar')
           .attach('img', './modules/users/tests/img/default.png')
           .expect(200);
         upload1 = result.body.data.avatar;
@@ -79,8 +83,7 @@ describe('Uploads CRUD Tests :', () => {
     test('should be able to read an upload', async () => {
       // add upload
       try {
-        const result = await agent.get(`/api/uploads/${upload1}`)
-          .expect(200);
+        const result = await agent.get(`/api/uploads/${upload1}`).expect(200);
         expect(result.body).toBeInstanceOf(Buffer);
       } catch (err) {
         console.log(err);
@@ -90,7 +93,8 @@ describe('Uploads CRUD Tests :', () => {
 
     test('should not be able to read old upload if we update it', async () => {
       try {
-        const result = await agent.post('/api/users/avatar')
+        const result = await agent
+          .post('/api/users/avatar')
           .attach('img', './modules/users/tests/img/default.png')
           .expect(200);
         expect(result.body.type).toBe('success');
@@ -99,12 +103,12 @@ describe('Uploads CRUD Tests :', () => {
         expect(typeof result.body.data.avatar).toBe('string');
         expect(result.body.data.id).toBe(String(user.id));
 
-        const _new = await agent.get(`/api/uploads/${result.body.data.avatar}`)
+        const _new = await agent
+          .get(`/api/uploads/${result.body.data.avatar}`)
           .expect(200);
         expect(_new.body).toBeDefined();
 
-        const _old = await agent.get(`/api/uploads/${upload1}`)
-          .expect(404);
+        const _old = await agent.get(`/api/uploads/${upload1}`).expect(404);
         expect(_old.body).toBeDefined();
         expect(_old.body.type).toBe('error');
         expect(_old.body.message).toBe('Not Found');
@@ -117,7 +121,8 @@ describe('Uploads CRUD Tests :', () => {
     test('should be able to read an image upload', async () => {
       // add upload
       try {
-        const result = await agent.get(`/api/uploads/images/${upload1}`)
+        const result = await agent
+          .get(`/api/uploads/images/${upload1}`)
           .expect(200);
         expect(result.body).toBeInstanceOf(Buffer);
       } catch (err) {
@@ -130,7 +135,8 @@ describe('Uploads CRUD Tests :', () => {
       // add upload
       try {
         const input = upload1.split('.');
-        const result = await agent.get(`/api/uploads/images/${input[0]}-512.${input[1]}`)
+        const result = await agent
+          .get(`/api/uploads/images/${input[0]}-512.${input[1]}`)
           .expect(200);
         expect(result.body).toBeInstanceOf(Buffer);
       } catch (err) {
@@ -143,7 +149,8 @@ describe('Uploads CRUD Tests :', () => {
       // add upload
       try {
         const input = upload1.split('.');
-        const result = await agent.get(`/api/uploads/images/${input[0]}-512-blur.${input[1]}`)
+        const result = await agent
+          .get(`/api/uploads/images/${input[0]}-512-blur.${input[1]}`)
           .expect(200);
         expect(result.body).toBeInstanceOf(Buffer);
       } catch (err) {
@@ -155,8 +162,7 @@ describe('Uploads CRUD Tests :', () => {
     test('should not be able to read an image upload with wrong file name schema', async () => {
       // add upload
       try {
-        const result = await agent.get('/api/uploads/images/test')
-          .expect(404);
+        const result = await agent.get('/api/uploads/images/test').expect(404);
         expect(result.body.message).toEqual('Not Found');
         expect(result.body.description).toEqual('Wrong name schema');
       } catch (err) {
@@ -168,7 +174,8 @@ describe('Uploads CRUD Tests :', () => {
     test('should not be able to read an image upload with too much params', async () => {
       // add upload
       try {
-        const result = await agent.get('/api/uploads/images/filename-400-blur-test.png')
+        const result = await agent
+          .get('/api/uploads/images/filename-400-blur-test.png')
           .expect(404);
         expect(result.body.message).toEqual('Not Found');
         expect(result.body.description).toEqual('Too much params');
@@ -181,10 +188,13 @@ describe('Uploads CRUD Tests :', () => {
     test('should not be able to read an image upload with wrong name', async () => {
       // add upload
       try {
-        const result = await agent.get('/api/uploads/images/filename-400-blur.png')
+        const result = await agent
+          .get('/api/uploads/images/filename-400-blur.png')
           .expect(404);
         expect(result.body.message).toEqual('Not Found');
-        expect(result.body.description).toEqual('No Upload with that name has been found');
+        expect(result.body.description).toEqual(
+          'No Upload with that name has been found',
+        );
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -195,7 +205,8 @@ describe('Uploads CRUD Tests :', () => {
       // add upload
       try {
         const input = upload1.split('.');
-        const result = await agent.get(`/api/uploads/images/${input[0]}-300.${input[1]}`)
+        const result = await agent
+          .get(`/api/uploads/images/${input[0]}-300.${input[1]}`)
           .expect(422);
         expect(result.body.message).toEqual('Unprocessable Entity');
         expect(result.body.description).toEqual('Wrong size param');
@@ -209,10 +220,13 @@ describe('Uploads CRUD Tests :', () => {
       // add upload
       try {
         const input = upload1.split('.');
-        const result = await agent.get(`/api/uploads/images/${input[0]}-512-toto.${input[1]}`)
+        const result = await agent
+          .get(`/api/uploads/images/${input[0]}-512-toto.${input[1]}`)
           .expect(422);
         expect(result.body.message).toEqual('Unprocessable Entity');
-        expect(result.body.description).toEqual('Operation param not available');
+        expect(result.body.description).toEqual(
+          'Operation param not available',
+        );
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();

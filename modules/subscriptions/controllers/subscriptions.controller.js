@@ -18,7 +18,12 @@ exports.list = async (req, res) => {
     const subscriptions = await SubscriptionsService.list();
     responses.success(res, 'subscription list')(subscriptions);
   } catch (err) {
-    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+    responses.error(
+      res,
+      422,
+      'Unprocessable Entity',
+      errors.getMessage(err),
+    )(err);
   }
 };
 
@@ -32,7 +37,12 @@ exports.create = async (req, res) => {
     const subscription = await SubscriptionsService.create(req.body);
     responses.success(res, 'subscription created')(subscription);
   } catch (err) {
-    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+    responses.error(
+      res,
+      422,
+      'Unprocessable Entity',
+      errors.getMessage(err),
+    )(err);
   }
 };
 
@@ -53,10 +63,18 @@ exports.get = (req, res) => {
  */
 exports.update = async (req, res) => {
   try {
-    const subscription = await SubscriptionsService.update(req.subscription, req.body);
+    const subscription = await SubscriptionsService.update(
+      req.subscription,
+      req.body,
+    );
     responses.success(res, 'subscription updated')(subscription);
   } catch (err) {
-    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+    responses.error(
+      res,
+      422,
+      'Unprocessable Entity',
+      errors.getMessage(err),
+    )(err);
   }
 };
 
@@ -71,7 +89,12 @@ exports.delete = async (req, res) => {
     result.id = req.subscription.id;
     responses.success(res, 'subscription deleted')(result);
   } catch (err) {
-    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+    responses.error(
+      res,
+      422,
+      'Unprocessable Entity',
+      errors.getMessage(err),
+    )(err);
   }
 };
 
@@ -85,7 +108,13 @@ exports.delete = async (req, res) => {
 exports.subscriptionByID = async (req, res, next, id) => {
   try {
     const subscription = await SubscriptionsService.get(id);
-    if (!subscription) responses.error(res, 404, 'Not Found', 'No Subscription with that identifier has been found')();
+    if (!subscription)
+      responses.error(
+        res,
+        404,
+        'Not Found',
+        'No Subscription with that identifier has been found',
+      )();
     else {
       req.subscription = subscription;
       // if (subscription.user) req.isOwner = subscription.user._id; // user id used if we proteck road by isOwner policy

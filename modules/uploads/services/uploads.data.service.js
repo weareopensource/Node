@@ -19,7 +19,9 @@ exports.list = async (user) => {
  * @return {Promise} confirmation of delete
  */
 exports.delete = async (user) => {
-  const result = await UploadRepository.deleteMany({ 'metadata.user': user._id });
+  const result = await UploadRepository.deleteMany({
+    'metadata.user': user._id,
+  });
   return Promise.resolve(result);
 };
 

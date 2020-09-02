@@ -32,7 +32,9 @@ describe('Subscriptions CRUD Tests :', () => {
       await mongooseService.connect();
       await multerService.storage();
       await mongooseService.loadModels();
-      UserService = require(path.resolve('./modules/users/services/user.service'));
+      UserService = require(path.resolve(
+        './modules/users/services/user.service',
+      ));
       // init application
       app = express.init();
       agent = request.agent(app);
@@ -44,17 +46,21 @@ describe('Subscriptions CRUD Tests :', () => {
   describe('Logout', () => {
     beforeEach(async () => {
       // subscriptions
-      _subscriptions = [{
-        email: 'test1@gmail.com',
-        news: true,
-      }, {
-        email: 'test2@gmail.com',
-        news: true,
-      }];
+      _subscriptions = [
+        {
+          email: 'test1@gmail.com',
+          news: true,
+        },
+        {
+          email: 'test2@gmail.com',
+          news: true,
+        },
+      ];
 
       // add a subscription
       try {
-        const result = await agent.post('/api/subscriptions')
+        const result = await agent
+          .post('/api/subscriptions')
           .send(_subscriptions[0])
           .expect(200);
         subscription1 = result.body.data;
@@ -67,7 +73,8 @@ describe('Subscriptions CRUD Tests :', () => {
     test('should be able to save a subscription', async () => {
       // add subscription
       try {
-        const result = await agent.post('/api/subscriptions')
+        const result = await agent
+          .post('/api/subscriptions')
           .send(_subscriptions[1])
           .expect(200);
         subscription2 = result.body.data;
@@ -84,7 +91,8 @@ describe('Subscriptions CRUD Tests :', () => {
     test('should not be able to save a subscription with bad model', async () => {
       // add subscription
       try {
-        const result = await agent.post('/api/subscriptions')
+        const result = await agent
+          .post('/api/subscriptions')
           .send({
             email: 2,
             news: false,
@@ -102,7 +110,8 @@ describe('Subscriptions CRUD Tests :', () => {
     test('should be able to get a subscription', async () => {
       // delete subscription
       try {
-        const result = await agent.get(`/api/subscriptions/${subscription2.id}`)
+        const result = await agent
+          .get(`/api/subscriptions/${subscription2.id}`)
           .expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('subscription get');
@@ -118,11 +127,12 @@ describe('Subscriptions CRUD Tests :', () => {
     test('should not be able to get a subscription with a bad mongoose id', async () => {
       // delete subscription
       try {
-        const result = await agent.get('/api/subscriptions/test')
-          .expect(404);
+        const result = await agent.get('/api/subscriptions/test').expect(404);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toBe('Not Found');
-        expect(result.body.description).toBe('No Subscription with that identifier has been found');
+        expect(result.body.description).toBe(
+          'No Subscription with that identifier has been found',
+        );
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -132,11 +142,14 @@ describe('Subscriptions CRUD Tests :', () => {
     test('should not be able to get a subscription with a bad invented id', async () => {
       // delete subscription
       try {
-        const result = await agent.get('/api/subscriptions/waos56397898004243871228')
+        const result = await agent
+          .get('/api/subscriptions/waos56397898004243871228')
           .expect(404);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toBe('Not Found');
-        expect(result.body.description).toBe('No Subscription with that identifier has been found');
+        expect(result.body.description).toBe(
+          'No Subscription with that identifier has been found',
+        );
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -146,7 +159,8 @@ describe('Subscriptions CRUD Tests :', () => {
     test('should be able to update a subscription', async () => {
       // edit subscription
       try {
-        const result = await agent.put(`/api/subscriptions/${subscription2.id}`)
+        const result = await agent
+          .put(`/api/subscriptions/${subscription2.id}`)
           .send({ email: 'test3@gmail.com', news: true })
           .expect(200);
         expect(result.body.type).toBe('success');
@@ -163,7 +177,8 @@ describe('Subscriptions CRUD Tests :', () => {
     test('should not be able to double an email in subscriptions', async () => {
       // edit subscription
       try {
-        const result = await agent.put(`/api/subscriptions/${subscription2.id}`)
+        const result = await agent
+          .put(`/api/subscriptions/${subscription2.id}`)
           .send(_subscriptions[0])
           .expect(422);
         expect(result.body.type).toBe('error');
@@ -178,12 +193,15 @@ describe('Subscriptions CRUD Tests :', () => {
     test('should not be able to update a subscription with a bad id', async () => {
       // edit subscription
       try {
-        const result = await agent.put('/api/subscriptions/test')
+        const result = await agent
+          .put('/api/subscriptions/test')
           .send(_subscriptions[0])
           .expect(404);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toBe('Not Found');
-        expect(result.body.description).toBe('No Subscription with that identifier has been found');
+        expect(result.body.description).toBe(
+          'No Subscription with that identifier has been found',
+        );
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -193,7 +211,8 @@ describe('Subscriptions CRUD Tests :', () => {
     test('should be able to delete a subscription', async () => {
       // delete subscription
       try {
-        const result = await agent.delete(`/api/subscriptions/${subscription2.id}`)
+        const result = await agent
+          .delete(`/api/subscriptions/${subscription2.id}`)
           .expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('subscription deleted');
@@ -205,8 +224,7 @@ describe('Subscriptions CRUD Tests :', () => {
       }
       // check delete
       try {
-        await agent.get(`/api/subscriptions/${subscription2.id}`)
-          .expect(404);
+        await agent.get(`/api/subscriptions/${subscription2.id}`).expect(404);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -216,12 +234,15 @@ describe('Subscriptions CRUD Tests :', () => {
     test('should not be able to delete a subscription with a bad id', async () => {
       // edit subscription
       try {
-        const result = await agent.delete(`/api/subscriptions/${subscription2.id}`)
+        const result = await agent
+          .delete(`/api/subscriptions/${subscription2.id}`)
           .send(_subscriptions[0])
           .expect(404);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toBe('Not Found');
-        expect(result.body.description).toBe('No Subscription with that identifier has been found');
+        expect(result.body.description).toBe(
+          'No Subscription with that identifier has been found',
+        );
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -231,8 +252,7 @@ describe('Subscriptions CRUD Tests :', () => {
     test('should not be able to get list of subscriptions as guest', async () => {
       // get list
       try {
-        const result = await agent.get('/api/subscriptions')
-          .expect(401);
+        const result = await agent.get('/api/subscriptions').expect(401);
         expect(result.error.text).toBe('Unauthorized');
       } catch (err) {
         console.log(err);
@@ -243,7 +263,8 @@ describe('Subscriptions CRUD Tests :', () => {
     afterEach(async () => {
       // del subscription
       try {
-        await agent.delete(`/api/subscriptions/${subscription1.id}`)
+        await agent
+          .delete(`/api/subscriptions/${subscription1.id}`)
           .expect(200);
       } catch (err) {
         console.log(err);
@@ -254,14 +275,17 @@ describe('Subscriptions CRUD Tests :', () => {
 
   describe('Login', () => {
     beforeEach(async () => {
-    // user credentials
-      credentials = [{
-        email: 'test@test.com',
-        password: 'W@os.jsI$Aw3$0m3',
-      }, {
-        email: 'test2@test.com',
-        password: 'W@os.jsI$Aw3$0m3',
-      }];
+      // user credentials
+      credentials = [
+        {
+          email: 'test@test.com',
+          password: 'W@os.jsI$Aw3$0m3',
+        },
+        {
+          email: 'test2@test.com',
+          password: 'W@os.jsI$Aw3$0m3',
+        },
+      ];
 
       // user
       _user = {
@@ -277,7 +301,8 @@ describe('Subscriptions CRUD Tests :', () => {
 
       // add user
       try {
-        const result = await agent.post('/api/auth/signup')
+        const result = await agent
+          .post('/api/auth/signup')
           .send(_user)
           .expect(200);
         user = result.body.user;
@@ -290,8 +315,7 @@ describe('Subscriptions CRUD Tests :', () => {
     test('should not be able to get list of subscriptions as a user', async () => {
       // get list
       try {
-        await agent.get('/api/subscriptions')
-          .expect(403);
+        await agent.get('/api/subscriptions').expect(403);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -302,7 +326,8 @@ describe('Subscriptions CRUD Tests :', () => {
       _userEdited.roles = ['user', 'admin'];
 
       try {
-        const result = await agent.post('/api/auth/signup')
+        const result = await agent
+          .post('/api/auth/signup')
           .send(_userEdited)
           .expect(200);
         userEdited = result.body.user;
@@ -312,8 +337,7 @@ describe('Subscriptions CRUD Tests :', () => {
       }
 
       try {
-        const result = await agent.get('/api/subscriptions')
-          .expect(200);
+        const result = await agent.get('/api/subscriptions').expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('subscription list');
         expect(result.body.data).toBeInstanceOf(Array);

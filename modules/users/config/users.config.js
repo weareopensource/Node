@@ -30,9 +30,11 @@ module.exports = (app) => {
   });
 
   // Initialize strategies
-  config.utils.getGlobbedPaths(path.join(__dirname, './strategies/**/*.js')).forEach((strategy) => {
-    require(path.resolve(strategy))(config);
-  });
+  config.utils
+    .getGlobbedPaths(path.join(__dirname, './strategies/**/*.js'))
+    .forEach((strategy) => {
+      require(path.resolve(strategy))(config);
+    });
 
   // Add passport's middleware
   app.use(passport.initialize());

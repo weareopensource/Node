@@ -17,7 +17,12 @@ exports.list = async (req, res) => {
     const users = await UserService.list();
     responses.success(res, 'user list')(users);
   } catch (err) {
-    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+    responses.error(
+      res,
+      422,
+      'Unprocessable Entity',
+      errors.getMessage(err),
+    )(err);
   }
 };
 
@@ -41,7 +46,12 @@ exports.update = async (req, res) => {
     const user = await UserService.update(req.model, req.body, 'admin');
     responses.success(res, 'user updated')(user);
   } catch (err) {
-    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+    responses.error(
+      res,
+      422,
+      'Unprocessable Entity',
+      errors.getMessage(err),
+    )(err);
   }
 };
 
@@ -56,7 +66,12 @@ exports.delete = async (req, res) => {
     result.id = req.model.id;
     responses.success(res, 'user deleted')(result);
   } catch (err) {
-    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+    responses.error(
+      res,
+      422,
+      'Unprocessable Entity',
+      errors.getMessage(err),
+    )(err);
   }
 };
 
@@ -70,7 +85,12 @@ exports.stats = async (req, res) => {
   if (!data.err) {
     responses.success(res, 'users stats')(data);
   } else {
-    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(data.err))(data.err);
+    responses.error(
+      res,
+      422,
+      'Unprocessable Entity',
+      errors.getMessage(data.err),
+    )(data.err);
   }
 };
 
@@ -84,7 +104,13 @@ exports.stats = async (req, res) => {
 exports.userByID = async (req, res, next, id) => {
   try {
     const user = await UserService.getBrut({ id });
-    if (!user) responses.error(res, 404, 'Not Found', 'No User with that identifier has been found')();
+    if (!user)
+      responses.error(
+        res,
+        404,
+        'Not Found',
+        'No User with that identifier has been found',
+      )();
     else {
       req.model = user;
       next();

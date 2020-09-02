@@ -12,15 +12,16 @@ module.exports = (app) => {
   require('./users.routes.js')(app);
 
   // stats
-  app.route('/api/users/stats').all(policy.isAllowed)
-    .get(admin.stats);
+  app.route('/api/users/stats').all(policy.isAllowed).get(admin.stats);
 
   // Users collection routes
-  app.route('/api/users')
+  app
+    .route('/api/users')
     .get(passport.authenticate('jwt'), policy.isAllowed, admin.list); // list
 
   // Single user routes
-  app.route('/api/users/:userId')
+  app
+    .route('/api/users/:userId')
     .get(admin.get) // get
     .put(passport.authenticate('jwt'), policy.isAllowed, admin.update) // update
     .delete(passport.authenticate('jwt'), policy.isAllowed, admin.delete); // delete

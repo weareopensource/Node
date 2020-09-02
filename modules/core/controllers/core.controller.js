@@ -18,7 +18,12 @@ exports.releases = async (req, res) => {
     const releases = await CoreService.releases();
     responses.success(res, 'releases')(releases);
   } catch (err) {
-    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+    responses.error(
+      res,
+      422,
+      'Unprocessable Entity',
+      errors.getMessage(err),
+    )(err);
   }
 };
 
@@ -32,6 +37,11 @@ exports.changelogs = async (req, res) => {
     const changelogs = await CoreService.changelogs();
     responses.success(res, 'changelogs')(changelogs);
   } catch (err) {
-    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+    responses.error(
+      res,
+      422,
+      'Unprocessable Entity',
+      errors.getMessage(err),
+    )(err);
   }
 };

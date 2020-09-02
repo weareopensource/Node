@@ -12,12 +12,16 @@ const uploads = require('../controllers/uploads.controller');
  */
 module.exports = (app) => {
   // classic crud
-  app.route('/api/uploads/:uploadName').all(passport.authenticate('jwt'), policy.isAllowed)
+  app
+    .route('/api/uploads/:uploadName')
+    .all(passport.authenticate('jwt'), policy.isAllowed)
     .get(uploads.get)
     .delete(policy.isOwner, uploads.delete); // delete
 
   // classic crud
-  app.route('/api/uploads/images/:imageName').all(passport.authenticate('jwt'), policy.isAllowed)
+  app
+    .route('/api/uploads/images/:imageName')
+    .all(passport.authenticate('jwt'), policy.isAllowed)
     .get(uploads.getSharp);
 
   // Finish by binding the task middleware

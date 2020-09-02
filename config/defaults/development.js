@@ -1,7 +1,8 @@
 module.exports = {
   app: {
     title: 'WeAreOpenSource Node - Development Environment',
-    description: 'Node - Boilerplate Back : Express, Jwt, Mongo, Sequelize (Beta) ',
+    description:
+      'Node - Boilerplate Back : Express, Jwt, Mongo, Sequelize (Beta) ',
     keywords: 'node, express, mongo, jwt, sequelize, stack, boilerplate',
     googleAnalyticsTrackingID: 'WAOS_NODE_app_googleAnalyticsTrackingID',
     contact: 'waos.me@gmail.com',
@@ -44,7 +45,8 @@ module.exports = {
     // logging with Morgan - https://github.com/expressjs/morgan
     // Can specify one of 'combined', 'common', 'dev', 'short', 'tiny', 'custom'
     format: 'custom',
-    pattern: ':id :email :method :url :status :response-time ms - :res[content-length]', // only for custom format
+    pattern:
+      ':id :email :method :url :status :response-time ms - :res[content-length]', // only for custom format
     fileLogger: {
       directoryPath: process.cwd(),
       fileName: 'app.log',
@@ -78,25 +80,42 @@ module.exports = {
     credentials: true,
   },
   domain: '',
-  repos: [{ // generate releases and changelogs list auto /api/core/changelogs /api/core/releases
-    title: 'Node',
-    owner: 'weareopensource',
-    repo: 'node',
-    changelog: 'CHANGELOG.md',
-    token: null,
-  }, {
-    title: 'Vue',
-    owner: 'weareopensource',
-    repo: 'vue',
-    changelog: 'CHANGELOG.md',
-    token: null,
-  }],
+  repos: [
+    {
+      // generate releases and changelogs list auto /api/core/changelogs /api/core/releases
+      title: 'Node',
+      owner: 'weareopensource',
+      repo: 'node',
+      changelog: 'CHANGELOG.md',
+      token: null,
+    },
+    {
+      title: 'Vue',
+      owner: 'weareopensource',
+      repo: 'vue',
+      changelog: 'CHANGELOG.md',
+      token: null,
+    },
+  ],
   // Data filter whitelist & Blacklist
-  blacklists: {
-  },
+  blacklists: {},
   whitelists: {
     users: {
-      default: ['_id', 'id', 'firstName', 'lastName', 'bio', 'email', 'avatar', 'roles', 'provider', 'updatedAt', 'createdAt', 'resetPasswordToken', 'resetPasswordExpires'],
+      default: [
+        '_id',
+        'id',
+        'firstName',
+        'lastName',
+        'bio',
+        'email',
+        'avatar',
+        'roles',
+        'provider',
+        'updatedAt',
+        'createdAt',
+        'resetPasswordToken',
+        'resetPasswordExpires',
+      ],
       update: ['firstName', 'lastName', 'bio', 'email', 'avatar'],
       updateAdmin: ['firstName', 'lastName', 'bio', 'email', 'avatar', 'roles'],
       recover: ['password', 'resetPasswordToken', 'resetPasswordExpires'],
@@ -104,7 +123,8 @@ module.exports = {
     },
   },
   uploads: {
-    sharp: { // default sharp settings for all uploads
+    sharp: {
+      // default sharp settings for all uploads
       blur: 8,
     },
     avatar: {
@@ -120,7 +140,13 @@ module.exports = {
   },
   // zxcvbn is used to manage password security
   zxcvbn: {
-    forbiddenPasswords: ['12345678', 'azertyui', 'qwertyui', 'azertyuiop', 'qwertyuiop'], // passwords forbidden
+    forbiddenPasswords: [
+      '12345678',
+      'azertyui',
+      'qwertyui',
+      'azertyuiop',
+      'qwertyuiop',
+    ], // passwords forbidden
     minSize: 8, // min password size
     maxSize: 126, // max password size
     minimumScore: 3, // min password complexity score
@@ -145,8 +171,10 @@ module.exports = {
   },
   microsoft: {
     clientId: 'WAOS_NODE_microsoft_clientId',
-    issuer: 'https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0',
-    discovery: 'https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration',
+    issuer:
+      'https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0',
+    discovery:
+      'https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration',
     //    issuer: 'WAOS_NODE_microsoft_issuer',
     //    discovery: 'WAOS_NODE_microsoft_discovery'
   },
@@ -166,13 +194,16 @@ module.exports = {
     seed: true,
     options: {
       logResults: true,
-      seedTasks: [{
-        title: 'title1',
-        description: 'do something about something else',
-      }, {
-        title: 'title2',
-        description: 'do something about something else',
-      }],
+      seedTasks: [
+        {
+          title: 'title1',
+          description: 'do something about something else',
+        },
+        {
+          title: 'title2',
+          description: 'do something about something else',
+        },
+      ],
       seedUser: {
         provider: 'local',
         email: 'seeduser@localhost.com',

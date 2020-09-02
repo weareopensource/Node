@@ -199,7 +199,8 @@ describe('User Schema Tests :', () => {
     });
 
     test('should allow a difficult password with a score of 4 with zxcvbn- "WeAreOpenSource"', (done) => {
-      user.password = 'Open-Source Stack Solution For WeAreOpenSource Applications';
+      user.password =
+        'Open-Source Stack Solution For WeAreOpenSource Applications';
 
       const result = schema.User.validate(user, options);
       expect(typeof result).toBe('object');
@@ -253,7 +254,8 @@ describe('User Schema Tests :', () => {
     });
 
     test('should not allow a password greater than 128 characters long.', (done) => {
-      user.password = ')!/uLT="lh&:`6X!]|15o!$!TJf,.13l?vG].-j],lFPe/QhwN#{Z<[*1nX@n1^?WW-%_.*D)m$toB+N7z}kcN#B_d(f41h%w@0F!]igtSQ1gl~6sEV&r~}~1ub>If1c+';
+      user.password =
+        ')!/uLT="lh&:`6X!]|15o!$!TJf,.13l?vG].-j],lFPe/QhwN#{Z<[*1nX@n1^?WW-%_.*D)m$toB+N7z}kcN#B_d(f41h%w@0F!]igtSQ1gl~6sEV&r~}~1ub>If1c+';
 
       const result = schema.User.validate(user, options);
       expect(typeof result).toBe('object');
@@ -345,8 +347,8 @@ describe('User Schema Tests :', () => {
     });
 
     /* eslint no-useless-escape: 0 */
-    test('should not allow doudble quote characters in email address - "abc\"def@abc.com"', (done) => {
-      user.email = 'abc\"def@abc.com';
+    test('should not allow doudble quote characters in email address - "abc"def@abc.com"', (done) => {
+      user.email = 'abc"def@abc.com';
 
       const result = schema.User.validate(user, options);
       expect(typeof result).toBe('object');
@@ -364,7 +366,7 @@ describe('User Schema Tests :', () => {
     });
 
     test('should allow single quote characters in email address - "abc\'def@abc.com"', (done) => {
-      user.email = 'abc\'def@abc.com';
+      user.email = "abc'def@abc.com";
 
       const result = schema.User.validate(user, options);
       expect(typeof result).toBe('object');

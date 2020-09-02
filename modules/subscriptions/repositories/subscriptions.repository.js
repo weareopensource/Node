@@ -40,7 +40,8 @@ exports.update = (subscription) => new Subscription(subscription).save();
  * @param {Object} subscription
  * @return {Object} confirmation of delete
  */
-exports.delete = (subscription) => Subscription.deleteOne({ _id: subscription.id }).exec();
+exports.delete = (subscription) =>
+  Subscription.deleteOne({ _id: subscription.id }).exec();
 
 /**
  * @desc Function to delete subscriptions of one user in db
@@ -57,16 +58,19 @@ exports.deleteMany = (filter) => {
  * @param {[String]} filters
  * @return {Object} subscriptions
  */
-exports.import = (subscriptions, filters) => Subscription.bulkWrite(subscriptions.map((subscription) => {
-  const filter = {};
-  filters.forEach((value) => {
-    filter[value] = subscription[value];
-  });
-  return {
-    updateOne: {
-      filter,
-      update: subscription,
-      upsert: true,
-    },
-  };
-}));
+exports.import = (subscriptions, filters) =>
+  Subscription.bulkWrite(
+    subscriptions.map((subscription) => {
+      const filter = {};
+      filters.forEach((value) => {
+        filter[value] = subscription[value];
+      });
+      return {
+        updateOne: {
+          filter,
+          update: subscription,
+          upsert: true,
+        },
+      };
+    }),
+  );

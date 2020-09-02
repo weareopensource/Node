@@ -7,13 +7,17 @@ const rp = require('request-promise');
 const UserRepository = require('../repositories/user.repository');
 
 const client = new OAuth2Client(config.google.clientId);
-const microsoftValidator = rp.get(config.microsoft.discovery)
+const microsoftValidator = rp
+  .get(config.microsoft.discovery)
   .then((res) => JSON.parse(res))
-  .then(({ jwks_uri: jwksUri }) => new IdTokenVerifier({
-    issuer: config.microsoft.issuer,
-    jwksURI: jwksUri,
-    audience: config.microsoft.clientId,
-  }));
+  .then(
+    ({ jwks_uri: jwksUri }) =>
+      new IdTokenVerifier({
+        issuer: config.microsoft.issuer,
+        jwksURI: jwksUri,
+        audience: config.microsoft.clientId,
+      }),
+  );
 
 /**
  * @desc Function to verify Google Token
@@ -46,20 +50,19 @@ const verifyGoogleToken = async (idToken) => {
 const verifyMicrosoftToken = async (idToken) => {
   const validator = await microsoftValidator;
   return new Promise((resolve, reject) => {
-    validator.verify(idToken, validator.decode(idToken)
-      .payload.nonce, (err, {
-      sub,
-      name,
-      preferred_username: preferredUsername,
-    }) => {
-      if (err) return reject(err);
-      return resolve({
-        sub,
-        firstName: name,
-        email: preferredUsername,
-        provider: 'microsoft',
-      });
-    });
+    validator.verify(
+      idToken,
+      validator.decode(idToken).payload.nonce,
+      (err, { sub, name, preferred_username: preferredUsername }) => {
+        if (err) return reject(err);
+        return resolve({
+          sub,
+          firstName: name,
+          email: preferredUsername,
+          provider: 'microsoft',
+        });
+      },
+    );
   }).catch(console.log);
 };
 

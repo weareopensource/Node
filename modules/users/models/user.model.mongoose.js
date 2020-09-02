@@ -9,28 +9,31 @@ mongoose.Promise = Promise;
 /**
  * User Schema
  */
-const UserMongoose = new Schema({
-  sub: String,
-  firstName: String,
-  lastName: String,
-  bio: String,
-  email: {
-    type: String,
-    unique: 'Email already exists',
+const UserMongoose = new Schema(
+  {
+    sub: String,
+    firstName: String,
+    lastName: String,
+    bio: String,
+    email: {
+      type: String,
+      unique: 'Email already exists',
+    },
+    avatar: String,
+    roles: [String],
+    /* Provider */
+    provider: String,
+    providerData: {},
+    additionalProvidersData: {},
+    /* Password */
+    password: String,
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
   },
-  avatar: String,
-  roles: [String],
-  /* Provider */
-  provider: String,
-  providerData: {},
-  additionalProvidersData: {},
-  /* Password */
-  password: String,
-  resetPasswordToken: String,
-  resetPasswordExpires: Date,
-}, {
-  timestamps: true,
-});
+  {
+    timestamps: true,
+  },
+);
 
 // add virtual id field (FIXME mongoose.virtual ko es6)
 function addID() {

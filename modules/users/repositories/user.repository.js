@@ -9,7 +9,8 @@ const User = mongoose.model('User');
  * @desc Function to get all user in db
  * @return {Array} All users
  */
-exports.list = () => User.find({}, '-password -providerData').sort('-createdAt').exec();
+exports.list = () =>
+  User.find({}, '-password -providerData').sort('-createdAt').exec();
 
 /**
  * @desc Function to create a user in db
@@ -24,7 +25,8 @@ exports.create = (user) => new User(user).save();
  * @return {Object} user
  */
 exports.get = (user) => {
-  if (user.id && mongoose.Types.ObjectId.isValid(user.id)) return User.findOne({ _id: user.id }).exec();
+  if (user.id && mongoose.Types.ObjectId.isValid(user.id))
+    return User.findOne({ _id: user.id }).exec();
   if (user.email) return User.findOne({ email: user.email }).exec();
   return null;
 };
@@ -49,7 +51,8 @@ exports.update = (user) => new User(user).save();
  * @return {Object} confirmation of delete
  */
 exports.delete = async (user) => {
-  if (user.id && mongoose.Types.ObjectId.isValid(user.id)) return User.deleteOne({ _id: user.id }).exec();
+  if (user.id && mongoose.Types.ObjectId.isValid(user.id))
+    return User.deleteOne({ _id: user.id }).exec();
   if (user.email) return User.deleteOne({ email: user.email }).exec();
   return null;
 };
@@ -66,16 +69,19 @@ exports.stats = () => User.countDocuments();
  * @param {[String]} filters
  * @return {Object} locations
  */
-exports.import = (users, filters) => User.bulkWrite(users.map((user) => {
-  const filter = {};
-  filters.forEach((value) => {
-    filter[value] = user[value];
-  });
-  return {
-    updateOne: {
-      filter,
-      update: user,
-      upsert: true,
-    },
-  };
-}));
+exports.import = (users, filters) =>
+  User.bulkWrite(
+    users.map((user) => {
+      const filter = {};
+      filters.forEach((value) => {
+        filter[value] = user[value];
+      });
+      return {
+        updateOne: {
+          filter,
+          update: user,
+          upsert: true,
+        },
+      };
+    }),
+  );

@@ -14,7 +14,11 @@ const Uploads = mongoose.model('Uploads');
  * @param {Object} Filter
  * @return {Array} uploads
  */
-exports.list = (filter) => Uploads.find(filter).select('filename uploadDate contentType').sort('-createdAt').exec();
+exports.list = (filter) =>
+  Uploads.find(filter)
+    .select('filename uploadDate contentType')
+    .sort('-createdAt')
+    .exec();
 
 /**
  * @desc Function to get an upload from db
@@ -36,7 +40,8 @@ exports.getStream = (upload) => Attachment.read(upload);
  * @param {Object} update
  * @return {Object} upload updated
  */
-exports.update = (id, update) => Uploads.findOneAndUpdate({ _id: id }, update, { new: true }).exec();
+exports.update = (id, update) =>
+  Uploads.findOneAndUpdate({ _id: id }, update, { new: true }).exec();
 
 /**
  * @desc Function to delete an upload from db
@@ -44,10 +49,15 @@ exports.update = (id, update) => Uploads.findOneAndUpdate({ _id: id }, update, {
  * @return {Object} confirmation of delete
  */
 exports.delete = async (upload) => {
-  if (!upload._id) upload = await Uploads.findOne({ filename: upload.filename }).exec();
+  if (!upload._id)
+    upload = await Uploads.findOne({ filename: upload.filename }).exec();
   if (upload) {
     Attachment.unlink(upload._id, (err, unlinked) => {
-      if (err) throw new AppError('Upload: delete error', { code: 'REPOSITORY_ERROR', details: err });
+      if (err)
+        throw new AppError('Upload: delete error', {
+          code: 'REPOSITORY_ERROR',
+          details: err,
+        });
       return unlinked;
     });
   }
@@ -62,7 +72,11 @@ exports.deleteMany = async (filter) => {
   const uploads = await this.list(filter);
   uploads.forEach((upload) => {
     Attachment.unlink(upload._id, (err, unlinked) => {
-      if (err) throw new AppError('Upload: delete error', { code: 'REPOSITORY_ERROR', details: err });
+      if (err)
+        throw new AppError('Upload: delete error', {
+          code: 'REPOSITORY_ERROR',
+          details: err,
+        });
       return unlinked;
     });
   });
@@ -77,31 +91,33 @@ exports.deleteMany = async (filter) => {
  * @return {Object} confirmation of delete
  */
 exports.purge = async (kind, collection, key) => {
-  const toDelete = await Uploads.aggregate(
-    [
-      {
-        $match: {
-          'metadata.kind': kind,
-        },
+  const toDelete = await Uploads.aggregate([
+    {
+      $match: {
+        'metadata.kind': kind,
       },
-      {
-        $lookup: {
-          from: collection,
-          localField: 'filename',
-          foreignField: key,
-          as: 'references',
-        },
+    },
+    {
+      $lookup: {
+        from: collection,
+        localField: 'filename',
+        foreignField: key,
+        as: 'references',
       },
-      {
-        $match: {
-          references: [],
-        },
+    },
+    {
+      $match: {
+        references: [],
       },
-    ],
-  );
+    },
+  ]);
   toDelete.forEach(async (id) => {
     Attachment.unlink(id, (err, unlinked) => {
-      if (err) throw new AppError('Upload: delete error', { code: 'REPOSITORY_ERROR', details: err });
+      if (err)
+        throw new AppError('Upload: delete error', {
+          code: 'REPOSITORY_ERROR',
+          details: err,
+        });
       return unlinked;
     });
   });
@@ -122,17 +138,19 @@ exports.import = (uploads, filters, collection) => {
   } catch (error) {
     model = mongoose.model(collection, _schema);
   }
-  return model.bulkWrite(uploads.map((upload) => {
-    const filter = {};
-    filters.forEach((value) => {
-      filter[value] = upload[value];
-    });
-    return {
-      updateOne: {
-        filter,
-        update: upload,
-        upsert: true,
-      },
-    };
-  }));
+  return model.bulkWrite(
+    uploads.map((upload) => {
+      const filter = {};
+      filters.forEach((value) => {
+        filter[value] = upload[value];
+      });
+      return {
+        updateOne: {
+          filter,
+          update: upload,
+          upsert: true,
+        },
+      };
+    }),
+  );
 };

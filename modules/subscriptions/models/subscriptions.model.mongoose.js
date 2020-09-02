@@ -8,15 +8,18 @@ const Schema = mongoose.Schema;
 /**
  * Data Model Mongoose
  */
-const SubscriptionMongoose = new Schema({
-  email: {
-    type: String,
-    unique: 'Email already exists',
+const SubscriptionMongoose = new Schema(
+  {
+    email: {
+      type: String,
+      unique: 'Email already exists',
+    },
+    news: Boolean,
   },
-  news: Boolean,
-}, {
-  timestamps: true,
-});
+  {
+    timestamps: true,
+  },
+);
 
 /**
  * @desc Function to add id (+ _id) to all objects

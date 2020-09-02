@@ -94,9 +94,21 @@ exports.search = async (input) => {
  * @return {Promise} user -
  */
 exports.update = async (user, body, option) => {
-  if (!option) user = _.assignIn(user, removeSensitive(body, config.whitelists.users.update));
-  else if (option === 'admin') user = _.assignIn(user, removeSensitive(body, config.whitelists.users.updateAdmin));
-  else if (option === 'recover') user = _.assignIn(user, removeSensitive(body, config.whitelists.users.recover));
+  if (!option)
+    user = _.assignIn(
+      user,
+      removeSensitive(body, config.whitelists.users.update),
+    );
+  else if (option === 'admin')
+    user = _.assignIn(
+      user,
+      removeSensitive(body, config.whitelists.users.updateAdmin),
+    );
+  else if (option === 'recover')
+    user = _.assignIn(
+      user,
+      removeSensitive(body, config.whitelists.users.recover),
+    );
 
   user.updated = Date.now();
 
@@ -131,8 +143,10 @@ exports.stats = async () => {
  */
 exports.authenticate = async (email, password) => {
   const user = await UserRepository.get({ email });
-  if (!user) throw new AppError('invalid user or password.', { code: 'SERVICE_ERROR' });
-  if (await this.comparePassword(password, user.password)) return removeSensitive(user);
+  if (!user)
+    throw new AppError('invalid user or password.', { code: 'SERVICE_ERROR' });
+  if (await this.comparePassword(password, user.password))
+    return removeSensitive(user);
   throw new AppError('invalid user or password.', { code: 'SERVICE_ERROR' });
 };
 
@@ -142,7 +156,8 @@ exports.authenticate = async (email, password) => {
  * @param {String} storedPassword
  * @return {Boolean} true/false
  */
-exports.comparePassword = async (userPassword, storedPassword) => bcrypt.compare(String(userPassword), String(storedPassword));
+exports.comparePassword = async (userPassword, storedPassword) =>
+  bcrypt.compare(String(userPassword), String(storedPassword));
 
 /**
  * @desc Function to hash passwords
@@ -183,7 +198,7 @@ exports.generateRandomPassphrase = () => {
   while (password.length < 20 || repeatingCharacters.test(password)) {
     // build the random password
     password = generatePassword.generate({
-      length: Math.floor(Math.random() * (20)) + 20, // randomize length between 20 and 40 characters
+      length: Math.floor(Math.random() * 20) + 20, // randomize length between 20 and 40 characters
       numbers: true,
       symbols: false,
       uppercase: true,

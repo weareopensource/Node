@@ -6,18 +6,18 @@ Welcome to the Node wiki! Here you will find various information about this repo
 
 #### Node Wiki
 
-* [Api](https://github.com/weareopensource/Node/blob/master/WIKI.md#API)
-  * [Success](https://github.com/weareopensource/Node/blob/master/WIKI.md#Success)
-  * [Errors](https://github.com/weareopensource/Node/blob/master/WIKI.md#Errors)
-  * [Authentification](https://github.com/weareopensource/Node/blob/master/WIKI.md#Authentification)
-* [SSL](https://github.com/weareopensource/Node/blob/master/WIKI.md#SSL)
+- [Api](https://github.com/weareopensource/Node/blob/master/WIKI.md#API)
+  - [Success](https://github.com/weareopensource/Node/blob/master/WIKI.md#Success)
+  - [Errors](https://github.com/weareopensource/Node/blob/master/WIKI.md#Errors)
+  - [Authentification](https://github.com/weareopensource/Node/blob/master/WIKI.md#Authentification)
+- [SSL](https://github.com/weareopensource/Node/blob/master/WIKI.md#SSL)
 
 #### WAOS
 
-* [Mindset and what we would like to create](https://weareopensource.me/)
-* [How to start a project and maintain updates from stacks](https://blog.weareopensource.me/start-a-project-and-maintain-updates/)
-* [Global roadmap and  ideas about stacks](https://github.com/weareopensource/weareopensource.github.io/projects/1)
-* [How to contribute and help us](https://blog.weareopensource.me/how-to-contribute/)
+- [Mindset and what we would like to create](https://weareopensource.me/)
+- [How to start a project and maintain updates from stacks](https://blog.weareopensource.me/start-a-project-and-maintain-updates/)
+- [Global roadmap and ideas about stacks](https://github.com/weareopensource/weareopensource.github.io/projects/1)
+- [How to contribute and help us](https://blog.weareopensource.me/how-to-contribute/)
 
 # Node WIKI
 
@@ -118,7 +118,7 @@ As explained in Readme, we are curently using JWT Stateless, the server is unawa
 
 #### How to manage authentification
 
-* **First**, you need to signin (or signup) with a post request :
+- **First**, you need to signin (or signup) with a post request :
 
 Post : `http://localhost:3000/api/auth/signin`
 with json body :
@@ -158,9 +158,9 @@ with and header set Cookie like this :
 Set-Cookie →TOKEN=aaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.ccccccc; Path=/; HttpOnly
 ```
 
-* **Second**, you need to set this cookie for api request, it's ok !
+- **Second**, you need to set this cookie for api request, it's ok !
 
-* **third**, You can renew the token before it expires as you wish, thanks to the signin you know the expiration date. You can also check the status of the token regularly, via `/users/me` for example. Or simply redirect the user to the sign once the token has expired.
+- **third**, You can renew the token before it expires as you wish, thanks to the signin you know the expiration date. You can also check the status of the token regularly, via `/users/me` for example. Or simply redirect the user to the sign once the token has expired.
 
 #### Jwt configuration
 
@@ -201,18 +201,18 @@ We recommend this method, however we will not explain it. Many [tutorials](https
 
 To run your application in a secure manner with express you'll need to use OpenSSL and generate a set of self-signed certificates.
 
-* Unix-based users can use the following command:
+- Unix-based users can use the following command:
 
- ```bash
- npm run generate-ssl-certs
- ```
+```bash
+npm run generate-ssl-certs
+```
 
-this will create cert and key files and place them in *config/sslcerts* folder.
+this will create cert and key files and place them in _config/sslcerts_ folder.
 
-* Windows users can follow instructions found [here](http://www.websense.com/support/article/kbarticle/How-to-use-OpenSSL-and-Microsoft-Certification-Authority).
-After you've generated the key and certificate, place them in the *config/sslcerts* folder.
+- Windows users can follow instructions found [here](http://www.websense.com/support/article/kbarticle/How-to-use-OpenSSL-and-Microsoft-Certification-Authority).
+  After you've generated the key and certificate, place them in the _config/sslcerts_ folder.
 
-Finally, uncomment and activate ssl in configuration (*config/defaults/development.js*) :
+Finally, uncomment and activate ssl in configuration (_config/defaults/development.js_) :
 
 ```
 // SSL on express server (FYI : Wiki)

@@ -29,7 +29,9 @@ describe('Tasks CRUD Tests :', () => {
       await mongooseService.connect();
       await multerService.storage();
       await mongooseService.loadModels();
-      UserService = require(path.resolve('./modules/users/services/user.service'));
+      UserService = require(path.resolve(
+        './modules/users/services/user.service',
+      ));
       // init application
       app = express.init();
       agent = request.agent(app);
@@ -40,7 +42,7 @@ describe('Tasks CRUD Tests :', () => {
 
   describe('Logged', () => {
     beforeEach(async () => {
-    // user credentials
+      // user credentials
       credentials = {
         email: 'task@test.com',
         password: 'W@os.jsI$Aw3$0m3',
@@ -57,7 +59,8 @@ describe('Tasks CRUD Tests :', () => {
 
       // add user
       try {
-        const result = await agent.post('/api/auth/signup')
+        const result = await agent
+          .post('/api/auth/signup')
           .send(_user)
           .expect(200);
         user = result.body.user;
@@ -67,17 +70,21 @@ describe('Tasks CRUD Tests :', () => {
       }
 
       // tasks
-      _tasks = [{
-        title: 'title1',
-        description: 'do something about something else',
-      }, {
-        title: 'title2',
-        description: 'do something about something else',
-      }];
+      _tasks = [
+        {
+          title: 'title1',
+          description: 'do something about something else',
+        },
+        {
+          title: 'title2',
+          description: 'do something about something else',
+        },
+      ];
 
       // add a task
       try {
-        const result = await agent.post('/api/tasks')
+        const result = await agent
+          .post('/api/tasks')
           .send(_tasks[0])
           .expect(200);
         task1 = result.body.data;
@@ -90,7 +97,8 @@ describe('Tasks CRUD Tests :', () => {
     test('should be able to save a task', async () => {
       // add task
       try {
-        const result = await agent.post('/api/tasks')
+        const result = await agent
+          .post('/api/tasks')
           .send(_tasks[1])
           .expect(200);
         task2 = result.body.data;
@@ -108,7 +116,8 @@ describe('Tasks CRUD Tests :', () => {
     test('should not be able to save a task with bad model', async () => {
       // add task
       try {
-        const result = await agent.post('/api/tasks')
+        const result = await agent
+          .post('/api/tasks')
           .send({
             title: 2,
             description: 'do something about something else',
@@ -126,8 +135,7 @@ describe('Tasks CRUD Tests :', () => {
     test('should be able to get a task', async () => {
       // delete task
       try {
-        const result = await agent.get(`/api/tasks/${task2.id}`)
-          .expect(200);
+        const result = await agent.get(`/api/tasks/${task2.id}`).expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('task get');
         expect(result.body.data.id).toBe(task2.id);
@@ -142,11 +150,12 @@ describe('Tasks CRUD Tests :', () => {
     test('should not be able to get a task with a bad mongoose id', async () => {
       // delete task
       try {
-        const result = await agent.get('/api/tasks/test')
-          .expect(404);
+        const result = await agent.get('/api/tasks/test').expect(404);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toBe('Not Found');
-        expect(result.body.description).toBe('No Task with that identifier has been found');
+        expect(result.body.description).toBe(
+          'No Task with that identifier has been found',
+        );
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -156,11 +165,14 @@ describe('Tasks CRUD Tests :', () => {
     test('should not be able to get a task with a bad invented id', async () => {
       // delete task
       try {
-        const result = await agent.get('/api/tasks/waos56397898004243871228')
+        const result = await agent
+          .get('/api/tasks/waos56397898004243871228')
           .expect(404);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toBe('Not Found');
-        expect(result.body.description).toBe('No Task with that identifier has been found');
+        expect(result.body.description).toBe(
+          'No Task with that identifier has been found',
+        );
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -170,7 +182,8 @@ describe('Tasks CRUD Tests :', () => {
     test('should be able to update a task', async () => {
       // edit task
       try {
-        const result = await agent.put(`/api/tasks/${task2.id}`)
+        const result = await agent
+          .put(`/api/tasks/${task2.id}`)
           .send(_tasks[0])
           .expect(200);
         expect(result.body.type).toBe('success');
@@ -187,12 +200,15 @@ describe('Tasks CRUD Tests :', () => {
     test('should not be able to update a task with a bad id', async () => {
       // edit task
       try {
-        const result = await agent.put('/api/tasks/test')
+        const result = await agent
+          .put('/api/tasks/test')
           .send(_tasks[0])
           .expect(404);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toBe('Not Found');
-        expect(result.body.description).toBe('No Task with that identifier has been found');
+        expect(result.body.description).toBe(
+          'No Task with that identifier has been found',
+        );
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -202,8 +218,7 @@ describe('Tasks CRUD Tests :', () => {
     test('should be able to delete a task', async () => {
       // delete task
       try {
-        const result = await agent.delete(`/api/tasks/${task2.id}`)
-          .expect(200);
+        const result = await agent.delete(`/api/tasks/${task2.id}`).expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('task deleted');
         expect(result.body.data.id).toBe(task2.id);
@@ -214,8 +229,7 @@ describe('Tasks CRUD Tests :', () => {
       }
       // check delete
       try {
-        await agent.get(`/api/tasks/${task2.id}`)
-          .expect(404);
+        await agent.get(`/api/tasks/${task2.id}`).expect(404);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -225,12 +239,15 @@ describe('Tasks CRUD Tests :', () => {
     test('should not be able to delete a task with a bad id', async () => {
       // edit task
       try {
-        const result = await agent.delete(`/api/tasks/${task2.id}`)
+        const result = await agent
+          .delete(`/api/tasks/${task2.id}`)
           .send(_tasks[0])
           .expect(404);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toBe('Not Found');
-        expect(result.body.description).toBe('No Task with that identifier has been found');
+        expect(result.body.description).toBe(
+          'No Task with that identifier has been found',
+        );
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -240,8 +257,7 @@ describe('Tasks CRUD Tests :', () => {
     test('should be able to get list of tasks', async () => {
       // get list
       try {
-        const result = await agent.get('/api/tasks')
-          .expect(200);
+        const result = await agent.get('/api/tasks').expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('task list');
         expect(result.body.data).toBeInstanceOf(Array);
@@ -255,8 +271,7 @@ describe('Tasks CRUD Tests :', () => {
     afterEach(async () => {
       // del task
       try {
-        await agent.delete(`/api/tasks/${task1.id}`)
-          .expect(200);
+        await agent.delete(`/api/tasks/${task1.id}`).expect(200);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -273,7 +288,8 @@ describe('Tasks CRUD Tests :', () => {
   describe('Logout', () => {
     test('should not be able to save a task', async () => {
       try {
-        const result = await agent.post('/api/tasks')
+        const result = await agent
+          .post('/api/tasks')
           .send(_tasks[0])
           .expect(401);
         expect(result.error.text).toBe('Unauthorized');
@@ -286,8 +302,7 @@ describe('Tasks CRUD Tests :', () => {
     test('should be able to get list of tasks', async () => {
       // get list
       try {
-        const result = await agent.get('/api/tasks')
-          .expect(200);
+        const result = await agent.get('/api/tasks').expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('task list');
         expect(result.body.data).toBeInstanceOf(Array);
@@ -300,8 +315,7 @@ describe('Tasks CRUD Tests :', () => {
 
     test('should be able to get a tasks stats', async () => {
       try {
-        const result = await agent.get('/api/tasks/stats')
-          .expect(200);
+        const result = await agent.get('/api/tasks/stats').expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('tasks stats');
       } catch (err) {
