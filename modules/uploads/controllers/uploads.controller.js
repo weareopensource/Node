@@ -125,7 +125,7 @@ exports.uploadByImageName = async (req, res, next, uploadImageName) => {
     // return
     req.upload = upload;
     if (upload.metadata && upload.metadata.user) req.isOwner = upload.metadata.user; // user id if we proteck road by isOwner policy
-    req.sharpSize = parseInt(opts[1], 0) || null;
+    req.sharpSize = parseInt(opts[1], 10) || null;
     req.sharpOption = opts[2] || null;
     next();
   } catch (err) {
