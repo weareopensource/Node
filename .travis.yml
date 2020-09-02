@@ -1,24 +1,24 @@
 language: node_js
 node_js:
-- 10
-- 12
-- 13
+  - 10
+  - 12
+  - 13
 os:
-- linux
+  - linux
 cache:
   directories:
-  - node_modules
+    - node_modules
 services:
-- mongodb
+  - mongodb
 install:
-- npm i
+  - npm i
 before_script:
-- npm rebuild bcrypt --update-binary
-- npm run test:coveralls
+  - npm rebuild bcrypt --update-binary
+  - npm run test:coveralls
 jobs:
   include:
-  - stage: allow_failures
-    node_js: 14
+    - stage: allow_failures
+      node_js: 14
 #  - stage: deploy
 #    node_js: lts/*
 #    deploy:
