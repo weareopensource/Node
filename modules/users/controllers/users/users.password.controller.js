@@ -91,7 +91,7 @@ exports.reset = async (req, res) => {
     return res.status(200)
       .cookie('TOKEN', jwt.sign({ userId: user.id }, configuration.jwt.secret, { expiresIn: config.jwt.expiresIn }), { httpOnly: true })
       .json({
-        user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000), type: 'sucess', message: 'Sign in',
+        user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000), type: 'sucess', message: 'Password changed successfully',
       });
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
@@ -131,7 +131,7 @@ exports.updatePassword = async (req, res) => {
     return res.status(200)
       .cookie('TOKEN', jwt.sign({ userId: user.id }, configuration.jwt.secret, { expiresIn: config.jwt.expiresIn }), { httpOnly: true })
       .json({
-        user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000), type: 'sucess', message: 'Sign in',
+        user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000), type: 'sucess', message: 'Password changed successfully',
       });
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
