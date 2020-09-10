@@ -58,7 +58,7 @@
     "bson": "^4.1.0",
     "chalk": "~4.1.0",
     "compression": "^1.7.4",
-    "consolidate": "^0.15.1",
+    "consolidate": "^0.16.0",
     "cookie-parser": "~1.4.5",
     "cors": "^2.8.5",
     "cross-env": "^7.0.2",
