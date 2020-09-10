@@ -26,9 +26,6 @@ const UserSchema = Joi.object().keys({
   email: Joi.string().email(),
   avatar: Joi.string().trim().default(''),
   roles: Joi.array().items(Joi.string().valid(...config.whitelists.users.roles)).min(1).default(['user']),
-  /* Extra */
-  updated: Joi.date(),
-  created: Joi.date(),
   /* Provider */
   provider: Joi.string(),
   providerData: Joi.object(),
@@ -36,8 +33,8 @@ const UserSchema = Joi.object().keys({
   /* Password */
   password: Joi.zxcvbn().strength(config.zxcvbn.minimumScore).min(config.zxcvbn.minSize).max(config.zxcvbn.maxSize)
     .default(''),
-  resetPasswordToken: Joi.string(),
-  resetPasswordExpires: Joi.date(),
+  resetPasswordToken: Joi.string().allow(null),
+  resetPasswordExpires: Joi.date().allow(null),
 });
 
 module.exports = {

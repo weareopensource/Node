@@ -26,6 +26,14 @@ exports.create = (user) => new User(user).save();
 exports.get = (user) => {
   if (user.id && mongoose.Types.ObjectId.isValid(user.id)) return User.findOne({ _id: user.id }).exec();
   if (user.email) return User.findOne({ email: user.email }).exec();
+  if (user.resetPasswordToken) {
+    return User.findOne({
+      resetPasswordToken: user.resetPasswordToken,
+      resetPasswordExpires: {
+        $gt: Date.now(),
+      },
+    }).exec();
+  }
   return null;
 };
 

@@ -98,8 +98,6 @@ exports.update = async (user, body, option) => {
   else if (option === 'admin') user = _.assignIn(user, removeSensitive(body, config.whitelists.users.updateAdmin));
   else if (option === 'recover') user = _.assignIn(user, removeSensitive(body, config.whitelists.users.recover));
 
-  user.updated = Date.now();
-
   const result = await UserRepository.update(user);
   return Promise.resolve(removeSensitive(result));
 };
