@@ -503,7 +503,7 @@ describe('User CRUD Tests :', () => {
         try {
           const result2 = await agent.get(`/api/auth/reset/${result.resetPasswordToken}`)
             .expect(302);
-          expect(result2.headers.location).toBe(`/password/reset/${result.resetPasswordToken}`);
+          expect(result2.headers.location).toBe(`/api/password/reset/${result.resetPasswordToken}`);
         } catch (err) {
           console.log(err);
           expect(err).toBeFalsy();
@@ -541,7 +541,7 @@ describe('User CRUD Tests :', () => {
           const invalidToken = 'someTOKEN1234567890';
           const result2 = await agent.get(`/api/auth/reset/${invalidToken}`)
             .expect(302);
-          expect(result2.headers.location).toBe('/password/reset/invalid');
+          expect(result2.headers.location).toBe('/api/password/reset/invalid');
         } catch (err) {
           console.log(err);
           expect(err).toBeFalsy();

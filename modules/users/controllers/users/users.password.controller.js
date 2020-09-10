@@ -45,7 +45,7 @@ exports.forgot = async (req, res) => {
     subject: 'Password Reset',
     params: {
       displayName: `${user.firstName} ${user.lastName}`,
-      url: `${config.cors.protocol}://${config.cors.host}:${config.cors.port}/auth/password-reset?token=${user.resetPasswordToken}`,
+      url: `${config.cors.origin[0]}/reset?token=${user.resetPasswordToken}`,
       appName: config.app.title,
       appContact: config.app.contact,
     },
@@ -61,16 +61,11 @@ exports.forgot = async (req, res) => {
  */
 exports.validateResetToken = async (req, res) => {
   try {
-    const users = await UserService.search({
-      resetPasswordToken: req.params.token,
-      resetPasswordExpires: {
-        $gt: Date.now(),
-      },
-    });
-    if (users.length === 0) return res.redirect('/password/reset/invalid');
-    res.redirect(`/password/reset/${req.params.token}`);
+    const user = await UserService.getBrut({ resetPasswordToken: req.params.token });
+    if (!user || !user.email) return res.redirect('/api/password/reset/invalid');
+    res.redirect(`/api/password/reset/${req.params.token}`);
   } catch (err) {
-    return res.redirect('/password/reset/invalid');
+    return res.redirect('/api/password/reset/invalid');
   }
 };
 
@@ -85,26 +80,19 @@ exports.reset = async (req, res) => {
   if (!req.body.token || !req.body.newPassword) return responses.error(res, 400, 'Bad Request', 'Password or Token fields must not be blank')();
   // get user by token, update with new password, login again
   try {
-    user = await UserService.search({
-      resetPasswordToken: req.body.token,
-      resetPasswordExpires: {
-        $gt: Date.now(),
-      },
-    });
-    if (user.length !== 1) return responses.error(res, 400, 'Bad Request', 'Password reset token is invalid or has expired.')();
-
+    user = await UserService.getBrut({ resetPasswordToken: req.body.token });
+    if (!user || !user.email) return responses.error(res, 400, 'Bad Request', 'Password reset token is invalid or has expired.')();
     const edit = {
       password: await UserService.hashPassword(req.body.newPassword),
-      resetPasswordToken: undefined,
-      resetPasswordExpires: undefined,
+      resetPasswordToken: null,
+      resetPasswordExpires: null,
     };
-    user = await UserService.update(user[0], edit, 'recover');
-
-    req.login(user, (errLogin) => {
-      if (errLogin) return responses.error(res, 400, 'Bad Request', errors.getMessage(errLogin))(errLogin);
-      user.password = undefined;
-      return responses.success(res, 'password reseted')(user);
-    });
+    user = await UserService.update(user, edit, 'recover');
+    return res.status(200)
+      .cookie('TOKEN', jwt.sign({ userId: user.id }, configuration.jwt.secret, { expiresIn: config.jwt.expiresIn }), { httpOnly: true })
+      .json({
+        user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000), type: 'sucess', message: 'Password changed successfully',
+      });
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
@@ -130,26 +118,21 @@ exports.reset = async (req, res) => {
 exports.updatePassword = async (req, res) => {
   let user;
   let password;
-
   // check input
   if (!req.body.newPassword) return responses.error(res, 400, 'Bad Request', 'Please provide a new password')();
-
   // get user, check password, update user, login again
   try {
     user = await UserService.getBrut({ id: req.user.id });
-    if (!user) return responses.error(res, 400, 'Bad Request', 'User is not found')();
-
+    if (!user || !user.email) return responses.error(res, 400, 'Bad Request', 'User is not found')();
     if (!await UserService.comparePassword(req.body.currentPassword, user.password)) return responses.error(res, 422, 'Unprocessable Entity', 'Current password is incorrect')();
     if (req.body.newPassword !== req.body.verifyPassword) return responses.error(res, 422, 'Unprocessable Entity', 'Passwords do not match')();
-
     password = UserService.checkPassword(req.body.newPassword);
-
     user = await UserService.update(user, { password }, 'recover');
-
-    req.login(user, (errLogin) => {
-      if (errLogin) return responses.error(res, 400, 'Bad Request', errors.getMessage(errLogin))();
-      responses.success(res, 'Password changed successfully')();
-    });
+    return res.status(200)
+      .cookie('TOKEN', jwt.sign({ userId: user.id }, configuration.jwt.secret, { expiresIn: config.jwt.expiresIn }), { httpOnly: true })
+      .json({
+        user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000), type: 'sucess', message: 'Password changed successfully',
+      });
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
