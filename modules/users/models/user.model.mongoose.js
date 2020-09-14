@@ -10,7 +10,6 @@ mongoose.Promise = Promise;
  * User Schema
  */
 const UserMongoose = new Schema({
-  sub: String,
   firstName: String,
   lastName: String,
   bio: String,

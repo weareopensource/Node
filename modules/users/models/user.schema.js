@@ -12,7 +12,6 @@ const config = require(path.resolve('./config'));
  * User Data Schema
  */
 const UserSchema = Joi.object().keys({
-  sub: Joi.string().trim().default(''),
   firstName: Joi.string().alphanum().min(1).max(30)
     .trim()
     .required(),
@@ -29,7 +28,6 @@ const UserSchema = Joi.object().keys({
   /* Provider */
   provider: Joi.string(),
   providerData: Joi.object(),
-  additionalProvidersData: Joi.object(),
   /* Password */
   password: Joi.zxcvbn().strength(config.zxcvbn.minimumScore).min(config.zxcvbn.minSize).max(config.zxcvbn.maxSize)
     .default(''),

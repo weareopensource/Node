@@ -9,7 +9,6 @@ const UserService = require('../../services/user.service');
 const mails = require(path.resolve('./lib/helpers/mails'));
 const errors = require(path.resolve('./lib/helpers/errors'));
 const responses = require(path.resolve('./lib/helpers/responses'));
-const configuration = require(path.resolve('./config'));
 const config = require(path.resolve('./config'));
 
 /**
@@ -29,7 +28,7 @@ exports.forgot = async (req, res) => {
     if (user.provider !== 'local') return responses.error(res, 400, 'Bad Request', `It seems like you signed up using your ${user.provider} account`)();
 
     const edit = {
-      resetPasswordToken: jwt.sign({ exp: Date.now() + 3600000 }, configuration.jwt.secret, { algorithm: 'HS256' }),
+      resetPasswordToken: jwt.sign({ exp: Date.now() + 3600000 }, config.jwt.secret, { algorithm: 'HS256' }),
       resetPasswordExpires: Date.now() + 3600000,
     };
     user = await UserService.update(user, edit, 'recover');
@@ -89,7 +88,7 @@ exports.reset = async (req, res) => {
     };
     user = await UserService.update(user, edit, 'recover');
     return res.status(200)
-      .cookie('TOKEN', jwt.sign({ userId: user.id }, configuration.jwt.secret, { expiresIn: config.jwt.expiresIn }), { httpOnly: true })
+      .cookie('TOKEN', jwt.sign({ userId: user.id }, config.jwt.secret, { expiresIn: config.jwt.expiresIn }), { httpOnly: true })
       .json({
         user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000), type: 'sucess', message: 'Password changed successfully',
       });
@@ -129,7 +128,7 @@ exports.updatePassword = async (req, res) => {
     password = UserService.checkPassword(req.body.newPassword);
     user = await UserService.update(user, { password }, 'recover');
     return res.status(200)
-      .cookie('TOKEN', jwt.sign({ userId: user.id }, configuration.jwt.secret, { expiresIn: config.jwt.expiresIn }), { httpOnly: true })
+      .cookie('TOKEN', jwt.sign({ userId: user.id }, config.jwt.secret, { expiresIn: config.jwt.expiresIn }), { httpOnly: true })
       .json({
         user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000), type: 'sucess', message: 'Password changed successfully',
       });
