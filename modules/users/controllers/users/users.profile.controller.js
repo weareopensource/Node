@@ -2,13 +2,10 @@
  * Module dependencies
  */
 const path = require('path');
-const jwt = require('jsonwebtoken');
 
 const errors = require(path.resolve('./lib/helpers/errors'));
 const responses = require(path.resolve('./lib/helpers/responses'));
-const config = require(path.resolve('./config'));
 const UserService = require('../../services/user.service');
-const oAuthService = require('../../services/user.service');
 
 /**
  * @desc Endpoint to ask the service to update a user
@@ -66,25 +63,4 @@ exports.me = (req, res) => {
     if (req.user.bio) user.bio = req.user.bio;
   }
   return responses.success(res, 'user get')(user);
-};
-
-/**
- * @desc Endpoint to add oAuthProvider
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
-exports.addOAuthProviderUserProfile = async (req, res) => {
-  let user;
-  try {
-    user = await oAuthService.addUser(req.body.provider, req.body.idToken);
-  } catch (err) {
-    return responses.error(res, 304, 'Not Modified', errors.getMessage(err))(err);
-  }
-  if (!user) return responses.error(res, 404, 'Not Found', 'No Oauth found')();
-
-  const token = jwt.sign({ userId: user.id }, config.jwt.secret, { expiresIn: config.jwt.expiresIn });
-
-  res.status(200)
-    .cookie('TOKEN', token, { httpOnly: true })
-    .json({ user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000) });
 };

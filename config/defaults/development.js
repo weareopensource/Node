@@ -6,8 +6,12 @@ module.exports = {
     googleAnalyticsTrackingID: 'WAOS_NODE_app_googleAnalyticsTrackingID',
     contact: 'waos.me@gmail.com',
   },
-  port: 3000,
-  host: 'localhost',
+  api: {
+    protocol: 'http',
+    port: 3000,
+    host: 'localhost',
+    base: 'api',
+  },
   db: {
     uri: 'mongodb://localhost/WaosNodeDev',
     debug: true,
@@ -140,15 +144,11 @@ module.exports = {
       },
     },
   },
-  google: {
-    clientId: 'WAOS_NODE_google_clientId',
-  },
-  microsoft: {
-    clientId: 'WAOS_NODE_microsoft_clientId',
-    issuer: 'https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0',
-    discovery: 'https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration',
-    //    issuer: 'WAOS_NODE_microsoft_issuer',
-    //    discovery: 'WAOS_NODE_microsoft_discovery'
+  oAuth: {
+    google: { // google console / api & service / identifier
+      clientID: null,
+      clientSecret: null,
+    },
   },
   // joi is used to manage schema restrictions, on the top of mongo / orm
   joi: {
