@@ -148,13 +148,13 @@ module.exports = {
     google: { // google console / api & service / identifier
       clientID: null,
       clientSecret: null,
-      callbackUrl: null,
+      callbackURL: null,
     },
     apple: {
       clientID: null, // developer.apple.com service identifier
       teamID: null, // developer.apple.com team identifier
       keyID: null, // developer.apple.com private key identifier
-      callbackUrl: null,
+      callbackURL: null,
       privateKeyLocation: null,
     },
   },

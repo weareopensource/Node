@@ -27,7 +27,9 @@ module.exports = () => {
         {
           clientID: config.oAuth.google.clientID,
           clientSecret: config.oAuth.google.clientSecret,
-          callbackURL: config.oAuth.google.callbackURL ? config.oAuth.google.callbackURL : callbackURL,
+          callbackURL: config.oAuth.google.callbackURL
+            ? config.oAuth.google.callbackURL
+            : callbackURL,
           scope: ['profile', 'email'],
         },
         async (accessToken, refreshToken, profile, cb) => {
