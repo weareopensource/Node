@@ -21,15 +21,14 @@ module.exports = () => {
     config.oAuth.apple &&
     config.oAuth.apple.clientID &&
     config.oAuth.apple.teamID &&
-    config.oAuth.apple.keyID &&
-    config.oAuth.apple.privateKeyLocation
+    config.oAuth.apple.keyID
   ) {
     passport.use(
       new AppleStrategy(
         {
           clientID: config.oAuth.google.clientID,
           teamID: config.oAuth.google.teamID,
-          callbackURL,
+          callbackURL: config.oAuth.google.callbackURL ? config.oAuth.google.callbackURL : callbackURL,
           keyID: config.oAuth.google.keyID,
           scope: ['email', 'name'],
         },
