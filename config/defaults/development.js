@@ -155,6 +155,7 @@ module.exports = {
       teamID: null, // developer.apple.com team identifier
       keyID: null, // developer.apple.com private key identifier
       callbackURL: null,
+      privateKeyLocation: null,
     },
   },
   // joi is used to manage schema restrictions, on the top of mongo / orm
