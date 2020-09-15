@@ -49,8 +49,7 @@ module.exports = () => {
 
           // Set the provider data and include tokens
           const providerData = {};
-          providerData.sub = decodedIdToken.sub;
-          providerData.accessToken = accessToken;
+          providerData.appleProfile = accessToken.appleProfile;
           providerData.refreshToken = refreshToken;
           providerData.decodedIdToken = decodedIdToken;
           // Create the user OAuth profile
