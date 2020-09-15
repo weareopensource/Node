@@ -21,6 +21,9 @@ const UsersSchema = require('../../models/user.schema');
  */
 exports.signup = async (req, res) => {
   try {
+    if (!config.sign.up) {
+      return responses.error(res, 404, 'Error', 'Sign Up actually disabled')();
+    }
     const user = await UserService.create(req.body);
     const token = jwt.sign({ userId: user.id }, config.jwt.secret, {
       expiresIn: config.jwt.expiresIn,
@@ -51,6 +54,9 @@ exports.signup = async (req, res) => {
  * @param {Function} next - Express next middleware function
  */
 exports.signin = async (req, res) => {
+  if (!config.sign.in) {
+    return responses.error(res, 404, 'Error', 'Sign In actually disabled')();
+  }
   const user = req.user;
   const token = jwt.sign({ userId: user.id }, config.jwt.secret, {
     expiresIn: config.jwt.expiresIn,
