@@ -110,27 +110,29 @@ exports.oauthCallback = (req, res, next) => {
  * @param {Object} providerUserProfile
  * @param {Function} done - done
  */
-exports.saveOAuthUserProfile = async (providerUserProfile, provider) => {
+exports.saveOAuthUserProfile = async (userProfile, indentifier, provider) => {
   // check if user exist
   try {
-    const user = await UserService.search({ 'providerData.email': providerUserProfile.email, provider });
-    if (user.length === 1) return user[0];
+    const query = {};
+    query[`providerData.${indentifier}`] = userProfile[indentifier];
+    query.provider = provider;
+    const search = await UserService.search(query);
+    if (search.length === 1) return search[0];
   } catch (err) {
     throw new AppError('saveOAuthUserProfile', { code: 'SERVICE_ERROR', details: err });
   }
   // if no, generate
   try {
     const user = {
-      firstName: providerUserProfile.firstName,
-      lastName: providerUserProfile.lastName,
-      email: providerUserProfile.email,
-      avatar: providerUserProfile.avatar,
-      provider: providerUserProfile.provider,
-      providerData: providerUserProfile.providerData,
+      firstName: userProfile.firstName,
+      lastName: userProfile.lastName,
+      email: userProfile.email,
+      avatar: userProfile.avatar,
+      provider: userProfile.provider,
+      providerData: userProfile.providerData,
     };
     const result = model.getResultFromJoi(user, UsersSchema.User, _.clone(config.joi.validationOptions));
     if (result && result.error) throw new AppError('saveOAuthUserProfile schema validation', { code: 'SERVICE_ERROR', details: result.error });
-    console.log('value', result.value);
     return await UserService.create(result.value);
   } catch (err) {
     throw new AppError('saveOAuthUserProfile', { code: 'SERVICE_ERROR', details: err });
