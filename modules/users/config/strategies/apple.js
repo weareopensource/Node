@@ -36,28 +36,33 @@ module.exports = () => {
             ? config.oAuth.apple.privateKeyLocation
             : null,
           scope: ['email', 'name'],
-          passReqToCallback: false,
+          passReqToCallback: true,
         },
-        async (accessToken, refreshToken, decodedIdToken, profile, cb) => {
+        async (req, accessToken, refreshToken, decodedIdToken, profile, cb) => {
+          console.log('accessToken', accessToken);
+          console.log('refreshToken', refreshToken);
+          console.log('decodedIdToken', decodedIdToken);
+          console.log('profile', profile);
+          console.log('req.appleProfile', req.appleProfile);
+
           // Set the provider data and include tokens
           const providerData = decodedIdToken;
-          providerData.appleProfile = accessToken.appleProfile;
+          providerData.appleProfile = req.appleProfile;
+          providerData.accessToken = accessToken || null;
           providerData.refreshToken = refreshToken || null;
           providerData.profile = profile || null;
           providerData.sub = decodedIdToken.sub;
           // Create the user OAuth profile
           const providerUserProfile = {
             firstName:
-              accessToken.appleProfile && accessToken.appleProfile.name
-                ? accessToken.appleProfile.name.firstName
+              req.appleProfile && req.appleProfile.name
+                ? req.appleProfile.name.firstName
                 : null,
             lastName:
-              accessToken.appleProfile && accessToken.appleProfile.name
-                ? accessToken.appleProfile.name.lastName
+              req.appleProfile && req.appleProfile.name
+                ? req.appleProfile.name.lastName
                 : null,
-            email: accessToken.appleProfile
-              ? accessToken.appleProfile.email
-              : null,
+            email: req.appleProfile ? req.appleProfile.email : null,
             avatar: null,
             provider: 'apple',
             sub: providerData.sub,
