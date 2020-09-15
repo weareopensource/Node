@@ -39,14 +39,12 @@ module.exports = () => {
           passReqToCallback: false,
         },
         async (accessToken, refreshToken, decodedIdToken, profile, cb) => {
-          console.log('profile', profile);
-          console.log('decodedIdTokenId', decodedIdToken.id);
-          console.log('decodedIdToken', decodedIdToken);
           // Set the provider data and include tokens
-          const providerData = {};
+          const providerData = decodedIdToken;
           providerData.appleProfile = accessToken.appleProfile;
-          providerData.refreshToken = refreshToken;
-          providerData.decodedIdTokenId = decodedIdToken.id;
+          providerData.refreshToken = refreshToken || null;
+          providerData.profile = profile || null;
+          providerData.sub = decodedIdToken.sub;
           // Create the user OAuth profile
           const providerUserProfile = {
             firstName:
@@ -62,14 +60,14 @@ module.exports = () => {
               : null,
             avatar: null,
             provider: 'apple',
-            decodedIdTokenId: providerData.decodedIdTokenId,
+            sub: providerData.sub,
             providerData,
           };
           // Save the user OAuth profile
           try {
             const user = await users.saveOAuthUserProfile(
               providerUserProfile,
-              'decodedIdTokenId',
+              'sub',
               'apple',
             );
             return cb(null, user);
