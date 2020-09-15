@@ -84,6 +84,10 @@ module.exports = {
     credentials: true,
   },
   domain: '',
+  sign: {
+    in: true, // disable signin
+    up: true, // disable signup
+  },
   repos: [
     {
       // generate releases and changelogs list auto /api/core/changelogs /api/core/releases
