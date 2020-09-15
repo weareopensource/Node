@@ -148,6 +148,14 @@ module.exports = {
     google: { // google console / api & service / identifier
       clientID: null,
       clientSecret: null,
+      callbackURL: null,
+    },
+    apple: {
+      clientID: null, // developer.apple.com service identifier
+      teamID: null, // developer.apple.com team identifier
+      keyID: null, // developer.apple.com private key identifier
+      callbackURL: null,
+      privateKeyLocation: null,
     },
   },
   // joi is used to manage schema restrictions, on the top of mongo / orm

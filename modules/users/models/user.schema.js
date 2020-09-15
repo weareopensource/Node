@@ -23,7 +23,7 @@ const UserSchema = Joi.object().keys({
     .allow('')
     .optional(),
   email: Joi.string().email(),
-  avatar: Joi.string().trim().default(''),
+  avatar: Joi.string().trim().default('').allow(''),
   roles: Joi.array().items(Joi.string().valid(...config.whitelists.users.roles)).min(1).default(['user']),
   /* Provider */
   provider: Joi.string(),
