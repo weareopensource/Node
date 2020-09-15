@@ -26,14 +26,14 @@ module.exports = () => {
     passport.use(
       new AppleStrategy(
         {
-          clientID: config.oAuth.google.clientID,
-          teamID: config.oAuth.google.teamID,
-          callbackURL: config.oAuth.google.callbackURL
-            ? config.oAuth.google.callbackURL
+          clientID: config.oAuth.apple.clientID,
+          teamID: config.oAuth.apple.teamID,
+          callbackURL: config.oAuth.apple.callbackURL
+            ? config.oAuth.apple.callbackURL
             : callbackURL,
-          keyID: config.oAuth.google.keyID,
-          privateKeyLocation: config.oAuth.google.privateKeyLocation
-            ? config.oAuth.google.privateKeyLocation
+          keyID: config.oAuth.apple.keyID,
+          privateKeyLocation: config.oAuth.apple.privateKeyLocation
+            ? config.oAuth.apple.privateKeyLocation
             : null,
           scope: ['email', 'name'],
         },
