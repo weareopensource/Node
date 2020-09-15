@@ -94,8 +94,9 @@ exports.oauthCall = (req, res, next) => {
 exports.oauthCallback = (req, res, next) => {
   const strategy = req.params.strategy;
   passport.authenticate(strategy, (err, user) => {
-    if (err) responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
-    else if (!user) responses.error(res, 422, 'Unprocessable Entity', errors.getMessage('could not define user in oAuth'))(err);
+    console.log('toto');
+    if (err) res.redirect(302, `${config.cors.origin[0]}/token?message=Unprocessable%20Entity&error=${JSON.stringify(err)}`);
+    else if (!user) res.redirect(302, `${config.cors.origin[0]}/token?message=Could%20not%20define%20user%20in%20oAuth&error=${JSON.stringify(err)}`);
     else {
       const token = jwt.sign({ userId: user.id }, config.jwt.secret, { expiresIn: config.jwt.expiresIn });
       res.cookie('TOKEN', token, { httpOnly: true });
@@ -120,7 +121,7 @@ exports.saveOAuthUserProfile = async (userProfile, indentifier, provider) => {
     const search = await UserService.search(query);
     if (search.length === 1) return search[0];
   } catch (err) {
-    console.log('err', err);
+    console.log('err1', err);
     throw new AppError('saveOAuthUserProfile', { code: 'SERVICE_ERROR', details: err });
   }
   // if no, generate
@@ -137,7 +138,7 @@ exports.saveOAuthUserProfile = async (userProfile, indentifier, provider) => {
     if (result && result.error) throw new AppError('saveOAuthUserProfile schema validation', { code: 'SERVICE_ERROR', details: result.error });
     return await UserService.create(result.value);
   } catch (err) {
-    console.log('err', err);
+    console.log('err2', err);
     throw new AppError('saveOAuthUserProfile', { code: 'SERVICE_ERROR', details: err });
   }
 };
