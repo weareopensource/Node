@@ -38,7 +38,7 @@ module.exports = () => {
           scope: ['email', 'name'],
         },
         async (accessToken, refreshToken, decodedIdToken, profile, cb) => {
-          console.log('accessToken', JSON.stringify(accessToken));
+          console.log('accessToken', accessToken);
           console.log('refreshToken', refreshToken);
           console.log('decodedIdToken', decodedIdToken);
           console.log('decodedIdToken.sub', decodedIdToken.sub);
