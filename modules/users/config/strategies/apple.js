@@ -30,6 +30,9 @@ module.exports = () => {
           teamID: config.oAuth.google.teamID,
           callbackURL: config.oAuth.google.callbackURL ? config.oAuth.google.callbackURL : callbackURL,
           keyID: config.oAuth.google.keyID,
+          privateKeyLocation: config.oAuth.google.privateKeyLocation
+            ? config.oAuth.google.privateKeyLocation
+            : null,
           scope: ['email', 'name'],
         },
         async (accessToken, refreshToken, decodedIdToken, profile, cb) => {
