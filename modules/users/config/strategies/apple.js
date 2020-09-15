@@ -42,9 +42,10 @@ module.exports = () => {
           console.log('refreshToken', refreshToken);
           console.log('decodedIdToken', decodedIdToken);
           console.log('decodedIdToken.sub', decodedIdToken.sub);
-          console.log('decodedIdToken.email', decodedIdToken.email);
-          console.log('decodedIdToken.name', decodedIdToken.name);
-          console.log('profile', profile);
+          console.log(
+            'accessToken.appleProfile.name.firstName',
+            accessToken.appleProfile.name.firstName,
+          );
 
           // Set the provider data and include tokens
           const providerData = {};
@@ -54,12 +55,12 @@ module.exports = () => {
           providerData.decodedIdToken = decodedIdToken;
           // Create the user OAuth profile
           const providerUserProfile = {
-            firstName: 'tim',
-            lastName: 'apple',
-            email: decodedIdToken.email,
+            firstName: accessToken.appleProfile.name.firstName || null,
+            lastName: accessToken.appleProfile.name.lastName || null,
+            email: accessToken.appleProfile.email || null,
             avatar: undefined,
             provider: 'apple',
-            sub: decodedIdToken.sub,
+            decodedIdToken: providerData.decodedIdToken,
             providerData,
           };
           // Save the user OAuth profile
