@@ -38,13 +38,17 @@ module.exports = () => {
           scope: ['email', 'name'],
         },
         async (accessToken, refreshToken, decodedIdToken, profile, cb) => {
-          console.log('accessToken', accessToken);
+          console.log('accessToken', JSON.stringify(accessToken));
           console.log('refreshToken', refreshToken);
           console.log('decodedIdToken', decodedIdToken);
+          console.log('decodedIdToken.sub', decodedIdToken.sub);
+          console.log('decodedIdToken.email', decodedIdToken.email);
+          console.log('decodedIdToken.name', decodedIdToken.name);
           console.log('profile', profile);
 
           // Set the provider data and include tokens
-          const providerData = profile._json;
+          const providerData = {};
+          providerData.sub = decodedIdToken.sub;
           providerData.accessToken = accessToken;
           providerData.refreshToken = refreshToken;
           providerData.decodedIdToken = decodedIdToken;
@@ -55,7 +59,7 @@ module.exports = () => {
             email: decodedIdToken.email,
             avatar: undefined,
             provider: 'apple',
-            decodedIdToken,
+            sub: decodedIdToken.sub,
             providerData,
           };
           // Save the user OAuth profile
