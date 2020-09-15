@@ -3,7 +3,7 @@
  */
 const path = require('path');
 const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20');
+const AppleStrategy = require('passport-apple');
 
 const config = require(path.resolve('./config'));
 const users = require('../../controllers/users.controller');
@@ -12,47 +12,56 @@ const callbackURL = `${config.api.protocol}://${config.api.host}${
   config.api.port ? ':' : ''
 }${config.api.port ? config.api.port : ''}/${
   config.api.base
-}/auth/google/callback`;
+}/auth/apple/callback`;
 
 module.exports = () => {
   // Use google strategy
   if (
     config.oAuth &&
-    config.oAuth.google &&
-    config.oAuth.google.clientID &&
-    config.oAuth.google.clientSecret
+    config.oAuth.apple &&
+    config.oAuth.apple.clientID &&
+    config.oAuth.apple.teamID &&
+    config.oAuth.apple.keyID &&
+    config.oAuth.apple.privateKeyLocation
   ) {
     passport.use(
-      new GoogleStrategy(
+      new AppleStrategy(
         {
           clientID: config.oAuth.google.clientID,
-          clientSecret: config.oAuth.google.clientSecret,
+          teamID: config.oAuth.google.teamID,
           callbackURL,
-          scope: ['profile', 'email'],
+          keyID: config.oAuth.google.keyID,
+          scope: ['email', 'name'],
         },
-        async (accessToken, refreshToken, profile, cb) => {
+        async (accessToken, refreshToken, decodedIdToken, profile, cb) => {
+          console.log('accessToken', accessToken);
+          console.log('refreshToken', refreshToken);
+          console.log('decodedIdToken', decodedIdToken);
+          console.log('profile', profile);
+
           // Set the provider data and include tokens
           const providerData = profile._json;
           providerData.accessToken = accessToken;
           providerData.refreshToken = refreshToken;
+          providerData.decodedIdToken = decodedIdToken;
           // Create the user OAuth profile
           const providerUserProfile = {
-            firstName: profile.name.givenName,
-            lastName: profile.name.familyName,
-            email: profile.emails[0].value,
-            avatar: providerData.picture ? providerData.picture : undefined,
-            provider: 'google',
-            sub: providerData.sub,
+            firstName: 'tim',
+            lastName: 'apple',
+            email: decodedIdToken.email,
+            avatar: undefined,
+            provider: 'apple',
+            decodedIdToken,
             providerData,
           };
           // Save the user OAuth profile
           try {
-            const user = await users.saveOAuthUserProfile(
+            await users.saveOAuthUserProfile(
               providerUserProfile,
-              'sub',
-              'google',
+              'decodedIdToken',
+              'apple',
             );
-            return cb(null, user);
+            return cb(null, decodedIdToken);
           } catch (err) {
             return cb(err);
           }

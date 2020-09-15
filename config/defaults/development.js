@@ -149,6 +149,11 @@ module.exports = {
       clientID: null,
       clientSecret: null,
     },
+    apple: {
+      clientID: null, // developer.apple.com service identifier
+      teamID: null, // developer.apple.com team identifier
+      keyID: null, // developer.apple.com private key identifier
+    },
   },
   // joi is used to manage schema restrictions, on the top of mongo / orm
   joi: {
