@@ -119,6 +119,7 @@ exports.saveOAuthUserProfile = async (userProfile, indentifier, provider) => {
     const search = await UserService.search(query);
     if (search.length === 1) return search[0];
   } catch (err) {
+    console.log('err', err);
     throw new AppError('saveOAuthUserProfile', { code: 'SERVICE_ERROR', details: err });
   }
   // if no, generate
@@ -127,14 +128,15 @@ exports.saveOAuthUserProfile = async (userProfile, indentifier, provider) => {
       firstName: userProfile.firstName,
       lastName: userProfile.lastName,
       email: userProfile.email,
-      avatar: userProfile.avatar,
+      avatar: userProfile.avatar || null,
       provider: userProfile.provider,
-      providerData: userProfile.providerData,
+      providerData: userProfile.providerData || null,
     };
     const result = model.getResultFromJoi(user, UsersSchema.User, _.clone(config.joi.validationOptions));
     if (result && result.error) throw new AppError('saveOAuthUserProfile schema validation', { code: 'SERVICE_ERROR', details: result.error });
     return await UserService.create(result.value);
   } catch (err) {
+    console.log('err', err);
     throw new AppError('saveOAuthUserProfile', { code: 'SERVICE_ERROR', details: err });
   }
 };
