@@ -39,12 +39,6 @@ module.exports = () => {
           passReqToCallback: true,
         },
         async (req, accessToken, refreshToken, decodedIdToken, profile, cb) => {
-          console.log('accessToken', accessToken);
-          console.log('refreshToken', refreshToken);
-          console.log('decodedIdToken', decodedIdToken);
-          console.log('profile', profile);
-          console.log('req.appleProfile', req.appleProfile);
-
           // Set the provider data and include tokens
           const providerData = decodedIdToken;
           providerData.appleProfile = req.appleProfile;
