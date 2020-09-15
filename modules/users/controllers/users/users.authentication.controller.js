@@ -22,14 +22,25 @@ const UsersSchema = require('../../models/user.schema');
 exports.signup = async (req, res) => {
   try {
     const user = await UserService.create(req.body);
-    const token = jwt.sign({ userId: user.id }, config.jwt.secret, { expiresIn: config.jwt.expiresIn });
-    return res.status(200)
+    const token = jwt.sign({ userId: user.id }, config.jwt.secret, {
+      expiresIn: config.jwt.expiresIn,
+    });
+    return res
+      .status(200)
       .cookie('TOKEN', token, { httpOnly: true })
       .json({
-        user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000), type: 'sucess', message: 'Sign up',
+        user,
+        tokenExpiresIn: Date.now() + config.jwt.expiresIn * 1000,
+        type: 'sucess',
+        message: 'Sign up',
       });
   } catch (err) {
-    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+    responses.error(
+      res,
+      422,
+      'Unprocessable Entity',
+      errors.getMessage(err),
+    )(err);
   }
 };
 
@@ -41,11 +52,17 @@ exports.signup = async (req, res) => {
  */
 exports.signin = async (req, res) => {
   const user = req.user;
-  const token = jwt.sign({ userId: user.id }, config.jwt.secret, { expiresIn: config.jwt.expiresIn });
-  return res.status(200)
+  const token = jwt.sign({ userId: user.id }, config.jwt.secret, {
+    expiresIn: config.jwt.expiresIn,
+  });
+  return res
+    .status(200)
     .cookie('TOKEN', token, { httpOnly: true })
     .json({
-      user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000), type: 'sucess', message: 'Sign in',
+      user,
+      tokenExpiresIn: Date.now() + config.jwt.expiresIn * 1000,
+      type: 'sucess',
+      message: 'Sign in',
     });
 };
 
@@ -68,10 +85,13 @@ exports.token = async (req, res) => {
       additionalProvidersData: req.user.additionalProvidersData,
     };
   }
-  const token = jwt.sign({ userId: user.id }, config.jwt.secret, { expiresIn: config.jwt.expiresIn });
-  return res.status(200)
+  const token = jwt.sign({ userId: user.id }, config.jwt.secret, {
+    expiresIn: config.jwt.expiresIn,
+  });
+  return res
+    .status(200)
     .cookie('TOKEN', token, { httpOnly: true })
-    .json({ user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000) });
+    .json({ user, tokenExpiresIn: Date.now() + config.jwt.expiresIn * 1000 });
 };
 
 /**
@@ -94,11 +114,26 @@ exports.oauthCall = (req, res, next) => {
 exports.oauthCallback = (req, res, next) => {
   const strategy = req.params.strategy;
   passport.authenticate(strategy, (err, user) => {
-    console.log('toto');
-    if (err) res.redirect(302, `${config.cors.origin[0]}/token?message=Unprocessable%20Entity&error=${JSON.stringify(err)}`);
-    else if (!user) res.redirect(302, `${config.cors.origin[0]}/token?message=Could%20not%20define%20user%20in%20oAuth&error=${JSON.stringify(err)}`);
-    else {
-      const token = jwt.sign({ userId: user.id }, config.jwt.secret, { expiresIn: config.jwt.expiresIn });
+    if (err) {
+      res.redirect(
+        302,
+        `${
+          config.cors.origin[0]
+        }/token?message=Unprocessable%20Entity&error=${JSON.stringify(err)}`,
+      );
+    } else if (!user) {
+      res.redirect(
+        302,
+        `${
+          config.cors.origin[0]
+        }/token?message=Could%20not%20define%20user%20in%20oAuth&error=${JSON.stringify(
+          err,
+        )}`,
+      );
+    } else {
+      const token = jwt.sign({ userId: user.id }, config.jwt.secret, {
+        expiresIn: config.jwt.expiresIn,
+      });
       res.cookie('TOKEN', token, { httpOnly: true });
       res.redirect(302, `${config.cors.origin[0]}/token`);
     }
@@ -117,12 +152,13 @@ exports.saveOAuthUserProfile = async (userProfile, indentifier, provider) => {
     const query = {};
     query[`providerData.${indentifier}`] = userProfile[indentifier];
     query.provider = provider;
-    console.log('query', query);
     const search = await UserService.search(query);
     if (search.length === 1) return search[0];
   } catch (err) {
-    console.log('err1', err);
-    throw new AppError('saveOAuthUserProfile', { code: 'SERVICE_ERROR', details: err });
+    throw new AppError('saveOAuthUserProfile', {
+      code: 'SERVICE_ERROR',
+      details: err,
+    });
   }
   // if no, generate
   try {
@@ -134,11 +170,22 @@ exports.saveOAuthUserProfile = async (userProfile, indentifier, provider) => {
       provider: userProfile.provider,
       providerData: userProfile.providerData || null,
     };
-    const result = model.getResultFromJoi(user, UsersSchema.User, _.clone(config.joi.validationOptions));
-    if (result && result.error) throw new AppError('saveOAuthUserProfile schema validation', { code: 'SERVICE_ERROR', details: result.error });
+    const result = model.getResultFromJoi(
+      user,
+      UsersSchema.User,
+      _.clone(config.joi.validationOptions),
+    );
+    if (result && result.error) {
+      throw new AppError('saveOAuthUserProfile schema validation', {
+        code: 'SERVICE_ERROR',
+        details: result.error,
+      });
+    }
     return await UserService.create(result.value);
   } catch (err) {
-    console.log('err2', err);
-    throw new AppError('saveOAuthUserProfile', { code: 'SERVICE_ERROR', details: err });
+    throw new AppError('saveOAuthUserProfile', {
+      code: 'SERVICE_ERROR',
+      details: err,
+    });
   }
 };
