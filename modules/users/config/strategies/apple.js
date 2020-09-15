@@ -38,6 +38,7 @@ module.exports = () => {
           scope: ['email', 'name'],
         },
         async (accessToken, refreshToken, decodedIdToken, profile, cb) => {
+          console.log('decodedIdToken', decodedIdToken);
           // Set the provider data and include tokens
           const providerData = {};
           providerData.appleProfile = accessToken.appleProfile;

@@ -116,6 +116,7 @@ exports.saveOAuthUserProfile = async (userProfile, indentifier, provider) => {
     const query = {};
     query[`providerData.${indentifier}`] = userProfile[indentifier];
     query.provider = provider;
+    console.log('query', query);
     const search = await UserService.search(query);
     if (search.length === 1) return search[0];
   } catch (err) {
