@@ -128,7 +128,7 @@ exports.saveOAuthUserProfile = async (userProfile, indentifier, provider) => {
       firstName: userProfile.firstName,
       lastName: userProfile.lastName,
       email: userProfile.email,
-      avatar: userProfile.avatar || null,
+      avatar: userProfile.avatar || '',
       provider: userProfile.provider,
       providerData: userProfile.providerData || null,
     };

@@ -57,7 +57,7 @@ module.exports = () => {
             firstName: accessToken.appleProfile.name.firstName || null,
             lastName: accessToken.appleProfile.name.lastName || null,
             email: accessToken.appleProfile.email || null,
-            avatar: undefined,
+            avatar: null,
             provider: 'apple',
             decodedIdToken: providerData.decodedIdToken,
             providerData,
