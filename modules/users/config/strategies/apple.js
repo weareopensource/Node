@@ -54,13 +54,17 @@ module.exports = () => {
           providerData.decodedIdToken = decodedIdToken;
           // Create the user OAuth profile
           const providerUserProfile = {
-            firstName: accessToken.appleProfile.name
-              ? accessToken.appleProfile.name.firstName
+            firstName:
+              accessToken.appleProfile && accessToken.appleProfile.name
+                ? accessToken.appleProfile.name.firstName
+                : null,
+            lastName:
+              accessToken.appleProfile && accessToken.appleProfile.name
+                ? accessToken.appleProfile.name.lastName
+                : null,
+            email: accessToken.appleProfile
+              ? accessToken.appleProfile.email
               : null,
-            lastName: accessToken.appleProfile.name
-              ? accessToken.appleProfile.name.firstNam
-              : null,
-            email: accessToken.appleProfile.email || null,
             avatar: null,
             provider: 'apple',
             decodedIdToken: providerData.decodedIdToken,
