@@ -117,25 +117,51 @@ exports.oauthCall = (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-exports.oauthCallback = (req, res, next) => {
+exports.oauthCallback = async (req, res, next) => {
   const strategy = req.params.strategy;
+  // app Auth with Strategy managed on client side
+  if (req.body.strategy === false && req.body.key) {
+    try {
+      let user = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        providerData: {},
+      };
+      user.providerData[req.body.key] = req.body.value;
+      user = await this.checkOAuthUserProfile(user, req.body.key, strategy);
+      const token = jwt.sign({ userId: user.id }, config.jwt.secret, {
+        expiresIn: config.jwt.expiresIn,
+      });
+      return res
+        .status(200)
+        .cookie('TOKEN', token, { httpOnly: true })
+        .json({
+          user,
+          tokenExpiresIn: Date.now() + config.jwt.expiresIn * 1000,
+          type: 'sucess',
+          message: 'oAuth Ok',
+        });
+    } catch (err) {
+      return responses.error(
+        res,
+        422,
+        'Unprocessable Entity',
+        errors.getMessage(err.details || err),
+      )(err);
+    }
+  }
+  // classic web oAuth
   passport.authenticate(strategy, (err, user) => {
+    const url = config.cors.origin[0];
     if (err) {
-      res.redirect(
-        302,
-        `${
-          config.cors.origin[0]
-        }/token?message=Unprocessable%20Entity&error=${JSON.stringify(err)}`,
-      );
+      const _err = JSON.stringify(err);
+      const path = 'token?message=Unprocessable%20Entity';
+      res.redirect(302, `${url}/${path}&error=${_err}`);
     } else if (!user) {
-      res.redirect(
-        302,
-        `${
-          config.cors.origin[0]
-        }/token?message=Could%20not%20define%20user%20in%20oAuth&error=${JSON.stringify(
-          err,
-        )}`,
-      );
+      const _err = JSON.stringify(err);
+      const path = 'token?message=Could%20not%20define%20user%20in%20oAuth';
+      res.redirect(302, `${url}/${path}&error=${_err}`);
     } else {
       const token = jwt.sign({ userId: user.id }, config.jwt.secret, {
         expiresIn: config.jwt.expiresIn,
@@ -152,16 +178,16 @@ exports.oauthCallback = (req, res, next) => {
  * @param {Object} providerUserProfile
  * @param {Function} done - done
  */
-exports.saveOAuthUserProfile = async (userProfile, indentifier, provider) => {
+exports.checkOAuthUserProfile = async (profil, key, provider) => {
   // check if user exist
   try {
     const query = {};
-    query[`providerData.${indentifier}`] = userProfile[indentifier];
+    query[`providerData.${key}`] = profil.providerData[key];
     query.provider = provider;
     const search = await UserService.search(query);
     if (search.length === 1) return search[0];
   } catch (err) {
-    throw new AppError('saveOAuthUserProfile', {
+    throw new AppError('checkOAuthUserProfile', {
       code: 'SERVICE_ERROR',
       details: err,
     });
@@ -169,12 +195,12 @@ exports.saveOAuthUserProfile = async (userProfile, indentifier, provider) => {
   // if no, generate
   try {
     const user = {
-      firstName: userProfile.firstName,
-      lastName: userProfile.lastName,
-      email: userProfile.email,
-      avatar: userProfile.avatar || '',
-      provider: userProfile.provider,
-      providerData: userProfile.providerData || null,
+      firstName: profil.firstName,
+      lastName: profil.lastName,
+      email: profil.email,
+      avatar: profil.avatar || '',
+      provider,
+      providerData: profil.providerData || null,
     };
     const result = model.getResultFromJoi(
       user,
@@ -182,14 +208,14 @@ exports.saveOAuthUserProfile = async (userProfile, indentifier, provider) => {
       _.clone(config.joi.validationOptions),
     );
     if (result && result.error) {
-      throw new AppError('saveOAuthUserProfile schema validation', {
+      throw new AppError('checkOAuthUserProfile schema validation', {
         code: 'SERVICE_ERROR',
         details: result.error,
       });
     }
     return await UserService.create(result.value);
   } catch (err) {
-    throw new AppError('saveOAuthUserProfile', {
+    throw new AppError('checkOAuthUserProfile', {
       code: 'SERVICE_ERROR',
       details: err,
     });
