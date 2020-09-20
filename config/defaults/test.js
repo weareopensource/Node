@@ -5,8 +5,11 @@ module.exports = _.merge(defaultConfig, {
   app: {
     title: 'WeAreOpenSource Node - Test Environment',
   },
+  api: {
+    host: 'localhost',
+    port: 3001,
+  },
   port: 3001,
-  host: 'localhost',
   db: {
     uri: 'mongodb://localhost/WaosNodeTest',
     debug: false,
