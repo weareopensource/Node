@@ -14,6 +14,7 @@ install:
   - npm i
 before_script:
   - npm rebuild bcrypt --update-binary
+after_success:
   - npm run test:coveralls
 jobs:
   include:
