@@ -12,6 +12,7 @@ module.exports = {
     port: 3000,
     host: 'localhost',
     base: 'api',
+    timeout: 2 * 60 * 1000,
   },
   db: {
     uri: 'mongodb://localhost/WaosNodeDev',
