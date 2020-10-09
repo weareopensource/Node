@@ -33,6 +33,7 @@ const UserSchema = Joi.object().keys({
     .default(''),
   resetPasswordToken: Joi.string().allow(null),
   resetPasswordExpires: Joi.date().allow(null),
+  complementary: Joi.object({}).unknown().allow(null).optional(),
 });
 
 module.exports = {
