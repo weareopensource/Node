@@ -58,7 +58,8 @@ exports.me = (req, res) => {
       email: escape(req.user.email),
       lastName: escape(req.user.lastName),
       firstName: escape(req.user.firstName),
-      additionalProvidersData: req.user.additionalProvidersData,
+      providerData: req.user.providerData,
+      complementary: req.user.complementary,
     };
     if (req.user.bio) user.bio = req.user.bio;
   }
