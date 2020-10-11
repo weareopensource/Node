@@ -12,6 +12,8 @@ const inquirer = require('inquirer');
 const plugins = gulpLoadPlugins();
 const defaultAssets = require('./config/assets');
 
+const config = require(path.resolve('./config'));
+
 // default node env if not define
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
@@ -170,6 +172,23 @@ const seedMongoose = async () => {
   }
 };
 
+// Connects to Mongoose based on environment settings and seeds the database
+const seedMongooseUser = async () => {
+  try {
+    const mongooseService = require(path.resolve('./lib/services/mongoose'));
+    await mongooseService.connect();
+    await mongooseService.loadModels();
+    const UserService = require(path.resolve('./modules/users/services/user.service'));
+    const seed = require(path.resolve('./lib/services/seed'));
+    await seed.user(config.seedDB.options.seedUser, UserService).catch((e) => {
+      console.log(e);
+    });
+    await mongooseService.disconnect();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 // Connects to an SQL database, drop and re-create the schemas
 // gulp.task('seed:sequelize', (done) => {
 //   const sequelize = require('./lib/services/sequelize');
@@ -195,6 +214,10 @@ exports.testCoverage = testCoverage;
 // Run Mongoose Seed
 const seed = gulp.series(dropDB, seedMongoose);
 exports.seed = seed;
+
+// Run Mongoose Seed
+const seedUser = gulp.series(seedMongooseUser);
+exports.seedUser = seedUser;
 
 // Run Mongoose drop
 const drop = gulp.series(dropDB);

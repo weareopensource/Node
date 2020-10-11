@@ -33,6 +33,7 @@
     "test:coveralls": "cross-env NODE_ENV=test gulp testCoverage && cat ./coverage/lcov.info | coveralls",
     "seed:dev": "cross-env NODE_ENV=development gulp seed",
     "seed:prod": "cross-env NODE_ENV=production gulp seed",
+    "seed:user": "gulp seedUser",
     "seed:mongodump": "./scripts/db/mongodump.sh",
     "seed:mongorestore": "node ./scripts/db/mongorestore.js",
     "seed:mongodrop": "gulp drop",
