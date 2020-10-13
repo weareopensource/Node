@@ -4,6 +4,7 @@
 const axios = require('axios');
 const path = require('path');
 const _ = require('lodash');
+const base64 = require('js-base64').Base64;
 
 const config = require(path.resolve('./config'));
 /**
@@ -38,12 +39,7 @@ exports.changelogs = async () => {
   let results = await axios.all(requests);
   results = results.map((result, i) => ({
     title: config.repos[i].title,
-    data: {
-      type: result.data.type,
-      size: result.data.size,
-      encoding: result.data.encoding,
-      content: result.data.content,
-    },
+    markdown: base64.decode(result.data.content),
   }));
   return Promise.resolve(results);
 };
