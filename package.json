@@ -68,6 +68,7 @@
     "glob": "~7.1.6",
     "handlebars": "^4.7.6",
     "helmet": "~4.1.1",
+    "js-base64": "^3.5.2",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
     "lusca": "~1.6.1",
