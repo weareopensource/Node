@@ -18,7 +18,6 @@ Our stack node is actually in Beta.
 
 # :computer: Node / Express / Mongoose - Sequelize Orm
 
-* [**Wiki**](https://github.com/weareopensource/Node/blob/master/WIKI.md) - wip
 * [**Knowledges JS**](https://blog.weareopensource.me/js-knwoledges/)
 * [**Demo**](https://node.weareopensource.me) (or working with [Vue](https://github.com/weareopensource/Vue) stack [here](https://vue.weareopensource.me), email: *test@waos.me*, password: *TestWaos@2019*)
 
