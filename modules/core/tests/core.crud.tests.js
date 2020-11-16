@@ -31,7 +31,7 @@ describe('Tasks CRUD Tests :', () => {
   });
 
   describe('Logout', () => {
-    test('should not be able to save a task', async () => {
+    test('shouldbe able to get releases', async () => {
       try {
         const result = await agent.get('/api/core/releases')
           .expect(200);
@@ -44,12 +44,25 @@ describe('Tasks CRUD Tests :', () => {
       }
     });
 
-    test('should not be able to save a task', async () => {
+    test('should be able to get changelogs', async () => {
       try {
         const result = await agent.get('/api/core/changelogs')
           .expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('changelogs');
+        expect(result.body.data).toBeInstanceOf(Array);
+      } catch (err) {
+        expect(err).toBeFalsy();
+        console.log(err);
+      }
+    });
+
+    test('should be able to get team members', async () => {
+      try {
+        const result = await agent.get('/api/core/team')
+          .expect(200);
+        expect(result.body.type).toBe('success');
+        expect(result.body.message).toBe('team list');
         expect(result.body.data).toBeInstanceOf(Array);
       } catch (err) {
         expect(err).toBeFalsy();

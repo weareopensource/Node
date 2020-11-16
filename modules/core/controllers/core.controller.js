@@ -35,3 +35,17 @@ exports.changelogs = async (req, res) => {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
 };
+
+/**
+ * @desc Endpoint to ask the service to get the list of users
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.team = async (req, res) => {
+  try {
+    const users = await CoreService.team();
+    responses.success(res, 'team list')(users);
+  } catch (err) {
+    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+  }
+};

@@ -6,7 +6,10 @@ const path = require('path');
 const _ = require('lodash');
 const base64 = require('js-base64').Base64;
 
+const UserService = require(path.resolve('./modules/users/services/user.service'));
 const config = require(path.resolve('./config'));
+const CoreRepository = require('../repositories/core.repository');
+
 /**
  * @desc Function to get all versions
  * @return {Promise} All versions
@@ -42,4 +45,13 @@ exports.changelogs = async () => {
     markdown: base64.decode(result.data.content),
   }));
   return Promise.resolve(results);
+};
+
+/**
+ * @desc Function to get all admin users in db
+ * @return {Promise} All users
+ */
+exports.team = async () => {
+  const result = await CoreRepository.team();
+  return Promise.resolve(result.map((user) => UserService.removeSensitive(user)));
 };

@@ -18,7 +18,7 @@ const saltRounds = 10;
  * @param {Object} user
  * @return {Object} user
  */
-const removeSensitive = (user, conf) => {
+exports.removeSensitive = (user, conf) => {
   if (!user || typeof user !== 'object') return null;
   const keys = conf || config.whitelists.users.default;
   return _.pick(user, keys);
@@ -30,7 +30,7 @@ const removeSensitive = (user, conf) => {
  */
 exports.list = async () => {
   const result = await UserRepository.list();
-  return Promise.resolve(result.map((user) => removeSensitive(user)));
+  return Promise.resolve(result.map((user) => this.removeSensitive(user)));
 };
 
 /**
@@ -53,7 +53,7 @@ exports.create = async (user) => {
   }
   const result = await UserRepository.create(user);
   // Remove sensitive data before return
-  return Promise.resolve(removeSensitive(result));
+  return Promise.resolve(this.removeSensitive(result));
 };
 
 /**
@@ -63,7 +63,7 @@ exports.create = async (user) => {
  */
 exports.get = async (user) => {
   const result = await UserRepository.get(user);
-  return Promise.resolve(removeSensitive(result));
+  return Promise.resolve(this.removeSensitive(result));
 };
 
 /**
@@ -83,7 +83,7 @@ exports.getBrut = async (user) => {
  */
 exports.search = async (input) => {
   const result = await UserRepository.search(input);
-  return Promise.resolve(result.map((user) => removeSensitive(user)));
+  return Promise.resolve(result.map((user) => this.removeSensitive(user)));
 };
 
 /**
@@ -94,12 +94,12 @@ exports.search = async (input) => {
  * @return {Promise} user -
  */
 exports.update = async (user, body, option) => {
-  if (!option) user = _.assignIn(user, removeSensitive(body, config.whitelists.users.update));
-  else if (option === 'admin') user = _.assignIn(user, removeSensitive(body, config.whitelists.users.updateAdmin));
-  else if (option === 'recover') user = _.assignIn(user, removeSensitive(body, config.whitelists.users.recover));
+  if (!option) user = _.assignIn(user, this.removeSensitive(body, config.whitelists.users.update));
+  else if (option === 'admin') user = _.assignIn(user, this.removeSensitive(body, config.whitelists.users.updateAdmin));
+  else if (option === 'recover') user = _.assignIn(user, this.removeSensitive(body, config.whitelists.users.recover));
 
   const result = await UserRepository.update(user);
-  return Promise.resolve(removeSensitive(result));
+  return Promise.resolve(this.removeSensitive(result));
 };
 
 /**
@@ -130,7 +130,7 @@ exports.stats = async () => {
 exports.authenticate = async (email, password) => {
   const user = await UserRepository.get({ email });
   if (!user) throw new AppError('invalid user or password.', { code: 'SERVICE_ERROR' });
-  if (await this.comparePassword(password, user.password)) return removeSensitive(user);
+  if (await this.comparePassword(password, user.password)) return this.removeSensitive(user);
   throw new AppError('invalid user or password.', { code: 'SERVICE_ERROR' });
 };
 
