@@ -6,7 +6,7 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20');
 
 const config = require(path.resolve('./config'));
-const users = require('../../controllers/users.controller');
+const auth = require('../../controllers/auth.controller');
 
 const callbackURL = `${config.api.protocol}://${config.api.host}${
   config.api.port ? ':' : ''
@@ -37,7 +37,7 @@ exports.prepare = async (accessToken, refreshToken, profile, cb) => {
   };
   // Save the user OAuth profile
   try {
-    const user = await users.checkOAuthUserProfile(_profile, 'sub', 'google');
+    const user = await auth.checkOAuthUserProfile(_profile, 'sub', 'google');
     return cb(null, user);
   } catch (err) {
     return cb(err);

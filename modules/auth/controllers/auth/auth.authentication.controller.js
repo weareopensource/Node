@@ -6,13 +6,13 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 
+const UserService = require(path.resolve('modules/users/services/user.service'));
 const config = require(path.resolve('./config'));
 const model = require(path.resolve('./lib/middlewares/model'));
 const responses = require(path.resolve('./lib/helpers/responses'));
 const errors = require(path.resolve('./lib/helpers/errors'));
 const AppError = require(path.resolve('./lib/helpers/AppError'));
-const UserService = require('../../services/user.service');
-const UsersSchema = require('../../models/user.schema');
+const UsersSchema = require(path.resolve('./modules/users/models/user.schema'));
 
 /**
  * @desc Endpoint to ask the service to create a user

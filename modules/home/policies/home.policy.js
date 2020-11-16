@@ -12,13 +12,13 @@ exports.invokeRolesPolicies = () => {
   policy.Acl.allow([{
     roles: ['guest'],
     allows: [{
-      resources: '/api/core/releases',
+      resources: '/api/home/releases',
       permissions: ['get'],
     }, {
-      resources: '/api/core/changelogs',
+      resources: '/api/home/changelogs',
       permissions: ['get'],
     }, {
-      resources: '/api/core/team',
+      resources: '/api/home/team',
       permissions: ['get'],
     }],
   }]);

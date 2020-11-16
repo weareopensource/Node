@@ -4,8 +4,9 @@
 const path = require('path');
 
 const jwt = require('jsonwebtoken');
-const UserService = require('../../services/user.service');
+const AuthService = require('../../services/auth.service');
 
+const UserService = require(path.resolve('modules/users/services/user.service'));
 const mails = require(path.resolve('./lib/helpers/mails'));
 const errors = require(path.resolve('./lib/helpers/errors'));
 const responses = require(path.resolve('./lib/helpers/responses'));
@@ -82,7 +83,7 @@ exports.reset = async (req, res) => {
     user = await UserService.getBrut({ resetPasswordToken: req.body.token });
     if (!user || !user.email) return responses.error(res, 400, 'Bad Request', 'Password reset token is invalid or has expired.')();
     const edit = {
-      password: await UserService.hashPassword(req.body.newPassword),
+      password: await AuthService.hashPassword(req.body.newPassword),
       resetPasswordToken: null,
       resetPasswordExpires: null,
     };
@@ -123,9 +124,9 @@ exports.updatePassword = async (req, res) => {
   try {
     user = await UserService.getBrut({ id: req.user.id });
     if (!user || !user.email) return responses.error(res, 400, 'Bad Request', 'User is not found')();
-    if (!await UserService.comparePassword(req.body.currentPassword, user.password)) return responses.error(res, 422, 'Unprocessable Entity', 'Current password is incorrect')();
+    if (!await AuthService.comparePassword(req.body.currentPassword, user.password)) return responses.error(res, 422, 'Unprocessable Entity', 'Current password is incorrect')();
     if (req.body.newPassword !== req.body.verifyPassword) return responses.error(res, 422, 'Unprocessable Entity', 'Passwords do not match')();
-    password = UserService.checkPassword(req.body.newPassword);
+    password = AuthService.checkPassword(req.body.newPassword);
     user = await UserService.update(user, { password }, 'recover');
     return res.status(200)
       .cookie('TOKEN', jwt.sign({ userId: user.id }, config.jwt.secret, { expiresIn: config.jwt.expiresIn }), { httpOnly: true })

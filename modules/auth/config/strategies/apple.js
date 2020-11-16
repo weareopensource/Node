@@ -6,7 +6,7 @@ const passport = require('passport');
 const AppleStrategy = require('passport-apple');
 
 const config = require(path.resolve('./config'));
-const users = require('../../controllers/users.controller');
+const auth = require('../../controllers/auth.controller');
 
 const callbackURL = `${config.api.protocol}://${config.api.host}${
   config.api.port ? ':' : ''
@@ -47,7 +47,7 @@ exports.prepare = async (req, accessToken, refreshToken, decodedIdToken, profile
   };
   // Save the user OAuth profile
   try {
-    const user = await users.checkOAuthUserProfile(_profile, 'sub', 'apple');
+    const user = await auth.checkOAuthUserProfile(_profile, 'sub', 'apple');
     return cb(null, user);
   } catch (err) {
     return cb(err);
