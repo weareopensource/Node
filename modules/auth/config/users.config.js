@@ -5,7 +5,7 @@ const path = require('path');
 const passport = require('passport');
 
 const config = require(path.resolve('./config'));
-const UserService = require('../services/user.service');
+const UserService = require(path.resolve('modules/users/services/user.service'));
 
 /**
  * Module init function

@@ -158,12 +158,13 @@ const seedMongoose = async () => {
     const mongooseService = require(path.resolve('./lib/services/mongoose'));
     await mongooseService.connect();
     await mongooseService.loadModels();
+    const AuthService = require(path.resolve('./modules/auth/services/auth.service'));
     const UserService = require(path.resolve('./modules/users/services/user.service'));
     const TaskService = require(path.resolve('./modules/tasks/services/tasks.service'));
     const seed = require(path.resolve('./lib/services/seed'));
     await seed.start({
       logResults: true,
-    }, UserService, TaskService).catch((e) => {
+    }, UserService, AuthService, TaskService).catch((e) => {
       console.log(e);
     });
     await mongooseService.disconnect();
@@ -178,9 +179,10 @@ const seedMongooseUser = async () => {
     const mongooseService = require(path.resolve('./lib/services/mongoose'));
     await mongooseService.connect();
     await mongooseService.loadModels();
+    const AuthService = require(path.resolve('./modules/auth/services/auth.service'));
     const UserService = require(path.resolve('./modules/users/services/user.service'));
     const seed = require(path.resolve('./lib/services/seed'));
-    await seed.user(config.seedDB.options.seedUser, UserService).catch((e) => {
+    await seed.user(config.seedDB.options.seedUser, UserService, AuthService).catch((e) => {
       console.log(e);
     });
     await mongooseService.disconnect();

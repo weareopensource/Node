@@ -8,7 +8,7 @@ const base64 = require('js-base64').Base64;
 
 const UserService = require(path.resolve('./modules/users/services/user.service'));
 const config = require(path.resolve('./config'));
-const CoreRepository = require('../repositories/core.repository');
+const HomeRepository = require('../repositories/home.repository');
 
 /**
  * @desc Function to get all versions
@@ -52,6 +52,6 @@ exports.changelogs = async () => {
  * @return {Promise} All users
  */
 exports.team = async () => {
-  const result = await CoreRepository.team();
+  const result = await HomeRepository.team();
   return Promise.resolve(result.map((user) => UserService.removeSensitive(user)));
 };

@@ -6,7 +6,7 @@ const path = require('path');
 const errors = require(path.resolve('./lib/helpers/errors'));
 const responses = require(path.resolve('./lib/helpers/responses'));
 
-const CoreService = require('../services/core.service');
+const HomeService = require('../services/home.service');
 
 /**
  * @desc Endpoint to ask the service to get the releases
@@ -15,7 +15,7 @@ const CoreService = require('../services/core.service');
  */
 exports.releases = async (req, res) => {
   try {
-    const releases = await CoreService.releases();
+    const releases = await HomeService.releases();
     responses.success(res, 'releases')(releases);
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
@@ -29,7 +29,7 @@ exports.releases = async (req, res) => {
  */
 exports.changelogs = async (req, res) => {
   try {
-    const changelogs = await CoreService.changelogs();
+    const changelogs = await HomeService.changelogs();
     responses.success(res, 'changelogs')(changelogs);
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
@@ -43,7 +43,7 @@ exports.changelogs = async (req, res) => {
  */
 exports.team = async (req, res) => {
   try {
-    const users = await CoreService.team();
+    const users = await HomeService.team();
     responses.success(res, 'team list')(users);
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);

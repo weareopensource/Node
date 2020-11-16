@@ -14,6 +14,7 @@ const config = require(path.resolve('./config'));
 module.exports = (app) => {
   const users = require('../controllers/users.controller');
   const usersData = require('../controllers/users.data.controller');
+  const auth = require(path.resolve('./modules/auth/controllers/auth.controller'));
 
   app.route('/api/users/me')
     .get(passport.authenticate('jwt'), policy.isAllowed, users.me);
@@ -23,7 +24,7 @@ module.exports = (app) => {
     .delete(users.delete);
 
   app.route('/api/users/password')
-    .post(passport.authenticate('jwt'), policy.isAllowed, users.updatePassword);
+    .post(passport.authenticate('jwt'), policy.isAllowed, auth.updatePassword);
 
   app.route('/api/users/avatar').all(passport.authenticate('jwt'), policy.isAllowed)
     .post(multer.create('img', config.uploads.avatar), users.updateAvatar)

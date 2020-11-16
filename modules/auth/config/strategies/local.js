@@ -3,7 +3,7 @@
  */
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const UserService = require('../../services/user.service');
+const AuthService = require('../../services/auth.service');
 
 module.exports = () => {
   passport.use(new LocalStrategy({
@@ -11,7 +11,7 @@ module.exports = () => {
     passwordField: 'password',
   }, async (email, password, done) => {
     try {
-      const user = await UserService.authenticate(email, password);
+      const user = await AuthService.authenticate(email, password);
       if (user) return done(null, user);
 
       return done(null, false, {

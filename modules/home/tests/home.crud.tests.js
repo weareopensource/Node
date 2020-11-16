@@ -11,7 +11,7 @@ const multerService = require(path.resolve('./lib/services/multer'));
 /**
  * Unit tests
  */
-describe('Tasks CRUD Tests :', () => {
+describe('Home CRUD Tests :', () => {
   let app;
   let agent;
 
@@ -33,7 +33,7 @@ describe('Tasks CRUD Tests :', () => {
   describe('Logout', () => {
     test('shouldbe able to get releases', async () => {
       try {
-        const result = await agent.get('/api/core/releases')
+        const result = await agent.get('/api/home/releases')
           .expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('releases');
@@ -46,7 +46,7 @@ describe('Tasks CRUD Tests :', () => {
 
     test('should be able to get changelogs', async () => {
       try {
-        const result = await agent.get('/api/core/changelogs')
+        const result = await agent.get('/api/home/changelogs')
           .expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('changelogs');
@@ -59,7 +59,7 @@ describe('Tasks CRUD Tests :', () => {
 
     test('should be able to get team members', async () => {
       try {
-        const result = await agent.get('/api/core/team')
+        const result = await agent.get('/api/home/team')
           .expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('team list');

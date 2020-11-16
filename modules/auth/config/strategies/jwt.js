@@ -2,8 +2,10 @@
  * Module dependencies
  */
 const passport = require('passport');
+const path = require('path');
 const JwtStrategy = require('passport-jwt').Strategy;
-const UserService = require('../../services/user.service');
+
+const UserService = require(path.resolve('modules/users/services/user.service'));
 
 const cookieExtractor = (req) => {
   let token = null;
