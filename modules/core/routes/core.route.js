@@ -16,4 +16,7 @@ module.exports = (app) => {
   // changelogs
   app.route('/api/core/changelogs').all(policy.isAllowed)
     .get(core.changelogs);
+  // changelogs
+  app.route('/api/core/team').all(policy.isAllowed)
+    .get(core.team);
 };

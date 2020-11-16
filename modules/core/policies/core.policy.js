@@ -17,6 +17,9 @@ exports.invokeRolesPolicies = () => {
     }, {
       resources: '/api/core/changelogs',
       permissions: ['get'],
+    }, {
+      resources: '/api/core/team',
+      permissions: ['get'],
     }],
   }]);
 };
