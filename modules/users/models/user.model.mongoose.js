@@ -13,6 +13,7 @@ const UserMongoose = new Schema({
   firstName: String,
   lastName: String,
   bio: String,
+  position: String,
   email: {
     type: String,
     unique: 'Email already exists',
@@ -27,7 +28,7 @@ const UserMongoose = new Schema({
   password: String,
   resetPasswordToken: String,
   resetPasswordExpires: Date,
-  complementary: {}, // put your specific project data here
+  complementary: {}, // put your specific project private data here
 }, {
   timestamps: true,
 });

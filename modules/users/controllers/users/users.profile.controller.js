@@ -62,6 +62,7 @@ exports.me = (req, res) => {
       complementary: req.user.complementary,
     };
     if (req.user.bio) user.bio = req.user.bio;
+    if (req.user.position) user.position = req.user.position;
   }
   return responses.success(res, 'user get')(user);
 };
