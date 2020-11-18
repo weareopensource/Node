@@ -19,4 +19,10 @@ module.exports = (app) => {
   // changelogs
   app.route('/api/home/team').all(policy.isAllowed)
     .get(home.team);
+  // markdown files
+  app.route('/api/home/pages/:name').all(policy.isAllowed)
+    .get(home.page);
+
+  // Finish by binding the task middleware
+  app.param('name', home.pageByName);
 };
