@@ -20,6 +20,9 @@ exports.invokeRolesPolicies = () => {
     }, {
       resources: '/api/home/team',
       permissions: ['get'],
+    }, {
+      resources: '/api/home/pages/:name',
+      permissions: ['get'],
     }],
   }]);
 };

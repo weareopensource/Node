@@ -5,10 +5,24 @@ const axios = require('axios');
 const path = require('path');
 const _ = require('lodash');
 const base64 = require('js-base64').Base64;
+const fs = require('fs').promises;
 
 const UserService = require(path.resolve('./modules/users/services/user.service'));
 const config = require(path.resolve('./config'));
 const HomeRepository = require('../repositories/home.repository');
+
+/**
+ * @desc Function to get all admin users in db
+ * @return {Promise} All users
+ */
+exports.page = async (name) => {
+  const markdown = await fs.readFile(path.resolve(`./config/markdown/${name}.md`), 'utf8');
+  const test = await fs.stat(path.resolve(`./config/markdown/${name}.md`));
+  return Promise.resolve({
+    update: test.ctime,
+    markdown,
+  });
+};
 
 /**
  * @desc Function to get all versions
