@@ -126,6 +126,7 @@ module.exports = {
         'resetPasswordToken',
         'resetPasswordExpires',
         'complementary',
+        'terms',
       ],
       update: ['firstName', 'lastName', 'bio', 'position', 'email', 'avatar', 'complementary'],
       updateAdmin: ['firstName', 'lastName', 'bio', 'position', 'email', 'avatar', 'roles', 'complementary'],

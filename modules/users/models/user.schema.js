@@ -37,6 +37,9 @@ const UserSchema = Joi.object().keys({
     .default(''),
   resetPasswordToken: Joi.string().allow(null),
   resetPasswordExpires: Joi.date().allow(null),
+  // startup requirement
+  terms: Joi.date().default(null).optional(), // last check
+  // others
   complementary: Joi.object({}).unknown().allow(null).optional(),
 });
 

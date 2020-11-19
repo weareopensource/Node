@@ -28,6 +28,9 @@ const UserMongoose = new Schema({
   password: String,
   resetPasswordToken: String,
   resetPasswordExpires: Date,
+  // startup requirement
+  terms: Date,
+  // other
   complementary: {}, // put your specific project private data here
 }, {
   timestamps: true,

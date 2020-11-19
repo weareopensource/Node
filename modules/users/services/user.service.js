@@ -98,6 +98,17 @@ exports.update = async (user, body, option) => {
 };
 
 /**
+ * @desc Functio to ask repository to sign terms for current user
+ * @param {Object} user - original user
+ * @return {Promise} user -
+ */
+exports.terms = async (user) => {
+  user = _.assignIn(user, { terms: new Date() });
+  const result = await UserRepository.update(user);
+  return Promise.resolve(this.removeSensitive(result));
+};
+
+/**
  * @desc Function to ask repository to a user from db by id or email
  * @param {Object} user
  * @return {Promise} result & id
