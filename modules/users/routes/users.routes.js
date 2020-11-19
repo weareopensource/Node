@@ -19,6 +19,9 @@ module.exports = (app) => {
   app.route('/api/users/me')
     .get(passport.authenticate('jwt'), policy.isAllowed, users.me);
 
+  app.route('/api/users/terms')
+    .get(passport.authenticate('jwt'), policy.isAllowed, users.terms);
+
   app.route('/api/users').all(passport.authenticate('jwt'), policy.isAllowed)
     .put(model.isValid(usersSchema.User), users.update)
     .delete(users.delete);

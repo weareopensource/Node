@@ -15,6 +15,9 @@ exports.invokeRolesPolicies = () => {
       resources: '/api/users/me',
       permissions: ['get'],
     }, {
+      resources: '/api/users/terms',
+      permissions: ['get'],
+    }, {
       resources: '/api/users',
       permissions: ['put', 'delete'],
     }, {

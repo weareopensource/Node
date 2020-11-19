@@ -1,9 +1,9 @@
-Legal information – weareopensource.me
-Headquarters: firstname lastname xx street xxxx, xxxx Paris
-Email: xxx@xxxx.xxx
-Phone: +33 (0)xxx xxx xxx
-French trade register number: xxxxxx
-VAT identification number: xxxxxx
-Site created by: weareopensource.me
-Publication manager: firstname lastname, xxx@xxx.xxx
-Hosts: xxxxxxxxx
+- Legal information – weareopensource.me
+- Headquarters: firstname lastname xx street xxxx, xxxx Paris
+- Email: xxx@xxxx.xxx
+- Phone: +33 (0)xxx xxx xxx
+- French trade register number: xxxxxx
+- VAT identification number: xxxxxx
+- Site created by: weareopensource.me
+- Publication manager: firstname lastname, xxx@xxx.xxx
+- Hosts: xxxxxxxxx

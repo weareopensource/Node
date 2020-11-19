@@ -26,6 +26,20 @@ exports.update = async (req, res) => {
 };
 
 /**
+ * @desc Endpoint to ask the service to update the terms sign of the user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+exports.terms = async (req, res) => {
+  try {
+    const user = await UserService.terms(req.user);
+    responses.success(res, 'user terms signed')(user);
+  } catch (err) {
+    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+  }
+};
+
+/**
  * @desc Endpoint to ask the service to delete the user connected
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
@@ -59,10 +73,13 @@ exports.me = (req, res) => {
       lastName: escape(req.user.lastName),
       firstName: escape(req.user.firstName),
       providerData: req.user.providerData,
+      // others
       complementary: req.user.complementary,
     };
     if (req.user.bio) user.bio = req.user.bio;
     if (req.user.position) user.position = req.user.position;
+    // startup requirement
+    if (req.user.terms) user.terms = req.user.terms;
   }
   return responses.success(res, 'user get')(user);
 };

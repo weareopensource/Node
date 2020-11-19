@@ -18,10 +18,11 @@ const HomeRepository = require('../repositories/home.repository');
 exports.page = async (name) => {
   const markdown = await fs.readFile(path.resolve(`./config/markdown/${name}.md`), 'utf8');
   const test = await fs.stat(path.resolve(`./config/markdown/${name}.md`));
-  return Promise.resolve({
-    update: test.ctime,
+  return Promise.resolve([{
+    title: _.startCase(name),
+    updatedAt: test.mtime,
     markdown,
-  });
+  }]);
 };
 
 /**
