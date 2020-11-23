@@ -25,5 +25,5 @@ module.exports = (app) => {
   // Setting the oauth routes
   app.route('/api/auth/:strategy').get(auth.oauthCall);
   app.route('/api/auth/:strategy/callback').get(auth.oauthCallback);
-  app.route('/api/auth/:strategy/callback').post(auth.oauthCallback); // specific for apple call back
+  app.route('/api/auth/:strategy/callback').post(model.isValid(usersSchema.User), auth.oauthCallback); // specific for apple call back
 };
