@@ -12,10 +12,10 @@ const config = require(path.resolve('./config'));
  * User Data Schema
  */
 const UserSchema = Joi.object().keys({
-  firstName: Joi.string().alphanum().min(1).max(30)
+  firstName: Joi.string().regex(/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u).min(1).max(30)
     .trim()
     .required(),
-  lastName: Joi.string().alphanum().min(1).max(30)
+  lastName: Joi.string().regex(/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u).min(1).max(30)
     .trim()
     .required(),
   bio: Joi.string().max(200)
