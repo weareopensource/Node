@@ -129,7 +129,7 @@ exports.oauthCallback = async (req, res, next) => {
         providerData: {},
       };
       user.providerData[req.body.key] = req.body.value;
-      user = await this.checkOAuthUserProfile(user, req.body.key, strategy);
+      user = await this.checkOAuthUserProfile(user, req.body.key, strategy, res);
       const token = jwt.sign({ userId: user.id }, config.jwt.secret, {
         expiresIn: config.jwt.expiresIn,
       });
@@ -178,7 +178,7 @@ exports.oauthCallback = async (req, res, next) => {
  * @param {Object} providerUserProfile
  * @param {Function} done - done
  */
-exports.checkOAuthUserProfile = async (profil, key, provider) => {
+exports.checkOAuthUserProfile = async (profil, key, provider, res) => {
   // check if user exist
   try {
     const query = {};
@@ -187,7 +187,7 @@ exports.checkOAuthUserProfile = async (profil, key, provider) => {
     const search = await UserService.search(query);
     if (search.length === 1) return search[0];
   } catch (err) {
-    throw new AppError('checkOAuthUserProfile', {
+    throw new AppError('oAuth, find user failed', {
       code: 'SERVICE_ERROR',
       details: err,
     });
@@ -207,17 +207,14 @@ exports.checkOAuthUserProfile = async (profil, key, provider) => {
       UsersSchema.User,
       _.clone(config.joi.validationOptions),
     );
-    if (result && result.error) {
-      throw new AppError('checkOAuthUserProfile schema validation', {
-        code: 'SERVICE_ERROR',
-        details: result.error,
-      });
-    }
+    // check error
+    model.checkError(result, res);
+    // else return req.body with the data after Joi validation
     return await UserService.create(result.value);
   } catch (err) {
-    throw new AppError('checkOAuthUserProfile', {
-      code: 'SERVICE_ERROR',
-      details: err,
+    throw new AppError('oAuth', {
+      code: 'CONTROLLER_ERROR',
+      details: err.details || err,
     });
   }
 };
