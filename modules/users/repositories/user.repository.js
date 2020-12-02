@@ -7,9 +7,25 @@ const User = mongoose.model('User');
 
 /**
  * @desc Function to get all user in db
- * @return {Array} All users
+ * @param {String} search
+ * @param {Int} page
+ * @param {Int} perPage
+ * @return {Array}  users selected
  */
-exports.list = () => User.find({}, '-password -providerData').sort('-createdAt').exec();
+exports.list = (search, page, perPage) => {
+  const filter = search ? {
+    $or: [
+      { firstName: { $regex: `${search}`, $options: 'i' } },
+      { lastName: { $regex: `${search}`, $options: 'i' } },
+      { email: { $regex: `${search}`, $options: 'i' } },
+    ],
+  } : {};
+  return User.find(filter).limit(perPage)
+    .skip(perPage * page)
+    .select('-password -providerData')
+    .sort('-createdAt')
+    .exec();
+};
 
 /**
  * @desc Function to create a user in db

@@ -15,8 +15,12 @@ module.exports = (app) => {
   app.route('/api/users/stats').all(policy.isAllowed)
     .get(admin.stats);
 
-  // Users collection routes
+  // Users
   app.route('/api/users')
+    .get(passport.authenticate('jwt'), policy.isAllowed, admin.list); // list
+
+  // Users page
+  app.route('/api/users/page/:userPage')
     .get(passport.authenticate('jwt'), policy.isAllowed, admin.list); // list
 
   // Single user routes
@@ -27,4 +31,5 @@ module.exports = (app) => {
 
   // Finish by binding the user middleware
   app.param('userId', admin.userByID);
+  app.param('userPage', admin.userByPage);
 };

@@ -92,7 +92,7 @@ describe('Subscriptions CRUD Tests :', () => {
           .expect(422);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toEqual('Schema validation error');
-        expect(result.body.description).toBe('"email" must be a string. ');
+        expect(result.body.description).toBe('Email must be a string. ');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -168,7 +168,7 @@ describe('Subscriptions CRUD Tests :', () => {
           .expect(422);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toEqual('Unprocessable Entity');
-        expect(result.body.description).toBe('Validation failed.');
+        expect(result.body.description).toBe('Path `email` (test1@gmail.com) is not unique. .');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();

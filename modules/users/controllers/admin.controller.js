@@ -14,7 +14,7 @@ const UserService = require('../services/user.service');
  */
 exports.list = async (req, res) => {
   try {
-    const users = await UserService.list();
+    const users = await UserService.list(req.search, req.page, req.perPage);
     responses.success(res, 'user list')(users);
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
@@ -87,6 +87,37 @@ exports.userByID = async (req, res, next, id) => {
     if (!user) responses.error(res, 404, 'Not Found', 'No User with that identifier has been found')();
     else {
       req.model = user;
+      next();
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * @desc MiddleWare to check the params
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function  ...pagenumber&perpage&search
+ * @param {String} params - params
+ */
+exports.userByPage = async (req, res, next, params) => {
+  try {
+    if (!params) responses.error(res, 404, 'Not Found', 'No users with that params has been found')();
+    const request = params.split('&');
+    if (request.length > 3) responses.error(res, 422, 'Not Found', 'That search countain more than 3 params')();
+    else {
+      if (request.length === 3) {
+        req.page = Number(request[0]);
+        req.perPage = Number(request[1]);
+        req.search = String(request[2]);
+      } else if (request.length === 2) {
+        req.page = Number(request[0]);
+        req.perPage = Number(request[1]);
+      } else {
+        req.page = 0;
+        req.perPage = 0;
+      }
       next();
     }
   } catch (err) {
