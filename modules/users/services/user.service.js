@@ -21,10 +21,13 @@ exports.removeSensitive = (user, conf) => {
 
 /**
  * @desc Function to get all users in db
- * @return {Promise} All users
+ * @param {String} search
+ * @param {Int} page
+ * @param {Int} perPage
+ * @return {Promise} users selected
  */
-exports.list = async () => {
-  const result = await UserRepository.list();
+exports.list = async (search, page, perPage) => {
+  const result = await UserRepository.list(search, page, perPage);
   return Promise.resolve(result.map((user) => this.removeSensitive(user)));
 };
 

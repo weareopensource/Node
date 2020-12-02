@@ -208,7 +208,8 @@ exports.checkOAuthUserProfile = async (profil, key, provider, res) => {
       _.clone(config.joi.validationOptions),
     );
     // check error
-    model.checkError(result, res);
+    const error = model.checkError(result);
+    if (error) return responses.error(res, 422, 'Schema validation error', error)(result.error);
     // else return req.body with the data after Joi validation
     return await UserService.create(result.value);
   } catch (err) {

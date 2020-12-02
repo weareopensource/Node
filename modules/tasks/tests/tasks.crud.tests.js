@@ -116,7 +116,7 @@ describe('Tasks CRUD Tests :', () => {
           .expect(422);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toEqual('Schema validation error');
-        expect(result.body.description).toBe('"title" must be a string. ');
+        expect(result.body.description).toBe('Title must be a string. ');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();

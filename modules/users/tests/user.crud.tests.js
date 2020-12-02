@@ -87,7 +87,7 @@ describe('User CRUD Tests :', () => {
           .expect(422);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toBe('Schema validation error');
-        expect(result.body.description).toEqual('Password must have a strength of at least 3. "password" length must be at least 8 characters long. ');
+        expect(result.body.description).toEqual('Password must have a strength of at least 3. Password length must be at least 8 characters long. ');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -105,7 +105,7 @@ describe('User CRUD Tests :', () => {
           .expect(422);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toBe('Schema validation error');
-        expect(result.body.description).toEqual('Password must have a strength of at least 3. "password" length must be at least 8 characters long. ');
+        expect(result.body.description).toEqual('Password must have a strength of at least 3. Password length must be at least 8 characters long. ');
         expect(JSON.parse(result.body.error)._original.password).toBeUndefined();
       } catch (err) {
         console.log(err);
@@ -171,7 +171,7 @@ describe('User CRUD Tests :', () => {
           .expect(422);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toEqual('Unprocessable Entity');
-        expect(result.body.description).toBe('Validation failed.');
+        expect(result.body.description).toBe('Path `email` (register_new_user_@test.com) is not unique. .');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -240,6 +240,84 @@ describe('User CRUD Tests :', () => {
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('user list');
         expect(result.body.data).toBeInstanceOf(Array);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+
+      try {
+        await UserService.delete(userEdited);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+
+    test('should be able to retrieve a list of users if admin with pagination', async () => {
+      _userEdited.roles = ['user', 'admin'];
+
+      try {
+        const result = await agent.post('/api/auth/signup')
+          .send(_userEdited)
+          .expect(200);
+        userEdited = result.body.user;
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+
+      try {
+        const result = await agent.get('/api/users/page/0&1')
+          .expect(200);
+        expect(result.body.type).toBe('success');
+        expect(result.body.message).toBe('user list');
+        expect(result.body.data).toBeInstanceOf(Array);
+        expect(result.body.data).toHaveLength(1);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+
+      try {
+        const result = await agent.get('/api/users/page/1&1')
+          .expect(200);
+        expect(result.body.type).toBe('success');
+        expect(result.body.message).toBe('user list');
+        expect(result.body.data).toBeInstanceOf(Array);
+        expect(result.body.data).toHaveLength(1);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+
+      try {
+        await UserService.delete(userEdited);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+
+    test('should be able to retrieve a list of users if admin with pagination and search', async () => {
+      _userEdited.roles = ['user', 'admin'];
+
+      try {
+        const result = await agent.post('/api/auth/signup')
+          .send(_userEdited)
+          .expect(200);
+        userEdited = result.body.user;
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+
+      try {
+        const result = await agent.get('/api/users/page/0&20&Admin')
+          .expect(200);
+        expect(result.body.type).toBe('success');
+        expect(result.body.message).toBe('user list');
+        expect(result.body.data).toBeInstanceOf(Array);
+        expect(result.body.data).toHaveLength(1);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -743,7 +821,7 @@ describe('User CRUD Tests :', () => {
           .send(userUpdate)
           .expect(422);
         expect(result.body.message).toEqual('Unprocessable Entity');
-        expect(result.body.description).toBe('Validation failed.');
+        expect(result.body.description).toBe('Path `email` (test@test.com) is not unique. .');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
