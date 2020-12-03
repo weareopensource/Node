@@ -6,7 +6,9 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 
-const UserService = require(path.resolve('modules/users/services/user.service'));
+const UserService = require(path.resolve(
+  'modules/users/services/user.service',
+));
 const config = require(path.resolve('./config'));
 const model = require(path.resolve('./lib/middlewares/model'));
 const responses = require(path.resolve('./lib/helpers/responses'));
@@ -38,12 +40,7 @@ exports.signup = async (req, res) => {
         message: 'Sign up',
       });
   } catch (err) {
-    responses.error(
-      res,
-      422,
-      'Unprocessable Entity',
-      errors.getMessage(err),
-    )(err);
+    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
 };
 
@@ -137,18 +134,10 @@ exports.oauthCallback = async (req, res, next) => {
         .status(200)
         .cookie('TOKEN', token, { httpOnly: true })
         .json({
-          user,
-          tokenExpiresIn: Date.now() + config.jwt.expiresIn * 1000,
-          type: 'sucess',
-          message: 'oAuth Ok',
+          user, tokenExpiresIn: Date.now() + config.jwt.expiresIn * 1000, type: 'sucess', message: 'oAuth Ok',
         });
     } catch (err) {
-      return responses.error(
-        res,
-        422,
-        'Unprocessable Entity',
-        errors.getMessage(err.details || err),
-      )(err);
+      return responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err.details || err))(err);
     }
   }
   // classic web oAuth
