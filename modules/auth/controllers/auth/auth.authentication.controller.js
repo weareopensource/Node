@@ -176,10 +176,7 @@ exports.checkOAuthUserProfile = async (profil, key, provider, res) => {
     const search = await UserService.search(query);
     if (search.length === 1) return search[0];
   } catch (err) {
-    throw new AppError('oAuth, find user failed', {
-      code: 'SERVICE_ERROR',
-      details: err,
-    });
+    throw new AppError('oAuth, find user failed', { code: 'SERVICE_ERROR', details: err });
   }
   // if no, generate
   try {
@@ -191,20 +188,13 @@ exports.checkOAuthUserProfile = async (profil, key, provider, res) => {
       provider,
       providerData: profil.providerData || null,
     };
-    const result = model.getResultFromJoi(
-      user,
-      UsersSchema.User,
-      _.clone(config.joi.validationOptions),
-    );
+    const result = model.getResultFromJoi(user, UsersSchema.User, _.clone(config.joi.validationOptions));
     // check error
     const error = model.checkError(result);
     if (error) return responses.error(res, 422, 'Schema validation error', error)(result.error);
     // else return req.body with the data after Joi validation
     return await UserService.create(result.value);
   } catch (err) {
-    throw new AppError('oAuth', {
-      code: 'CONTROLLER_ERROR',
-      details: err.details || err,
-    });
+    throw new AppError('oAuth', { code: 'CONTROLLER_ERROR', details: err.details || err });
   }
 };
