@@ -1,0 +1,42 @@
+---
+kind: pipeline
+name: node13
+
+steps:
+  - name: test node 13
+    image: node:13
+    commands:
+      - npm i
+      - WAOS_NODE_db_uri='mongodb://mongo:27017/WaosNodeTest' npm run test
+services:
+  - name: mongo
+    image: mongo:latest
+
+---
+kind: pipeline
+name: node14
+
+steps:
+  - name: test node 14
+    image: node:14
+    commands:
+      - npm i
+      - WAOS_NODE_db_uri='mongodb://mongo:27017/WaosNodeTest' npm run test
+services:
+  - name: mongo
+    image: mongo:latest
+
+---
+kind: pipeline
+name: node15
+
+steps:
+  - name: test node 15
+    image: node:15
+    failure: ignore
+    commands:
+      - npm i
+      - WAOS_NODE_db_uri='mongodb://mongo:27017/WaosNodeTest' npm run test
+services:
+  - name: mongo
+    image: mongo:latest
