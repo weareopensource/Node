@@ -21,13 +21,11 @@ exports.forgot = async (req, res) => {
   let user;
   // check input
   if (!req.body.email) return responses.error(res, 422, 'Unprocessable Entity', 'Mail field must not be blank')();
-
   // get user generate and add token
   try {
     user = await UserService.getBrut({ email: req.body.email });
     if (!user) return responses.error(res, 400, 'Bad Request', 'No account with that email has been found')();
     if (user.provider !== 'local') return responses.error(res, 400, 'Bad Request', `It seems like you signed up using your ${user.provider} account`)();
-
     const edit = {
       resetPasswordToken: jwt.sign({ exp: Date.now() + 3600000 }, config.jwt.secret, { algorithm: 'HS256' }),
       resetPasswordExpires: Date.now() + 3600000,
@@ -36,7 +34,6 @@ exports.forgot = async (req, res) => {
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
-
   // send mail
   const mail = await mails.sendMail({
     template: 'reset-password-email',

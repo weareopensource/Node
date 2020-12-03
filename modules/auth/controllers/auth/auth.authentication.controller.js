@@ -6,7 +6,9 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 
-const UserService = require(path.resolve('modules/users/services/user.service'));
+const UserService = require(path.resolve(
+  'modules/users/services/user.service',
+));
 const config = require(path.resolve('./config'));
 const model = require(path.resolve('./lib/middlewares/model'));
 const responses = require(path.resolve('./lib/helpers/responses'));
@@ -38,12 +40,7 @@ exports.signup = async (req, res) => {
         message: 'Sign up',
       });
   } catch (err) {
-    responses.error(
-      res,
-      422,
-      'Unprocessable Entity',
-      errors.getMessage(err),
-    )(err);
+    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
 };
 
@@ -137,18 +134,10 @@ exports.oauthCallback = async (req, res, next) => {
         .status(200)
         .cookie('TOKEN', token, { httpOnly: true })
         .json({
-          user,
-          tokenExpiresIn: Date.now() + config.jwt.expiresIn * 1000,
-          type: 'sucess',
-          message: 'oAuth Ok',
+          user, tokenExpiresIn: Date.now() + config.jwt.expiresIn * 1000, type: 'sucess', message: 'oAuth Ok',
         });
     } catch (err) {
-      return responses.error(
-        res,
-        422,
-        'Unprocessable Entity',
-        errors.getMessage(err.details || err),
-      )(err);
+      return responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err.details || err))(err);
     }
   }
   // classic web oAuth
@@ -187,10 +176,7 @@ exports.checkOAuthUserProfile = async (profil, key, provider, res) => {
     const search = await UserService.search(query);
     if (search.length === 1) return search[0];
   } catch (err) {
-    throw new AppError('oAuth, find user failed', {
-      code: 'SERVICE_ERROR',
-      details: err,
-    });
+    throw new AppError('oAuth, find user failed', { code: 'SERVICE_ERROR', details: err });
   }
   // if no, generate
   try {
@@ -202,20 +188,13 @@ exports.checkOAuthUserProfile = async (profil, key, provider, res) => {
       provider,
       providerData: profil.providerData || null,
     };
-    const result = model.getResultFromJoi(
-      user,
-      UsersSchema.User,
-      _.clone(config.joi.validationOptions),
-    );
+    const result = model.getResultFromJoi(user, UsersSchema.User, _.clone(config.joi.validationOptions));
     // check error
     const error = model.checkError(result);
     if (error) return responses.error(res, 422, 'Schema validation error', error)(result.error);
     // else return req.body with the data after Joi validation
     return await UserService.create(result.value);
   } catch (err) {
-    throw new AppError('oAuth', {
-      code: 'CONTROLLER_ERROR',
-      details: err.details || err,
-    });
+    throw new AppError('oAuth', { code: 'CONTROLLER_ERROR', details: err.details || err });
   }
 };

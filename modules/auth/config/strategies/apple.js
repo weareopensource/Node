@@ -32,14 +32,8 @@ exports.prepare = async (req, accessToken, refreshToken, decodedIdToken, profile
   providerData.sub = decodedIdToken.sub;
   // Create the user OAuth profile
   const _profile = {
-    firstName:
-      req.appleProfile && req.appleProfile.name
-        ? req.appleProfile.name.firstName
-        : null,
-    lastName:
-      req.appleProfile && req.appleProfile.name
-        ? req.appleProfile.name.lastName
-        : null,
+    firstName: req.appleProfile && req.appleProfile.name ? req.appleProfile.name.firstName : null,
+    lastName: req.appleProfile && req.appleProfile.name ? req.appleProfile.name.lastName : null,
     email: req.appleProfile ? req.appleProfile.email : null,
     avatar: null,
     provider: 'apple',

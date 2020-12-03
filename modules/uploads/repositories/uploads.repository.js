@@ -77,28 +77,18 @@ exports.deleteMany = async (filter) => {
  * @return {Object} confirmation of delete
  */
 exports.purge = async (kind, collection, key) => {
-  const toDelete = await Uploads.aggregate(
-    [
-      {
-        $match: {
-          'metadata.kind': kind,
-        },
+  const toDelete = await Uploads.aggregate([
+    { $match: { 'metadata.kind': kind } },
+    {
+      $lookup: {
+        from: collection,
+        localField: 'filename',
+        foreignField: key,
+        as: 'references',
       },
-      {
-        $lookup: {
-          from: collection,
-          localField: 'filename',
-          foreignField: key,
-          as: 'references',
-        },
-      },
-      {
-        $match: {
-          references: [],
-        },
-      },
-    ],
-  );
+    },
+    { $match: { references: [] } },
+  ]);
   toDelete.forEach(async (id) => {
     Attachment.unlink(id, (err, unlinked) => {
       if (err) throw new AppError('Upload: delete error', { code: 'REPOSITORY_ERROR', details: err });

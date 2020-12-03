@@ -36,7 +36,6 @@ const UserMongoose = new Schema({
   timestamps: true,
 });
 
-// add virtual id field (FIXME mongoose.virtual ko es6)
 function addID() {
   return this._id.toHexString();
 }
