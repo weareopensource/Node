@@ -267,6 +267,18 @@ describe('User CRUD Tests :', () => {
       }
 
       try {
+        const result = await agent.get('/api/users/page/0')
+          .expect(200);
+        expect(result.body.type).toBe('success');
+        expect(result.body.message).toBe('user list');
+        expect(result.body.data).toBeInstanceOf(Array);
+        expect(result.body.data).toHaveLength(4);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+
+      try {
         const result = await agent.get('/api/users/page/0&1')
           .expect(200);
         expect(result.body.type).toBe('success');
@@ -738,7 +750,6 @@ describe('User CRUD Tests :', () => {
         expect(result.body.message).toBe('user data');
         expect(result.body.data.user.id).toBe(user.id);
         expect(result.body.data.tasks).toBeInstanceOf(Array);
-        expect(result.body.data.tasks).toBeInstanceOf(Array);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -766,6 +777,18 @@ describe('User CRUD Tests :', () => {
           expect.arrayContaining(['user']),
         );
         expect(result.body.data.id).toBe(String(user.id));
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+
+    test('should be able to update Terms sign date', async () => {
+      try {
+        const result = await agent.get('/api/users/terms')
+          .expect(200);
+        expect(result.body.type).toBe('success');
+        expect(result.body.message).toBe('user terms signed');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
