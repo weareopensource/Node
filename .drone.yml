@@ -8,6 +8,10 @@ steps:
     commands:
       - npm i
       - npm run test
+services:
+  - name: mongo
+    image: mongo:4
+    command: [--smallfiles]
 
 ---
 kind: pipeline
@@ -19,6 +23,10 @@ steps:
     commands:
       - npm i
       - npm run test
+services:
+  - name: mongo
+    image: mongo:4
+    command: [--smallfiles]
 
 ---
 kind: pipeline
@@ -31,3 +39,7 @@ steps:
     commands:
       - npm i
       - npm run test
+services:
+  - name: mongo
+    image: mongo:4
+    command: [--smallfiles]
