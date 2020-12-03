@@ -1,5 +1,6 @@
 ---
 kind: pipeline
+type: kubernetes
 name: node13
 
 steps:
@@ -10,11 +11,11 @@ steps:
       - npm run test
 services:
   - name: mongo
-    image: mongo:4
-    command: [--smallfiles]
+    image: mongo:latest
 
 ---
 kind: pipeline
+type: kubernetes
 name: node14
 
 steps:
@@ -25,11 +26,11 @@ steps:
       - npm run test
 services:
   - name: mongo
-    image: mongo:4
-    command: [--smallfiles]
+    image: mongo:latest
 
 ---
 kind: pipeline
+type: kubernetes
 name: node15
 
 steps:
@@ -41,5 +42,4 @@ steps:
       - npm run test
 services:
   - name: mongo
-    image: mongo:4
-    command: [--smallfiles]
+    image: mongo:latest
