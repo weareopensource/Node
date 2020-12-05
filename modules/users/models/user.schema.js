@@ -7,15 +7,16 @@ const path = require('path');
 const joiHelpers = require(path.resolve('./lib/helpers/joi'));
 const Joi = PlainJoi.extend(joiHelpers.joiZxcvbn(PlainJoi));
 const config = require(path.resolve('./config'));
+const names = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
 
 /**
  * User Data Schema
  */
 const UserSchema = Joi.object().keys({
-  firstName: Joi.string().regex(/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u).min(1).max(30)
+  firstName: Joi.string().regex(names).min(1).max(50)
     .trim()
     .required(),
-  lastName: Joi.string().regex(/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u).min(1).max(30)
+  lastName: Joi.string().regex(names).min(1).max(50)
     .trim()
     .required(),
   bio: Joi.string().max(200)
