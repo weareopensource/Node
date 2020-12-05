@@ -328,7 +328,6 @@ describe('User CRUD Tests :', () => {
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('user list');
         expect(result.body.data).toBeInstanceOf(Array);
-        expect(result.body.data).toHaveLength(1);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
