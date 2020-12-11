@@ -56,7 +56,6 @@ Our stack node is actually in Beta.
 
 * **Tasks** : list - get - add - edit - delete
 * **Files Uploads** : get stream - add - delete  - get image stream & sharp operations
-* **Mails Subscriptions** : list - get - add - edit - delete  
 
 ## :pushpin: Prerequisites
 
