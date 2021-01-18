@@ -109,7 +109,7 @@
     "gulp-load-plugins": "^2.0.6",
     "gulp-nodemon": "~2.5.0",
     "gulp-refresh": "~1.1.0",
-    "husky": "^4.3.7",
+    "husky": "^4.3.8",
     "inquirer": "^7.3.3",
     "jest-cli": "24.9.0",
     "semantic-release": "^17.3.2",
