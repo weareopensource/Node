@@ -88,7 +88,7 @@
     "sequelize": "^6.3.5",
     "sharp": "^0.27.0",
     "snyk": "^1.437.4",
-    "supertest": "^6.0.1",
+    "supertest": "^6.1.1",
     "swig": "^1.4.2",
     "winston": "3.3.3",
     "zxcvbn": "^4.4.2"
