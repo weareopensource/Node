@@ -112,7 +112,7 @@
     "husky": "^4.3.8",
     "inquirer": "^7.3.3",
     "jest-cli": "24.9.0",
-    "semantic-release": "^17.3.2",
+    "semantic-release": "^17.3.6",
     "standard-version": "^9.1.0"
   },
   "release": {
