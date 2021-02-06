@@ -6,7 +6,7 @@ const _ = require('lodash');
 const gulp = require('gulp');
 const gulpLoadPlugins = require('gulp-load-plugins');
 const path = require('path');
-const jestCli = require('jest-cli');
+const { runCLI } = require('@jest/core');
 const inquirer = require('inquirer');
 
 const plugins = gulpLoadPlugins();
@@ -70,9 +70,9 @@ exports.watch = watch;
 
 // Jest UT
 const jest = (done) => {
-  jestCli.runCLI(
+  runCLI(
     {},
-    '.',
+    ['.'],
   ).then((result) => {
     if (result.results && result.results.numFailedTests > 0) process.exit();
     done();
@@ -84,9 +84,9 @@ exports.jest = jest;
 
 // Jest Watch
 const jestWatch = (done) => {
-  jestCli.runCLI(
+  runCLI(
     { watch: true },
-    '.',
+    ['.'],
   );
   done();
 };
@@ -94,7 +94,7 @@ exports.jestWatch = jestWatch;
 
 // Jest UT
 const jestCoverage = (done) => {
-  jestCli.runCLI(
+  runCLI(
     {
       collectCoverage: true,
       collectCoverageFrom: defaultAssets.allJS,
@@ -105,7 +105,7 @@ const jestCoverage = (done) => {
         'text',
       ],
     },
-    '.',
+    ['.'],
   ).then((result) => {
     if (result.results && result.results.numFailedTests > 0) process.exit();
     done();
