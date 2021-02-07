@@ -1,3 +1,37 @@
+# [1.1.0](https://github.com/weareopensource/Node/compare/v1.0.0...v1.1.0) (2021-02-07)
+
+
+### Bug Fixes
+
+* **auth:** oAuth apple mode validation 🐛 ([a4a249b](https://github.com/weareopensource/Node/commit/a4a249b76d1cf73495d997861b5f4b63c07ba634))
+* **config:** tests env api 🐛 ([039bfa4](https://github.com/weareopensource/Node/commit/039bfa46bbb5e349f2924feaaf03995ee370f0c5))
+* **config, users:** reset pasword fix & mail template adjustment 🐛 ([4ed570e](https://github.com/weareopensource/Node/commit/4ed570eaca1de16fb19e07eea73c6427021003ed))
+* **core:** protect for undefined changelog 🐛 ([36350ba](https://github.com/weareopensource/Node/commit/36350ba4b8e5d16f836ef6818f68afadd9b02a1b))
+* **dependencies:** missing one O.O 🐛 ([944ad4f](https://github.com/weareopensource/Node/commit/944ad4f691e0aa8d2a7cdc6f25a09011f5934ec0))
+* **lib, auth:** oAuth errors management 🐛 ([f809a76](https://github.com/weareopensource/Node/commit/f809a76038c4553236971c68f0f659b11bbf298f))
+* **travis:** coveralls uniq 🐛 ([2a8b7d4](https://github.com/weareopensource/Node/commit/2a8b7d4990c3d2f3a3020f29931992e5e920eea3))
+* **user:** add complementary data to /me 🐛 ([91096bd](https://github.com/weareopensource/Node/commit/91096bd3107b301c9bab6ebfa123b8811f8e27c5))
+* **users:** schema firstname lastname valide accent 🐛 ([62f587a](https://github.com/weareopensource/Node/commit/62f587ac9820aa9b262759751e4019e190453abe))
+* **users:** unit test for password reset 🐛 ([0d75a52](https://github.com/weareopensource/Node/commit/0d75a52a1aef922dafe04c8c1e46d0ab945f6b2e))
+* package.json & package-lock.json to reduce vulnerabilities ([a3fb4ad](https://github.com/weareopensource/Node/commit/a3fb4ad81038fe857a5df552224b62d326ad6b58))
+
+
+### Features
+
+* **auth, config:** review oAuth for google sign in ✨ ([4446da4](https://github.com/weareopensource/Node/commit/4446da4dda67f010cf27bcf0d84352075f6d91c7))
+* **config, lib:** add server tiemout to config ✨ ([7c905c8](https://github.com/weareopensource/Node/commit/7c905c80e9ff5cc63f9711955660c1fa9ed3d8bf))
+* **config, users:** add option to diabled sign in up on api side ✨ ([f5a958f](https://github.com/weareopensource/Node/commit/f5a958fca2e6a87c58685f08d808049ebce2f86e))
+* **core, users:** add team route ✨ ([17c97ba](https://github.com/weareopensource/Node/commit/17c97ba4d6012258fe305af1d5afd2e2eca03c2f))
+* **home:** add cgu & legals page example ✨ ([b617e32](https://github.com/weareopensource/Node/commit/b617e32bf12410618bd4e076c43e34a26e3b8830))
+* **lib:** seed user easily ✨ ([3683c3b](https://github.com/weareopensource/Node/commit/3683c3b5dbc982f3b16beef9c72c93011ef086db))
+* **users:** add apple client side oAuth ✨ ([a41c351](https://github.com/weareopensource/Node/commit/a41c351d3f2809e999a58c8a857a610c141bbcb8))
+* **users:** add position to model ✨ ([41cd8fc](https://github.com/weareopensource/Node/commit/41cd8fc3c8ee8c0b666adf11f6d195f5ec8a4eaa))
+* **users:** admin pagination ✨ ([f41e064](https://github.com/weareopensource/Node/commit/f41e064c3a5815352808341f19f47aceb8c360b0))
+* **users:** oAuth add apple ✨ ([71891f9](https://github.com/weareopensource/Node/commit/71891f9f60a97aa77c3515c5eca2721b590700df))
+* **users:** switch oAuth errors to server side ✨ ([4abfecb](https://github.com/weareopensource/Node/commit/4abfecbc90ebc006379758c64bfcb71272b97ce4))
+* **users, config:** add complementary data key for specific projects ✨ ([58fc863](https://github.com/weareopensource/Node/commit/58fc8634cdf30d54faf7fe4e18217754c0d9e75b))
+* **users, home, config:** add sign terms road and mngt ✨ ([6977d1e](https://github.com/weareopensource/Node/commit/6977d1e1b6f74e4efa8ff50b17a00642428a1ee2))
+
 # 1.0.0 (2020-07-25)
 
 ### Bug Fixes
