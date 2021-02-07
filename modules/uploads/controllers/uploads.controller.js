@@ -129,7 +129,6 @@ exports.uploadByImageName = async (req, res, next, uploadImageName) => {
     req.sharpOption = opts[2] || null;
     next();
   } catch (err) {
-    console.log('err', err);
     next(err);
   }
 };

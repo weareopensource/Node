@@ -10,6 +10,7 @@ const logger = require(path.resolve('./lib/services/logger'));
 const mongooseService = require(path.resolve('./lib/services/mongoose'));
 const multerService = require(path.resolve('./lib/services/multer'));
 const seed = require(path.resolve('./lib/services/seed'));
+const errors = require(path.resolve('./lib/helpers/errors'));
 
 /**
  * Unit tests
@@ -393,6 +394,36 @@ describe('Configuration Tests:', () => {
     test('should be able to generate 32 bytes file name', async () => {
       const filename = await multerService.generateFileName('filename.png');
       expect(filename).toHaveLength(68);
+    });
+  });
+
+  describe('Errors', () => {
+    test('should return errors message properly', async () => {
+      try {
+        const fromCode = errors.getMessage({ code: 11001, errmsg: 'test' });
+        expect(fromCode).toBe('Test already exists.');
+
+        const fromCode2 = errors.getMessage({ code: 11001, errmsg: 'test.$.test' });
+        expect(fromCode2).toBe('Test.$ already exists.');
+
+        const fromCodeUnknow = errors.getMessage({ code: 'unknow' });
+        expect(fromCodeUnknow).toBe('Something went wrong.');
+
+        const fromErrorsArray = errors.getMessage({ errors: [{ message: 'error1' }, { message: 'error2' }] });
+        expect(fromErrorsArray).toBe('error1 error2 .');
+
+        const fromErrorsObject = errors.getMessage({ errors: { one: { message: 'error1' }, two: { message: 'error2' } } });
+        expect(fromErrorsObject).toBe('error1 error2 .');
+
+        const fromMessage = errors.getMessage({ message: 'error1' });
+        expect(fromMessage).toBe('error1.');
+
+        const fromEmpty = errors.getMessage({ });
+        expect(fromEmpty).toBe('error while retrieving the error :o : {}.');
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
     });
   });
 

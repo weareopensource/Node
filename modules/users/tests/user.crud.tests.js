@@ -781,7 +781,7 @@ describe('User CRUD Tests :', () => {
       }
     });
 
-    test('should be able to update Terms sign date', async () => {
+    test('should be able to update Terms sign date if logged in', async () => {
       try {
         const result = await agent.get('/api/users/terms')
           .expect(200);
@@ -1029,6 +1029,16 @@ describe('User CRUD Tests :', () => {
   });
 
   describe('Logout', () => {
+    test('should not be able to update Terms sign date if not logged in', async () => {
+      try {
+        await agent.get('/api/users/terms')
+          .expect(401);
+      } catch (err) {
+        expect(err).toBeFalsy();
+        console.log(err);
+      }
+    });
+
     test('should not be able to change user own password if not signed in', async () => {
       try {
         await agent.post('/api/users/password')
