@@ -2,7 +2,7 @@
  [![Dependabot badge](https://badges.weareopensource.me/badge/Dependabot-enabled-2768cf.svg?style=flat-square)](https://dependabot.com)
  [![Known Vulnerabilities](https://snyk.io/test/github/weareopensource/node/badge.svg?style=flat-square)](https://snyk.io/test/github/weareopensource/node) [![Docker Pulls](https://badges.weareopensource.me/docker/pulls/weareopensource/node?style=flat-square)](https://hub.docker.com/repository/docker/weareopensource/node)
 
-# :globe_with_meridians: [WeAreOpenSource](https://weareopensource.me) Node - Beta
+# :globe_with_meridians: [WeAreOpenSource](https://weareopensource.me) Node + Typescript - Beta
 
 ## :book: Presentation
 
