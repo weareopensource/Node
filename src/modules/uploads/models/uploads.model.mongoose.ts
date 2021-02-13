@@ -1,14 +1,24 @@
 /**
  * Module dependencies
  */
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const Schema = mongoose.Schema;
-
+interface IUpload extends mongoose.Document {
+  length: number,
+  chunkSize: number,
+  uploadDate: number,
+  md5: string,
+  filename: string,
+  contentType: string,
+  metadata: {
+    user: any,
+    kind: string,
+  },
+}
 /**
  * Data Model Mongoose
  */
-const UploadsMongoose = new Schema({
+const UploadsMongoose = new mongoose.Schema({
   length: Number,
   chunkSize: Number,
   uploadDate: Date,
@@ -17,11 +27,11 @@ const UploadsMongoose = new Schema({
   contentType: String,
   metadata: {
     user: {
-      type: Schema.ObjectId,
+      type: mongoose.SchemaTypes.ObjectId,
       ref: 'User',
     },
     kind: String,
   },
 }, { strict: false });
 
-mongoose.model('Uploads', UploadsMongoose, 'uploads.files');
+export default mongoose.model<IUpload>('Uploads', UploadsMongoose, 'uploads.files');

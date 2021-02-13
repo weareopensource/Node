@@ -4,9 +4,9 @@
 import mongoose from 'mongoose';
 import { createModel } from 'mongoose-gridfs';
 import AppError from '../../../lib/helpers/AppError';
+import Uploads from '../models/uploads.model.mongoose';
 
 const Attachment = createModel({ bucketName: 'uploads', model: 'Uploads' });
-const Uploads = mongoose.model('Uploads');
 
 /**
  * @desc Function to get all upload in db with filter or not

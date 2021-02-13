@@ -35,7 +35,7 @@ export async function changelogs(req: NodeRequest, res: Response) {
  */
 export async function team(req: NodeRequest, res: Response) {
   try {
-    const users = await HomeService.team();
+    const users = await HomeService.homeTeam();
     success(res, 'team list')(users);
   } catch (err) {
     error(res, 422, 'Unprocessable Entity', getMessage(err))(err);

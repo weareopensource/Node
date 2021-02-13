@@ -3,13 +3,33 @@
  */
 import mongoose from 'mongoose';
 
-const Schema = mongoose.Schema;
 mongoose.Promise = Promise;
 
+export interface IUser extends mongoose.Document {
+  firstName?: string,
+  lastName?: string,
+  bio?: string,
+  position?: string,
+  email?: string,
+  avatar?: string,
+  roles?: string[],
+  /* Provider */
+  provider?: string,
+  providerData: {},
+  additionalProvidersData: {},
+  /* Password */
+  password: string,
+  resetPasswordToken: string,
+  resetPasswordExpires: number,
+  // startup requirement
+  terms: Date,
+  // other
+  complementary: {}, // put your specific project private data here
+}
 /**
  * User Schema
  */
-const UserMongoose = new Schema({
+const UserMongoose = new mongoose.Schema({
   firstName: String,
   lastName: String,
   bio: String,
@@ -62,4 +82,4 @@ UserMongoose.set('toJSON', {
 //   });
 // });
 
-mongoose.model('User', UserMongoose);
+export default mongoose.model<IUser>('User', UserMongoose);

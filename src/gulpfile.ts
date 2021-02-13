@@ -2,17 +2,18 @@
  * Module dependencies.
  */
 import _ from 'lodash';
-// const glob = require('glob');
 import gulp from 'gulp';
 import gulpLoadPlugins from 'gulp-load-plugins';
-import path from 'path';
 import { runCLI } from '@jest/core';
 import inquirer from 'inquirer';
 import defaultAssets from './config/assets';
 import config from './config';
 import * as mongooseService from './lib/services/mongoose';
+import * as seedService from './lib/services/seed';
 
 const plugins = gulpLoadPlugins();
+
+console.log(defaultAssets);
 
 // default node env if not define
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
@@ -126,7 +127,7 @@ const dropMongo = async () => {
 export { dropMongo };
 
 // Drop database after confirmation, depends of ENV
-const dropDB = (done) => {
+const dropDB = async () => {
   if (process.env.NODE_ENV !== 'test') {
     const question = [
       {
@@ -137,11 +138,11 @@ const dropDB = (done) => {
       },
     ];
 
-    inquirer.prompt(question).then((answer) => {
+    inquirer.prompt(question).then(async (answer) => {
       if (!answer.continue) return process.exit(2);
-      dropMongo(done);
+      await dropMongo();
     });
-  } else dropMongo(done);
+  } else await dropMongo();
 };
 export { dropDB };
 
@@ -149,14 +150,9 @@ export { dropDB };
 const seedMongoose = async () => {
   try {
     await mongooseService.connect();
-    await mongooseService.loadModels();
-    const AuthService = require(path.resolve('./dist/src/modules/auth/services/auth.service'));
-    const UserService = require(path.resolve('./dist/src/modules/users/services/user.service'));
-    const TaskService = require(path.resolve('./dist/src/modules/tasks/services/tasks.service'));
-    const seed = require(path.resolve('./dist/src/lib/services/seed'));
-    await seed.start({
+    await seedService.start({
       logResults: true,
-    }, UserService, AuthService, TaskService).catch((e) => {
+    }).catch((e) => {
       console.log(e);
     });
     await mongooseService.disconnect();
@@ -170,10 +166,7 @@ const seedMongooseUser = async () => {
   try {
     await mongooseService.connect();
     await mongooseService.loadModels();
-    const AuthService = require(path.resolve('./dist/src/modules/auth/services/auth.service'));
-    const UserService = require(path.resolve('./dist/src/modules/users/services/user.service'));
-    const seed = require(path.resolve('./dist/src/lib/services/seed'));
-    await seed.user(config.seedDB.options.seedUser, UserService, AuthService).catch((e) => {
+    await seedService.userSeed(config.seedDB.options.seedUser).catch((e) => {
       console.log(e);
     });
     await mongooseService.disconnect();

@@ -1,9 +1,9 @@
 /**
  * Module dependencies
  */
+import { hash } from 'bcrypt';
 import _ from 'lodash';
 import config from '../../../config';
-import * as authService from '../../auth/services/auth.service';
 import * as UserRepository from '../repositories/user.repository';
 
 /**
@@ -24,7 +24,7 @@ export function removeSensitive(user: any, conf?: any) {
  * @param {Int} perPage
  * @return {Promise} users selected
  */
-export async function list(filter, page?: any, perPage?: any) {
+export async function list(filter: RegExp, page?: any, perPage?: any) {
   const result = await UserRepository.list(filter, page, perPage);
   return Promise.resolve(result.map((user) => removeSensitive(user)));
 }
@@ -45,7 +45,7 @@ export async function create(user): Promise<any> {
     //   throw new AppError(`${validPassword.feedback.warning}. ${validPassword.feedback.suggestions.join('. ')}`);
     // }
     // When password is provided we need to make sure we are hashing it
-    user.password = await authService.hashPassword(user.password);
+    user.password = await hash(String(user.password), 10);
   }
   const result = await UserRepository.create(user);
   // Remove sensitive data before return

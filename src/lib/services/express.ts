@@ -61,7 +61,6 @@ export function initMiddleware(app: Application) {
   // Add the cookie parser and flash middleware
   app.use(cookieParser());
   app.use(cors({
-    methods: ['GET'],
     origin: config.cors.origin || [],
     credentials: config.cors.credentials || false,
     optionsSuccessStatus: config.cors.optionsSuccessStatus || 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
@@ -123,11 +122,10 @@ export function initModulesServerPolicies() {
 export function initModulesServerRoutes(app: Application) {
   try {
     config.files.routes.forEach((routePath) => {
-      console.log(routePath);
       require(path.resolve(routePath)).default(app);
     });
   } catch (e) {
-    console.log(e.stack)
+    console.log(e.stack);
   }
   app.get('*', (req, res) => {
     res.send('<center><br /><h1>WAOS Node Api</h1><h3>Available on <a href="/api/tasks">/api</a>. #LetsGetTogether</h3></center>');

@@ -3,18 +3,20 @@
  */
 import _ from 'lodash';
 import chalk from 'chalk';
-import path from 'path';
 import config from '../../config';
+import AppError from '../helpers/AppError';
+import * as UserService from '../../modules/users/services/user.service';
+import * as AuthService from '../../modules/auth/services/auth.service';
+import * as TaskService from '../../modules/tasks/services/tasks.service';
 
-const AppError = require(path.resolve('./lib/helpers/AppError'));
 // global seed options object
 let seedOptions: any = {};
 
 // save the specified user with the password provided from the resolved promise
-const seedTheUser = (UserService, user: any) => async (password) => {
+const seedTheUser = (user) => async (password) => {
   user.password = password;
   if (user.email === seedOptions.seedAdmin.email && process.env.NODE_ENV === 'production' && await UserService.get(user)) return new AppError(`Failed due to local account already exists: ${user.email}`);
-  if (process.env.NODE_ENV === 'test' && await UserService.get(user)) UserService.delete(user);
+  if (process.env.NODE_ENV === 'test' && await UserService.get(user)) await UserService.deleteUser(user);
   try {
     const result = await UserService.create(user);
     if (seedOptions.logResults) console.log(chalk.bold.red(`Database Seeding:\t\t\tLocal ${user.email} added with password set to ${password}`));
@@ -24,8 +26,9 @@ const seedTheUser = (UserService, user: any) => async (password) => {
   }
 };
 
+
 // save the specified user with the password provided from the resolved promise
-const seedTasks = async (TaskService, task, user: any) => {
+const seedTasks = async (task, user: any) => {
   try {
     const result = await TaskService.create(task, user);
     if (seedOptions.logResults) console.log(chalk.bold.red(`Database Seeding:\t\t\tLocal ${task.title} added`));
@@ -35,7 +38,7 @@ const seedTasks = async (TaskService, task, user: any) => {
   }
 };
 
-export async function start(options, UserService, AuthService, TaskService) {
+export async function start(options) {
   let pwd;
   const result: any[] = [];
 
@@ -49,16 +52,16 @@ export async function start(options, UserService, AuthService, TaskService) {
   try {
     if (process.env.NODE_ENV === 'production') {
       pwd = await AuthService.generateRandomPassphrase();
-      result.push(await seedTheUser(UserService, seedOptions.seedAdmin)(pwd));
+      result.push(await seedTheUser(seedOptions.seedAdmin)(pwd));
     } else {
       pwd = await AuthService.generateRandomPassphrase();
-      result.push(await seedTheUser(UserService, seedOptions.seedUser)(pwd));
+      result.push(await seedTheUser(seedOptions.seedUser)(pwd));
       pwd = await AuthService.generateRandomPassphrase();
-      result.push(await seedTheUser(UserService, seedOptions.seedAdmin)(pwd));
+      result.push(await seedTheUser(seedOptions.seedAdmin)(pwd));
 
       if (process.env.NODE_ENV === 'development') {
-        result.push(await seedTasks(TaskService, seedOptions.seedTasks[0], result[0]));
-        result.push(await seedTasks(TaskService, seedOptions.seedTasks[1], result[1]));
+        result.push(await seedTasks(seedOptions.seedTasks[0], result[0]));
+        result.push(await seedTasks(seedOptions.seedTasks[1], result[1]));
       }
     }
   } catch (err) {
@@ -69,7 +72,7 @@ export async function start(options, UserService, AuthService, TaskService) {
   return result;
 }
 
-export async function userSeed(user: any, UserService, AuthService) {
+export async function userSeed(user: any) {
   let pwd;
   const result: any = [];
 
@@ -78,7 +81,7 @@ export async function userSeed(user: any, UserService, AuthService) {
 
   try {
     pwd = await AuthService.generateRandomPassphrase();
-    result.push(await seedTheUser(UserService, user)(pwd));
+    result.push(await seedTheUser(user)(pwd));
   } catch (err) {
     console.log(err);
     return new AppError('Error on seed start.');

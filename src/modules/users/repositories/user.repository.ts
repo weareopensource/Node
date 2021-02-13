@@ -2,13 +2,11 @@
  * Module dependencies
  */
 import mongoose from 'mongoose';
-
-const User = mongoose.model('User');
-
+import User from '../models/user.model.mongoose';
 /**
  * @desc Function to get all user in db
  */
-export function list(searchFilter: string, page, perPage) {
+export async function list(searchFilter: RegExp, page, perPage) {
   const filter = searchFilter ? {
     $or: [
       { firstName: { $regex: `${searchFilter}`, $options: 'i' } },
@@ -28,7 +26,7 @@ export function list(searchFilter: string, page, perPage) {
  * @param {Object} user
  * @return {Object} user
  */
-export function create(user) {
+export async function create(user) {
   return new User(user).save();
 }
 
@@ -37,7 +35,7 @@ export function create(user) {
  * @param {Object} user
  * @return {Object} user
  */
-export function get(user): any {
+export async function get(user) {
   if (user.id && mongoose.Types.ObjectId.isValid(user.id)) return User.findOne({ _id: user.id }).exec();
   if (user.email) return User.findOne({ email: user.email }).exec();
   if (user.resetPasswordToken) {
@@ -55,7 +53,7 @@ export function get(user): any {
  * @param {Object} mongoose input request
  * @return {Array} users
  */
-export function search(input) {
+export async function search(input) {
   return User.find(input)
     .exec();
 }
@@ -65,7 +63,7 @@ export function search(input) {
  * @param {Object} user
  * @return {Object} user
  */
-export function update(user) {
+export async function update(user) {
   return new User(user).save();
 }
 
@@ -83,7 +81,7 @@ export async function deleteUser(user) {
  * @desc Function to get collection stats
  * @return {Object} scrap
  */
-export function stats() {
+export async function stats() {
   return User.countDocuments();
 }
 
@@ -93,7 +91,7 @@ export function stats() {
  * @param {[String]} filters
  * @return {Object} locations
  */
-export function importUser(users, filters) {
+export async function importUser(users, filters) {
   return User.bulkWrite(users.map((user) => {
     const filter = {};
     filters.forEach((value) => {

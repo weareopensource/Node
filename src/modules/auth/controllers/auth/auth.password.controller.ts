@@ -1,6 +1,7 @@
 /**
  * Module dependencies
  */
+import { hash } from 'bcrypt';
 import { Response } from 'express';
 import jwt from 'jsonwebtoken';
 import getMessage from '../../../../lib/helpers/errors';
@@ -71,7 +72,7 @@ export async function reset(req: NodeRequest, res: Response) {
     user = await UserService.getBrut({ resetPasswordToken: req.body.token });
     if (!user || !user.email) return error(res, 400, 'Bad Request', 'Password reset token is invalid or has expired.')();
     const edit = {
-      password: await AuthService.hashPassword(req.body.newPassword),
+      password: await hash(String(req.body.newPassword), 10),
       resetPasswordToken: null,
       resetPasswordExpires: null,
     };

@@ -10,9 +10,9 @@ interface IMessage {
 }
 
 interface IAppErrorOptions {
-  details: IMessage[],
-  status: number;
-  code: string;
+  details?: IMessage[],
+  status?: number;
+  code?: string;
 }
 
 class AppError extends Error {
@@ -24,19 +24,19 @@ class AppError extends Error {
 
   public details: any;
 
-  constructor(message: string, { details, code, status }: Partial<IAppErrorOptions>) {
+  constructor(message: string, options?: IAppErrorOptions) {
     super(message);
     // Set HTTP status code
-    this.status = status || 500;
+    this.status = options?.status || 500;
 
     // Set API error code
-    this.code = code || AppErrorCodes.serverError;
+    this.code = options?.code || AppErrorCodes.serverError;
 
     // Ensures that stack trace uses our subclass name
     this.name = this.constructor.name;
 
     // Share clean messages for api feedback
-    if (details) this.details = details;
+    if (options?.details) this.details = options?.details;
     else this.details = [{ message }];
 
     // Ensures the AppError subclass is sliced out of the

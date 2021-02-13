@@ -30,7 +30,7 @@ export async function getStream(upload) {
  * @param {String} kind, upload configuration path (important for futur transformations)
  * @return {Promise} Upload
  */
-export async function update(file, user, kind) {
+export async function update(file, user, kind): Promise<any> {
   const upload = {
     filename: await generateFileName(file.filename || file.originalname),
     metadata: {

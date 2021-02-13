@@ -1,7 +1,15 @@
 /**
- * Module dependencies
+ * Module dependencies¬
  */
 import mongoose from 'mongoose';
+
+mongoose.Promise = Promise;
+
+interface ITask extends mongoose.Document {
+  title: string,
+  description: string,
+  user: any
+}
 
 /**
  * Data Model Mongoose
@@ -34,4 +42,4 @@ TaskMongoose.set('toJSON', {
   virtuals: true,
 });
 
-mongoose.model('Task', TaskMongoose);
+export default mongoose.model<ITask>('Task', TaskMongoose);

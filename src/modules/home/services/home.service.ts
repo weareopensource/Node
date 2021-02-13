@@ -7,8 +7,8 @@ import _ from 'lodash';
 import { Base64 as base64 } from 'js-base64';
 import { promises as fs } from 'fs';
 import config from '../../../config';
-import * as HomeRepository from '../repositories/home.repository';
 import * as UserService from '../../users/services/user.service';
+import team from '../repositories/home.repository';
 
 /**
  * @desc Function to get all admin users in db
@@ -63,7 +63,7 @@ export async function changelogs() {
  * @desc Function to get all admin users in db
  * @return {Promise} All users
  */
-export async function team() {
-  const result = await HomeRepository.team();
+export async function homeTeam() {
+  const result = await team();
   return Promise.resolve(result.map((user) => UserService.removeSensitive(user)));
 }

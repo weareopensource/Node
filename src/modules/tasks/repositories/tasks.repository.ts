@@ -2,8 +2,7 @@
  * Module dependencies
  */
 import mongoose from 'mongoose';
-
-const Task = mongoose.model('Task');
+import Task from '../models/tasks.model.mongoose';
 
 const defaultPopulate = [{
   path: 'user',

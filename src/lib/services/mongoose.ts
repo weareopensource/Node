@@ -11,12 +11,13 @@ import config from '../../config';
 /**
  * Load all mongoose related models
  */
-export function loadModels(callback?: () => void) {
+export async function loadModels() {
   // Globbing model files
-  config.files.mongooseModels.forEach((modelPath: string) => {
-    import(path.resolve(modelPath));
-  });
-  if (callback) callback();
+  console.log(config.files.mongooseModels);
+  await Promise.all(config.files.mongooseModels.map(async (modelPath: string) => {
+    console.log(path.resolve(modelPath))
+    require(path.resolve(modelPath));
+  }));
 }
 
 /**
@@ -25,7 +26,7 @@ export function loadModels(callback?: () => void) {
 export const connect = async (): Promise<mongoose.Mongoose> => {
   try {
     // Attach Node.js native Promises library implementation to Mongoose
-    mongoose.Promise = config.db.promise;
+    mongoose.Promise = Promise;
     // Requires as of 4.11.0 to opt-in to the new connect implementation
     // see: http://mongoosejs.com/docs/connections.html#use-mongo-client
     const mongoOptions = config.db.options;
@@ -38,6 +39,7 @@ export const connect = async (): Promise<mongoose.Mongoose> => {
 
     // Enabling mongoose debug mode if required
     mongoose.set('debug', config.db.debug);
+
     return mongoose;
   } catch (err) {
     // Log Error

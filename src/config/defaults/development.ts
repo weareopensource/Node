@@ -133,17 +133,17 @@ export interface OAuth {
 }
 
 export interface Apple {
-  clientID: null;
-  teamID: null;
-  keyID: null;
-  callbackURL: null;
-  privateKeyLocation: null;
+  clientID: string;
+  teamID: string;
+  keyID: string;
+  callbackURL: string;
+  privateKeyLocation: string;
 }
 
 export interface Google {
-  clientID: null;
-  clientSecret: null;
-  callbackURL: null;
+  clientID: string;
+  clientSecret: string;
+  callbackURL: string;
 }
 
 export interface Repo {
@@ -151,7 +151,7 @@ export interface Repo {
   owner: string;
   repo: string;
   changelog: string;
-  token: null;
+  token: string;
 }
 
 export interface SeedDB {
@@ -248,8 +248,8 @@ const config = {
     uri: 'mongodb://localhost/WaosNodeDev',
     debug: true,
     options: {
-      user: '',
-      pass: '',
+      user: 'user',
+      pass: 'user',
       useCreateIndex: true,
       useUnifiedTopology: true,
       useNewUrlParser: true,

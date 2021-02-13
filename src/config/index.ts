@@ -96,14 +96,14 @@ const initGlobalConfigFiles = (config: any, assetsConfig: any) => {
  */
 
 const initGlobalConfig: () => IConfig = () => {
-  const pathConfig = path.join(process.cwd(), './dist/src/config', 'defaults', process.env.NODE_ENV || 'development');
+  const pathConfig = path.join(process.cwd(), './config', 'defaults', process.env.NODE_ENV || 'development');
 
   let defaultConfig;
   if (fs.existsSync(`${pathConfig}.js`)) {
     defaultConfig = require(pathConfig);
   } else {
     console.error(chalk.red(`+ Error: No configuration file found for "${process.env.NODE_ENV}" environment using development instead`));
-    defaultConfig = require(path.join(process.cwd(), './dist/src/config', 'defaults', 'development'));
+    defaultConfig = require(path.join(process.cwd(), './config', 'defaults', 'development'));
   }
 
   // Get the config from  process.env.WAOS_NODE_*

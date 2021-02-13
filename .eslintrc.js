@@ -8,8 +8,8 @@ module.exports = {
   },
   extends: 'airbnb-typescript/base',
   rules: {
-    'not-tabs': 'off',
-    'no-console': 'off',
+    'not-tabs': 0,
+    'no-console': 2,
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'max-len': 0,
     'no-param-reassign': 0,

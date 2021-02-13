@@ -3,14 +3,11 @@
  */
 import bcrypt from 'bcrypt';
 import generatePassword from 'generate-password';
+import _ from 'lodash';
 import zxcvbn from 'zxcvbn';
 import AppError from '../../../lib/helpers/AppError';
 import config from '../../../config';
-import * as UserRepository from '../../users/repositories/user.repository';
-// eslint-disable-next-line import/no-cycle
-import { removeSensitive } from '../../users/services/user.service';
-
-const saltRounds = 10;
+import { get } from '../../users/repositories/user.repository';
 
 /**
  * @desc Function to compare passwords
@@ -22,6 +19,12 @@ export async function comparePassword(userPassword, storedPassword: string) {
   return bcrypt.compare(String(userPassword), String(storedPassword));
 }
 
+function removeSensitive(user: any, conf?: any) {
+  if (!user || typeof user !== 'object') return null;
+  const keys = conf || config.whitelists.users.default;
+  return _.pick(user, keys);
+}
+
 /**
  * @desc Function to authenticate user)
  * @param {String} email
@@ -29,19 +32,10 @@ export async function comparePassword(userPassword, storedPassword: string) {
  * @return {Object} user
  */
 export async function authenticate(email, password) {
-  const user = await UserRepository.get({ email });
+  const user = await get({ email });
   if (!user) throw new AppError('invalid user or password.', { code: 'SERVICE_ERROR' });
   if (await comparePassword(password, user.password)) return removeSensitive(user);
   throw new AppError('invalid user or password.', { code: 'SERVICE_ERROR' });
-}
-
-/**
- * @desc Function to hash passwords
- * @param {String} password
- * @return {String} password hashed
- */
-export function hashPassword(password) {
-  return bcrypt.hash(String(password), saltRounds);
 }
 
 /**

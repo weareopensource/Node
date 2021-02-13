@@ -58,7 +58,7 @@ export default () => {
           teamID: apple.teamID,
           callbackURL: apple.callbackURL ? apple.callbackURL : callbackURL,
           keyID: config.oAuth.apple.keyID,
-          privateKeyLocation: apple.privateKeyLocation ? apple.privateKeyLocation : null,
+          privateKeyLocation: apple.privateKeyLocation ? apple.privateKeyLocation : undefined,
           scope: ['email', 'name'],
           passReqToCallback: true,
         },
