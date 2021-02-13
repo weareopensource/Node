@@ -20,8 +20,8 @@ coverage/
 # waos Node app and assets
 # ======================
 public/dist/
-config/env/local.js
-config/env/local-*.js
+src/config/env/local.js
+src/config/env/local-*.js
 *.pem
 
 # General
@@ -69,3 +69,7 @@ mongod
 *.ntvs*
 *.njsproj
 *.sln
+
+# Typescript
+# =========
+dist/
