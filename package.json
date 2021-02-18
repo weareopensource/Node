@@ -74,7 +74,7 @@
     "lodash": "^4.17.20",
     "lusca": "~1.6.1",
     "method-override": "~3.0.0",
-    "mongoose": "~5.11.16",
+    "mongoose": "~5.11.17",
     "mongoose-gridfs": "^1.2.48",
     "morgan": "^1.10.0",
     "multer": "~1.4.2",
