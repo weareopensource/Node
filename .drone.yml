@@ -1,19 +1,5 @@
 ---
 kind: pipeline
-name: node13
-
-steps:
-  - name: test node 13
-    image: node:13
-    commands:
-      - npm i
-      - WAOS_NODE_db_uri='mongodb://mongo:27017/WaosNodeTest' npm run test
-services:
-  - name: mongo
-    image: mongo:latest
-
----
-kind: pipeline
 name: node14
 
 steps:
