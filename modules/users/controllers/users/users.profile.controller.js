@@ -47,8 +47,7 @@ exports.terms = async (req, res) => {
 exports.delete = async (req, res) => {
   try {
     const result = await UserService.delete(req.user);
-    result.id = req.user.id;
-    responses.success(res, 'user deleted')(result);
+    responses.success(res, 'user deleted')({ id: req.user.id, ...result });
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
