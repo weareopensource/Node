@@ -70,7 +70,7 @@ exports.delete = async (req, res) => {
   try {
     const result = await TasksService.delete(req.task);
     result.id = req.task.id;
-    responses.success(res, 'task deleted')(result);
+    responses.success(res, 'task deleted')({ id: req.task.id, ...result });
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }

@@ -24,8 +24,7 @@ exports.delete = async (req, res) => {
       tasks: await TaskDataService.delete(req.user),
       uploads: await UploadDataService.delete(req.user),
     };
-    result.user.id = req.user.id;
-    responses.success(res, 'user and his data were deleted')(result);
+    responses.success(res, 'user and his data were deleted')({ id: req.user.id, ...result });
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
