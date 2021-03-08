@@ -104,7 +104,7 @@ npm i
 
 ### docker
 
-* `docker run --env WAOS_NODE_db_uri=mongodb://host.docker.internal/WaosNodeDev WAOS_NODE_host=0.0.0.0 --rm -p 3000:3000 weareopensource/node`
+* `docker run --env WAOS_NODE_db_uri=mongodb://host.docker.internal/WaosNodeDev --env WAOS_NODE_host=0.0.0.0 --rm -p 3000:3000 weareopensource/node`
 
 if you want to build yourself : `docker build -t weareopensource/node .`
 
