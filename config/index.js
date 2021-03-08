@@ -81,6 +81,7 @@ const initSecureMode = (config) => {
  */
 const initGlobalConfigFiles = (config, assets) => {
   config.files = {}; // Appending files
+  config.files.swagger = getGlobbedPaths(assets.allYaml); // Setting Globbed module yaml files
   config.files.mongooseModels = getGlobbedPaths(assets.mongooseModels); // Setting Globbed mongoose model files
   config.files.sequelizeModels = getGlobbedPaths(assets.sequelizeModels); // Setting Globbed sequelize model files
   config.files.routes = getGlobbedPaths(assets.routes); // Setting Globbed route files
