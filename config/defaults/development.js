@@ -44,7 +44,6 @@ module.exports = {
       sslPass: '1234'
       */
     },
-    promise: global.Promise,
     restoreExceptions: [], // collections exceptions for db restore : npm run seed:mongorestore
   },
   // SSL on express server (FYI : Wiki)
