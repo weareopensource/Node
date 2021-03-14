@@ -86,6 +86,9 @@ module.exports = {
     p3p: 'ABCDEF',
     xssProtection: true,
   },
+  bodyParser: {
+    limit: '500kb',
+  },
   cors: {
     origin: ['http://localhost:8080'],
     credentials: true,
