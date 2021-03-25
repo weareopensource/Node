@@ -18,11 +18,13 @@ const HomeRepository = require('../repositories/home.repository');
 exports.page = async (name) => {
   const markdown = await fs.readFile(path.resolve(`./config/markdown/${name}.md`), 'utf8');
   const test = await fs.stat(path.resolve(`./config/markdown/${name}.md`));
-  return Promise.resolve([{
-    title: _.startCase(name),
-    updatedAt: test.mtime,
-    markdown,
-  }]);
+  return Promise.resolve([
+    {
+      title: _.startCase(name),
+      updatedAt: test.mtime,
+      markdown,
+    },
+  ]);
 };
 
 /**
@@ -30,9 +32,11 @@ exports.page = async (name) => {
  * @return {Promise} All versions
  */
 exports.releases = async () => {
-  const requests = config.repos.map((item) => axios.get(`https://api.github.com/repos/${item.owner}/${item.repo}/releases`, {
-    headers: item.token ? { Authorization: `token ${item.token}` } : {},
-  }));
+  const requests = config.repos.map((item) =>
+    axios.get(`https://api.github.com/repos/${item.owner}/${item.repo}/releases`, {
+      headers: item.token ? { Authorization: `token ${item.token}` } : {},
+    }),
+  );
   let results = await axios.all(requests);
   results = results.map((result, i) => ({
     title: config.repos[i].title,
@@ -51,9 +55,11 @@ exports.releases = async () => {
  */
 exports.changelogs = async () => {
   const repos = _.filter(config.repos, (repo) => repo.changelog);
-  const requests = repos.map((item) => axios.get(`https://api.github.com/repos/${item.owner}/${item.repo}/contents/${item.changelog}`, {
-    headers: item.token ? { Authorization: `token ${item.token}` } : {},
-  }));
+  const requests = repos.map((item) =>
+    axios.get(`https://api.github.com/repos/${item.owner}/${item.repo}/contents/${item.changelog}`, {
+      headers: item.token ? { Authorization: `token ${item.token}` } : {},
+    }),
+  );
   let results = await axios.all(requests);
   results = results.map((result, i) => ({
     title: config.repos[i].title,

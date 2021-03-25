@@ -9,32 +9,35 @@ mongoose.Promise = Promise;
 /**
  * User Schema
  */
-const UserMongoose = new Schema({
-  firstName: String,
-  lastName: String,
-  bio: String,
-  position: String,
-  email: {
-    type: String,
-    unique: 'Email already exists',
+const UserMongoose = new Schema(
+  {
+    firstName: String,
+    lastName: String,
+    bio: String,
+    position: String,
+    email: {
+      type: String,
+      unique: 'Email already exists',
+    },
+    avatar: String,
+    roles: [String],
+    /* Provider */
+    provider: String,
+    providerData: {},
+    additionalProvidersData: {},
+    /* Password */
+    password: String,
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
+    // startup requirement
+    terms: Date,
+    // other
+    complementary: {}, // put your specific project private data here
   },
-  avatar: String,
-  roles: [String],
-  /* Provider */
-  provider: String,
-  providerData: {},
-  additionalProvidersData: {},
-  /* Password */
-  password: String,
-  resetPasswordToken: String,
-  resetPasswordExpires: Date,
-  // startup requirement
-  terms: Date,
-  // other
-  complementary: {}, // put your specific project private data here
-}, {
-  timestamps: true,
-});
+  {
+    timestamps: true,
+  },
+);
 
 function addID() {
   return this._id.toHexString();

@@ -8,16 +8,19 @@ const Schema = mongoose.Schema;
 /**
  * Data Model Mongoose
  */
-const TaskMongoose = new Schema({
-  title: String,
-  description: String,
-  user: {
-    type: Schema.ObjectId,
-    ref: 'User',
+const TaskMongoose = new Schema(
+  {
+    title: String,
+    description: String,
+    user: {
+      type: Schema.ObjectId,
+      ref: 'User',
+    },
   },
-}, {
-  timestamps: true,
-});
+  {
+    timestamps: true,
+  },
+);
 
 /**
  * @desc Function to add id (+ _id) to all objects

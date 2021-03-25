@@ -3,4 +3,5 @@ module.exports = {
   trailingComma: 'all',
   arrowParens: 'always',
   extends: 'airbnb',
+  printWidth: 2000,
 };

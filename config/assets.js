@@ -10,5 +10,5 @@ module.exports = {
   config: ['modules/*/config/*.js'],
   policies: 'modules/*/policies/*.js',
   tests: ['modules/*/tests/**/*.js'],
-  views: ['modules/*/views/*.html']
+  views: ['modules/*/views/*.html'],
 };

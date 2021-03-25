@@ -112,17 +112,19 @@ exports.import = (uploads, filters, collection) => {
   } catch (error) {
     model = mongoose.model(collection, _schema);
   }
-  return model.bulkWrite(uploads.map((upload) => {
-    const filter = {};
-    filters.forEach((value) => {
-      filter[value] = upload[value];
-    });
-    return {
-      updateOne: {
-        filter,
-        update: upload,
-        upsert: true,
-      },
-    };
-  }));
+  return model.bulkWrite(
+    uploads.map((upload) => {
+      const filter = {};
+      filters.forEach((value) => {
+        filter[value] = upload[value];
+      });
+      return {
+        updateOne: {
+          filter,
+          update: upload,
+          upsert: true,
+        },
+      };
+    }),
+  );
 };

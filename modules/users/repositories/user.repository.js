@@ -13,14 +13,13 @@ const User = mongoose.model('User');
  * @return {Array}  users selected
  */
 exports.list = (search, page, perPage) => {
-  const filter = search ? {
-    $or: [
-      { firstName: { $regex: `${search}`, $options: 'i' } },
-      { lastName: { $regex: `${search}`, $options: 'i' } },
-      { email: { $regex: `${search}`, $options: 'i' } },
-    ],
-  } : {};
-  return User.find(filter).limit(perPage)
+  const filter = search
+    ? {
+        $or: [{ firstName: { $regex: `${search}`, $options: 'i' } }, { lastName: { $regex: `${search}`, $options: 'i' } }, { email: { $regex: `${search}`, $options: 'i' } }],
+      }
+    : {};
+  return User.find(filter)
+    .limit(perPage)
     .skip(perPage * page)
     .select('-password -providerData')
     .sort('-createdAt')
@@ -88,16 +87,19 @@ exports.stats = () => User.countDocuments();
  * @param {[String]} filters
  * @return {Object} locations
  */
-exports.import = (users, filters) => User.bulkWrite(users.map((user) => {
-  const filter = {};
-  filters.forEach((value) => {
-    filter[value] = user[value];
-  });
-  return {
-    updateOne: {
-      filter,
-      update: user,
-      upsert: true,
-    },
-  };
-}));
+exports.import = (users, filters) =>
+  User.bulkWrite(
+    users.map((user) => {
+      const filter = {};
+      filters.forEach((value) => {
+        filter[value] = user[value];
+      });
+      return {
+        updateOne: {
+          filter,
+          update: user,
+          upsert: true,
+        },
+      };
+    }),
+  );

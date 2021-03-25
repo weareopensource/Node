@@ -345,8 +345,8 @@ describe('User Schema Tests :', () => {
     });
 
     /* eslint no-useless-escape: 0 */
-    test('should not allow doudble quote characters in email address - "abc\"def@abc.com"', (done) => {
-      user.email = 'abc\"def@abc.com';
+    test('should not allow doudble quote characters in email address - "abc"def@abc.com"', (done) => {
+      user.email = 'abc"def@abc.com';
 
       const result = schema.User.validate(user, options);
       expect(typeof result).toBe('object');
@@ -364,7 +364,7 @@ describe('User Schema Tests :', () => {
     });
 
     test('should allow single quote characters in email address - "abc\'def@abc.com"', (done) => {
-      user.email = 'abc\'def@abc.com';
+      user.email = "abc'def@abc.com";
 
       const result = schema.User.validate(user, options);
       expect(typeof result).toBe('object');

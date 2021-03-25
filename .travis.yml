@@ -13,6 +13,7 @@ install:
 before_script:
   - npm rebuild bcrypt --update-binary
 after_success:
+  - npm run test:lint
   - npm run test:coveralls
 jobs:
   include:

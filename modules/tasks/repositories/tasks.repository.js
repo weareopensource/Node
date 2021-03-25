@@ -5,10 +5,11 @@ const mongoose = require('mongoose');
 
 const Task = mongoose.model('Task');
 
-const defaultPopulate = [{
-  path: 'user',
-  select: 'email firstName lastName',
-},
+const defaultPopulate = [
+  {
+    path: 'user',
+    select: 'email firstName lastName',
+  },
 ];
 
 /**
@@ -69,16 +70,19 @@ exports.stats = () => Task.countDocuments();
  * @param {[String]} filters
  * @return {Object} tasks
  */
-exports.import = (tasks, filters) => Task.bulkWrite(tasks.map((task) => {
-  const filter = {};
-  filters.forEach((value) => {
-    filter[value] = task[value];
-  });
-  return {
-    updateOne: {
-      filter,
-      update: task,
-      upsert: true,
-    },
-  };
-}));
+exports.import = (tasks, filters) =>
+  Task.bulkWrite(
+    tasks.map((task) => {
+      const filter = {};
+      filters.forEach((value) => {
+        filter[value] = task[value];
+      });
+      return {
+        updateOne: {
+          filter,
+          update: task,
+          upsert: true,
+        },
+      };
+    }),
+  );

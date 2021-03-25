@@ -13,29 +13,21 @@ const names = /^[a-zA-Zàáâäãåąčćęèéêëėįìíîïłńòóôöõø�
  * User Data Schema
  */
 const UserSchema = Joi.object().keys({
-  firstName: Joi.string().regex(names).min(1).max(50)
-    .trim()
-    .required(),
-  lastName: Joi.string().regex(names).min(1).max(50)
-    .trim()
-    .required(),
-  bio: Joi.string().max(200)
-    .trim()
-    .allow('')
-    .optional(),
-  position: Joi.string().max(50)
-    .trim()
-    .allow('')
-    .optional(),
+  firstName: Joi.string().regex(names).min(1).max(50).trim().required(),
+  lastName: Joi.string().regex(names).min(1).max(50).trim().required(),
+  bio: Joi.string().max(200).trim().allow('').optional(),
+  position: Joi.string().max(50).trim().allow('').optional(),
   email: Joi.string().email(),
   avatar: Joi.string().trim().default('').allow(''),
-  roles: Joi.array().items(Joi.string().valid(...config.whitelists.users.roles)).min(1).default(['user']),
+  roles: Joi.array()
+    .items(Joi.string().valid(...config.whitelists.users.roles))
+    .min(1)
+    .default(['user']),
   /* Provider */
   provider: Joi.string(),
   providerData: Joi.object(),
   /* Password */
-  password: Joi.zxcvbn().strength(config.zxcvbn.minimumScore).min(config.zxcvbn.minSize).max(config.zxcvbn.maxSize)
-    .default(''),
+  password: Joi.zxcvbn().strength(config.zxcvbn.minimumScore).min(config.zxcvbn.minSize).max(config.zxcvbn.maxSize).default(''),
   resetPasswordToken: Joi.string().allow(null),
   resetPasswordExpires: Joi.date().allow(null),
   // startup requirement

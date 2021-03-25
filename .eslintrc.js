@@ -2,20 +2,21 @@ module.exports = {
   root: true,
   env: {
     node: true,
-    es6: true,
+    es2021: true,
     browser: true,
     jest: true,
   },
-  extends: ['airbnb-base'],
+  extends: ['airbnb-base', 'plugin:markdown/recommended', 'plugin:prettier/recommended'],
+  plugins: ['prettier', 'markdown'],
   rules: {
-    'no-console': 'off',
+    'prettier/prettier': 'error',
+    'no-console': 0,
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'max-len': 0,
     'no-param-reassign': 0,
     'global-require': 0,
     'prefer-destructuring': ['error', { object: false, array: false }],
     'import/no-dynamic-require': 0,
-    // due to switch es6
     'consistent-return': 0,
     'no-underscore-dangle': 0,
     'no-shadow': 0,
@@ -23,15 +24,12 @@ module.exports = {
   },
   parserOptions: {
     parser: 'babel-eslint',
-    ecmaVersion: 10,
+    ecmaVersion: 12,
     sourceType: 'module',
   },
   overrides: [
     {
-      files: [
-        '**/__tests__/*.{j,t}s?(x)',
-        '**/tests/unit/**/*.spec.{j,t}s?(x)',
-      ],
+      files: ['**/__tests__/*.{j,t}s?(x)', '**/tests/unit/**/*.spec.{j,t}s?(x)'],
       env: {
         jest: true,
       },
