@@ -118,6 +118,7 @@
     "husky": "^5.2.0",
     "inquirer": "^8.0.0",
     "jest-cli": "26.6.3",
+    "prettier": "^2.2.1",
     "semantic-release": "^17.4.2",
     "standard-version": "^9.1.1"
   },
