@@ -21,7 +21,8 @@ module.exports = _.merge(defaultConfig, {
   },
   log: {
     format: 'custom',
-    pattern: ':id :email :remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"', // only for custom format
+    pattern:
+      ':id :email :remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"', // only for custom format
   },
   livereload: false,
 });

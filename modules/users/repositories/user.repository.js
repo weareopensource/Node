@@ -15,7 +15,11 @@ const User = mongoose.model('User');
 exports.list = (search, page, perPage) => {
   const filter = search
     ? {
-        $or: [{ firstName: { $regex: `${search}`, $options: 'i' } }, { lastName: { $regex: `${search}`, $options: 'i' } }, { email: { $regex: `${search}`, $options: 'i' } }],
+        $or: [
+          { firstName: { $regex: `${search}`, $options: 'i' } },
+          { lastName: { $regex: `${search}`, $options: 'i' } },
+          { email: { $regex: `${search}`, $options: 'i' } },
+        ],
       }
     : {};
   return User.find(filter)

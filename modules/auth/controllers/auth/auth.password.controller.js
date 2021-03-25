@@ -25,7 +25,8 @@ exports.forgot = async (req, res) => {
   try {
     user = await UserService.getBrut({ email: req.body.email });
     if (!user) return responses.error(res, 400, 'Bad Request', 'No account with that email has been found')();
-    if (user.provider !== 'local') return responses.error(res, 400, 'Bad Request', `It seems like you signed up using your ${user.provider} account`)();
+    if (user.provider !== 'local')
+      return responses.error(res, 400, 'Bad Request', `It seems like you signed up using your ${user.provider} account`)();
     const edit = {
       resetPasswordToken: jwt.sign({ exp: Date.now() + 3600000 }, config.jwt.secret, { algorithm: 'HS256' }),
       resetPasswordExpires: Date.now() + 3600000,
@@ -125,7 +126,8 @@ exports.updatePassword = async (req, res) => {
   try {
     user = await UserService.getBrut({ id: req.user.id });
     if (!user || !user.email) return responses.error(res, 400, 'Bad Request', 'User is not found')();
-    if (!(await AuthService.comparePassword(req.body.currentPassword, user.password))) return responses.error(res, 422, 'Unprocessable Entity', 'Current password is incorrect')();
+    if (!(await AuthService.comparePassword(req.body.currentPassword, user.password)))
+      return responses.error(res, 422, 'Unprocessable Entity', 'Current password is incorrect')();
     if (req.body.newPassword !== req.body.verifyPassword) return responses.error(res, 422, 'Unprocessable Entity', 'Passwords do not match')();
     password = AuthService.checkPassword(req.body.newPassword);
     user = await UserService.update(user, { password }, 'recover');
