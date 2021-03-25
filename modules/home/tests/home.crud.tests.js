@@ -33,8 +33,7 @@ describe('Home CRUD Tests :', () => {
   describe('Logout', () => {
     test('should be able to get releases', async () => {
       try {
-        const result = await agent.get('/api/home/releases')
-          .expect(200);
+        const result = await agent.get('/api/home/releases').expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('releases');
         expect(result.body.data).toBeInstanceOf(Array);
@@ -46,8 +45,7 @@ describe('Home CRUD Tests :', () => {
 
     test('should be able to get changelogs', async () => {
       try {
-        const result = await agent.get('/api/home/changelogs')
-          .expect(200);
+        const result = await agent.get('/api/home/changelogs').expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('changelogs');
         expect(result.body.data).toBeInstanceOf(Array);
@@ -59,8 +57,7 @@ describe('Home CRUD Tests :', () => {
 
     test('should be able to get team members', async () => {
       try {
-        const result = await agent.get('/api/home/team')
-          .expect(200);
+        const result = await agent.get('/api/home/team').expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('team list');
         expect(result.body.data).toBeInstanceOf(Array);
@@ -72,8 +69,7 @@ describe('Home CRUD Tests :', () => {
 
     test('should be able to get an existing page', async () => {
       try {
-        const result = await agent.get('/api/home/pages/terms')
-          .expect(200);
+        const result = await agent.get('/api/home/pages/terms').expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('page');
         expect(result.body.data[0].title).toBe('Terms');
@@ -87,8 +83,7 @@ describe('Home CRUD Tests :', () => {
 
     test('should be able to catch error of unknown page', async () => {
       try {
-        const result = await agent.get('/api/home/pages/test')
-          .expect(404);
+        const result = await agent.get('/api/home/pages/test').expect(404);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toBe('Not Found');
         expect(result.body.description).toBe('No page with that name has been found');

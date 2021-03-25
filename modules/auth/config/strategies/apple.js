@@ -8,11 +8,7 @@ const AppleStrategy = require('passport-apple');
 const config = require(path.resolve('./config'));
 const auth = require('../../controllers/auth.controller');
 
-const callbackURL = `${config.api.protocol}://${config.api.host}${
-  config.api.port ? ':' : ''
-}${config.api.port ? config.api.port : ''}/${
-  config.api.base
-}/auth/apple/callback`;
+const callbackURL = `${config.api.protocol}://${config.api.host}${config.api.port ? ':' : ''}${config.api.port ? config.api.port : ''}/${config.api.base}/auth/apple/callback`;
 
 /**
  * @desc function to prepare map callback to user profile
@@ -51,12 +47,7 @@ exports.prepare = async (req, accessToken, refreshToken, decodedIdToken, profile
 module.exports = () => {
   const apple = config.oAuth.apple ? config.oAuth.apple : null;
   // Use google strategy
-  if (
-    apple &&
-    apple.clientID &&
-    apple.teamID &&
-    apple.keyID
-  ) {
+  if (apple && apple.clientID && apple.teamID && apple.keyID) {
     passport.use(
       new AppleStrategy(
         {

@@ -11,17 +11,13 @@ const home = require('../controllers/home.controller');
  */
 module.exports = (app) => {
   // changelogs
-  app.route('/api/home/releases').all(policy.isAllowed)
-    .get(home.releases);
+  app.route('/api/home/releases').all(policy.isAllowed).get(home.releases);
   // changelogs
-  app.route('/api/home/changelogs').all(policy.isAllowed)
-    .get(home.changelogs);
+  app.route('/api/home/changelogs').all(policy.isAllowed).get(home.changelogs);
   // changelogs
-  app.route('/api/home/team').all(policy.isAllowed)
-    .get(home.team);
+  app.route('/api/home/team').all(policy.isAllowed).get(home.team);
   // markdown files
-  app.route('/api/home/pages/:name').all(policy.isAllowed)
-    .get(home.page);
+  app.route('/api/home/pages/:name').all(policy.isAllowed).get(home.page);
 
   // Finish by binding the task middleware
   app.param('name', home.pageByName);

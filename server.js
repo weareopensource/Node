@@ -7,7 +7,7 @@ const app = require('./lib/app');
 
 const server = app.start().catch((e) => {
   console.log(`server failed: ${e.message}`);
-  throw (e);
+  throw e;
 });
 
 process.on('SIGINT', () => {

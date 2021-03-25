@@ -6,7 +6,7 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 const AuthService = require('../../services/auth.service');
 
-const UserService = require(path.resolve('modules/users/services/user.service'));
+const UserService = require(path.resolve('./modules/users/services/user.service'));
 const mails = require(path.resolve('./lib/helpers/mails'));
 const errors = require(path.resolve('./lib/helpers/errors'));
 const responses = require(path.resolve('./lib/helpers/responses'));
@@ -85,10 +85,14 @@ exports.reset = async (req, res) => {
       resetPasswordExpires: null,
     };
     user = await UserService.update(user, edit, 'recover');
-    return res.status(200)
+    return res
+      .status(200)
       .cookie('TOKEN', jwt.sign({ userId: user.id }, config.jwt.secret, { expiresIn: config.jwt.expiresIn }), { httpOnly: true })
       .json({
-        user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000), type: 'sucess', message: 'Password changed successfully',
+        user,
+        tokenExpiresIn: Date.now() + config.jwt.expiresIn * 1000,
+        type: 'sucess',
+        message: 'Password changed successfully',
       });
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
@@ -121,14 +125,18 @@ exports.updatePassword = async (req, res) => {
   try {
     user = await UserService.getBrut({ id: req.user.id });
     if (!user || !user.email) return responses.error(res, 400, 'Bad Request', 'User is not found')();
-    if (!await AuthService.comparePassword(req.body.currentPassword, user.password)) return responses.error(res, 422, 'Unprocessable Entity', 'Current password is incorrect')();
+    if (!(await AuthService.comparePassword(req.body.currentPassword, user.password))) return responses.error(res, 422, 'Unprocessable Entity', 'Current password is incorrect')();
     if (req.body.newPassword !== req.body.verifyPassword) return responses.error(res, 422, 'Unprocessable Entity', 'Passwords do not match')();
     password = AuthService.checkPassword(req.body.newPassword);
     user = await UserService.update(user, { password }, 'recover');
-    return res.status(200)
+    return res
+      .status(200)
       .cookie('TOKEN', jwt.sign({ userId: user.id }, config.jwt.secret, { expiresIn: config.jwt.expiresIn }), { httpOnly: true })
       .json({
-        user, tokenExpiresIn: Date.now() + (config.jwt.expiresIn * 1000), type: 'sucess', message: 'Password changed successfully',
+        user,
+        tokenExpiresIn: Date.now() + config.jwt.expiresIn * 1000,
+        type: 'sucess',
+        message: 'Password changed successfully',
       });
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);

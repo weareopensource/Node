@@ -20,17 +20,20 @@ describe('Configuration Tests:', () => {
   let UserService = null;
   let TaskService = null;
 
-  beforeAll(() => mongooseService.connect()
-    .then(async () => {
-      await multerService.storage();
-      mongooseService.loadModels();
-      AuthService = require(path.resolve('./modules/auth/services/auth.service'));
-      UserService = require(path.resolve('./modules/users/services/user.service'));
-      TaskService = require(path.resolve('./modules/tasks/services/tasks.service'));
-    })
-    .catch((e) => {
-      console.log(e);
-    }));
+  beforeAll(() =>
+    mongooseService
+      .connect()
+      .then(async () => {
+        await multerService.storage();
+        mongooseService.loadModels();
+        AuthService = require(path.resolve('./modules/auth/services/auth.service'));
+        UserService = require(path.resolve('./modules/users/services/user.service'));
+        TaskService = require(path.resolve('./modules/tasks/services/tasks.service'));
+      })
+      .catch((e) => {
+        console.log(e);
+      }),
+  );
 
   let user1;
   let admin1;
@@ -418,7 +421,7 @@ describe('Configuration Tests:', () => {
         const fromMessage = errors.getMessage({ message: 'error1' });
         expect(fromMessage).toBe('error1.');
 
-        const fromEmpty = errors.getMessage({ });
+        const fromEmpty = errors.getMessage({});
         expect(fromEmpty).toBe('error while retrieving the error :o : {}.');
       } catch (err) {
         console.log(err);
@@ -428,8 +431,9 @@ describe('Configuration Tests:', () => {
   });
 
   // Mongoose disconnect
-  afterAll(() => mongooseService.disconnect()
-    .catch((e) => {
+  afterAll(() =>
+    mongooseService.disconnect().catch((e) => {
       console.log(e);
-    }));
+    }),
+  );
 });

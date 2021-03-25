@@ -17,20 +17,6 @@ const config = require(path.resolve('./config'));
 // default node env if not define
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
-// ESLint JS
-const lint = () => {
-  const assets = _.union(
-    defaultAssets.gulpConfig,
-    defaultAssets.allJS,
-    defaultAssets.tests,
-  );
-
-  return gulp.src(assets)
-    .pipe(plugins.eslint())
-    .pipe(plugins.eslint.format());
-};
-exports.lint = lint;
-
 // Nodemon
 const nodemon = (done) => {
   plugins.nodemon({
@@ -62,32 +48,28 @@ const watch = (done) => {
   plugins.refresh.listen();
   // Add watch rules
   gulp.watch(defaultAssets.views).on('change', plugins.refresh.changed);
-  gulp.watch(defaultAssets.allJS, gulp.series(lint)).on('change', plugins.refresh.changed);
-  gulp.watch(defaultAssets.gulpConfig, gulp.series(lint));
+  gulp.watch(defaultAssets.allJS).on('change', plugins.refresh.changed);
+  gulp.watch(defaultAssets.gulpConfig);
   done();
 };
 exports.watch = watch;
 
 // Jest UT
 const jest = (done) => {
-  runCLI(
-    {},
-    ['.'],
-  ).then((result) => {
-    if (result.results && result.results.numFailedTests > 0) process.exit();
-    done();
-  }).catch((e) => {
-    console.log(e);
-  });
+  runCLI({}, ['.'])
+    .then((result) => {
+      if (result.results && result.results.numFailedTests > 0) process.exit();
+      done();
+    })
+    .catch((e) => {
+      console.log(e);
+    });
 };
 exports.jest = jest;
 
 // Jest Watch
 const jestWatch = (done) => {
-  runCLI(
-    { watch: true },
-    ['.'],
-  );
+  runCLI({ watch: true }, ['.']);
   done();
 };
 exports.jestWatch = jestWatch;
@@ -99,26 +81,25 @@ const jestCoverage = (done) => {
       collectCoverage: true,
       collectCoverageFrom: defaultAssets.allJS,
       coverageDirectory: 'coverage',
-      coverageReporters: [
-        'json',
-        'lcov',
-        'text',
-      ],
+      coverageReporters: ['json', 'lcov', 'text'],
     },
     ['.'],
-  ).then((result) => {
-    if (result.results && result.results.numFailedTests > 0) process.exit();
-    done();
-  }).catch((e) => {
-    console.log(e);
-  });
+  )
+    .then((result) => {
+      if (result.results && result.results.numFailedTests > 0) process.exit();
+      done();
+    })
+    .catch((e) => {
+      console.log(e);
+    });
 };
 exports.jestCoverage = jestCoverage;
 
 // Drops the MongoDB database, used in e2e testing by security
 const dropMongo = (done) => {
   const mongooseService = require(path.resolve('./lib/services/mongoose'));
-  mongooseService.connect()
+  mongooseService
+    .connect()
     .then((db) => {
       db.connection.dropDatabase((err) => {
         if (err) console.error(err);
@@ -162,11 +143,18 @@ const seedMongoose = async () => {
     const UserService = require(path.resolve('./modules/users/services/user.service'));
     const TaskService = require(path.resolve('./modules/tasks/services/tasks.service'));
     const seed = require(path.resolve('./lib/services/seed'));
-    await seed.start({
-      logResults: true,
-    }, UserService, AuthService, TaskService).catch((e) => {
-      console.log(e);
-    });
+    await seed
+      .start(
+        {
+          logResults: true,
+        },
+        UserService,
+        AuthService,
+        TaskService,
+      )
+      .catch((e) => {
+        console.log(e);
+      });
     await mongooseService.disconnect();
   } catch (err) {
     console.log(err);
@@ -202,15 +190,15 @@ const seedMongooseUser = async () => {
 // });
 
 // Run project tests
-const test = gulp.series(dropDB, lint, jest);
+const test = gulp.series(dropDB, jest);
 exports.test = test;
 
 // Run project tests with coverage
-const testWatch = gulp.series(dropDB, lint, jestWatch);
+const testWatch = gulp.series(dropDB, jestWatch);
 exports.testWatch = testWatch;
 
 // Run project tests with coverage
-const testCoverage = gulp.series(dropDB, lint, jestCoverage);
+const testCoverage = gulp.series(dropDB, jestCoverage);
 exports.testCoverage = testCoverage;
 
 // Run Mongoose Seed
@@ -226,15 +214,15 @@ const drop = gulp.series(dropDB);
 exports.drop = drop;
 
 // Run project in development mode
-const dev = gulp.series(lint, gulp.parallel(nodemon, watch));
+const dev = gulp.series(gulp.parallel(nodemon, watch));
 exports.default = dev;
 
 // Run project in debug mode
-const debug = gulp.series(lint, gulp.parallel(nodemonDebug, watch));
+const debug = gulp.series(gulp.parallel(nodemonDebug, watch));
 exports.debug = debug;
 
 // Run project in production mode
-const prod = gulp.series(lint, gulp.parallel(nodemonDebug, watch));
+const prod = gulp.series(gulp.parallel(nodemonDebug, watch));
 exports.prod = prod;
 
 /**
@@ -263,7 +251,7 @@ exports.prod = prod;
 //   plugins.refresh.listen();
 
 //   // Add Server Test file rules
-//   gulp.watch(_.union(defaultAssets.tests, defaultAssets.allJS), gulp.series(lint, mocha)).on('change', plugins.refresh.changed);
+//   gulp.watch(_.union(defaultAssets.tests, defaultAssets.allJS), gulp.series(mocha)).on('change', plugins.refresh.changed);
 //   done();
 // };
 // exports.watchMocha = watchMocha;
