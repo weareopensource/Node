@@ -8,7 +8,9 @@ const AppleStrategy = require('passport-apple');
 const config = require(path.resolve('./config'));
 const auth = require('../../controllers/auth.controller');
 
-const callbackURL = `${config.api.protocol}://${config.api.host}${config.api.port ? ':' : ''}${config.api.port ? config.api.port : ''}/${config.api.base}/auth/apple/callback`;
+const callbackURL = `${config.api.protocol}://${config.api.host}${config.api.port ? ':' : ''}${config.api.port ? config.api.port : ''}/${
+  config.api.base
+}/auth/apple/callback`;
 
 /**
  * @desc function to prepare map callback to user profile
