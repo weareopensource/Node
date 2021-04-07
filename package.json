@@ -120,7 +120,7 @@
     "jest-cli": "26.6.3",
     "prettier": "^2.2.1",
     "semantic-release": "^17.4.2",
-    "standard-version": "^9.1.1"
+    "standard-version": "^9.2.0"
   },
   "release": {
     "branches": [
