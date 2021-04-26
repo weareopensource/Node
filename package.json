@@ -109,7 +109,7 @@
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "^8.2.0",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-markdown": "^2.0.1",
+    "eslint-plugin-markdown": "^2.1.0",
     "eslint-plugin-prettier": "^3.4.0",
     "gulp": "~4.0.2",
     "gulp-load-plugins": "^2.0.6",
