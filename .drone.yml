@@ -1,10 +1,10 @@
 ---
 kind: pipeline
-name: node14
+name: node15
 
 steps:
-  - name: test node 14
-    image: node:14
+  - name: test node 15
+    image: node:15
     commands:
       - npm i
       - npm run test:lint
@@ -15,11 +15,11 @@ services:
 
 ---
 kind: pipeline
-name: node15
+name: node16
 
 steps:
-  - name: test node 15
-    image: node:15
+  - name: test node 16
+    image: node:16
     failure: ignore
     commands:
       - npm i
