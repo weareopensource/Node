@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - 14
+  - 15
 os:
   - linux
 cache:
@@ -18,7 +18,7 @@ after_success:
 jobs:
   include:
     - stage: allow_failures
-      node_js: 15
+      node_js: 16
 #  - stage: deploy
 #    node_js: lts/*
 #    deploy:

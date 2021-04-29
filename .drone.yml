@@ -1,25 +1,9 @@
----
 kind: pipeline
-name: node14
+name: node16
 
 steps:
-  - name: test node 14
-    image: node:14
-    commands:
-      - npm i
-      - npm run test:lint
-      - WAOS_NODE_db_uri='mongodb://mongo:27017/WaosNodeTest' npm run test
-services:
-  - name: mongo
-    image: mongo:latest
-
----
-kind: pipeline
-name: node15
-
-steps:
-  - name: test node 15
-    image: node:15
+  - name: test node 16
+    image: node:16
     failure: ignore
     commands:
       - npm i
