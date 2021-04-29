@@ -42,14 +42,9 @@
     "lint": "./node_modules/.bin/eslint --fix ./modules ./lib ./config ./scripts",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect",
-    "commit": "npx git-cz",
+    "commit": "npx cz",
     "release": "standard-version",
     "release:auto": "npx semantic-release"
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
