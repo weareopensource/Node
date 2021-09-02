@@ -85,7 +85,7 @@
     "passport-local": "~1.0.0",
     "sequelize": "^6.6.5",
     "sharp": "^0.29.0",
-    "snyk": "^1.684.0",
+    "snyk": "^1.696.0",
     "supertest": "^6.1.6",
     "swagger-ui-express": "^4.1.6",
     "swig": "^1.4.2",
