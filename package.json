@@ -112,7 +112,7 @@
     "gulp-refresh": "~1.1.0",
     "husky": "^7.0.2",
     "inquirer": "^8.1.2",
-    "jest-cli": "27.1.0",
+    "jest-cli": "27.1.1",
     "prettier": "^2.3.2",
     "semantic-release": "^17.4.7",
     "standard-version": "^9.3.1"
