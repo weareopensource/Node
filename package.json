@@ -146,7 +146,7 @@
   },
   "config": {
     "commitizen": {
-      "path": "./node_modules/@weareopensource/conventional-changelog"
+      "path": "./node_modules/cz-conventional-changelog"
     }
   },
   "snyk": true
