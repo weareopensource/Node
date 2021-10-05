@@ -23,7 +23,7 @@ exports.list = (filter) => Task.find(filter).populate(defaultPopulate).sort('-cr
  * @param {Object} task
  * @return {Object} task
  */
-exports.create = (task) => new Task(task).save().then((doc) => doc.populate(defaultPopulate).execPopulate());
+exports.create = (task) => new Task(task).save().then((doc) => doc.populate(defaultPopulate));
 
 /**
  * @desc Function to get a task from db
@@ -40,7 +40,7 @@ exports.get = (id) => {
  * @param {Object} task
  * @return {Object} task
  */
-exports.update = (task) => new Task(task).save().then((doc) => doc.populate(defaultPopulate).execPopulate());
+exports.update = (task) => new Task(task).save().then((doc) => doc.populate(defaultPopulate));
 
 /**
  * @desc Function to delete a task in db
