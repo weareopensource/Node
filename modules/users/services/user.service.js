@@ -27,7 +27,7 @@ exports.removeSensitive = (user, conf) => {
  * @return {Promise} users selected
  */
 exports.list = async (search, page, perPage) => {
-  const result = await UserRepository.list(search, page, perPage);
+  const result = await UserRepository.list(search, page || 1, perPage || 20);
   return Promise.resolve(result.map((user) => this.removeSensitive(user)));
 };
 

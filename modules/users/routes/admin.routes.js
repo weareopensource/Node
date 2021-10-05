@@ -9,7 +9,7 @@ const admin = require('../controllers/admin.controller');
 
 module.exports = (app) => {
   /* eslint global-require: 0 */
-  require('./users.routes.js')(app);
+  require('./users.routes')(app);
 
   // stats
   app.route('/api/users/stats').all(policy.isAllowed).get(admin.stats);
