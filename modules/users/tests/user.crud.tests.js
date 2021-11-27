@@ -144,7 +144,6 @@ describe('User CRUD Tests :', () => {
       try {
         const result = await agent.post('/api/auth/signup').send(_userEdited).expect(200);
         userEdited = result.body.user;
-
         expect(result.body.user.email).toBe(_userEdited.email);
         expect(result.body.user.roles).toBeInstanceOf(Array);
         expect(result.body.user.roles).toHaveLength(1);
