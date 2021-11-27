@@ -57,7 +57,7 @@
     "chalk": "~4.1.2",
     "compression": "^1.7.4",
     "consolidate": "^0.16.0",
-    "cookie-parser": "~1.4.5",
+    "cookie-parser": "~1.4.6",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "express": "^4.17.1",
