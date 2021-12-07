@@ -41,7 +41,6 @@
     "generate:sllCerts": "scripts/generate-ssl-certs.sh",
     "lint": "./node_modules/.bin/eslint --fix ./modules ./lib ./config ./scripts",
     "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect",
     "commit": "npx cz",
     "release": "standard-version",
     "release:auto": "npx semantic-release"
