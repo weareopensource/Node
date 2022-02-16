@@ -24,7 +24,7 @@ exports.list = (search, page, perPage) => {
     : {};
   return User.find(filter)
     .limit(perPage)
-    .skip(perPage * page)
+    .skip(perPage * page || 0)
     .select('-password -providerData')
     .sort('-createdAt')
     .exec();
