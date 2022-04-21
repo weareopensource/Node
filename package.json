@@ -52,7 +52,7 @@
     "axios": "^0.26.1",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.20.0",
-    "bson": "^4.6.2",
+    "bson": "^4.6.3",
     "chalk": "~4.1.2",
     "compression": "^1.7.4",
     "consolidate": "^0.16.0",
