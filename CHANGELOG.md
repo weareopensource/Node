@@ -1,3 +1,35 @@
+# [1.2.0](https://github.com/weareopensource/Node/compare/v1.1.0...v1.2.0) (2022-05-30)
+
+
+### Bug Fixes
+
+* **auth:** passport upgrade, require express session 🐛 ([#1916](https://github.com/weareopensource/Node/issues/1916)) ([d0c4b64](https://github.com/weareopensource/Node/commit/d0c4b643afc17b5d6a201da0f31d2af74b9a10e2))
+* **dependencies:** chalk 🐛 ([#1644](https://github.com/weareopensource/Node/issues/1644)) ([3b41bd9](https://github.com/weareopensource/Node/commit/3b41bd9c9471b3154bd5b62ebb97367b7acbf68d))
+* **dependencies:** chalk again 🐛 ([#1840](https://github.com/weareopensource/Node/issues/1840)) ([aeb2603](https://github.com/weareopensource/Node/commit/aeb26031c2b926a2ada8716abfa1f652779f7955))
+* **dependencies:** downgrade chalk, esm 🐛 ([#1910](https://github.com/weareopensource/Node/issues/1910)) ([635bb4b](https://github.com/weareopensource/Node/commit/635bb4b7b475462d0b9803d810fabcf634de7f30))
+* **dependencies:** mongoose upgrade to 6 🐛 ([f58b27b](https://github.com/weareopensource/Node/commit/f58b27b1d493a456a9f4bcdf17bbeea8dde1a353))
+* **dependencies:** temp fix mongoose-gridfs, waiting for update 🐛 ([97601b6](https://github.com/weareopensource/Node/commit/97601b66c5152f0f305375ab4ce1f92a6c7a076f))
+* **dependencies:** tempos downgrade chalk 🐛 ([#1777](https://github.com/weareopensource/Node/issues/1777)) ([d0499c8](https://github.com/weareopensource/Node/commit/d0499c8cf4d56009b27ef1d895239eeb3efe2a29))
+* **dependencies:** upgrade 🐛 ([#1821](https://github.com/weareopensource/Node/issues/1821)) ([5eb9ff7](https://github.com/weareopensource/Node/commit/5eb9ff7b55f4d593aedd6ab0613dc7bb26d98ec2))
+* package.json & package-lock.json to reduce vulnerabilities ([898ea26](https://github.com/weareopensource/Node/commit/898ea267e9ab3fe5fa07bacc62c2845d1b9a9872))
+* package.json & package-lock.json to reduce vulnerabilities ([a3a4fd1](https://github.com/weareopensource/Node/commit/a3a4fd1d579276cc37e0f5aef18d012e75273107))
+* package.json & package-lock.json to reduce vulnerabilities ([5d06454](https://github.com/weareopensource/Node/commit/5d064540012a665ec1c329897325c57f2649b2f4))
+* package.json & package-lock.json to reduce vulnerabilities ([2cb447f](https://github.com/weareopensource/Node/commit/2cb447f2e516f868092ce4611fa8611b7c60d3c3))
+* **repositories:** mongo upgrade, skip must be to 0 by default, not null 🐛 ([#1780](https://github.com/weareopensource/Node/issues/1780)) ([10f009a](https://github.com/weareopensource/Node/commit/10f009ade25e1a312193c5fa438ceb6acaaea6d6))
+* **users:** admin pagination start 🐛 ([#1849](https://github.com/weareopensource/Node/issues/1849)) ([064916a](https://github.com/weareopensource/Node/commit/064916ab956f0fd1a048a9ad5d7ca43fbb892cb2))
+
+
+### Features
+
+* **all:** swagger ([e5e8b1f](https://github.com/weareopensource/Node/commit/e5e8b1f35408dbfe97249f3a815757c62d9e926f))
+* **all:** swagger ([38ae47c](https://github.com/weareopensource/Node/commit/38ae47c7945ecdac54dbbbf86d39016fd3b40f3a))
+* **services:** add bodyparser config to express ✨ ([e97395e](https://github.com/weareopensource/Node/commit/e97395e283b1421a87a9e3e5668a79f8446abbf7))
+
+
+### Reverts
+
+* Revert "build(deps): bump chalk from 4.1.2 to 5.0.1 (#1912)" (#1915) ([8bf949b](https://github.com/weareopensource/Node/commit/8bf949b32f67ace4356c86f8a25cb17503773f1e)), closes [#1912](https://github.com/weareopensource/Node/issues/1912) [#1915](https://github.com/weareopensource/Node/issues/1915)
+
 # [1.1.0](https://github.com/weareopensource/Node/compare/v1.0.0...v1.1.0) (2021-02-07)
 
 ### Bug Fixes
