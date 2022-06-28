@@ -17,10 +17,10 @@ module.exports = (app) => {
 
   // Setting up the users authentication api
   app.route('/api/auth/signup').post(model.isValid(usersSchema.User), auth.signup);
-  app.route('/api/auth/signin').post(passport.authenticate('local'), auth.signin);
+  app.route('/api/auth/signin').post(passport.authenticate('local', { session: false }), auth.signin);
 
   // Jwt reset token
-  app.route('/api/auth/token').get(passport.authenticate('jwt'), auth.token);
+  app.route('/api/auth/token').get(passport.authenticate('jwt', { session: false }), auth.token);
 
   // Setting the oauth routes
   app.route('/api/auth/:strategy').get(auth.oauthCall);

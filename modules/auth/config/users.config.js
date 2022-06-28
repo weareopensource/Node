@@ -3,7 +3,6 @@
  */
 const path = require('path');
 const passport = require('passport');
-const session = require('express-session');
 
 const config = require(path.resolve('./config'));
 const UserService = require(path.resolve('modules/users/services/user.service'));
@@ -37,5 +36,4 @@ module.exports = (app) => {
 
   // Add passport's middleware
   app.use(passport.initialize());
-  app.use(session({ secret: config.jwt.secret, resave: false, saveUninitialized: false }));
 };

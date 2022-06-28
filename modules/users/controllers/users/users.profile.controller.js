@@ -16,7 +16,7 @@ exports.update = async (req, res) => {
   try {
     const user = await UserService.update(req.user, req.body);
     // reset login
-    req.login(user, (errLogin) => {
+    req.login(user, { session: false }, (errLogin) => {
       if (errLogin) return responses.error(res, 400, 'Bad Request', errors.getMessage(errLogin))(errLogin);
       return responses.success(res, 'user updated')(user);
     });

@@ -71,6 +71,7 @@ exports.signin = async (req, res) => {
  * @desc Endpoint to get a new token if old is ok
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
+ * TODO: escape deprecated
  */
 exports.token = async (req, res) => {
   let user = null;

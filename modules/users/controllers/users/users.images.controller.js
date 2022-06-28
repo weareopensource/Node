@@ -25,7 +25,7 @@ exports.updateAvatar = async (req, res) => {
     // update user
     const user = await UserService.update(req.user, { avatar: result.filename });
     // reload playload
-    req.login(user, (errLogin) => {
+    req.login(user, { session: false }, (errLogin) => {
       if (errLogin) return responses.error(res, 400, 'Bad Request', errors.getMessage(errLogin))(errLogin);
       return responses.success(res, 'profile avatar updated')(user);
     });
@@ -45,7 +45,7 @@ exports.deleteAvatar = async (req, res) => {
     // update user
     const user = await UserService.update(req.user, { avatar: '' });
     // reload playload
-    req.login(user, (errLogin) => {
+    req.login(user, { session: false }, (errLogin) => {
       if (errLogin) return responses.error(res, 400, 'Bad Request', errors.getMessage(errLogin))(errLogin);
       return responses.success(res, 'profile avatar updated')(user);
     });
