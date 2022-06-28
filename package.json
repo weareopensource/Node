@@ -60,7 +60,6 @@
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "express": "^4.18.1",
-    "express-session": "^1.17.3",
     "generate-password": "~1.7.0",
     "glob": "~8.0.3",
     "handlebars": "^4.7.7",
@@ -112,8 +111,8 @@
     "gulp-refresh": "~1.1.0",
     "husky": "^8.0.1",
     "inquirer": "^8.2.4",
-    "jest-cli": "27.5.1",
-    "prettier": "^2.6.2",
+    "jest-cli": "28.1.1",
+    "prettier": "^2.7.1",
     "semantic-release": "^19.0.2",
     "standard-version": "^9.5.0"
   },
