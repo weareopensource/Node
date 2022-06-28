@@ -20,12 +20,12 @@ module.exports = (app) => {
   app
     .route('/api/tasks')
     .get(tasks.list) // list
-    .post(passport.authenticate('jwt'), policy.isAllowed, model.isValid(tasksSchema.Task), tasks.create); // create
+    .post(passport.authenticate('jwt', { session: false }), policy.isAllowed, model.isValid(tasksSchema.Task), tasks.create); // create
 
   // classic crud
   app
     .route('/api/tasks/:taskId')
-    .all(passport.authenticate('jwt'), policy.isAllowed) // policy.isOwner available (require set in middleWare)
+    .all(passport.authenticate('jwt', { session: false }), policy.isAllowed) // policy.isOwner available (require set in middleWare)
     .get(tasks.get) // get
     .put(model.isValid(tasksSchema.Task), tasks.update) // update
     .delete(model.isValid(tasksSchema.Task), tasks.delete); // delete
