@@ -65,12 +65,12 @@ exports.me = (req, res) => {
   if (req.user) {
     user = {
       id: req.user.id,
-      provider: escape(req.user.provider),
+      provider: req.user.provider,
       roles: req.user.roles,
       avatar: req.user.avatar,
-      email: escape(req.user.email),
-      lastName: escape(req.user.lastName),
-      firstName: escape(req.user.firstName),
+      email: req.user.email,
+      lastName: req.user.lastName,
+      firstName: req.user.firstName,
       providerData: req.user.providerData,
       // others
       complementary: req.user.complementary,
