@@ -15,7 +15,7 @@ const objectPath = require('object-path');
 const getGlobbedPaths = (globPatterns, excludes) => {
   // URL paths regex
   /* eslint no-useless-escape:0 */
-  const urlRegex = new RegExp('^(?:[a-z]+:)?//', 'i');
+  const urlRegex = /^(?:[a-z]+:)?\/\//i;
   let output = [];
   // If glob pattern is array then we use each pattern in a recursive way, otherwise we use glob
   if (_.isArray(globPatterns)) {
@@ -26,7 +26,7 @@ const getGlobbedPaths = (globPatterns, excludes) => {
     if (urlRegex.test(globPatterns)) {
       output.push(globPatterns);
     } else {
-      let files = glob.sync(globPatterns);
+      let files = glob.sync(globPatterns.replace(/\\/g, '/'));
       if (excludes) {
         files = files.map((file) => {
           if (_.isArray(excludes)) {
