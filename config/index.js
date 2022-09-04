@@ -26,7 +26,7 @@ const getGlobbedPaths = (globPatterns, excludes) => {
     if (urlRegex.test(globPatterns)) {
       output.push(globPatterns);
     } else {
-      let files = glob.sync(globPatterns);
+      let files = glob.sync(globPatterns.replace(/\\/g, '/'));
       if (excludes) {
         files = files.map((file) => {
           if (_.isArray(excludes)) {
