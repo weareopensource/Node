@@ -67,7 +67,7 @@ exports.checkPassword = (password) => {
  */
 exports.generateRandomPassphrase = () => {
   let password = '';
-  const repeatingCharacters = new RegExp('(.)\\1{2,}', 'g');
+  const repeatingCharacters = /(.)\1{2,}/g;
   // iterate until the we have a valid passphrase
   // NOTE: Should rarely iterate more than once, but we need this to ensure no repeating characters are present
   while (password.length < 20 || repeatingCharacters.test(password)) {
