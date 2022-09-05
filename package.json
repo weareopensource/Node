@@ -82,7 +82,7 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "~1.0.0",
-    "sequelize": "^6.21.1",
+    "sequelize": "^6.21.4",
     "sharp": "^0.30.7",
     "snyk": "^1.958.0",
     "supertest": "^6.2.3",
