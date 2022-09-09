@@ -1,12 +1,13 @@
 /**
  * Module dependencies.
  */
-const _ = require('lodash');
-const path = require('path');
+import _ from "lodash";
+import path from "path";
 
-const config = require(path.resolve('./config'));
+import config from "../../../config/index.js";
+import schema from "../models/tasks.schema.js"
+
 const options = _.clone(config.joi.validationOptions);
-const schema = require('../models/tasks.schema');
 
 // Globals
 let task;

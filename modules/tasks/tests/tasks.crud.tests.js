@@ -1,12 +1,12 @@
 /**
  * Module dependencies.
  */
-const request = require('supertest');
-const path = require('path');
+import request from "supertest";
+import path from "path";
 
-const express = require(path.resolve('./lib/services/express'));
-const mongooseService = require(path.resolve('./lib/services/mongoose'));
-const multerService = require(path.resolve('./lib/services/multer'));
+import express from "../../../lib/services/express.js";
+import mongooseService from "../../../lib/services/mongoose.js";
+import multerService from "../../../lib/services/multer.js"
 
 /**
  * Unit tests
@@ -29,7 +29,7 @@ describe('Tasks CRUD Tests :', () => {
       await mongooseService.connect();
       await multerService.storage();
       await mongooseService.loadModels();
-      UserService = require(path.resolve('./modules/users/services/user.service'));
+      UserService = await import(path.resolve('./modules/users/services/user.service.js'));
       // init application
       app = express.init();
       agent = request.agent(app);
@@ -190,14 +190,14 @@ describe('Tasks CRUD Tests :', () => {
       }
     });
 
-    test('should be able to delete a task', async () => {
+    test('should be able to remove a task', async () => {
       // delete task
       try {
-        const result = await agent.delete(`/api/tasks/${task2.id}`).expect(200);
+        const result = await agent.remove(`/api/tasks/${task2.id}`).expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('task deleted');
         expect(result.body.data.id).toBe(task2.id);
-        expect(result.body.data.deletedCount).toBe(1);
+        expect(result.body.data.removedCount).toBe(1);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -211,10 +211,10 @@ describe('Tasks CRUD Tests :', () => {
       }
     });
 
-    test('should not be able to delete a task with a bad id', async () => {
+    test('should not be able to remove a task with a bad id', async () => {
       // edit task
       try {
-        const result = await agent.delete(`/api/tasks/${task2.id}`).send(_tasks[0]).expect(404);
+        const result = await agent.remove(`/api/tasks/${task2.id}`).send(_tasks[0]).expect(404);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toBe('Not Found');
         expect(result.body.description).toBe('No Task with that identifier has been found');
@@ -241,14 +241,14 @@ describe('Tasks CRUD Tests :', () => {
     afterEach(async () => {
       // del task
       try {
-        await agent.delete(`/api/tasks/${task1.id}`).expect(200);
+        await agent.remove(`/api/tasks/${task1.id}`).expect(200);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
       }
       // del user
       try {
-        await UserService.delete(user);
+        await UserService.remove(user);
       } catch (err) {
         console.log(err);
       }

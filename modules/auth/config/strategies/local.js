@@ -1,13 +1,15 @@
 /**
  * Module dependencies
  */
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const AuthService = require('../../services/auth.service');
+import passport from "passport";
+import path from "path";
+import { Strategy } from "passport-local";
 
-module.exports = () => {
+import AuthService from "../../services/auth.service.js";
+
+export default () => {
   passport.use(
-    new LocalStrategy(
+    new Strategy(
       {
         usernameField: 'email',
         passwordField: 'password',

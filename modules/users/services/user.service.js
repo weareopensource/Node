@@ -1,19 +1,18 @@
 /**
  * Module dependencies
  */
-const path = require('path');
-const _ = require('lodash');
+import _ from "lodash";
 
-const config = require(path.resolve('./config'));
-const authService = require(path.resolve('modules/auth/services/auth.service'));
-const UserRepository = require('../repositories/user.repository');
+import config from "../../../config/index.js";
+import authService from "../../auth/services/auth.service.js";
+import UserRepository from "../repositories/user.repository.js"
 
 /**
  * @desc Local function to removeSensitive data from user
  * @param {Object} user
  * @return {Object} user
  */
-exports.removeSensitive = (user, conf) => {
+const removeSensitive = (user, conf) => {
   if (!user || typeof user !== 'object') return null;
   const keys = conf || config.whitelists.users.default;
   return _.pick(user, keys);
@@ -26,9 +25,9 @@ exports.removeSensitive = (user, conf) => {
  * @param {Int} perPage
  * @return {Promise} users selected
  */
-exports.list = async (search, page, perPage) => {
+const list = async (search, page, perPage) => {
   const result = await UserRepository.list(search, page || 0, perPage || 20);
-  return Promise.resolve(result.map((user) => this.removeSensitive(user)));
+  return Promise.resolve(result.map((user) => removeSensitive(user)));
 };
 
 /**
@@ -36,7 +35,7 @@ exports.list = async (search, page, perPage) => {
  * @param {Object} user
  * @return {Promise} user
  */
-exports.create = async (user) => {
+const create = async (user) => {
   // Set provider to local
   if (!user.provider) user.provider = 'local';
   // confirming to secure password policies
@@ -51,7 +50,7 @@ exports.create = async (user) => {
   }
   const result = await UserRepository.create(user);
   // Remove sensitive data before return
-  return Promise.resolve(this.removeSensitive(result));
+  return Promise.resolve(removeSensitive(result));
 };
 
 /**
@@ -59,9 +58,9 @@ exports.create = async (user) => {
  * @param {Object} mongoose input request
  * @return {Array} users
  */
-exports.search = async (input) => {
+const search = async (input) => {
   const result = await UserRepository.search(input);
-  return Promise.resolve(result.map((user) => this.removeSensitive(user)));
+  return Promise.resolve(result.map((user) => removeSensitive(user)));
 };
 
 /**
@@ -69,9 +68,9 @@ exports.search = async (input) => {
  * @param {Object} user.id / user.email
  * @return {Object} user
  */
-exports.get = async (user) => {
+const get = async (user) => {
   const result = await UserRepository.get(user);
-  return Promise.resolve(this.removeSensitive(result));
+  return Promise.resolve(removeSensitive(result));
 };
 
 /**
@@ -79,7 +78,7 @@ exports.get = async (user) => {
  * @param {Object} user.id / user.email
  * @return {Object} user
  */
-exports.getBrut = async (user) => {
+const getBrut = async (user) => {
   const result = await UserRepository.get(user);
   return Promise.resolve(result);
 };
@@ -91,13 +90,13 @@ exports.getBrut = async (user) => {
  * @param {boolean} admin - true if admin update
  * @return {Promise} user -
  */
-exports.update = async (user, body, option) => {
-  if (!option) user = _.assignIn(user, this.removeSensitive(body, config.whitelists.users.update));
-  else if (option === 'admin') user = _.assignIn(user, this.removeSensitive(body, config.whitelists.users.updateAdmin));
-  else if (option === 'recover') user = _.assignIn(user, this.removeSensitive(body, config.whitelists.users.recover));
+const update = async (user, body, option) => {
+  if (!option) user = _.assignIn(user, removeSensitive(body, config.whitelists.users.update));
+  else if (option === 'admin') user = _.assignIn(user, removeSensitive(body, config.whitelists.users.updateAdmin));
+  else if (option === 'recover') user = _.assignIn(user, removeSensitive(body, config.whitelists.users.recover));
 
   const result = await UserRepository.update(user);
-  return Promise.resolve(this.removeSensitive(result));
+  return Promise.resolve(removeSensitive(result));
 };
 
 /**
@@ -105,10 +104,10 @@ exports.update = async (user, body, option) => {
  * @param {Object} user - original user
  * @return {Promise} user -
  */
-exports.terms = async (user) => {
+const terms = async (user) => {
   user = _.assignIn(user, { terms: new Date() });
   const result = await UserRepository.update(user);
-  return Promise.resolve(this.removeSensitive(result));
+  return Promise.resolve(removeSensitive(result));
 };
 
 /**
@@ -116,8 +115,8 @@ exports.terms = async (user) => {
  * @param {Object} user
  * @return {Promise} result & id
  */
-exports.delete = async (user) => {
-  const result = await UserRepository.delete(user);
+const remove = async (user) => {
+  const result = await UserRepository.remove(user);
   return Promise.resolve(result);
 };
 
@@ -125,7 +124,20 @@ exports.delete = async (user) => {
  * @desc Function to get all stats of db
  * @return {Promise} All stats
  */
-exports.stats = async () => {
+const stats = async () => {
   const result = await UserRepository.stats();
   return Promise.resolve(result);
 };
+
+export default {
+  removeSensitive,
+  list,
+  create,
+  search,
+  get,
+  getBrut,
+  update,
+  terms,
+  remove,
+  stats
+}

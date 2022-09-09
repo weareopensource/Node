@@ -1,12 +1,11 @@
 /**
  * Module dependencies
  */
-const path = require('path');
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20');
+import passport from "passport";
+import GoogleStrategy  from "passport-google-oauth20";
 
-const config = require(path.resolve('./config'));
-const auth = require('../../controllers/auth.controller');
+import config from "../../../../config/index.js";
+import auth from "../../controllers/auth.controller.js"
 
 const callbackURL = `${config.api.protocol}://${config.api.host}${config.api.port ? ':' : ''}${config.api.port ? config.api.port : ''}/${
   config.api.base
@@ -19,7 +18,7 @@ const callbackURL = `${config.api.protocol}://${config.api.host}${config.api.por
  * @param {profile}
  * @param {cb} callback
  */
-exports.prepare = async (accessToken, refreshToken, profile, cb) => {
+ const prepare = async (accessToken, refreshToken, profile, cb) => {
   // Set the provider data and include tokens
   const providerData = profile._json;
   providerData.accessToken = accessToken;
@@ -45,7 +44,7 @@ exports.prepare = async (accessToken, refreshToken, profile, cb) => {
 /**
  * @desc Export oAuth Strategie
  */
-module.exports = () => {
+export default () => {
   const google = config.oAuth.google ? config.oAuth.google : null;
   // Use google strategy
   if (google && google.clientID && google.clientSecret) {
@@ -57,7 +56,7 @@ module.exports = () => {
           callbackURL: google.callbackURL ? google.callbackURL : callbackURL,
           scope: ['profile', 'email'],
         },
-        (a, r, p, cb) => this.prepare(a, r, p, cb),
+        (a, r, p, cb) => prepare(a, r, p, cb),
       ),
     );
   }

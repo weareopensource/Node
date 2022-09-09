@@ -1,11 +1,10 @@
 /**
  * Module dependencies
  */
-const passport = require('passport');
-const path = require('path');
-const JwtStrategy = require('passport-jwt').Strategy;
+import passport from "passport";
+import { Strategy } from "passport-jwt";
 
-const UserService = require(path.resolve('modules/users/services/user.service'));
+import UserService from "../../../users/services/user.service.js";
 
 const cookieExtractor = (req) => {
   let token = null;
@@ -26,11 +25,11 @@ async function verifyCallback(jwtPayload, done) {
   }
 }
 
-module.exports = ({ jwt }) => {
+export default ({ jwt }) => {
   const opts = {};
   opts.jwtFromRequest = cookieExtractor;
   opts.secretOrKey = jwt.secret;
-  const strategy = new JwtStrategy(opts, verifyCallback);
+  const strategy = new Strategy(opts, verifyCallback);
 
   passport.use(strategy);
 };

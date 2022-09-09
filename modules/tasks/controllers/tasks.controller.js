@@ -1,19 +1,16 @@
 /**
  * Module dependencies
  */
-const path = require('path');
-
-const errors = require(path.resolve('./lib/helpers/errors'));
-const responses = require(path.resolve('./lib/helpers/responses'));
-
-const TasksService = require('../services/tasks.service');
+import errors from "../../../lib/helpers/errors.js"
+import responses from "../../../lib/helpers/responses.js";
+import TasksService from "../services/tasks.service.js"
 
 /**
  * @desc Endpoint to ask the service to get the list of tasks
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.list = async (req, res) => {
+const list = async (req, res) => {
   try {
     const tasks = await TasksService.list();
     responses.success(res, 'task list')(tasks);
@@ -27,7 +24,7 @@ exports.list = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.create = async (req, res) => {
+const create = async (req, res) => {
   try {
     const task = await TasksService.create(req.body, req.user);
     responses.success(res, 'task created')(task);
@@ -41,7 +38,7 @@ exports.create = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.get = (req, res) => {
+const get = (req, res) => {
   const task = req.task ? req.task.toJSON() : {};
   responses.success(res, 'task get')(task);
 };
@@ -51,7 +48,7 @@ exports.get = (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.update = async (req, res) => {
+const update = async (req, res) => {
   // TODO if (req.task && req.user && req.task.user && req.task.user.id === req.user.id) next();
   try {
     const task = await TasksService.update(req.task, req.body);
@@ -62,13 +59,13 @@ exports.update = async (req, res) => {
 };
 
 /**
- * @desc Endpoint to ask the service to delete a task
+ * @desc Endpoint to ask the service to remove a task
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.delete = async (req, res) => {
+const remove = async (req, res) => {
   try {
-    const result = await TasksService.delete(req.task);
+    const result = await TasksService.remove(req.task);
     result.id = req.task.id;
     responses.success(res, 'task deleted')({ id: req.task.id, ...result });
   } catch (err) {
@@ -81,7 +78,7 @@ exports.delete = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.stats = async (req, res) => {
+const stats = async (req, res) => {
   const data = await TasksService.stats();
   if (!data.err) {
     responses.success(res, 'tasks stats')(data);
@@ -97,7 +94,7 @@ exports.stats = async (req, res) => {
  * @param {Function} next - Express next middleware function
  * @param {String} id - task id
  */
-exports.taskByID = async (req, res, next, id) => {
+const taskByID = async (req, res, next, id) => {
   try {
     const task = await TasksService.get(id);
     if (!task) responses.error(res, 404, 'Not Found', 'No Task with that identifier has been found')();
@@ -110,3 +107,13 @@ exports.taskByID = async (req, res, next, id) => {
     next(err);
   }
 };
+
+export default {
+  list,
+  create,
+  get,
+  update,
+  remove,
+  stats,
+  taskByID
+}

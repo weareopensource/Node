@@ -1,9 +1,89 @@
 /**
  * Module dependencies
  */
-const _ = require('lodash');
+import errors from "../../../lib/helpers/errors.js"
+import responses from "../../../lib/helpers/responses.js";
+import UserService from "../services/user.service.js";
 
 /**
- * Extend user's controller
+ * @desc Endpoint to ask the service to update a user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
-module.exports = _.extend(require('./users/users.profile.controller'), require('./users/users.images.controller'));
+const update = async (req, res) => {
+  try {
+    const user = await UserService.update(req.user, req.body);
+    // reset login
+    req.login(user, { session: false }, (errLogin) => {
+      if (errLogin) return responses.error(res, 400, 'Bad Request', errors.getMessage(errLogin))(errLogin);
+      return responses.success(res, 'user updated')(user);
+    });
+  } catch (err) {
+    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+  }
+};
+
+/**
+ * @desc Endpoint to ask the service to update the terms sign of the user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+const terms = async (req, res) => {
+  try {
+    const user = await UserService.terms(req.user);
+    responses.success(res, 'user terms signed')(user);
+  } catch (err) {
+    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+  }
+};
+
+/**
+ * @desc Endpoint to ask the service to remove the user connected
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+const remove = async (req, res) => {
+  try {
+    const result = await UserService.remove(req.user);
+    responses.success(res, 'user deleted')({ id: req.user.id, ...result });
+  } catch (err) {
+    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
+  }
+};
+
+/**
+ * @desc Endpoint to ask the service to sanitize the user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+const me = (req, res) => {
+  // Sanitize the user - short term solution. Copied from core.controller.js
+  // TODO create proper passport mock: See https://gist.github.com/mweibel/5219403
+  let user = null;
+  if (req.user) {
+    user = {
+      id: req.user.id,
+      provider: req.user.provider,
+      roles: req.user.roles,
+      avatar: req.user.avatar,
+      email: req.user.email,
+      lastName: req.user.lastName,
+      firstName: req.user.firstName,
+      providerData: req.user.providerData,
+      // others
+      complementary: req.user.complementary,
+    };
+    if (req.user.bio) user.bio = req.user.bio;
+    if (req.user.position) user.position = req.user.position;
+    // startup requirement
+    if (req.user.terms) user.terms = req.user.terms;
+  }
+  return responses.success(res, 'user get')(user);
+};
+
+export default {
+  update,
+  terms,
+  remove,
+  me
+}

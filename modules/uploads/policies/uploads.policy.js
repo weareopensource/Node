@@ -1,14 +1,14 @@
 /**
  * Module dependencies
  * */
-const path = require('path');
+import path from "path";
 
-const policy = require(path.resolve('./lib/middlewares/policy'));
+import policy from "../../../lib/middlewares/policy.js";
 
 /**
  * Invoke Uploads Permissions
  */
-exports.invokeRolesPolicies = () => {
+const invokeRolesPolicies = () => {
   policy.Acl.allow([
     {
       roles: ['user', 'admin'],
@@ -25,3 +25,7 @@ exports.invokeRolesPolicies = () => {
     },
   ]);
 };
+
+export default {
+  invokeRolesPolicies
+}

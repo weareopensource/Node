@@ -1,13 +1,13 @@
 /**
  * Module dependencies.
  */
-const request = require('supertest');
-const path = require('path');
-const _ = require('lodash');
+import request from "supertest";
+import path from "path";
+import _ from "lodash";
 
-const express = require(path.resolve('./lib/services/express'));
-const mongooseService = require(path.resolve('./lib/services/mongoose'));
-const multerService = require(path.resolve('./lib/services/multer'));
+import express from "../../../lib/services/express.js";
+import mongooseService from "../../../lib/services/mongoose.js";
+import multerService from "../../../lib/services/multer.js";
 
 /**
  * Unit tests
@@ -29,7 +29,7 @@ describe('User CRUD Tests :', () => {
       await mongooseService.connect();
       await multerService.storage();
       await mongooseService.loadModels();
-      UserService = require(path.resolve('./modules/users/services/user.service'));
+      UserService = await import(path.resolve('./modules/users/services/user.service.js'));
       // init application
       app = express.init();
       agent = request.agent(app);
@@ -130,7 +130,7 @@ describe('User CRUD Tests :', () => {
       }
 
       try {
-        await UserService.delete(userEdited);
+        await UserService.remove(userEdited);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -164,7 +164,7 @@ describe('User CRUD Tests :', () => {
       }
 
       try {
-        await UserService.delete(userEdited);
+        await UserService.remove(userEdited);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -227,7 +227,7 @@ describe('User CRUD Tests :', () => {
       }
 
       try {
-        await UserService.delete(userEdited);
+        await UserService.remove(userEdited);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -278,7 +278,7 @@ describe('User CRUD Tests :', () => {
       }
 
       try {
-        await UserService.delete(userEdited);
+        await UserService.remove(userEdited);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -307,7 +307,7 @@ describe('User CRUD Tests :', () => {
       }
 
       try {
-        await UserService.delete(userEdited);
+        await UserService.remove(userEdited);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -337,7 +337,7 @@ describe('User CRUD Tests :', () => {
       }
 
       try {
-        await UserService.delete(userEdited);
+        await UserService.remove(userEdited);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -378,14 +378,14 @@ describe('User CRUD Tests :', () => {
       }
 
       try {
-        await UserService.delete(userEdited);
+        await UserService.remove(userEdited);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
       }
     });
 
-    test('should be able to delete a single user if admin', async () => {
+    test('should be able to remove a single user if admin', async () => {
       _userEdited.roles = ['user', 'admin'];
 
       try {
@@ -397,7 +397,7 @@ describe('User CRUD Tests :', () => {
       }
 
       try {
-        const result = await agent.delete(`/api/users/${userEdited._id}`).expect(200);
+        const result = await agent.remove(`/api/users/${userEdited._id}`).expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('user deleted');
         expect(result.body.data).toBeInstanceOf(Object);
@@ -408,7 +408,7 @@ describe('User CRUD Tests :', () => {
       }
 
       try {
-        await UserService.delete(userEdited);
+        await UserService.remove(userEdited);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -458,7 +458,7 @@ describe('User CRUD Tests :', () => {
       }
 
       try {
-        await UserService.delete(userEdited);
+        await UserService.remove(userEdited);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -491,7 +491,7 @@ describe('User CRUD Tests :', () => {
       }
 
       try {
-        await UserService.delete(userEdited);
+        await UserService.remove(userEdited);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -800,7 +800,7 @@ describe('User CRUD Tests :', () => {
       }
 
       try {
-        await UserService.delete(userEdited);
+        await UserService.remove(userEdited);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -835,7 +835,7 @@ describe('User CRUD Tests :', () => {
       }
     });
 
-    test('should be able to delete current user', async () => {
+    test('should be able to remove current user', async () => {
       // Init user edited
       _userEdited.email = 'register_new_user_@test.com';
 
@@ -856,19 +856,19 @@ describe('User CRUD Tests :', () => {
 
       // delete user
       try {
-        const result = await agent.delete('/api/users').expect(200);
+        const result = await agent.remove('/api/users').expect(200);
 
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('user deleted');
         expect(result.body.data.id).toBe(userEdited.id);
-        expect(result.body.data.deletedCount).toBe(1);
+        expect(result.body.data.removedCount).toBe(1);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
       }
     });
 
-    test('should be able to delete current user and all his data', async () => {
+    test('should be able to remove current user and all his data', async () => {
       // Init user edited
       _userEdited.email = 'register_new_user_@test.com';
 
@@ -889,13 +889,13 @@ describe('User CRUD Tests :', () => {
 
       // delete user
       try {
-        const result = await agent.delete('/api/users/data').expect(200);
+        const result = await agent.remove('/api/users/data').expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('user and his data were deleted');
         expect(result.body.data.id).toBe(userEdited.id);
-        expect(result.body.data.user.deletedCount).toBe(1);
-        expect(result.body.data.tasks.deletedCount).toBe(0);
-        expect(result.body.data.uploads.deletedCount).toBe(0);
+        expect(result.body.data.user.removedCount).toBe(1);
+        expect(result.body.data.tasks.removedCount).toBe(0);
+        expect(result.body.data.uploads.removedCount).toBe(0);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -952,7 +952,7 @@ describe('User CRUD Tests :', () => {
     afterEach(async () => {
       // del user
       try {
-        await UserService.delete(user);
+        await UserService.remove(user);
       } catch (err) {
         console.log(err);
       }

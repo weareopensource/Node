@@ -1,15 +1,13 @@
 /**
  * Module dependencies
  */
-const path = require('path');
-
-const policy = require(path.resolve('./lib/middlewares/policy'));
-const home = require('../controllers/home.controller');
+import policy from "../../../lib/middlewares/policy.js";
+import home from "../controllers/home.controller.js";
 
 /**
  * Routes
  */
-module.exports = (app) => {
+export default (app) => {
   // changelogs
   app.route('/api/home/releases').all(policy.isAllowed).get(home.releases);
   // changelogs

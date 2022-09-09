@@ -1,16 +1,19 @@
 /**
  * Module dependencies
  */
-const path = require('path');
-const passport = require('passport');
+import path from "path";
+import passport from "passport";
+import * as url from 'url';
 
-const config = require(path.resolve('./config'));
-const UserService = require(path.resolve('modules/users/services/user.service'));
+import config from "../../../config/index.js";
+import UserService from "../../users/services/user.service.js";
+
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 /**
  * Module init function
  */
-module.exports = (app) => {
+ export default (app) => {
   // Serialize identifiable user's information to the session
   // so that it can be pulled back in another request
   passport.serializeUser(({ id }, done) => {
@@ -30,8 +33,9 @@ module.exports = (app) => {
   });
 
   // Initialize strategies
-  config.utils.getGlobbedPaths(path.join(__dirname, './strategies/**/*.js')).forEach((strategy) => {
-    require(path.resolve(strategy))(config);
+  config.utils.getGlobbedPaths(path.join(__dirname, './strategies/**/*.js')).forEach(async (strat) => {
+    const strategy = await import(path.resolve(strat));
+    strategy.default(config);
   });
 
   // Add passport's middleware

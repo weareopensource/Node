@@ -1,10 +1,10 @@
 /**
  * Module dependencies
  */
-const chalk = require('chalk');
-const path = require('path');
+import chalk from "chalk";
+import path from "path";
 
-const mongooseService = require(path.resolve('./lib/services/mongoose'));
+import mongooseService from "../../lib/services/mongoose";
 
 /**
  * Work
@@ -15,9 +15,9 @@ const purge = async () => {
     await mongooseService.connect();
     await mongooseService.loadModels();
 
-    const uploadRepository = require(path.resolve('./modules/uploads/repositories/uploads.repository'));
+    const uploadRepository = await import(path.resolve('./modules/uploads/repositories/uploads.repository.js'));
     const result = await uploadRepository.purge('avatar', 'users', 'avatar');
-    console.log(chalk.bold.blue(`Uploads purged ${result.deletedCount} avatar`));
+    console.log(chalk.bold.blue(`Uploads purged ${result.removedCount} avatar`));
   } catch (err) {
     console.log(chalk.bold.red(`Error ${err}`));
   }

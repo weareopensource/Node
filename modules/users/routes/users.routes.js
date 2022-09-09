@@ -1,21 +1,21 @@
 /**
  * Module dependencies
  */
-const passport = require('passport');
-const path = require('path');
+import passport from "passport";
+import path from "path";
 
-const multer = require(path.resolve('./lib/services/multer'));
-const model = require(path.resolve('./lib/middlewares/model'));
-const policy = require(path.resolve('./lib/middlewares/policy'));
-const usersSchema = require('../models/user.schema');
+import multer from "../../../lib/services/multer.js";
+import model from "../../../lib/middlewares/model.js";
+import config from "../../../config/index.js";
+import policy from "../../../lib/middlewares/policy.js";
+import usersSchema from "../models/user.schema.js";
+import users from "../controllers/users.controller.js"
+import usersImage from "../controllers/users.images.controller.js"
+import usersData from "../controllers/users.data.controller.js"
+import authPassword from "../../auth/controllers/auth.password.controller.js"
 
-const config = require(path.resolve('./config'));
-
-module.exports = (app) => {
-  const users = require('../controllers/users.controller');
-  const usersData = require('../controllers/users.data.controller');
-  const auth = require(path.resolve('./modules/auth/controllers/auth.controller'));
-
+export default (app) => {
+  
   app.route('/api/users/me').get(passport.authenticate('jwt', { session: false }), policy.isAllowed, users.me);
 
   app.route('/api/users/terms').get(passport.authenticate('jwt', { session: false }), policy.isAllowed, users.terms);
@@ -24,21 +24,22 @@ module.exports = (app) => {
     .route('/api/users')
     .all(passport.authenticate('jwt', { session: false }), policy.isAllowed)
     .put(model.isValid(usersSchema.User), users.update)
-    .delete(users.delete);
+    .delete(users.remove);
 
-  app.route('/api/users/password').post(passport.authenticate('jwt', { session: false }), policy.isAllowed, auth.updatePassword);
+  app.route('/api/users/password')
+    .post(passport.authenticate('jwt', { session: false }), policy.isAllowed, authPassword.updatePassword);
 
   app
     .route('/api/users/avatar')
     .all(passport.authenticate('jwt', { session: false }), policy.isAllowed)
-    .post(multer.create('img', config.uploads.avatar), users.updateAvatar)
-    .delete(users.deleteAvatar);
+    .post(multer.create('img', config.uploads.avatar), usersImage.updateAvatar)
+    .delete(usersImage.removeAvatar);
 
   app
     .route('/api/users/data')
     .all(passport.authenticate('jwt', { session: false }), policy.isAllowed)
     .get(usersData.get)
-    .delete(usersData.delete);
+    .delete(usersData.remove);
 
   app
     .route('/api/users/data/mail')

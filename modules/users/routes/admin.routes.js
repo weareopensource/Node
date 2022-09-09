@@ -1,16 +1,12 @@
 /**
  * Module dependencies
  */
-const passport = require('passport');
-const path = require('path');
+import passport from "passport";
 
-const policy = require(path.resolve('./lib/middlewares/policy'));
-const admin = require('../controllers/admin.controller');
+import policy from "../../../lib/middlewares/policy.js"
+import admin from "../controllers/admin.controller.js"
 
-module.exports = (app) => {
-  /* eslint global-require: 0 */
-  require('./users.routes')(app);
-
+export default (app) => {
   // stats
   app.route('/api/users/stats').all(policy.isAllowed).get(admin.stats);
 
@@ -25,7 +21,7 @@ module.exports = (app) => {
     .route('/api/users/:userId')
     .get(admin.get) // get
     .put(passport.authenticate('jwt', { session: false }), policy.isAllowed, admin.update) // update
-    .delete(passport.authenticate('jwt', { session: false }), policy.isAllowed, admin.delete); // delete
+    .delete(passport.authenticate('jwt', { session: false }), policy.isAllowed, admin.remove); // delete
 
   // Finish by binding the user middleware
   app.param('userId', admin.userByID);

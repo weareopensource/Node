@@ -5,14 +5,15 @@
  * Module dependencies
  */
 
-const chalk = require('chalk');
-const path = require('path');
-const fs = require('fs');
-const bson = require('bson');
+import chalk from "chalk";
+import path from "path";
+import fs from "fs";
+import bson from "bson";
 
 const fsPromises = fs.promises;
-const config = require(path.resolve('./config'));
-const mongooseService = require(path.resolve('./lib/services/mongoose'));
+
+import config from "../../config/index.js";
+import mongooseService from "../../lib/services/mongoose.js";
 
 /**
  * Work
@@ -60,11 +61,11 @@ const seedData = async () => {
 
         // insert
         if (collection.split('.')[0] === 'uploads') {
-          const Service = require(path.resolve(`./modules/${collection.split('.')[0]}/services/${collection.split('.')[0]}.data.service`));
-          await Service.import(items, ['_id'], collection);
+          const Service = await import(path.resolve(`./modules/${collection.split('.')[0]}/services/${collection.split('.')[0]}.data.service.js`));
+          await Service.push(items, ['_id'], collection);
         } else {
-          const Service = require(path.resolve(`./modules/${collection}/services/${collection}.data.service`));
-          await Service.import(items, ['_id']);
+          const Service = await import(path.resolve(`./modules/${collection}/services/${collection}.data.service.js`));
+          await Service.push(items, ['_id']);
         }
 
         console.log(chalk.blue(`Database Seeding ${collection} : ${items.length}`));

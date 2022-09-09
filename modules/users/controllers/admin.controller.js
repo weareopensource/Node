@@ -1,18 +1,16 @@
 /**
  * Module dependencies
  */
-const path = require('path');
-
-const errors = require(path.resolve('./lib/helpers/errors'));
-const responses = require(path.resolve('./lib/helpers/responses'));
-const UserService = require('../services/user.service');
+import errors from "../../../lib/helpers/errors.js"
+import responses from "../../../lib/helpers/responses.js";
+import UserService from "../services/user.service.js";
 
 /**
  * @desc Endpoint to ask the service to get the list of users
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.list = async (req, res) => {
+const list = async (req, res) => {
   try {
     const users = await UserService.list(req.search, req.page, req.perPage);
     responses.success(res, 'user list')(users);
@@ -26,7 +24,7 @@ exports.list = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.get = (req, res) => {
+const get = (req, res) => {
   const user = req.model ? req.model.toJSON() : {};
   responses.success(res, 'user get')(user);
 };
@@ -36,7 +34,7 @@ exports.get = (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.update = async (req, res) => {
+const update = async (req, res) => {
   try {
     const user = await UserService.update(req.model, req.body, 'admin');
     responses.success(res, 'user updated')(user);
@@ -46,13 +44,13 @@ exports.update = async (req, res) => {
 };
 
 /**
- * @desc Endpoint to ask the service to delete a user
+ * @desc Endpoint to ask the service to remove a user
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.delete = async (req, res) => {
+const remove = async (req, res) => {
   try {
-    const result = await UserService.delete(req.model);
+    const result = await UserService.remove(req.model);
     responses.success(res, 'user deleted')({ id: req.model.id, ...result });
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
@@ -64,7 +62,7 @@ exports.delete = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.stats = async (req, res) => {
+const stats = async (req, res) => {
   const data = await UserService.stats();
   if (!data.err) {
     responses.success(res, 'users stats')(data);
@@ -80,7 +78,7 @@ exports.stats = async (req, res) => {
  * @param {Function} next - Express next middleware function
  * @param {String} id - user id
  */
-exports.userByID = async (req, res, next, id) => {
+const userByID = async (req, res, next, id) => {
   try {
     const user = await UserService.getBrut({ id });
     if (!user) responses.error(res, 404, 'Not Found', 'No User with that identifier has been found')();
@@ -100,7 +98,7 @@ exports.userByID = async (req, res, next, id) => {
  * @param {Function} next - Express next middleware function  ...pagenumber&perpage&search
  * @param {String} params - params
  */
-exports.userByPage = async (req, res, next, params) => {
+const userByPage = async (req, res, next, params) => {
   try {
     if (!params) responses.error(res, 404, 'Not Found', 'No users with that params has been found')();
     const request = params.split('&');
@@ -123,3 +121,13 @@ exports.userByPage = async (req, res, next, params) => {
     next(err);
   }
 };
+
+export default {
+  list,
+  get,
+  update,
+  remove,
+  stats,
+  userByID,
+  userByPage
+}

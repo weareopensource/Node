@@ -1,13 +1,12 @@
 /**
  * Module dependencies.
  */
-const request = require('supertest');
-const path = require('path');
+import request from "supertest";
+import path from "path";
 
-const express = require(path.resolve('./lib/services/express'));
-const mongooseService = require(path.resolve('./lib/services/mongoose'));
-const multerService = require(path.resolve('./lib/services/multer'));
-
+import express from "../../../lib/services/express.js";
+import mongooseService from "../../../lib/services/mongoose.js";
+import multerService from "../../../lib/services/multer.js"
 /**
  * Unit tests
  */

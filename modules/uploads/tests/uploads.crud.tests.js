@@ -1,12 +1,12 @@
 /**
  * Module dependencies.
  */
-const request = require('supertest');
-const path = require('path');
+import request from "supertest";
+import path from "path";
 
-const express = require(path.resolve('./lib/services/express'));
-const mongooseService = require(path.resolve('./lib/services/mongoose'));
-const multerService = require(path.resolve('./lib/services/multer'));
+import express from "../../../lib/services/express.js";
+import mongooseService from "../../../lib/services/mongoose.js";
+import multerService from "../../../lib/services/multer.js";
 
 /**
  * Unit tests
@@ -27,7 +27,7 @@ describe('Uploads CRUD Tests :', () => {
       await mongooseService.connect();
       await multerService.storage();
       await mongooseService.loadModels();
-      UserService = require(path.resolve('./modules/users/services/user.service'));
+      UserService = await import(path.resolve('./modules/users/services/user.service.js'));
       // init application
       app = express.init();
       agent = request.agent(app);
@@ -205,7 +205,7 @@ describe('Uploads CRUD Tests :', () => {
     afterEach(async () => {
       // del upload
       // try {
-      //   await agent.delete(`/api/uploads/${upload1}`)
+      //   await agent.remove(`/api/uploads/${upload1}`)
       //     .expect(200);
       // } catch (err) {
       //   console.log(err);
@@ -213,7 +213,7 @@ describe('Uploads CRUD Tests :', () => {
       // }
       // del user
       try {
-        await UserService.delete(user);
+        await UserService.remove(user);
       } catch (err) {
         console.log(err);
       }

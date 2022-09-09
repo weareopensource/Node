@@ -1,4 +1,4 @@
-module.exports = {
+const config = {
   app: {
     title: 'WeAreOpenSource Node - Development Environment',
     description: 'Node - Boilerplate Back : Express, Jwt, Mongo, Sequelize (Beta) ',
@@ -237,3 +237,5 @@ module.exports = {
     },
   },
 };
+
+export default config;

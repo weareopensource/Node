@@ -1,7 +1,7 @@
 /**
  * Data Model Sequelize
  */
-// module.exports = (sequelize, DataTypes) => {
+//  export default (sequelize, DataTypes) => {
 //   const TaskSequelize = sequelize.define('Task', {
 //     title: DataTypes.STRING,
 //     description: DataTypes.STRING,

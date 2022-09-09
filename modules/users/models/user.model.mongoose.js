@@ -1,7 +1,7 @@
 /**
  * Module dependencies
  */
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 mongoose.Promise = Promise;
@@ -40,7 +40,7 @@ const UserMongoose = new Schema(
 );
 
 function addID() {
-  return this._id.toHexString();
+  return _id.toHexString();
 }
 UserMongoose.virtual('id').get(addID);
 

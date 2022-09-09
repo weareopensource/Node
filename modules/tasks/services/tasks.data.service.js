@@ -1,35 +1,41 @@
 /**
  * Module dependencies
  */
-const TasksRepository = require('../repositories/tasks.repository');
+import TasksRepository from "../repositories/tasks.repository.js"
 
 /**
  * @desc Function to ask repository to get all task from a specific user
  * @param {Object} user
  * @return {Promise} user tasks
  */
-exports.list = async (user) => {
+const list = async (user) => {
   const result = await TasksRepository.list({ user: user._id });
   return Promise.resolve(result);
 };
 
 /**
- * @desc Function to ask repository to delete all task from a specific user
+ * @desc Function to ask repository to remove all task from a specific user
  * @param {Object} user
  * @return {Promise} confirmation of delete
  */
-exports.delete = async (user) => {
-  const result = await TasksRepository.deleteMany({ user: user._id });
+const remove = async (user) => {
+  const result = await TasksRepository.removeMany({ user: user._id });
   return Promise.resolve(result);
 };
 
 /**
- * @desc Function to ask repository to import a list of tasks
+ * @desc Function to ask repository to push a list of tasks
  * @param {[Object]} tasks
  * @param {[String]} filters
  * @return {Promise} tasks
  */
-exports.import = (tasks, filters) => {
-  const result = TasksRepository.import(tasks, filters);
+const push = (tasks, filters) => {
+  const result = TasksRepository.push(tasks, filters);
   return result;
 };
+
+export default {
+  list,
+  remove,
+  push
+}

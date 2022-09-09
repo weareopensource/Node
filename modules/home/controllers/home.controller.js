@@ -1,20 +1,19 @@
 /**
  * Module dependencies
  */
-const path = require('path');
-const fs = require('fs');
+import path from "path";
+import fs from "fs";
 
-const errors = require(path.resolve('./lib/helpers/errors'));
-const responses = require(path.resolve('./lib/helpers/responses'));
-
-const HomeService = require('../services/home.service');
+import errors from "../../../lib/helpers/errors.js"
+import responses from "../../../lib/helpers/responses.js";
+import HomeService from "../services/home.service.js"
 
 /**
  * @desc Endpoint to ask the service to get the releases
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.releases = async (req, res) => {
+const releases = async (req, res) => {
   try {
     const releases = await HomeService.releases();
     responses.success(res, 'releases')(releases);
@@ -28,7 +27,7 @@ exports.releases = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.changelogs = async (req, res) => {
+const changelogs = async (req, res) => {
   try {
     const changelogs = await HomeService.changelogs();
     responses.success(res, 'changelogs')(changelogs);
@@ -42,7 +41,7 @@ exports.changelogs = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.team = async (req, res) => {
+const team = async (req, res) => {
   try {
     const users = await HomeService.team();
     responses.success(res, 'team list')(users);
@@ -56,7 +55,7 @@ exports.team = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.page = async (req, res) => {
+const page = async (req, res) => {
   try {
     responses.success(res, 'page')(req.page);
   } catch (err) {
@@ -71,7 +70,7 @@ exports.page = async (req, res) => {
  * @param {Function} next - Express next middleware function
  * @param {String} name - file name
  */
-exports.pageByName = async (req, res, next, name) => {
+const pageByName = async (req, res, next, name) => {
   try {
     if (!fs.existsSync(`./config/markdown/${name}.md`)) return responses.error(res, 404, 'Not Found', 'No page with that name has been found')();
     const page = await HomeService.page(name);
@@ -81,3 +80,11 @@ exports.pageByName = async (req, res, next, name) => {
     next(err);
   }
 };
+
+export default {
+  releases,
+  changelogs,
+  team,
+  page,
+  pageByName
+}

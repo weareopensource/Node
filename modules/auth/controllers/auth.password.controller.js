@@ -1,23 +1,21 @@
 /**
  * Module dependencies
  */
-const path = require('path');
+import jwt from "jsonwebtoken";
 
-const jwt = require('jsonwebtoken');
-const AuthService = require('../../services/auth.service');
-
-const UserService = require(path.resolve('./modules/users/services/user.service'));
-const mails = require(path.resolve('./lib/helpers/mails'));
-const errors = require(path.resolve('./lib/helpers/errors'));
-const responses = require(path.resolve('./lib/helpers/responses'));
-const config = require(path.resolve('./config'));
+import AuthService from "../services/auth.service.js"
+import UserService from "../../users/services/user.service.js";
+import mails from "../../../lib/helpers/mails.js";
+import errors from "../../../lib/helpers/errors.js"
+import responses from "../../../lib/helpers/responses.js";
+import config from "../../../config/index.js";
 
 /**
  * @desc Endpoint to init password reset mail
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.forgot = async (req, res) => {
+const forgot = async (req, res) => {
   let user;
   // check input
   if (!req.body.email) return responses.error(res, 422, 'Unprocessable Entity', 'Mail field must not be blank')();
@@ -57,7 +55,7 @@ exports.forgot = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.validateResetToken = async (req, res) => {
+const validateResetToken = async (req, res) => {
   try {
     const user = await UserService.getBrut({ resetPasswordToken: req.params.token });
     if (!user || !user.email) return res.redirect('/api/password/reset/invalid');
@@ -72,7 +70,7 @@ exports.validateResetToken = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.reset = async (req, res) => {
+const reset = async (req, res) => {
   let user;
   // check input
   if (!req.body.token || !req.body.newPassword) return responses.error(res, 400, 'Bad Request', 'Password or Token fields must not be blank')();
@@ -117,7 +115,7 @@ exports.reset = async (req, res) => {
 /**
  * Change Password
  */
-exports.updatePassword = async (req, res) => {
+const updatePassword = async (req, res) => {
   let user;
   let password;
   // check input
@@ -144,3 +142,10 @@ exports.updatePassword = async (req, res) => {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
 };
+
+export default {
+  forgot,
+  validateResetToken,
+  reset,
+  updatePassword
+}

@@ -1,16 +1,16 @@
 /**
  * Module dependencies.
  */
-const _ = require('lodash');
-const path = require('path');
+import _ from "lodash";
+import path from "path";
 // const mock = require('mock-fs');
 
-const config = require(path.resolve('./config'));
-const logger = require(path.resolve('./lib/services/logger'));
-const mongooseService = require(path.resolve('./lib/services/mongoose'));
-const multerService = require(path.resolve('./lib/services/multer'));
-const seed = require(path.resolve('./lib/services/seed'));
-const errors = require(path.resolve('./lib/helpers/errors'));
+import config from "../../../config/index.js";
+import logger from "../../../lib/services/logger.js";
+import mongooseService from "../../../lib/services/mongoose.js"
+import multerService from "../../../lib/services/multer.js"
+import seed from "../../../lib/services/seed.js"
+import errors from "../../../lib/helpers/errors.js"
 
 /**
  * Unit tests
@@ -26,9 +26,9 @@ describe('Configuration Tests:', () => {
       .then(async () => {
         await multerService.storage();
         mongooseService.loadModels();
-        AuthService = require(path.resolve('./modules/auth/services/auth.service'));
-        UserService = require(path.resolve('./modules/users/services/user.service'));
-        TaskService = require(path.resolve('./modules/tasks/services/tasks.service'));
+        AuthService = await import(path.resolve('./modules/auth/services/auth.service.js'));
+        UserService = await import(path.resolve('./modules/users/services/user.service.js'));
+        TaskService = await import(path.resolve('./modules/tasks/services/tasks.service.js'));
       })
       .catch((e) => {
         console.log(e);
@@ -113,7 +113,7 @@ describe('Configuration Tests:', () => {
       }
 
       try {
-        await UserService.delete({ id: result[0]._id });
+        await UserService.remove({ id: result[0]._id });
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -137,8 +137,8 @@ describe('Configuration Tests:', () => {
       }
 
       try {
-        await UserService.delete({ id: result[0]._id });
-        await UserService.delete({ id: result[1]._id });
+        await UserService.remove({ id: result[0]._id });
+        await UserService.remove({ id: result[1]._id });
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -162,10 +162,10 @@ describe('Configuration Tests:', () => {
       }
 
       try {
-        await UserService.delete({ id: result[0]._id });
-        await UserService.delete({ id: result[1]._id });
-        await TaskService.delete({ id: result[2]._id });
-        await TaskService.delete({ id: result[3]._id });
+        await UserService.remove({ id: result[0]._id });
+        await UserService.remove({ id: result[1]._id });
+        await TaskService.remove({ id: result[2]._id });
+        await TaskService.remove({ id: result[3]._id });
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -210,8 +210,8 @@ describe('Configuration Tests:', () => {
       }
 
       try {
-        await UserService.delete({ id: result[0]._id });
-        await UserService.delete({ id: result[1]._id });
+        await UserService.remove({ id: result[0]._id });
+        await UserService.remove({ id: result[1]._id });
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -236,7 +236,7 @@ describe('Configuration Tests:', () => {
       }
 
       try {
-        await UserService.delete({ id: result[0]._id });
+        await UserService.remove({ id: result[0]._id });
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -262,8 +262,8 @@ describe('Configuration Tests:', () => {
       }
 
       try {
-        await UserService.delete({ id: result[0]._id });
-        await UserService.delete({ id: result[1]._id });
+        await UserService.remove({ id: result[0]._id });
+        await UserService.remove({ id: result[1]._id });
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -325,8 +325,8 @@ describe('Configuration Tests:', () => {
       expect(options.stream).toBeDefined();
     });
 
-    test('should use the default log format of "combined" when an invalid format was provided', () => {
-      const _logger = require(path.resolve('./lib/services/logger'));
+    test('should use the default log format of "combined" when an invalid format was provided', async () => {
+      const _logger = await import(path.resolve('./lib/services/logger.js'));
 
       // manually set the config log format to be invalid
       config.log = {

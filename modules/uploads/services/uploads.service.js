@@ -1,17 +1,17 @@
 /**
  * Module dependencies
  */
-const path = require('path');
+import path from "path";
 
-const multer = require(path.resolve('./lib/services/multer'));
-const UploadRepository = require('../repositories/uploads.repository');
+import multerService from "../../../lib/services/multer.js";
+import UploadRepository from "../repositories/uploads.repository.js";
 
 /**
  * @desc Function to ask repository to get an upload
  * @param {String} uploadName
  * @return {Promise} Upload
  */
-exports.get = async (uploadName) => {
+const get = async (uploadName) => {
   const result = await UploadRepository.get(uploadName);
   return Promise.resolve(result);
 };
@@ -21,7 +21,7 @@ exports.get = async (uploadName) => {
  * @param {Object} Upload
  * @return {Promise} result stream
  */
-exports.getStream = async (upload) => {
+const getStream = async (upload) => {
   const result = await UploadRepository.getStream(upload);
   return Promise.resolve(result);
 };
@@ -33,9 +33,9 @@ exports.getStream = async (upload) => {
  * @param {String} kind, upload configuration path (important for futur transformations)
  * @return {Promise} Upload
  */
-exports.update = async (file, user, kind) => {
+const update = async (file, user, kind) => {
   const update = {
-    filename: await multer.generateFileName(file.filename || file.originalname),
+    filename: await multerService.generateFileName(file.filename || file.originalname),
     metadata: {
       user: user.id,
       kind: kind || null,
@@ -46,11 +46,18 @@ exports.update = async (file, user, kind) => {
 };
 
 /**
- * @desc Function to ask repository to delete chunks data
+ * @desc Function to ask repository to remove chunks data
  * @param {Object} Upload
  * @return {Promise} confirmation of delete
  */
-exports.delete = async (upload) => {
-  const result = await UploadRepository.delete(upload);
+const remove = async (upload) => {
+  const result = await UploadRepository.remove(upload);
   return Promise.resolve(result);
 };
+
+export default {
+  get,
+  getStream,
+  update,
+  remove
+}
