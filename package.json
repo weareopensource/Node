@@ -75,7 +75,7 @@
     "morgan": "^1.10.0",
     "multer": "~1.4.4",
     "nodemailer": "~6.7.8",
-    "nodemon": "^2.0.19",
+    "nodemon": "^2.0.20",
     "object-path": "^0.11.8",
     "passport": "^0.6.0",
     "passport-apple": "^2.0.1",
