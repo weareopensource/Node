@@ -25,13 +25,11 @@ describe('User CRUD Tests :', () => {
   //  init
   beforeAll(async () => {
     try {
-      // init mongo
+      await mongooseService.loadModels();
       await mongooseService.connect();
       await multerService.storage();
-      await mongooseService.loadModels();
-      UserService = await import(path.resolve('./modules/users/services/user.service.js'));
-      // init application
-      app = express.init();
+      UserService = (await import(path.resolve('./modules/users/services/user.service.js'))).default;
+      app = await express.init();
       agent = request.agent(app);
     } catch (err) {
       console.log(err);
@@ -100,6 +98,7 @@ describe('User CRUD Tests :', () => {
 
       try {
         const result = await agent.post('/api/auth/signup').send(_userEdited).expect(422);
+
         expect(result.body.type).toBe('error');
         expect(result.body.message).toBe('Schema validation error');
         expect(result.body.description).toEqual('Password must have a strength of at least 3. Password length must be at least 8 characters long. ');
@@ -397,7 +396,7 @@ describe('User CRUD Tests :', () => {
       }
 
       try {
-        const result = await agent.remove(`/api/users/${userEdited._id}`).expect(200);
+        const result = await agent.delete(`/api/users/${userEdited._id}`).expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('user deleted');
         expect(result.body.data).toBeInstanceOf(Object);
@@ -856,12 +855,12 @@ describe('User CRUD Tests :', () => {
 
       // delete user
       try {
-        const result = await agent.remove('/api/users').expect(200);
+        const result = await agent.delete('/api/users').expect(200);
 
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('user deleted');
         expect(result.body.data.id).toBe(userEdited.id);
-        expect(result.body.data.removedCount).toBe(1);
+        expect(result.body.data.deletedCount).toBe(1);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -874,6 +873,8 @@ describe('User CRUD Tests :', () => {
 
       try {
         const result = await agent.post('/api/auth/signup').send(_userEdited).expect(200);
+        console.log("1", result.body);
+
         userEdited = result.body.user;
 
         expect(result.body.user._id).toBe(result.body.user.id);
@@ -889,13 +890,15 @@ describe('User CRUD Tests :', () => {
 
       // delete user
       try {
-        const result = await agent.remove('/api/users/data').expect(200);
+        const result = await agent.delete('/api/users/data').expect(200);
+        console.log("2", result.body);
+
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('user and his data were deleted');
         expect(result.body.data.id).toBe(userEdited.id);
-        expect(result.body.data.user.removedCount).toBe(1);
-        expect(result.body.data.tasks.removedCount).toBe(0);
-        expect(result.body.data.uploads.removedCount).toBe(0);
+        expect(result.body.data.user.deletedCount).toBe(1);
+        expect(result.body.data.tasks.deletedCount).toBe(0);
+        expect(result.body.data.uploads.deletedCount).toBe(0);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();

@@ -75,8 +75,8 @@ const update = (user) => new User(user).save();
  * @return {Object} confirmation of delete
  */
 const remove = async (user) => {
-  if (user.id && mongoose.Types.ObjectId.isValid(user.id)) return User.removeOne({ _id: user.id }).exec();
-  if (user.email) return User.removeOne({ email: user.email }).exec();
+  if (user.id && mongoose.Types.ObjectId.isValid(user.id)) return User.deleteOne({ _id: user.id }).exec();
+  if (user.email) return User.deleteOne({ email: user.email }).exec();
 };
 
 /**

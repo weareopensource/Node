@@ -3,7 +3,6 @@
  */
 import _ from "lodash";
 import path from "path";
-// const mock = require('mock-fs');
 
 import config from "../../../config/index.js";
 import logger from "../../../lib/services/logger.js";
@@ -11,29 +10,28 @@ import mongooseService from "../../../lib/services/mongoose.js"
 import multerService from "../../../lib/services/multer.js"
 import seed from "../../../lib/services/seed.js"
 import errors from "../../../lib/helpers/errors.js"
+import _logger from '../../../lib/services/logger.js';
 
 /**
  * Unit tests
  */
 describe('Configuration Tests:', () => {
-  let AuthService = null;
-  let UserService = null;
-  let TaskService = null;
+  let AuthService;
+  let UserService;
+  let TaskService;
 
-  beforeAll(() =>
-    mongooseService
-      .connect()
-      .then(async () => {
-        await multerService.storage();
-        mongooseService.loadModels();
-        AuthService = await import(path.resolve('./modules/auth/services/auth.service.js'));
-        UserService = await import(path.resolve('./modules/users/services/user.service.js'));
-        TaskService = await import(path.resolve('./modules/tasks/services/tasks.service.js'));
-      })
-      .catch((e) => {
-        console.log(e);
-      }),
-  );
+  beforeAll(async () => {
+    try {
+      await mongooseService.loadModels();
+      await mongooseService.connect();
+      await multerService.storage();
+      AuthService = (await import(path.resolve('./modules/auth/services/auth.service.js'))).default;
+      UserService = (await import(path.resolve('./modules/users/services/user.service.js'))).default;
+      TaskService = (await import(path.resolve('./modules/tasks/services/tasks.service.js'))).default;
+    } catch (err) {
+      console.log(err);
+    }
+  });
 
   let user1;
   let admin1;
@@ -46,8 +44,8 @@ describe('Configuration Tests:', () => {
   describe('Configurations', () => {
     test('should load production configuration in production env', async () => {
       try {
-        const defaultConfig = require(path.join(process.cwd(), './config', 'defaults', 'production')) || {};
-        expect(defaultConfig.app.title.split(' - ')[1]).toBe('Production Environment');
+        const defaultConfig = await import(path.join(process.cwd(), './config', 'defaults', 'production.js')) || {};
+        expect(defaultConfig.default.app.title.split(' - ')[1]).toBe('Production Environment');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -326,8 +324,6 @@ describe('Configuration Tests:', () => {
     });
 
     test('should use the default log format of "combined" when an invalid format was provided', async () => {
-      const _logger = await import(path.resolve('./lib/services/logger.js'));
-
       // manually set the config log format to be invalid
       config.log = {
         format: '_some_invalid_format_',

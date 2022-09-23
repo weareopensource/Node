@@ -40,7 +40,7 @@ const UserMongoose = new Schema(
 );
 
 function addID() {
-  return _id.toHexString();
+  return this._id.toHexString();
 }
 UserMongoose.virtual('id').get(addID);
 

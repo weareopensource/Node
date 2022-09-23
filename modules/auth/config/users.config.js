@@ -13,7 +13,7 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 /**
  * Module init function
  */
- export default (app) => {
+ export default async (app) => {
   // Serialize identifiable user's information to the session
   // so that it can be pulled back in another request
   passport.serializeUser(({ id }, done) => {
@@ -33,10 +33,10 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
   });
 
   // Initialize strategies
-  config.utils.getGlobbedPaths(path.join(__dirname, './strategies/**/*.js')).forEach(async (strat) => {
-    const strategy = await import(path.resolve(strat));
-    strategy.default(config);
-  });
+  for (const stratPath of config.utils.getGlobbedPaths(path.join(__dirname, './strategies/**/*.js'))) {
+    const strat = await import(path.resolve(stratPath));
+    strat.default(config);
+  }
 
   // Add passport's middleware
   app.use(passport.initialize());

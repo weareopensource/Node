@@ -23,6 +23,7 @@ const remove = async (req, res) => {
     };
     responses.success(res, 'user and his data were deleted')({ id: req.user.id, ...result });
   } catch (err) {
+    console.log("err", err);
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
 };

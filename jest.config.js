@@ -58,7 +58,11 @@ export default {
   // globalTeardown: null,
 
   // A set of global variables that need to be available in all test environments
-  // globals: {},
+  globals: {
+    "ts-jest": {
+      useESM: true,
+    },
+  },
 
   // An array of directory names to be searched recursively up from the requiring module's location
   // moduleDirectories: [
@@ -86,7 +90,7 @@ export default {
   // notifyMode: "always",
 
   // A preset that is used as a base for Jest's configuration
-  // preset: null,
+  preset: "ts-jest/presets/default-esm",
 
   // Run tests from one or more projects
   // projects: null,
@@ -101,7 +105,7 @@ export default {
   // resetModules: false,
 
   // A path to a custom resolver
-  // resolver: null,
+  resolver: "./resolver.cjs",
 
   // Automatically restore mock state between every test
   // restoreMocks: false,

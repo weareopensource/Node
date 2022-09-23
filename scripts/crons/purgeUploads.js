@@ -17,7 +17,7 @@ const purge = async () => {
 
     const uploadRepository = await import(path.resolve('./modules/uploads/repositories/uploads.repository.js'));
     const result = await uploadRepository.purge('avatar', 'users', 'avatar');
-    console.log(chalk.bold.blue(`Uploads purged ${result.removedCount} avatar`));
+    console.log(chalk.bold.blue(`Uploads purged ${result.deletedCount} avatar`));
   } catch (err) {
     console.log(chalk.bold.red(`Error ${err}`));
   }

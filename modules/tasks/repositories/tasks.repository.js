@@ -47,7 +47,7 @@ const update = (task) => new Task(task).save().then((doc) => doc.populate(defaul
  * @param {Object} task
  * @return {Object} confirmation of delete
  */
-const remove = (task) => Task.removeOne({ _id: task.id }).exec();
+const remove = (task) => Task.deleteOne({ _id: task.id }).exec();
 
 /**
  * @desc Function to remove tasks of one user in db
@@ -55,7 +55,7 @@ const remove = (task) => Task.removeOne({ _id: task.id }).exec();
  * @return {Object} confirmation of delete
  */
 const deleteMany = (filter) => {
-  if (filter) return Task.removeMany(filter).exec();
+  if (filter) return Task.deleteMany(filter).exec();
 };
 
 /**

@@ -2,13 +2,13 @@
  * Module dependencies.
  */
 import _ from "lodash";
-
 import chalk from "chalk";
 import glob from "glob";
 import fs from "fs";
 import path from "path";
 import objectPath from "object-path";
 import assets from "./assets.js"; 
+
 
 /**
  * Get files by glob patterns
@@ -80,15 +80,16 @@ const initSecureMode = (config) => {
 /**
  * Initialize global configuration files
  */
-const initGlobalConfigFiles = (config, assets) => {
-  config.files = {}; // Appending files
-  config.files.swagger = getGlobbedPaths(assets.allYaml); // Setting Globbed module yaml files
-  config.files.mongooseModels = getGlobbedPaths(assets.mongooseModels); // Setting Globbed mongoose model files
-  config.files.sequelizeModels = getGlobbedPaths(assets.sequelizeModels); // Setting Globbed sequelize model files
-  config.files.routes = getGlobbedPaths(assets.routes); // Setting Globbed route files
-  config.files.configs = getGlobbedPaths(assets.config); // Setting Globbed config files
-  // conf.files.sockets = getGlobbedPaths(assets.sockets); // Setting Globbed socket files
-  config.files.policies = getGlobbedPaths(assets.policies); // Setting Globbed policies files
+const initGlobalConfigFiles = (assets) => {
+  const files = {}; // Appending files
+  files.swagger = getGlobbedPaths(assets.allYaml); // Setting Globbed module yaml files
+  files.mongooseModels = getGlobbedPaths(assets.mongooseModels); // Setting Globbed mongoose model files
+  files.sequelizeModels = getGlobbedPaths(assets.sequelizeModels); // Setting Globbed sequelize model files
+  files.routes = getGlobbedPaths(assets.routes); // Setting Globbed route files
+  files.configs = getGlobbedPaths(assets.config); // Setting Globbed config files
+  // files.sockets = getGlobbedPaths(assets.sockets); // Setting Globbed socket files
+  files.policies = getGlobbedPaths(assets.policies); // Setting Globbed policies files
+  return files;
 };
 
 /**
@@ -99,9 +100,9 @@ const initGlobalConfig = async () => {
   // Get the current config
   const _path = path.join(process.cwd(), './config', 'defaults', `${process.env.NODE_ENV}.js` || 'development.js');
   let defaultConfig;
-  if (fs.existsSync(`${_path}.js`)) defaultConfig = await import(_path);
+  if (fs.existsSync(`${_path}`)) defaultConfig = await import(_path);
   else {
-    console.error(chalk.red(`+ Error: No configuration file found for "${process.env.NODE_ENV}" environment using development instead`));
+    console.error(chalk.red(`+ Error: No configuration file found for "${process.env.NODE_ENV}" environment using development instead. (${_path})`));
     defaultConfig = await import(path.join(process.cwd(), './config', 'defaults', 'development.js'));
   }
   // Get the config from  process.env.WAOS_NODE_*
@@ -120,11 +121,10 @@ const initGlobalConfig = async () => {
   });
   // Merge config files
   const config = _.merge(defaultConfig.default, environmentConfigVars);
-  // read package.json for MEAN.JS project information
-  const pkg = await import(path.resolve('./package.json'), { assert: { type: "json" } });
-  config.package = pkg;
+  // read package.json for project information
+  _.merge(config, { package: await import(path.resolve('./package.json'), { assert: { type: "json" } }) });
   // Initialize global globbed files
-  initGlobalConfigFiles(config, assets);
+  _.merge(config, { files: initGlobalConfigFiles(assets) });
   // Init Secure SSL if can be used
   initSecureMode(config);
   // Print a warning if config.domain is not set

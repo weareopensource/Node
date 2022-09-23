@@ -4,7 +4,7 @@
 import passport from "passport";
 
 import policy from "../../../lib/middlewares/policy.js"
-import admin from "../controllers/admin.controller.js"
+import admin from "../controllers/users.admin.controller.js"
 
 export default (app) => {
   // stats

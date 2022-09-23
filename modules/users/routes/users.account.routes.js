@@ -2,14 +2,13 @@
  * Module dependencies
  */
 import passport from "passport";
-import path from "path";
 
 import multer from "../../../lib/services/multer.js";
 import model from "../../../lib/middlewares/model.js";
 import config from "../../../config/index.js";
 import policy from "../../../lib/middlewares/policy.js";
 import usersSchema from "../models/user.schema.js";
-import users from "../controllers/users.controller.js"
+import users from "../controllers/users.account.controller.js"
 import usersImage from "../controllers/users.images.controller.js"
 import usersData from "../controllers/users.data.controller.js"
 import authPassword from "../../auth/controllers/auth.password.controller.js"

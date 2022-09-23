@@ -1,9 +1,7 @@
 import _ from "lodash";
-import path from "path";
-const defaultConfig = await import(path.resolve('./development.js'));
+const config = await import('./development.js');
 
-
-export default _.merge(defaultConfig, {
+export default _.merge(config.default, {
   app: {
     title: 'WeAreOpenSource Node - Production Environment',
   },

@@ -12,7 +12,7 @@ import multerService from "../../../lib/services/multer.js";
  * Unit tests
  */
 describe('Uploads CRUD Tests :', () => {
-  let UserService = null;
+  let UserService;
   let app;
   let agent;
   let credentials;
@@ -23,13 +23,11 @@ describe('Uploads CRUD Tests :', () => {
   //  init
   beforeAll(async () => {
     try {
-      // init mongo
+      await mongooseService.loadModels();
       await mongooseService.connect();
       await multerService.storage();
-      await mongooseService.loadModels();
-      UserService = await import(path.resolve('./modules/users/services/user.service.js'));
-      // init application
-      app = express.init();
+      UserService = (await import(path.resolve('./modules/users/services/user.service.js'))).default;
+      app = await express.init();
       agent = request.agent(app);
     } catch (err) {
       console.log(err);
@@ -205,7 +203,7 @@ describe('Uploads CRUD Tests :', () => {
     afterEach(async () => {
       // del upload
       // try {
-      //   await agent.remove(`/api/uploads/${upload1}`)
+      //   await agent.delete(`/api/uploads/${upload1}`)
       //     .expect(200);
       // } catch (err) {
       //   console.log(err);

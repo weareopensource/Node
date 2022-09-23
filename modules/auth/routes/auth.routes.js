@@ -2,7 +2,6 @@
  * Module dependencies
  */
 import passport from "passport";
-import path from "path";
 
 import model from "../../../lib/middlewares/model.js";
 import UsersSchema from "../../users/models/user.schema.js";

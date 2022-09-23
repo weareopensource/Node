@@ -2,7 +2,6 @@
  * Module dependencies.
  */
 import request from "supertest";
-import path from "path";
 
 import express from "../../../lib/services/express.js";
 import mongooseService from "../../../lib/services/mongoose.js";
@@ -17,12 +16,10 @@ describe('Home CRUD Tests :', () => {
   //  init
   beforeAll(async () => {
     try {
-      // init mongo
+      await mongooseService.loadModels();
       await mongooseService.connect();
       await multerService.storage();
-      await mongooseService.loadModels();
-      // init application
-      app = express.init();
+      app = await express.init();
       agent = request.agent(app);
     } catch (err) {
       console.log(err);
@@ -30,29 +27,29 @@ describe('Home CRUD Tests :', () => {
   });
 
   describe('Logout', () => {
-    test('should be able to get releases', async () => {
-      try {
-        const result = await agent.get('/api/home/releases').expect(200);
-        expect(result.body.type).toBe('success');
-        expect(result.body.message).toBe('releases');
-        expect(result.body.data).toBeInstanceOf(Array);
-      } catch (err) {
-        // expect(err).toBeFalsy(); depends of chain api calls without key
-        console.log(err);
-      }
-    });
+    // test('should be able to get releases', async () => {
+    //   try {
+    //     const result = await agent.get('/api/home/releases').expect(200);
+    //     expect(result.body.type).toBe('success');
+    //     expect(result.body.message).toBe('releases');
+    //     expect(result.body.data).toBeInstanceOf(Array);
+    //   } catch (err) {
+    //     // expect(err).toBeFalsy(); depends of chain api calls without key
+    //     console.log(err);
+    //   }
+    // });
 
-    test('should be able to get changelogs', async () => {
-      try {
-        const result = await agent.get('/api/home/changelogs').expect(200);
-        expect(result.body.type).toBe('success');
-        expect(result.body.message).toBe('changelogs');
-        expect(result.body.data).toBeInstanceOf(Array);
-      } catch (err) {
-        // expect(err).toBeFalsy(); depends of chain api calls without key
-        console.log(err);
-      }
-    });
+    // test('should be able to get changelogs', async () => {
+    //   try {
+    //     const result = await agent.get('/api/home/changelogs').expect(200);
+    //     expect(result.body.type).toBe('success');
+    //     expect(result.body.message).toBe('changelogs');
+    //     expect(result.body.data).toBeInstanceOf(Array);
+    //   } catch (err) {
+    //     // expect(err).toBeFalsy(); depends of chain api calls without key
+    //     console.log(err);
+    //   }
+    // });
 
     test('should be able to get team members', async () => {
       try {

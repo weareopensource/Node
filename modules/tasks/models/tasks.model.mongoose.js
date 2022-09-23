@@ -28,7 +28,7 @@ const TaskMongoose = new Schema(
  * @return {Object} Task
  */
 function addID() {
-  return _id.toHexString();
+  return this._id.toHexString();
 }
 
 /**

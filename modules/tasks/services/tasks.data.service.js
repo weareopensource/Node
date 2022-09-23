@@ -19,7 +19,7 @@ const list = async (user) => {
  * @return {Promise} confirmation of delete
  */
 const remove = async (user) => {
-  const result = await TasksRepository.removeMany({ user: user._id });
+  const result = await TasksRepository.deleteMany({ user: user._id });
   return Promise.resolve(result);
 };
 

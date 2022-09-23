@@ -4,12 +4,15 @@
 import _ from "lodash";
 // import glob from "glob";
 import gulp from "gulp";
-import gugulpLoadPluginslp from "gulp-load-plugins";
+import gulpLoadPlugins from "gulp-load-plugins";
 import path from "path";
 import { runCLI } from "@jest/core";
 import inquirer from "inquirer";
+import mongooseService from "./lib/services/mongoose.js"
 
-const plugins = gulpLoadPlugins();
+const plugins = gulpLoadPlugins({
+  config: process.env.npm_package_json
+});
 
 import defaultAssets from "./config/assets.js"
 import config from "./config/index.js";
@@ -91,7 +94,6 @@ const jestCoverage = (done) => {
 
 // Drops the MongoDB database, used in e2e testing by security
 const dropMongo = async (done) => {
-  const mongooseService = await import(path.resolve('./lib/services/mongoose.js'));
   mongooseService
     .connect()
     .then((db) => {
@@ -128,7 +130,6 @@ const dropDB = (done) => {
 // Connects to Mongoose based on environment settings and seeds the database
 const seedMongoose = async () => {
   try {
-    const mongooseService = await import(path.resolve('./lib/services/mongoose.js'));
     await mongooseService.connect();
     await mongooseService.loadModels();
     const AuthService = await import(path.resolve('./modules/auth/services/auth.service.js'));
@@ -156,7 +157,6 @@ const seedMongoose = async () => {
 // Connects to Mongoose based on environment settings and seeds the database
 const seedMongooseUser = async () => {
   try {
-    const mongooseService = await import(path.resolve('./lib/services/mongoose.js'));
     await mongooseService.connect();
     await mongooseService.loadModels();
     const AuthService = await import(path.resolve('./modules/auth/services/auth.service.js'));
@@ -208,7 +208,7 @@ const debug = gulp.series(gulp.parallel(nodemonDebug, watch));
 // Run project in production mode
 const prod = gulp.series(gulp.parallel(nodemonDebug, watch));
 
-export default {
+export {
   test,
   testWatch,
   testCoverage,
