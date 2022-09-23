@@ -1,8 +1,8 @@
 /**
  * Module dependencies
  */
-import policy from "../../../lib/middlewares/policy.js";
-import home from "../controllers/home.controller.js";
+import policy from '../../../lib/middlewares/policy.js';
+import home from '../controllers/home.controller.js';
 
 /**
  * Routes

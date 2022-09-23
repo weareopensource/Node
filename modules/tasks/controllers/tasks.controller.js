@@ -1,9 +1,9 @@
 /**
  * Module dependencies
  */
-import errors from "../../../lib/helpers/errors.js"
-import responses from "../../../lib/helpers/responses.js";
-import TasksService from "../services/tasks.service.js"
+import errors from '../../../lib/helpers/errors.js';
+import responses from '../../../lib/helpers/responses.js';
+import TasksService from '../services/tasks.service.js';
 
 /**
  * @desc Endpoint to ask the service to get the list of tasks
@@ -115,5 +115,5 @@ export default {
   update,
   remove,
   stats,
-  taskByID
-}
+  taskByID,
+};

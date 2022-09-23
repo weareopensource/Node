@@ -1,11 +1,10 @@
 /**
  * Module dependencies
  */
-import path from "path";
-import mongoose from "mongoose";
-import { createModel } from "mongoose-gridfs";
+import mongoose from 'mongoose';
+import { createModel } from 'mongoose-gridfs';
 
-import AppError from "../../../lib/helpers/AppError.js";
+import AppError from '../../../lib/helpers/AppError.js';
 
 const Attachment = createModel({ bucketName: 'uploads', model: 'Uploads' });
 const Uploads = mongoose.model('Uploads');
@@ -78,7 +77,7 @@ const deleteMany = async (filter) => {
  * @return {Object} confirmation of delete
  */
 const purge = async (kind, collection, key) => {
-  const toremove = await Uploads.aggregate([
+  const toDelete = await Uploads.aggregate([
     { $match: { 'metadata.kind': kind } },
     {
       $lookup: {
@@ -138,5 +137,5 @@ export default {
   remove,
   deleteMany,
   purge,
-  push
-}
+  push,
+};

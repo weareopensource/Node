@@ -1,10 +1,10 @@
 /**
  * Module dependencies
  */
-import passport from "passport";
+import passport from 'passport';
 
-import policy from "../../../lib/middlewares/policy.js"
-import admin from "../controllers/users.admin.controller.js"
+import policy from '../../../lib/middlewares/policy.js';
+import admin from '../controllers/users.admin.controller.js';
 
 export default (app) => {
   // stats

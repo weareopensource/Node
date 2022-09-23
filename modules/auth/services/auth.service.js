@@ -1,16 +1,35 @@
 /**
  * Module dependencies
  */
-import bcrypt from "bcrypt";
-import generatePassword from "generate-password";
-import zxcvbn from "zxcvbn";
+import _ from 'lodash';
+import bcrypt from 'bcrypt';
+import generatePassword from 'generate-password';
+import zxcvbn from 'zxcvbn';
 
-import config from "../../../config/index.js";
-import AppError from "../../../lib/helpers/AppError.js";
-import UserRepository from "../../users/repositories/user.repository.js";
-import UserService from "../../users/services/user.service.js";
+import config from '../../../config/index.js';
+import AppError from '../../../lib/helpers/AppError.js';
+import UserRepository from '../../users/repositories/user.repository.js';
 
 const saltRounds = 10;
+
+/**
+ * @desc Local function to removeSensitive data from user
+ * @param {Object} user
+ * @return {Object} user
+ */
+const removeSensitive = (user, conf) => {
+  if (!user || typeof user !== 'object') return null;
+  const keys = conf || config.whitelists.users.default;
+  return _.pick(user, keys);
+};
+
+/**
+ * @desc Function to compare passwords
+ * @param {String} userPassword
+ * @param {String} storedPassword
+ * @return {Boolean} true/false
+ */
+const comparePassword = async (userPassword, storedPassword) => bcrypt.compare(String(userPassword), String(storedPassword));
 
 /**
  * @desc Function to authenticate user)
@@ -21,17 +40,9 @@ const saltRounds = 10;
 const authenticate = async (email, password) => {
   const user = await UserRepository.get({ email });
   if (!user) throw new AppError('invalid user or password.', { code: 'SERVICE_ERROR' });
-  if (await comparePassword(password, user.password)) return UserService.removeSensitive(user);
+  if (await comparePassword(password, user.password)) return removeSensitive(user);
   throw new AppError('invalid user or password.', { code: 'SERVICE_ERROR' });
 };
-
-/**
- * @desc Function to compare passwords
- * @param {String} userPassword
- * @param {String} storedPassword
- * @return {Boolean} true/false
- */
-const comparePassword = async (userPassword, storedPassword) => bcrypt.compare(String(userPassword), String(storedPassword));
 
 /**
  * @desc Function to hash passwords
@@ -87,9 +98,10 @@ const generateRandomPassphrase = () => {
 };
 
 export default {
+  removeSensitive,
   authenticate,
   comparePassword,
   hashPassword,
   checkPassword,
-  generateRandomPassphrase
-}
+  generateRandomPassphrase,
+};

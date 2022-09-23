@@ -1,10 +1,10 @@
 /**
  * Module dependencies.
  */
-import _ from "lodash";
+import _ from 'lodash';
 
-import config from "../../../config/index.js";
-import schema from "../models/user.schema.js"
+import config from '../../../config/index.js';
+import schema from '../models/user.schema.js';
 
 const options = _.clone(config.joi.validationOptions);
 

@@ -1,12 +1,11 @@
 /**
  * Module dependencies
  */
-import path from "path";
-import fs from "fs";
+import fs from 'fs';
 
-import errors from "../../../lib/helpers/errors.js"
-import responses from "../../../lib/helpers/responses.js";
-import HomeService from "../services/home.service.js"
+import errors from '../../../lib/helpers/errors.js';
+import responses from '../../../lib/helpers/responses.js';
+import HomeService from '../services/home.service.js';
 
 /**
  * @desc Endpoint to ask the service to get the releases
@@ -86,5 +85,5 @@ export default {
   changelogs,
   team,
   page,
-  pageByName
-}
+  pageByName,
+};

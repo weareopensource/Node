@@ -1,14 +1,13 @@
 /**
  * Module dependencies.
  */
-import _ from "lodash";
-import chalk from "chalk";
-import glob from "glob";
-import fs from "fs";
-import path from "path";
-import objectPath from "object-path";
-import assets from "./assets.js"; 
-
+import _ from 'lodash';
+import chalk from 'chalk';
+import glob from 'glob';
+import fs, { readFileSync } from 'fs';
+import path from 'path';
+import objectPath from 'object-path';
+import assets from './assets.js';
 
 /**
  * Get files by glob patterns
@@ -122,7 +121,8 @@ const initGlobalConfig = async () => {
   // Merge config files
   const config = _.merge(defaultConfig.default, environmentConfigVars);
   // read package.json for project information
-  _.merge(config, { package: await import(path.resolve('./package.json'), { assert: { type: "json" } }) });
+  const packageJSON = JSON.parse(readFileSync(path.resolve('./package.json')));
+  _.merge(config, { package: packageJSON });
   // Initialize global globbed files
   _.merge(config, { files: initGlobalConfigFiles(assets) });
   // Init Secure SSL if can be used
@@ -130,11 +130,11 @@ const initGlobalConfig = async () => {
   // Print a warning if config.domain is not set
   validateDomainIsSet(config);
   // Expose configuration utilities
-  const conf = Object.assign({}, config);
+  const conf = { ...config };
   conf.utils = {
     getGlobbedPaths,
   };
   return conf;
 };
 
-export default await initGlobalConfig()
+export default await initGlobalConfig();

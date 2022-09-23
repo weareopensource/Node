@@ -1,7 +1,7 @@
 /**
  * Module dependencies
  */
-import TasksRepository from "../repositories/tasks.repository.js"
+import TasksRepository from '../repositories/tasks.repository.js';
 
 /**
  * @desc Function to ask repository to get all task from a specific user
@@ -37,5 +37,5 @@ const push = (tasks, filters) => {
 export default {
   list,
   remove,
-  push
-}
+  push,
+};

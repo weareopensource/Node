@@ -1,10 +1,10 @@
 /**
  * Module dependencies
  */
-import passport from "passport";
-import { Strategy } from "passport-jwt";
+import passport from 'passport';
+import { Strategy } from 'passport-jwt';
 
-import UserService from "../../../users/services/user.service.js";
+import UserService from '../../../users/services/user.service.js';
 
 const cookieExtractor = (req) => {
   let token = null;

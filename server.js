@@ -2,8 +2,8 @@
  * Module dependencies.
  */
 
-import chalk from "chalk";
-import path from "path";
+import chalk from 'chalk';
+import path from 'path';
 
 const app = await import(path.resolve('./lib/app.js'));
 

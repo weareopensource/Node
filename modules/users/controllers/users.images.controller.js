@@ -1,13 +1,11 @@
 /**
  * Module dependencies
  */
-import path from "path";
-
-import AppError from "../../../lib/helpers/AppError.js"
-import errors from "../../../lib/helpers/errors.js"
-import responses from "../../../lib/helpers/responses.js";
-import UploadsService from "../../uploads/services/uploads.service.js"
-import UserService from "../services/user.service.js";
+import AppError from '../../../lib/helpers/AppError.js';
+import errors from '../../../lib/helpers/errors.js';
+import responses from '../../../lib/helpers/responses.js';
+import UploadsService from '../../uploads/services/uploads.service.js';
+import UserService from '../services/user.service.js';
 
 /**
  * @desc Endpoint to ask the service to update a user profile avatar
@@ -56,5 +54,5 @@ const removeAvatar = async (req, res) => {
 
 export default {
   updateAvatar,
-  removeAvatar
-}
+  removeAvatar,
+};

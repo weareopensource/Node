@@ -1,17 +1,17 @@
 /**
  * Module dependencies
  */
-import passport from "passport";
-import jwt from "jsonwebtoken";
-import _ from "lodash";
+import passport from 'passport';
+import jwt from 'jsonwebtoken';
+import _ from 'lodash';
 
-import UserService from "../../users/services/user.service.js";
-import config from "../../../config/index.js";
-import model from "../../../lib/middlewares/model.js";
-import responses from "../../../lib/helpers/responses.js";
-import errors from "../../../lib/helpers/errors.js"
-import AppError from "../../../lib/helpers/AppError.js";
-import UsersSchema from "../../users/models/user.schema.js";
+import UserService from '../../users/services/user.service.js';
+import config from '../../../config/index.js';
+import model from '../../../lib/middlewares/model.js';
+import responses from '../../../lib/helpers/responses.js';
+import errors from '../../../lib/helpers/errors.js';
+import AppError from '../../../lib/helpers/AppError.js';
+import UsersSchema from '../../users/models/user.schema.js';
 
 /**
  * @desc Endpoint to ask the service to create a user
@@ -107,6 +107,44 @@ const oauthCall = (req, res, next) => {
 };
 
 /**
+ * @desc Endpoint to save oAuthProfile
+ * @param {Object} req - Express request object
+ * @param {Object} providerUserProfile
+ * @param {Function} done - done
+ */
+const checkOAuthUserProfile = async (profil, key, provider, res) => {
+  // check if user exist
+  try {
+    const query = {};
+    query[`providerData.${key}`] = profil.providerData[key];
+    query.provider = provider;
+    const search = await UserService.search(query);
+    if (search.length === 1) return search[0];
+  } catch (err) {
+    throw new AppError('oAuth, find user failed', { code: 'SERVICE_ERROR', details: err });
+  }
+  // if no, generate
+  try {
+    const user = {
+      firstName: profil.firstName,
+      lastName: profil.lastName,
+      email: profil.email,
+      avatar: profil.avatar || '',
+      provider,
+      providerData: profil.providerData || null,
+    };
+    const result = model.getResultFromJoi(user, UsersSchema.User, _.clone(config.joi.validationOptions));
+    // check error
+    const error = model.checkError(result);
+    if (error) return responses.error(res, 422, 'Schema validation error', error)(result.error);
+    // else return req.body with the data after Joi validation
+    return await UserService.create(result.value);
+  } catch (err) {
+    throw new AppError('oAuth', { code: 'CONTROLLER_ERROR', details: err.details || err });
+  }
+};
+
+/**
  * @desc Endpoint for oautCallCallBack
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
@@ -162,49 +200,11 @@ const oauthCallback = async (req, res, next) => {
   })(req, res, next);
 };
 
-/**
- * @desc Endpoint to save oAuthProfile
- * @param {Object} req - Express request object
- * @param {Object} providerUserProfile
- * @param {Function} done - done
- */
-const checkOAuthUserProfile = async (profil, key, provider, res) => {
-  // check if user exist
-  try {
-    const query = {};
-    query[`providerData.${key}`] = profil.providerData[key];
-    query.provider = provider;
-    const search = await UserService.search(query);
-    if (search.length === 1) return search[0];
-  } catch (err) {
-    throw new AppError('oAuth, find user failed', { code: 'SERVICE_ERROR', details: err });
-  }
-  // if no, generate
-  try {
-    const user = {
-      firstName: profil.firstName,
-      lastName: profil.lastName,
-      email: profil.email,
-      avatar: profil.avatar || '',
-      provider,
-      providerData: profil.providerData || null,
-    };
-    const result = model.getResultFromJoi(user, UsersSchema.User, _.clone(config.joi.validationOptions));
-    // check error
-    const error = model.checkError(result);
-    if (error) return responses.error(res, 422, 'Schema validation error', error)(result.error);
-    // else return req.body with the data after Joi validation
-    return await UserService.create(result.value);
-  } catch (err) {
-    throw new AppError('oAuth', { code: 'CONTROLLER_ERROR', details: err.details || err });
-  }
-};
-
 export default {
   signup,
   signin,
   token,
   oauthCall,
   oauthCallback,
-  checkOAuthUserProfile
-}
+  checkOAuthUserProfile,
+};

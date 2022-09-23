@@ -1,14 +1,12 @@
 /**
  * Module dependencies
  * */
-import path from "path";
-
-import policy from "../../../lib/middlewares/policy.js";
+import policy from '../../../lib/middlewares/policy.js';
 
 /**
  * Invoke Tasks Permissions
  */
- const invokeRolesPolicies = () => {
+const invokeRolesPolicies = () => {
   policy.Acl.allow([
     {
       roles: ['user'],
@@ -44,5 +42,5 @@ import policy from "../../../lib/middlewares/policy.js";
 };
 
 export default {
-  invokeRolesPolicies
-}
+  invokeRolesPolicies,
+};

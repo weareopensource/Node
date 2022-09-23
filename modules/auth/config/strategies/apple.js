@@ -4,8 +4,8 @@
 import passport from 'passport';
 import AppleStrategy from 'passport-apple';
 
-import config from "../../../../config/index.js";
-import auth from "../../controllers/auth.controller.js"
+import config from '../../../../config/index.js';
+import auth from '../../controllers/auth.controller.js';
 
 const callbackURL = `${config.api.protocol}://${config.api.host}${config.api.port ? ':' : ''}${config.api.port ? config.api.port : ''}/${
   config.api.base
@@ -19,7 +19,7 @@ const callbackURL = `${config.api.protocol}://${config.api.host}${config.api.por
  * @param {profile}
  * @param {cb} callback
  */
- const prepare = async (req, accessToken, refreshToken, decodedIdToken, profile, cb) => {
+const prepare = async (req, accessToken, refreshToken, decodedIdToken, profile, cb) => {
   // Set the provider data and include tokens
   const providerData = decodedIdToken;
   providerData.appleProfile = req.appleProfile;

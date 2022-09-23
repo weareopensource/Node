@@ -1,10 +1,8 @@
 /**
  * Module dependencies
  */
-import path from "path";
-
-import multerService from "../../../lib/services/multer.js";
-import UploadRepository from "../repositories/uploads.repository.js";
+import multerService from '../../../lib/services/multer.js';
+import UploadRepository from '../repositories/uploads.repository.js';
 
 /**
  * @desc Function to ask repository to get an upload
@@ -59,5 +57,5 @@ export default {
   get,
   getStream,
   update,
-  remove
-}
+  remove,
+};

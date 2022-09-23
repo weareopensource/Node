@@ -1,16 +1,15 @@
 /**
  * Module dependencies.
  */
-import _ from "lodash";
-import path from "path";
+import _ from 'lodash';
+import path from 'path';
 
-import config from "../../../config/index.js";
-import logger from "../../../lib/services/logger.js";
-import mongooseService from "../../../lib/services/mongoose.js"
-import multerService from "../../../lib/services/multer.js"
-import seed from "../../../lib/services/seed.js"
-import errors from "../../../lib/helpers/errors.js"
-import _logger from '../../../lib/services/logger.js';
+import config from '../../../config/index.js';
+import logger from '../../../lib/services/logger.js';
+import mongooseService from '../../../lib/services/mongoose.js';
+import multerService from '../../../lib/services/multer.js';
+import seed from '../../../lib/services/seed.js';
+import errors from '../../../lib/helpers/errors.js';
 
 /**
  * Unit tests
@@ -44,7 +43,7 @@ describe('Configuration Tests:', () => {
   describe('Configurations', () => {
     test('should load production configuration in production env', async () => {
       try {
-        const defaultConfig = await import(path.join(process.cwd(), './config', 'defaults', 'production.js')) || {};
+        const defaultConfig = (await import(path.join(process.cwd(), './config', 'defaults', 'production.js'))) || {};
         expect(defaultConfig.default.app.title.split(' - ')[1]).toBe('Production Environment');
       } catch (err) {
         console.log(err);
@@ -329,7 +328,7 @@ describe('Configuration Tests:', () => {
         format: '_some_invalid_format_',
       };
 
-      const format = _logger.getLogFormat();
+      const format = logger.getLogFormat();
       expect(format).toBe('combined');
     });
 

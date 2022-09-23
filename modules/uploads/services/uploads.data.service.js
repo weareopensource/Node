@@ -1,7 +1,7 @@
 /**
  * Module dependencies
  */
-import UploadRepository from "../repositories/uploads.repository.js";
+import UploadRepository from '../repositories/uploads.repository.js';
 
 /**
  * @desc Function to ask repository to get all uploads from a specific user
@@ -37,5 +37,5 @@ const push = (uploads, filters, collection) => {
 export default {
   list,
   remove,
-  push
-}
+  push,
+};

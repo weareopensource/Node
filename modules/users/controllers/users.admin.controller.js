@@ -1,9 +1,9 @@
 /**
  * Module dependencies
  */
-import errors from "../../../lib/helpers/errors.js"
-import responses from "../../../lib/helpers/responses.js";
-import UserService from "../services/user.service.js";
+import errors from '../../../lib/helpers/errors.js';
+import responses from '../../../lib/helpers/responses.js';
+import UserService from '../services/user.service.js';
 
 /**
  * @desc Endpoint to ask the service to get the list of users
@@ -129,5 +129,5 @@ export default {
   remove,
   stats,
   userByID,
-  userByPage
-}
+  userByPage,
+};

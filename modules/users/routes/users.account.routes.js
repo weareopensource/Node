@@ -1,20 +1,19 @@
 /**
  * Module dependencies
  */
-import passport from "passport";
+import passport from 'passport';
 
-import multer from "../../../lib/services/multer.js";
-import model from "../../../lib/middlewares/model.js";
-import config from "../../../config/index.js";
-import policy from "../../../lib/middlewares/policy.js";
-import usersSchema from "../models/user.schema.js";
-import users from "../controllers/users.account.controller.js"
-import usersImage from "../controllers/users.images.controller.js"
-import usersData from "../controllers/users.data.controller.js"
-import authPassword from "../../auth/controllers/auth.password.controller.js"
+import multer from '../../../lib/services/multer.js';
+import model from '../../../lib/middlewares/model.js';
+import config from '../../../config/index.js';
+import policy from '../../../lib/middlewares/policy.js';
+import usersSchema from '../models/user.schema.js';
+import users from '../controllers/users.account.controller.js';
+import usersImage from '../controllers/users.images.controller.js';
+import usersData from '../controllers/users.data.controller.js';
+import authPassword from '../../auth/controllers/auth.password.controller.js';
 
 export default (app) => {
-  
   app.route('/api/users/me').get(passport.authenticate('jwt', { session: false }), policy.isAllowed, users.me);
 
   app.route('/api/users/terms').get(passport.authenticate('jwt', { session: false }), policy.isAllowed, users.terms);
@@ -25,8 +24,7 @@ export default (app) => {
     .put(model.isValid(usersSchema.User), users.update)
     .delete(users.remove);
 
-  app.route('/api/users/password')
-    .post(passport.authenticate('jwt', { session: false }), policy.isAllowed, authPassword.updatePassword);
+  app.route('/api/users/password').post(passport.authenticate('jwt', { session: false }), policy.isAllowed, authPassword.updatePassword);
 
   app
     .route('/api/users/avatar')

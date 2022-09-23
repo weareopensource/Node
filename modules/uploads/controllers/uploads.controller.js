@@ -1,14 +1,13 @@
 /**
  * Module dependencies
  */
-import path from "path";
-import sharp from "sharp";
-import _ from "lodash";
+import sharp from 'sharp';
+import _ from 'lodash';
 
-import config from "../../../config/index.js";
-import errors from "../../../lib/helpers/errors.js"
-import responses from "../../../lib/helpers/responses.js";
-import UploadsService from "../../uploads/services/uploads.service.js"
+import config from '../../../config/index.js';
+import errors from '../../../lib/helpers/errors.js';
+import responses from '../../../lib/helpers/responses.js';
+import UploadsService from '../services/uploads.service.js';
 
 /**
  * @desc Endpoint to get an upload by fileName
@@ -139,5 +138,5 @@ export default {
   getSharp,
   remove,
   uploadByName,
-  uploadByImageName
-}
+  uploadByImageName,
+};

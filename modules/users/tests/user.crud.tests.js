@@ -1,13 +1,13 @@
 /**
  * Module dependencies.
  */
-import request from "supertest";
-import path from "path";
-import _ from "lodash";
+import request from 'supertest';
+import path from 'path';
+import _ from 'lodash';
 
-import express from "../../../lib/services/express.js";
-import mongooseService from "../../../lib/services/mongoose.js";
-import multerService from "../../../lib/services/multer.js";
+import express from '../../../lib/services/express.js';
+import mongooseService from '../../../lib/services/mongoose.js';
+import multerService from '../../../lib/services/multer.js';
 
 /**
  * Unit tests
@@ -873,7 +873,6 @@ describe('User CRUD Tests :', () => {
 
       try {
         const result = await agent.post('/api/auth/signup').send(_userEdited).expect(200);
-        console.log("1", result.body);
 
         userEdited = result.body.user;
 
@@ -891,7 +890,6 @@ describe('User CRUD Tests :', () => {
       // delete user
       try {
         const result = await agent.delete('/api/users/data').expect(200);
-        console.log("2", result.body);
 
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('user and his data were deleted');

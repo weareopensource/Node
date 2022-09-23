@@ -1,7 +1,7 @@
 /**
  * Module dependencies
  */
-import TasksRepository from "../repositories/tasks.repository.js";
+import TasksRepository from '../repositories/tasks.repository.js';
 
 /**
  * @desc Function to get all task in db
@@ -73,5 +73,5 @@ export default {
   get,
   update,
   remove,
-  stats
-}
+  stats,
+};

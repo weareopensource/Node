@@ -1,17 +1,17 @@
 /**
  * Module dependencies
  */
-import passport from "passport";
+import passport from 'passport';
 
-import model from "../../../lib/middlewares/model.js";
-import policy from "../../../lib/middlewares/policy.js";
-import tasks from "../controllers/tasks.controller.js";
-import tasksSchema from "../models/tasks.schema.js";
+import model from '../../../lib/middlewares/model.js';
+import policy from '../../../lib/middlewares/policy.js';
+import tasks from '../controllers/tasks.controller.js';
+import tasksSchema from '../models/tasks.schema.js';
 
 /**
  * Routes
  */
- export default (app) => {
+export default (app) => {
   // stats
   app.route('/api/tasks/stats').all(policy.isAllowed).get(tasks.stats);
 

@@ -1,7 +1,7 @@
 /**
  * Module dependencies
  */
-import Joi from "@hapi/joi";
+import Joi from '@hapi/joi';
 
 /**
  *  Data Schema

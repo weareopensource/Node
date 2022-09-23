@@ -1,13 +1,13 @@
 /**
  * Module dependencies
  */
-import errors from "../../../lib/helpers/errors.js"
-import responses from "../../../lib/helpers/responses.js";
-import mails from "../../../lib/helpers/mails.js"; 
-import config from "../../../config/index.js";
-import UserService from "../services/user.service.js"
-import TaskDataService from "../../tasks/services/tasks.data.service.js"
-import UploadDataService from "../../uploads/services/uploads.data.service.js"
+import errors from '../../../lib/helpers/errors.js';
+import responses from '../../../lib/helpers/responses.js';
+import mails from '../../../lib/helpers/mails.js';
+import config from '../../../config/index.js';
+import UserService from '../services/user.service.js';
+import TaskDataService from '../../tasks/services/tasks.data.service.js';
+import UploadDataService from '../../uploads/services/uploads.data.service.js';
 
 /**
  * @desc Endpoint to ask the service to remove the user connected and all his data
@@ -23,7 +23,7 @@ const remove = async (req, res) => {
     };
     responses.success(res, 'user and his data were deleted')({ id: req.user.id, ...result });
   } catch (err) {
-    console.log("err", err);
+    console.log('err', err);
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
 };
@@ -80,8 +80,8 @@ const getMail = async (req, res) => {
   }
 };
 
-export default { 
+export default {
   remove,
   get,
-  getMail
-}
+  getMail,
+};

@@ -1,13 +1,12 @@
 /**
  * Module dependencies
  */
-import passport from "passport";
+import passport from 'passport';
 
-import model from "../../../lib/middlewares/model.js";
-import UsersSchema from "../../users/models/user.schema.js";
-import auth from "../controllers/auth.controller.js"
-import authPassword from "../controllers/auth.password.controller.js"
-
+import model from '../../../lib/middlewares/model.js';
+import UsersSchema from '../../users/models/user.schema.js';
+import auth from '../controllers/auth.controller.js';
+import authPassword from '../controllers/auth.password.controller.js';
 
 export default (app) => {
   // Setting up the users password api

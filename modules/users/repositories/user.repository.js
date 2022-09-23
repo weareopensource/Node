@@ -1,7 +1,7 @@
 /**
  * Module dependencies
  */
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const User = mongoose.model('User');
 
@@ -108,13 +108,13 @@ const push = (users, filters) =>
     }),
   );
 
-  export default {
-    list,
-    create,
-    get,
-    search,
-    update,
-    remove,
-    stats,
-    push
-  }
+export default {
+  list,
+  create,
+  get,
+  search,
+  update,
+  remove,
+  stats,
+  push,
+};

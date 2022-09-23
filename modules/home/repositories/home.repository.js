@@ -1,7 +1,7 @@
 /**
  * Module dependencies
  */
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const User = mongoose.model('User');
 
@@ -12,5 +12,5 @@ const User = mongoose.model('User');
 const team = () => User.find({ roles: 'admin' }, '-password -providerData -complementary').sort('-createdAt').exec();
 
 export default {
-    team
-}
+  team,
+};

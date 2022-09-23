@@ -1,11 +1,10 @@
 /**
  * Module dependencies
  */
-import passport from "passport";
-import path from "path";
-import { Strategy } from "passport-local";
+import passport from 'passport';
+import { Strategy } from 'passport-local';
 
-import AuthService from "../../services/auth.service.js";
+import AuthService from '../../services/auth.service.js';
 
 export default () => {
   passport.use(

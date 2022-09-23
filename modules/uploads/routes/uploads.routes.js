@@ -1,10 +1,10 @@
 /**
  * Module dependencies
  */
-import passport from "passport";
+import passport from 'passport';
 
-import policy from "../../../lib/middlewares/policy.js";
-import uploads from "../controllers/uploads.controller.js"
+import policy from '../../../lib/middlewares/policy.js';
+import uploads from '../controllers/uploads.controller.js';
 
 /**
  * Routes

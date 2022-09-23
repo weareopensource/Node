@@ -1,14 +1,14 @@
 /**
  * Module dependencies
  */
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
 
-import AuthService from "../services/auth.service.js"
-import UserService from "../../users/services/user.service.js";
-import mails from "../../../lib/helpers/mails.js";
-import errors from "../../../lib/helpers/errors.js"
-import responses from "../../../lib/helpers/responses.js";
-import config from "../../../config/index.js";
+import AuthService from '../services/auth.service.js';
+import UserService from '../../users/services/user.service.js';
+import mails from '../../../lib/helpers/mails.js';
+import errors from '../../../lib/helpers/errors.js';
+import responses from '../../../lib/helpers/responses.js';
+import config from '../../../config/index.js';
 
 /**
  * @desc Endpoint to init password reset mail
@@ -147,5 +147,5 @@ export default {
   forgot,
   validateResetToken,
   reset,
-  updatePassword
-}
+  updatePassword,
+};

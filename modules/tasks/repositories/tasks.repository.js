@@ -1,7 +1,7 @@
 /**
  * Module dependencies
  */
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const Task = mongoose.model('Task');
 
@@ -87,13 +87,13 @@ const push = (tasks, filters) =>
     }),
   );
 
-  export default {
-    list,
-    create,
-    get,
-    update,
-    remove,
-    deleteMany,
-    stats,
-    push
-  }
+export default {
+  list,
+  create,
+  get,
+  update,
+  remove,
+  deleteMany,
+  stats,
+  push,
+};

@@ -1,9 +1,7 @@
 /**
  * Module dependencies
  * */
-import path from "path";
-
-import policy from "../../../lib/middlewares/policy.js";
+import policy from '../../../lib/middlewares/policy.js';
 
 /**
  * Invoke Tasks Permissions
@@ -77,5 +75,5 @@ const invokeRolesPolicies = () => {
 };
 
 export default {
-  invokeRolesPolicies
-}
+  invokeRolesPolicies,
+};

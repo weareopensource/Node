@@ -1,11 +1,10 @@
 /**
  * Module dependencies
  */
-import PlainJoi from "@hapi/joi";
-import path from "path";
+import PlainJoi from '@hapi/joi';
 
-import config from "../../../config/index.js";
-import joiHelpers from "../../../lib/helpers/joi.js";
+import config from '../../../config/index.js';
+import joiHelpers from '../../../lib/helpers/joi.js';
 
 const Joi = PlainJoi.extend(joiHelpers.joiZxcvbn(PlainJoi));
 const names = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;

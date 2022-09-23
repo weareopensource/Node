@@ -1,4 +1,5 @@
-import _ from "lodash";
+import _ from 'lodash';
+
 const config = await import('./development.js');
 
 export default _.merge(config.default, {

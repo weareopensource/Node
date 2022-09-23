@@ -1,11 +1,11 @@
 /**
  * Module dependencies
  */
-import passport from "passport";
-import GoogleStrategy  from "passport-google-oauth20";
+import passport from 'passport';
+import GoogleStrategy from 'passport-google-oauth20';
 
-import config from "../../../../config/index.js";
-import auth from "../../controllers/auth.controller.js"
+import config from '../../../../config/index.js';
+import auth from '../../controllers/auth.controller.js';
 
 const callbackURL = `${config.api.protocol}://${config.api.host}${config.api.port ? ':' : ''}${config.api.port ? config.api.port : ''}/${
   config.api.base
@@ -18,7 +18,7 @@ const callbackURL = `${config.api.protocol}://${config.api.host}${config.api.por
  * @param {profile}
  * @param {cb} callback
  */
- const prepare = async (accessToken, refreshToken, profile, cb) => {
+const prepare = async (accessToken, refreshToken, profile, cb) => {
   // Set the provider data and include tokens
   const providerData = profile._json;
   providerData.accessToken = accessToken;
