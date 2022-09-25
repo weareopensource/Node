@@ -8,7 +8,15 @@ steps:
     commands:
       - npm i
       - npm run test:lint
-      - WAOS_NODE_db_uri='mongodb://mongo:27017/WaosNodeTest' npm run test
+      - WAOS_NODE_db_uri='mongodb://mongo:27017/WaosNodeTest' npm run test:coverage
+  - name: coveralls
+    image: lizheming/drone-coveralls
+    settings:
+      token:
+        from_secret: coveralls_token
+      files:
+        - ./coverage/lcov.info
+
 services:
   - name: mongo
     image: mongo:latest

@@ -31,7 +31,6 @@
     "test": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules gulp test",
     "test:watch": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules  gulp testWatch",
     "test:coverage": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules gulp testCoverage",
-    "test:coveralls": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules gulp testCoverage && cat ./coverage/lcov.info | coveralls",
     "test:lint": "./node_modules/.bin/eslint ./modules ./lib ./config ./scripts",
     "seed:dev": "cross-env NODE_ENV=development gulp seed",
     "seed:prod": "cross-env NODE_ENV=production gulp seed",
