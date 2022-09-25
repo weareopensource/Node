@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/weareopensource/Node/compare/v1.2.0...v1.2.1) (2022-09-25)
+
+
+### Bug Fixes
+
+* package.json & package-lock.json to reduce vulnerabilities ([#1994](https://github.com/weareopensource/Node/issues/1994)) ([79ab580](https://github.com/weareopensource/Node/commit/79ab58001e27aef9095e7b07596fa025c62cb87d))
+
 # [1.2.0](https://github.com/weareopensource/Node/compare/v1.1.0...v1.2.0) (2022-05-30)
 
 ### Bug Fixes
