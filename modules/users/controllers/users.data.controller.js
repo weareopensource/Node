@@ -5,7 +5,7 @@ import errors from '../../../lib/helpers/errors.js';
 import responses from '../../../lib/helpers/responses.js';
 import mails from '../../../lib/helpers/mails.js';
 import config from '../../../config/index.js';
-import UserService from '../services/user.service.js';
+import UserService from '../services/users.service.js';
 import TaskDataService from '../../tasks/services/tasks.data.service.js';
 import UploadDataService from '../../uploads/services/uploads.data.service.js';
 

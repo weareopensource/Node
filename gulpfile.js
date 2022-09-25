@@ -1,21 +1,21 @@
 /**
  * Module dependencies.
  */
-import _ from "lodash";
+import _ from 'lodash';
 // import glob from "glob";
-import gulp from "gulp";
-import gulpLoadPlugins from "gulp-load-plugins";
-import path from "path";
-import { runCLI } from "@jest/core";
-import inquirer from "inquirer";
-import mongooseService from "./lib/services/mongoose.js"
+import gulp from 'gulp';
+import gulpLoadPlugins from 'gulp-load-plugins';
+import path from 'path';
+import { runCLI } from '@jest/core';
+import inquirer from 'inquirer';
+import mongooseService from './lib/services/mongoose.js';
+
+import defaultAssets from './config/assets.js';
+import config from './config/index.js';
 
 const plugins = gulpLoadPlugins({
-  config: process.env.npm_package_json
+  config: process.env.npm_package_json,
 });
-
-import defaultAssets from "./config/assets.js"
-import config from "./config/index.js";
 
 // default node env if not define
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
@@ -133,17 +133,17 @@ const seedMongoose = async () => {
     await mongooseService.connect();
     await mongooseService.loadModels();
     const AuthService = await import(path.resolve('./modules/auth/services/auth.service.js'));
-    const UserService = await import(path.resolve('./modules/users/services/user.service.js'));
+    const UserService = await import(path.resolve('./modules/users/services/users.service.js'));
     const TaskService = await import(path.resolve('./modules/tasks/services/tasks.service.js'));
     const seed = await import(path.resolve('./lib/services/seed.js'));
-    await seed
+    await seed.default
       .start(
         {
           logResults: true,
         },
-        UserService,
-        AuthService,
-        TaskService,
+        UserService.default,
+        AuthService.default,
+        TaskService.default,
       )
       .catch((e) => {
         console.log(e);
@@ -160,9 +160,9 @@ const seedMongooseUser = async () => {
     await mongooseService.connect();
     await mongooseService.loadModels();
     const AuthService = await import(path.resolve('./modules/auth/services/auth.service.js'));
-    const UserService = await import(path.resolve('./modules/users/services/user.service.js'));
+    const UserService = await import(path.resolve('./modules/users/services/users.service.js'));
     const seed = await import(path.resolve('./lib/services/seed.js'));
-    await seed.user(config.seedDB.options.seedUser, UserService, AuthService).catch((e) => {
+    await seed.default.user(config.seedDB.options.seedUser, UserService.default, AuthService.default).catch((e) => {
       console.log(e);
     });
     await mongooseService.disconnect();
@@ -208,14 +208,4 @@ const debug = gulp.series(gulp.parallel(nodemonDebug, watch));
 // Run project in production mode
 const prod = gulp.series(gulp.parallel(nodemonDebug, watch));
 
-export {
-  test,
-  testWatch,
-  testCoverage,
-  seed,
-  seedUser,
-  drop,
-  dev,
-  debug,
-  prod
-}
+export { test, testWatch, testCoverage, seed, seedUser, drop, dev, debug, prod };

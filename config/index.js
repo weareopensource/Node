@@ -128,7 +128,7 @@ const initGlobalConfig = async () => {
   // Init Secure SSL if can be used
   initSecureMode(config);
   // Print a warning if config.domain is not set
-  validateDomainIsSet(config);
+  if (process.env.NODE_ENV !== 'test') validateDomainIsSet(config);
   // Expose configuration utilities
   const conf = { ...config };
   conf.utils = {

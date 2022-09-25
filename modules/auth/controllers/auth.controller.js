@@ -5,7 +5,7 @@ import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import _ from 'lodash';
 
-import UserService from '../../users/services/user.service.js';
+import UserService from '../../users/services/users.service.js';
 import config from '../../../config/index.js';
 import model from '../../../lib/middlewares/model.js';
 import responses from '../../../lib/helpers/responses.js';

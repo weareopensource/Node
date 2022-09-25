@@ -1,10 +1,10 @@
 /**
  * Module dependencies
  */
-import chalk from "chalk";
-import path from "path";
+import chalk from 'chalk';
+import path from 'path';
 
-import mongooseService from "../../lib/services/mongoose";
+import mongooseService from '../../lib/services/mongoose';
 
 /**
  * Work

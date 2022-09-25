@@ -4,7 +4,7 @@
 import jwt from 'jsonwebtoken';
 
 import AuthService from '../services/auth.service.js';
-import UserService from '../../users/services/user.service.js';
+import UserService from '../../users/services/users.service.js';
 import mails from '../../../lib/helpers/mails.js';
 import errors from '../../../lib/helpers/errors.js';
 import responses from '../../../lib/helpers/responses.js';

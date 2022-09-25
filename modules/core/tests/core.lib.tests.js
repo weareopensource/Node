@@ -25,7 +25,7 @@ describe('Configuration Tests:', () => {
       await mongooseService.connect();
       await multerService.storage();
       AuthService = (await import(path.resolve('./modules/auth/services/auth.service.js'))).default;
-      UserService = (await import(path.resolve('./modules/users/services/user.service.js'))).default;
+      UserService = (await import(path.resolve('./modules/users/services/users.service.js'))).default;
       TaskService = (await import(path.resolve('./modules/tasks/services/tasks.service.js'))).default;
     } catch (err) {
       console.log(err);

@@ -41,7 +41,6 @@ const config = {
       sslPass: '1234'
       */
     },
-    restoreExceptions: [], // collections exceptions for db restore : npm run seed:mongorestore
   },
   // SSL on express server (FYI : Wiki)
   // secure: {
@@ -235,6 +234,7 @@ const config = {
         roles: ['user', 'admin'],
       },
     },
+    restoreExceptions: [], // collections exceptions for db restore : npm run seed:mongorestore
   },
 };
 
