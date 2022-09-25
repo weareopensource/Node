@@ -11,8 +11,7 @@ jobs:
     runs-on: ubuntu-latest    
     strategy:
       matrix:
-        node-version: ['16.x', '18.x']
-        mongodb-version: ['5.0', '6.0']
+        node-version: [16.x, 18.x]
 
     steps:
       - name: Git checkout
@@ -23,10 +22,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}`
           
-      - name: Start Mongo ${{ matrix.mongodb-version }}
+      - name: Start Mongo 
         uses: supercharge/mongodb-github-action@1.8.0
-        with:
-          mongodb-version: ${{ matrix.mongodb-version }}
         
       - name: Run tests
         run: |
