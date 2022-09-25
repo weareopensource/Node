@@ -12,7 +12,7 @@ export default _.merge(config.default, {
   },
   port: 3001,
   db: {
-    uri: 'mongodb://localhost/WaosNodeTest',
+    uri: 'mongodb://localhost:27017/WaosNodeTest',
     debug: false,
   },
   livereload: false,
