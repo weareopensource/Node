@@ -8,22 +8,22 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-          
+    runs-on: ubuntu-latest    
     strategy:
       matrix:
         node-version: [16.x, 18.x]
         mongodb-version: ['5.0', '6.0']
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Git checkout
+        uses: actions/checkout@v3
       
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Set Node ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}`
           
-      - name: Start Mongo
+      - name: Start Mongo ${{ matrix.mongodb-version }}
         uses: supercharge/mongodb-github-action@1.8.0
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
