@@ -16,9 +16,10 @@ export default (app) => {
   // Single user routes
   app
     .route('/api/users/:userId')
-    .get(passport.authenticate('jwt', { session: false }), policy.isAllowed, admin.get) // get
-    .put(passport.authenticate('jwt', { session: false }), policy.isAllowed, admin.update) // update
-    .delete(passport.authenticate('jwt', { session: false }), policy.isAllowed, admin.remove); // delete
+    .all(passport.authenticate('jwt', { session: false }), policy.isAllowed)
+    .get(admin.get) // get
+    .put(admin.update) // update
+    .delete(admin.remove); // delete
 
   // Finish by binding the user middleware
   app.param('userId', admin.userByID);

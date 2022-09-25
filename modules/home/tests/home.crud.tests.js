@@ -27,29 +27,29 @@ describe('Home CRUD Tests :', () => {
   });
 
   describe('Logout', () => {
-    // test('should be able to get releases', async () => {
-    //   try {
-    //     const result = await agent.get('/api/home/releases').expect(200);
-    //     expect(result.body.type).toBe('success');
-    //     expect(result.body.message).toBe('releases');
-    //     expect(result.body.data).toBeInstanceOf(Array);
-    //   } catch (err) {
-    //     // expect(err).toBeFalsy(); depends of chain api calls without key
-    //     console.log(err);
-    //   }
-    // });
+    test('should be able to get releases', async () => {
+      try {
+        const result = await agent.get('/api/home/releases').expect(200);
+        expect(result.body.type).toBe('success');
+        expect(result.body.message).toBe('releases');
+        expect(result.body.data).toBeInstanceOf(Array);
+      } catch (err) {
+        // expect(err).toBeFalsy(); depends of chain api calls without key
+        console.log(err);
+      }
+    });
 
-    // test('should be able to get changelogs', async () => {
-    //   try {
-    //     const result = await agent.get('/api/home/changelogs').expect(200);
-    //     expect(result.body.type).toBe('success');
-    //     expect(result.body.message).toBe('changelogs');
-    //     expect(result.body.data).toBeInstanceOf(Array);
-    //   } catch (err) {
-    //     // expect(err).toBeFalsy(); depends of chain api calls without key
-    //     console.log(err);
-    //   }
-    // });
+    test('should be able to get changelogs', async () => {
+      try {
+        const result = await agent.get('/api/home/changelogs').expect(200);
+        expect(result.body.type).toBe('success');
+        expect(result.body.message).toBe('changelogs');
+        expect(result.body.data).toBeInstanceOf(Array);
+      } catch (err) {
+        // expect(err).toBeFalsy(); depends of chain api calls without key
+        console.log(err);
+      }
+    });
 
     test('should be able to get team members', async () => {
       try {
