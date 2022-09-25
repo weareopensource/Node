@@ -1,7 +1,8 @@
-const _ = require('lodash');
-const defaultConfig = require('./development');
+import _ from 'lodash';
 
-module.exports = _.merge(defaultConfig, {
+const config = await import('./development.js');
+
+export default _.merge(config.default, {
   app: {
     title: 'WeAreOpenSource Node - Test Environment',
   },

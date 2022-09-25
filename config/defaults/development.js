@@ -1,4 +1,4 @@
-module.exports = {
+const config = {
   app: {
     title: 'WeAreOpenSource Node - Development Environment',
     description: 'Node - Boilerplate Back : Express, Jwt, Mongo, Sequelize (Beta) ',
@@ -41,7 +41,6 @@ module.exports = {
       sslPass: '1234'
       */
     },
-    restoreExceptions: [], // collections exceptions for db restore : npm run seed:mongorestore
   },
   // SSL on express server (FYI : Wiki)
   // secure: {
@@ -235,5 +234,8 @@ module.exports = {
         roles: ['user', 'admin'],
       },
     },
+    restoreExceptions: [], // collections exceptions for db restore : npm run seed:mongorestore
   },
 };
+
+export default config;

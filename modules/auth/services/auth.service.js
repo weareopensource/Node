@@ -1,29 +1,26 @@
 /**
  * Module dependencies
  */
-const path = require('path');
-const bcrypt = require('bcrypt');
-const generatePassword = require('generate-password');
-const zxcvbn = require('zxcvbn');
+import _ from 'lodash';
+import bcrypt from 'bcrypt';
+import generatePassword from 'generate-password';
+import zxcvbn from 'zxcvbn';
 
-const config = require(path.resolve('./config'));
-const AppError = require(path.resolve('./lib/helpers/AppError'));
-const UserRepository = require(path.resolve('modules/users/repositories/user.repository'));
-const UserService = require(path.resolve('modules/users/services/user.service'));
+import config from '../../../config/index.js';
+import AppError from '../../../lib/helpers/AppError.js';
+import UserRepository from '../../users/repositories/user.repository.js';
 
 const saltRounds = 10;
 
 /**
- * @desc Function to authenticate user)
- * @param {String} email
- * @param {String} password
+ * @desc Local function to removeSensitive data from user
+ * @param {Object} user
  * @return {Object} user
  */
-exports.authenticate = async (email, password) => {
-  const user = await UserRepository.get({ email });
-  if (!user) throw new AppError('invalid user or password.', { code: 'SERVICE_ERROR' });
-  if (await this.comparePassword(password, user.password)) return UserService.removeSensitive(user);
-  throw new AppError('invalid user or password.', { code: 'SERVICE_ERROR' });
+const removeSensitive = (user, conf) => {
+  if (!user || typeof user !== 'object') return null;
+  const keys = conf || config.whitelists.users.default;
+  return _.pick(user, keys);
 };
 
 /**
@@ -32,21 +29,34 @@ exports.authenticate = async (email, password) => {
  * @param {String} storedPassword
  * @return {Boolean} true/false
  */
-exports.comparePassword = async (userPassword, storedPassword) => bcrypt.compare(String(userPassword), String(storedPassword));
+const comparePassword = async (userPassword, storedPassword) => bcrypt.compare(String(userPassword), String(storedPassword));
+
+/**
+ * @desc Function to authenticate user)
+ * @param {String} email
+ * @param {String} password
+ * @return {Object} user
+ */
+const authenticate = async (email, password) => {
+  const user = await UserRepository.get({ email });
+  if (!user) throw new AppError('invalid user or password.', { code: 'SERVICE_ERROR' });
+  if (await comparePassword(password, user.password)) return removeSensitive(user);
+  throw new AppError('invalid user or password.', { code: 'SERVICE_ERROR' });
+};
 
 /**
  * @desc Function to hash passwords
  * @param {String} password
  * @return {String} password hashed
  */
-exports.hashPassword = (password) => bcrypt.hash(String(password), saltRounds);
+const hashPassword = (password) => bcrypt.hash(String(password), saltRounds);
 
 /**
  * @desc Function to hash passwords
  * @param {String} password
  * @return {String} password hashed
  */
-exports.checkPassword = (password) => {
+const checkPassword = (password) => {
   const result = zxcvbn(password);
   if (result.score < config.zxcvbn.minimumScore) {
     throw new AppError('Password too weak.', {
@@ -65,7 +75,7 @@ exports.checkPassword = (password) => {
  * NOTE: Passphrases are only tested against the required zxcvbn strength tests, and not the optional tests.
  * @return {Promise} user
  */
-exports.generateRandomPassphrase = () => {
+const generateRandomPassphrase = () => {
   let password = '';
   const repeatingCharacters = /(.)\1{2,}/g;
   // iterate until the we have a valid passphrase
@@ -84,5 +94,14 @@ exports.generateRandomPassphrase = () => {
     password = password.replace(repeatingCharacters, '');
   }
   // Send the rejection back if the passphrase fails to pass the strength test
-  return this.checkPassword(password);
+  return checkPassword(password);
+};
+
+export default {
+  removeSensitive,
+  authenticate,
+  comparePassword,
+  hashPassword,
+  checkPassword,
+  generateRandomPassphrase,
 };

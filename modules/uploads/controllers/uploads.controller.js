@@ -1,21 +1,20 @@
 /**
  * Module dependencies
  */
-const path = require('path');
-const sharp = require('sharp');
-const _ = require('lodash');
+import sharp from 'sharp';
+import _ from 'lodash';
 
-const config = require(path.resolve('./config'));
-const errors = require(path.resolve('./lib/helpers/errors'));
-const responses = require(path.resolve('./lib/helpers/responses'));
-const UploadsService = require('../services/uploads.service');
+import config from '../../../config/index.js';
+import errors from '../../../lib/helpers/errors.js';
+import responses from '../../../lib/helpers/responses.js';
+import UploadsService from '../services/uploads.service.js';
 
 /**
  * @desc Endpoint to get an upload by fileName
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.get = async (req, res) => {
+const get = async (req, res) => {
   try {
     const stream = await UploadsService.getStream({ _id: req.upload._id });
     if (!stream) responses.error(res, 404, 'Not Found', 'No Upload with that identifier can been found')();
@@ -35,7 +34,7 @@ exports.get = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.getSharp = async (req, res) => {
+const getSharp = async (req, res) => {
   try {
     const stream = await UploadsService.getStream({ _id: req.upload._id });
     if (!stream) responses.error(res, 404, 'Not Found', 'No Upload with that identifier can been found')();
@@ -62,13 +61,13 @@ exports.getSharp = async (req, res) => {
 };
 
 /**
- * @desc Endpoint to delete an upload
+ * @desc Endpoint to remove an upload
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.delete = async (req, res) => {
+const remove = async (req, res) => {
   try {
-    await UploadsService.delete({ _id: req.upload._id });
+    await UploadsService.remove({ _id: req.upload._id });
     responses.success(res, 'upload deleted')();
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
@@ -82,7 +81,7 @@ exports.delete = async (req, res) => {
  * @param {Function} next - Express next middleware function
  * @param {String} filename - upload filename
  */
-exports.uploadByName = async (req, res, next, uploadName) => {
+const uploadByName = async (req, res, next, uploadName) => {
   try {
     const upload = await UploadsService.get(uploadName);
     if (!upload) responses.error(res, 404, 'Not Found', 'No Upload with that name has been found')();
@@ -103,7 +102,7 @@ exports.uploadByName = async (req, res, next, uploadName) => {
  * @param {Function} next - Express next middleware function
  * @param {String} filename & params - upload filename & eventual params (two max) filename-maxSize-options.png
  */
-exports.uploadByImageName = async (req, res, next, uploadImageName) => {
+const uploadByImageName = async (req, res, next, uploadImageName) => {
   try {
     // Name
     const imageName = uploadImageName.split('.');
@@ -132,4 +131,12 @@ exports.uploadByImageName = async (req, res, next, uploadImageName) => {
   } catch (err) {
     next(err);
   }
+};
+
+export default {
+  get,
+  getSharp,
+  remove,
+  uploadByName,
+  uploadByImageName,
 };

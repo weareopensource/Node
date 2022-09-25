@@ -2,7 +2,7 @@ module.exports = {
   root: true,
   env: {
     node: true,
-    es2021: true,
+    es2022: true,
     browser: true,
     jest: true,
   },
@@ -21,10 +21,16 @@ module.exports = {
     'no-underscore-dangle': 0,
     'no-shadow': 0,
     'operator-linebreak': 0,
+    'import/extensions': [
+      'error',
+      {
+        js: 'ignorePackages',
+      },
+    ],
   },
   parserOptions: {
     parser: 'babel-eslint',
-    ecmaVersion: 12,
+    ecmaVersion: 'latest',
     sourceType: 'module',
   },
 };

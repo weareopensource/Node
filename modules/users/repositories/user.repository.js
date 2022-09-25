@@ -1,7 +1,7 @@
 /**
  * Module dependencies
  */
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const User = mongoose.model('User');
 
@@ -12,7 +12,7 @@ const User = mongoose.model('User');
  * @param {Int} perPage
  * @return {Array}  users selected
  */
-exports.list = (search, page, perPage) => {
+const list = (search, page, perPage) => {
   const filter = search
     ? {
         $or: [
@@ -35,14 +35,14 @@ exports.list = (search, page, perPage) => {
  * @param {Object} user
  * @return {Object} user
  */
-exports.create = (user) => new User(user).save();
+const create = (user) => new User(user).save();
 
 /**
  * @desc Function to get a user from db by id or email
  * @param {Object} user
  * @return {Object} user
  */
-exports.get = (user) => {
+const get = (user) => {
   if (user.id && mongoose.Types.ObjectId.isValid(user.id)) return User.findOne({ _id: user.id }).exec();
   if (user.email) return User.findOne({ email: user.email }).exec();
   if (user.resetPasswordToken) {
@@ -60,21 +60,21 @@ exports.get = (user) => {
  * @param {Object} mongoose input request
  * @return {Array} users
  */
-exports.search = (input) => User.find(input).exec();
+const search = (input) => User.find(input).exec();
 
 /**
  * @desc Function to update a user in db
  * @param {Object} user
  * @return {Object} user
  */
-exports.update = (user) => new User(user).save();
+const update = (user) => new User(user).save();
 
 /**
- * @desc Function to delete a user from db by id or email
+ * @desc Function to remove a user from db by id or email
  * @param {Object} user
  * @return {Object} confirmation of delete
  */
-exports.delete = async (user) => {
+const remove = async (user) => {
   if (user.id && mongoose.Types.ObjectId.isValid(user.id)) return User.deleteOne({ _id: user.id }).exec();
   if (user.email) return User.deleteOne({ email: user.email }).exec();
 };
@@ -83,15 +83,15 @@ exports.delete = async (user) => {
  * @desc Function to get collection stats
  * @return {Object} scrap
  */
-exports.stats = () => User.countDocuments();
+const stats = () => User.countDocuments();
 
 /**
- * @desc Function to import list of users in db
+ * @desc Function to push list of users in db
  * @param {[Object]} users
  * @param {[String]} filters
  * @return {Object} locations
  */
-exports.import = (users, filters) =>
+const push = (users, filters) =>
   User.bulkWrite(
     users.map((user) => {
       const filter = {};
@@ -107,3 +107,14 @@ exports.import = (users, filters) =>
       };
     }),
   );
+
+export default {
+  list,
+  create,
+  get,
+  search,
+  update,
+  remove,
+  stats,
+  push,
+};

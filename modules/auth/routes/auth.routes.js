@@ -1,22 +1,21 @@
 /**
  * Module dependencies
  */
-const passport = require('passport');
-const path = require('path');
+import passport from 'passport';
 
-const model = require(path.resolve('./lib/middlewares/model'));
-const usersSchema = require(path.resolve('./modules/users/models/user.schema'));
+import model from '../../../lib/middlewares/model.js';
+import UsersSchema from '../../users/models/user.schema.js';
+import auth from '../controllers/auth.controller.js';
+import authPassword from '../controllers/auth.password.controller.js';
 
-module.exports = (app) => {
-  const auth = require(path.resolve('./modules/auth/controllers/auth.controller'));
-
+export default (app) => {
   // Setting up the users password api
-  app.route('/api/auth/forgot').post(auth.forgot);
-  app.route('/api/auth/reset/:token').get(auth.validateResetToken);
-  app.route('/api/auth/reset').post(auth.reset);
+  app.route('/api/auth/forgot').post(authPassword.forgot);
+  app.route('/api/auth/reset/:token').get(authPassword.validateResetToken);
+  app.route('/api/auth/reset').post(authPassword.reset);
 
   // Setting up the users authentication api
-  app.route('/api/auth/signup').post(model.isValid(usersSchema.User), auth.signup);
+  app.route('/api/auth/signup').post(model.isValid(UsersSchema.User), auth.signup);
   app.route('/api/auth/signin').post(passport.authenticate('local', { session: false }), auth.signin);
 
   // Jwt reset token

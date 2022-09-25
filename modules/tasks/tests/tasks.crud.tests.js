@@ -1,18 +1,18 @@
 /**
  * Module dependencies.
  */
-const request = require('supertest');
-const path = require('path');
+import request from 'supertest';
+import path from 'path';
 
-const express = require(path.resolve('./lib/services/express'));
-const mongooseService = require(path.resolve('./lib/services/mongoose'));
-const multerService = require(path.resolve('./lib/services/multer'));
+import express from '../../../lib/services/express.js';
+import mongooseService from '../../../lib/services/mongoose.js';
+import multerService from '../../../lib/services/multer.js';
 
 /**
  * Unit tests
  */
 describe('Tasks CRUD Tests :', () => {
-  let UserService = null;
+  let UserService;
   let app;
   let agent;
   let credentials;
@@ -25,13 +25,11 @@ describe('Tasks CRUD Tests :', () => {
   //  init
   beforeAll(async () => {
     try {
-      // init mongo
+      await mongooseService.loadModels();
       await mongooseService.connect();
       await multerService.storage();
-      await mongooseService.loadModels();
-      UserService = require(path.resolve('./modules/users/services/user.service'));
-      // init application
-      app = express.init();
+      UserService = (await import(path.resolve('./modules/users/services/users.service.js'))).default;
+      app = await express.init();
       agent = request.agent(app);
     } catch (err) {
       console.log(err);
@@ -190,7 +188,7 @@ describe('Tasks CRUD Tests :', () => {
       }
     });
 
-    test('should be able to delete a task', async () => {
+    test('should be able to remove a task', async () => {
       // delete task
       try {
         const result = await agent.delete(`/api/tasks/${task2.id}`).expect(200);
@@ -199,7 +197,6 @@ describe('Tasks CRUD Tests :', () => {
         expect(result.body.data.id).toBe(task2.id);
         expect(result.body.data.deletedCount).toBe(1);
       } catch (err) {
-        console.log(err);
         expect(err).toBeFalsy();
       }
       // check delete
@@ -211,7 +208,7 @@ describe('Tasks CRUD Tests :', () => {
       }
     });
 
-    test('should not be able to delete a task with a bad id', async () => {
+    test('should not be able to remove a task with a bad id', async () => {
       // edit task
       try {
         const result = await agent.delete(`/api/tasks/${task2.id}`).send(_tasks[0]).expect(404);
@@ -248,7 +245,7 @@ describe('Tasks CRUD Tests :', () => {
       }
       // del user
       try {
-        await UserService.delete(user);
+        await UserService.remove(user);
       } catch (err) {
         console.log(err);
       }

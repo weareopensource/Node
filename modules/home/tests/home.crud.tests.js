@@ -1,13 +1,11 @@
 /**
  * Module dependencies.
  */
-const request = require('supertest');
-const path = require('path');
+import request from 'supertest';
 
-const express = require(path.resolve('./lib/services/express'));
-const mongooseService = require(path.resolve('./lib/services/mongoose'));
-const multerService = require(path.resolve('./lib/services/multer'));
-
+import express from '../../../lib/services/express.js';
+import mongooseService from '../../../lib/services/mongoose.js';
+import multerService from '../../../lib/services/multer.js';
 /**
  * Unit tests
  */
@@ -18,12 +16,10 @@ describe('Home CRUD Tests :', () => {
   //  init
   beforeAll(async () => {
     try {
-      // init mongo
+      await mongooseService.loadModels();
       await mongooseService.connect();
       await multerService.storage();
-      await mongooseService.loadModels();
-      // init application
-      app = express.init();
+      app = await express.init();
       agent = request.agent(app);
     } catch (err) {
       console.log(err);

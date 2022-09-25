@@ -1,14 +1,12 @@
 /**
  * Module dependencies
  * */
-const path = require('path');
-
-const policy = require(path.resolve('./lib/middlewares/policy'));
+import policy from '../../../lib/middlewares/policy.js';
 
 /**
  * Invoke Tasks Permissions
  */
-exports.invokeRolesPolicies = () => {
+const invokeRolesPolicies = () => {
   policy.Acl.allow([
     {
       roles: ['guest'],
@@ -32,4 +30,8 @@ exports.invokeRolesPolicies = () => {
       ],
     },
   ]);
+};
+
+export default {
+  invokeRolesPolicies,
 };

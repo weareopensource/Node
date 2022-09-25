@@ -1,22 +1,21 @@
 /**
  * Module dependencies
  */
-const passport = require('passport');
-const path = require('path');
+import passport from 'passport';
 
-const policy = require(path.resolve('./lib/middlewares/policy'));
-const uploads = require('../controllers/uploads.controller');
+import policy from '../../../lib/middlewares/policy.js';
+import uploads from '../controllers/uploads.controller.js';
 
 /**
  * Routes
  */
-module.exports = (app) => {
+export default (app) => {
   // classic crud
   app
     .route('/api/uploads/:uploadName')
     .all(passport.authenticate('jwt', { session: false }), policy.isAllowed)
     .get(uploads.get)
-    .delete(policy.isOwner, uploads.delete); // delete
+    .delete(policy.isOwner, uploads.remove); // delete
 
   // classic crud
   app
