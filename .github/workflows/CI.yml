@@ -20,8 +20,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.8.0
+      - name: Start Docker for Mongodb
+        run: docker run -d -p 27017:27017 mongo
       - name: Run tests
         run: |
           npm i
