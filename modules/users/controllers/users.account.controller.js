@@ -81,9 +81,24 @@ const me = (req, res) => {
   return responses.success(res, 'user get')(user);
 };
 
+/**
+ * @desc Endpoint to get stats of users and return data
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+const stats = async (req, res) => {
+  const data = await UserService.stats();
+  if (!data.err) {
+    responses.success(res, 'users stats')(data);
+  } else {
+    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(data.err))(data.err);
+  }
+};
+
 export default {
   update,
   terms,
   remove,
   me,
+  stats,
 };

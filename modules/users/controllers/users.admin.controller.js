@@ -58,20 +58,6 @@ const remove = async (req, res) => {
 };
 
 /**
- * @desc Endpoint to get stats of users and return data
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
-const stats = async (req, res) => {
-  const data = await UserService.stats();
-  if (!data.err) {
-    responses.success(res, 'users stats')(data);
-  } else {
-    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(data.err))(data.err);
-  }
-};
-
-/**
  * @desc MiddleWare to ask the service the user for this id
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
@@ -127,7 +113,6 @@ export default {
   get,
   update,
   remove,
-  stats,
   userByID,
   userByPage,
 };

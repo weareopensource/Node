@@ -14,6 +14,8 @@ import usersData from '../controllers/users.data.controller.js';
 import authPassword from '../../auth/controllers/auth.password.controller.js';
 
 export default (app) => {
+  app.route('/api/users/stats').all(policy.isAllowed).get(users.stats);
+
   app.route('/api/users/me').get(passport.authenticate('jwt', { session: false }), policy.isAllowed, users.me);
 
   app.route('/api/users/terms').get(passport.authenticate('jwt', { session: false }), policy.isAllowed, users.terms);
