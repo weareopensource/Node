@@ -1,6 +1,6 @@
 [![CI](https://github.com/weareopensource/Node/actions/workflows/CI.yml/badge.svg)](https://github.com/weareopensource/Node/actions/workflows/CI.yml) [![Coveralls Status](https://badges.weareopensource.me/coveralls/github/weareopensource/Node.svg?style=flat-square)](https://coveralls.io/github/weareopensource/Node) [![Code Climate](https://badges.weareopensource.me/codeclimate/maintainability-percentage/weareopensource/Node.svg?style=flat-square)](https://codeclimate.com/github/weareopensource/Node/maintainability)
 [![Dependabot badge](https://badges.weareopensource.me/badge/Dependabot-enabled-2768cf.svg?style=flat-square)](https://dependabot.com)
-[![Known Vulnerabilities](https://snyk.io/test/github/weareopensource/node/badge.svg?style=flat-square)](https://snyk.io/test/github/weareopensource/node) [![Docker Pulls](https://badges.weareopensource.me/docker/pulls/weareopensource/node?style=flat-square)](https://hub.docker.com/repository/docker/weareopensource/node)
+[![Known Vulnerabilities](https://snyk.io/test/github/weareopensource/node/badge.svg?style=flat-square)](https://snyk.io/test/github/weareopensource/node) [![Docker Pulls](https://badges.weareopensource.me/docker/pulls/pierrebrisorgueil/node?style=flat-square)](https://hub.docker.com/repository/docker/pierrebrisorgueil/node)
 
 # :globe_with_meridians: [WeAreOpenSource](https://weareopensource.me) Node
 
