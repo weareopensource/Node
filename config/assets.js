@@ -1,5 +1,5 @@
 /* eslint comma-dangle:[0, "only-multiline"] */
-module.exports = {
+export default {
   gulpConfig: ['gulpfile.js'],
   allJS: ['server.js', 'config/**/*.js', 'lib/**/*.js', 'modules/*/**/*.js'],
   allYaml: 'modules/*/doc/*.yml',

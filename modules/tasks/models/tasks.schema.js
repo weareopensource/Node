@@ -1,7 +1,7 @@
 /**
  * Module dependencies
  */
-const Joi = require('@hapi/joi');
+import Joi from '@hapi/joi';
 
 /**
  *  Data Schema
@@ -12,6 +12,6 @@ const TaskSchema = Joi.object().keys({
   user: Joi.string().trim().default(''),
 });
 
-module.exports = {
+export default {
   Task: TaskSchema,
 };

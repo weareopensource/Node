@@ -1,13 +1,13 @@
 /**
  * Module dependencies
  */
-const TasksRepository = require('../repositories/tasks.repository');
+import TasksRepository from '../repositories/tasks.repository.js';
 
 /**
  * @desc Function to get all task in db
  * @return {Promise} All tasks
  */
-exports.list = async () => {
+const list = async () => {
   const result = await TasksRepository.list();
   return Promise.resolve(result);
 };
@@ -17,7 +17,7 @@ exports.list = async () => {
  * @param {Object} task
  * @return {Promise} task
  */
-exports.create = async (task, user) => {
+const create = async (task, user) => {
   task.user = user.id;
 
   const result = await TasksRepository.create(task);
@@ -29,7 +29,7 @@ exports.create = async (task, user) => {
  * @param {String} id
  * @return {Promise} task
  */
-exports.get = async (id) => {
+const get = async (id) => {
   const result = await TasksRepository.get(id);
   return Promise.resolve(result);
 };
@@ -40,7 +40,7 @@ exports.get = async (id) => {
  * @param {Object} body - task edited
  * @return {Promise} task
  */
-exports.update = async (task, body) => {
+const update = async (task, body) => {
   task.title = body.title;
   task.description = body.description;
 
@@ -49,12 +49,12 @@ exports.update = async (task, body) => {
 };
 
 /**
- * @desc Function to ask repository to delete a task
+ * @desc Function to ask repository to remove a task
  * @param {Object} task
  * @return {Promise} confirmation of delete
  */
-exports.delete = async (task) => {
-  const result = await TasksRepository.delete(task);
+const remove = async (task) => {
+  const result = await TasksRepository.remove(task);
   return Promise.resolve(result);
 };
 
@@ -62,7 +62,16 @@ exports.delete = async (task) => {
  * @desc Function to get all stats of db
  * @return {Promise} All stats
  */
-exports.stats = async () => {
+const stats = async () => {
   const result = await TasksRepository.stats();
   return Promise.resolve(result);
+};
+
+export default {
+  list,
+  create,
+  get,
+  update,
+  remove,
+  stats,
 };

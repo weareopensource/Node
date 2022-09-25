@@ -1,14 +1,12 @@
 /**
  * Module dependencies
  * */
-const path = require('path');
-
-const policy = require(path.resolve('./lib/middlewares/policy'));
+import policy from '../../../lib/middlewares/policy.js';
 
 /**
  * Invoke Tasks Permissions
  */
-exports.invokeRolesPolicies = () => {
+const invokeRolesPolicies = () => {
   policy.Acl.allow([
     {
       roles: ['user'],
@@ -48,23 +46,6 @@ exports.invokeRolesPolicies = () => {
       ],
     },
     {
-      roles: ['admin'],
-      allows: [
-        {
-          resources: '/api/users',
-          permissions: ['get'],
-        },
-        {
-          resources: '/api/users/page/:userPage',
-          permissions: ['get'],
-        },
-        {
-          resources: '/api/users/:userId',
-          permissions: ['get', 'put', 'delete'],
-        },
-      ],
-    },
-    {
       roles: ['guest'],
       allows: [
         {
@@ -74,4 +55,8 @@ exports.invokeRolesPolicies = () => {
       ],
     },
   ]);
+};
+
+export default {
+  invokeRolesPolicies,
 };

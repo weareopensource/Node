@@ -1,12 +1,11 @@
 /**
  * Module dependencies
  */
-const path = require('path');
-const passport = require('passport');
-const AppleStrategy = require('passport-apple');
+import passport from 'passport';
+import AppleStrategy from 'passport-apple';
 
-const config = require(path.resolve('./config'));
-const auth = require('../../controllers/auth.controller');
+import config from '../../../../config/index.js';
+import auth from '../../controllers/auth.controller.js';
 
 const callbackURL = `${config.api.protocol}://${config.api.host}${config.api.port ? ':' : ''}${config.api.port ? config.api.port : ''}/${
   config.api.base
@@ -20,7 +19,7 @@ const callbackURL = `${config.api.protocol}://${config.api.host}${config.api.por
  * @param {profile}
  * @param {cb} callback
  */
-exports.prepare = async (req, accessToken, refreshToken, decodedIdToken, profile, cb) => {
+const prepare = async (req, accessToken, refreshToken, decodedIdToken, profile, cb) => {
   // Set the provider data and include tokens
   const providerData = decodedIdToken;
   providerData.appleProfile = req.appleProfile;
@@ -46,7 +45,7 @@ exports.prepare = async (req, accessToken, refreshToken, decodedIdToken, profile
   }
 };
 
-module.exports = () => {
+export default () => {
   const apple = config.oAuth.apple ? config.oAuth.apple : null;
   // Use google strategy
   if (apple && apple.clientID && apple.teamID && apple.keyID) {
@@ -61,7 +60,7 @@ module.exports = () => {
           scope: ['email', 'name'],
           passReqToCallback: true,
         },
-        (req, a, r, d, p, cb) => this.prepare(req, a, r, d, p, cb),
+        (req, a, r, d, p, cb) => prepare(req, a, r, d, p, cb),
       ),
     );
   }

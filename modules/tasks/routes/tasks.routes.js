@@ -1,18 +1,17 @@
 /**
  * Module dependencies
  */
-const passport = require('passport');
-const path = require('path');
+import passport from 'passport';
 
-const model = require(path.resolve('./lib/middlewares/model'));
-const policy = require(path.resolve('./lib/middlewares/policy'));
-const tasks = require('../controllers/tasks.controller');
-const tasksSchema = require('../models/tasks.schema');
+import model from '../../../lib/middlewares/model.js';
+import policy from '../../../lib/middlewares/policy.js';
+import tasks from '../controllers/tasks.controller.js';
+import tasksSchema from '../models/tasks.schema.js';
 
 /**
  * Routes
  */
-module.exports = (app) => {
+export default (app) => {
   // stats
   app.route('/api/tasks/stats').all(policy.isAllowed).get(tasks.stats);
 
@@ -28,7 +27,7 @@ module.exports = (app) => {
     .all(passport.authenticate('jwt', { session: false }), policy.isAllowed) // policy.isOwner available (require set in middleWare)
     .get(tasks.get) // get
     .put(model.isValid(tasksSchema.Task), tasks.update) // update
-    .delete(model.isValid(tasksSchema.Task), tasks.delete); // delete
+    .delete(model.isValid(tasksSchema.Task), tasks.remove); // delete
 
   // Finish by binding the task middleware
   app.param('taskId', tasks.taskByID);

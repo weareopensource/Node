@@ -1,7 +1,7 @@
 /**
  * Module dependencies
  */
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const Task = mongoose.model('Task');
 
@@ -16,21 +16,21 @@ const defaultPopulate = [
  * @desc Function to get all task in db with filter or not
  * @return {Array} tasks
  */
-exports.list = (filter) => Task.find(filter).populate(defaultPopulate).sort('-createdAt').exec();
+const list = (filter) => Task.find(filter).populate(defaultPopulate).sort('-createdAt').exec();
 
 /**
  * @desc Function to create a task in db
  * @param {Object} task
  * @return {Object} task
  */
-exports.create = (task) => new Task(task).save().then((doc) => doc.populate(defaultPopulate));
+const create = (task) => new Task(task).save().then((doc) => doc.populate(defaultPopulate));
 
 /**
  * @desc Function to get a task from db
  * @param {String} id
  * @return {Object} task
  */
-exports.get = (id) => {
+const get = (id) => {
   if (!mongoose.Types.ObjectId.isValid(id)) return null;
   return Task.findOne({ _id: id }).populate(defaultPopulate).exec();
 };
@@ -40,21 +40,21 @@ exports.get = (id) => {
  * @param {Object} task
  * @return {Object} task
  */
-exports.update = (task) => new Task(task).save().then((doc) => doc.populate(defaultPopulate));
+const update = (task) => new Task(task).save().then((doc) => doc.populate(defaultPopulate));
 
 /**
- * @desc Function to delete a task in db
+ * @desc Function to remove a task in db
  * @param {Object} task
  * @return {Object} confirmation of delete
  */
-exports.delete = (task) => Task.deleteOne({ _id: task.id }).exec();
+const remove = (task) => Task.deleteOne({ _id: task.id }).exec();
 
 /**
- * @desc Function to delete tasks of one user in db
+ * @desc Function to remove tasks of one user in db
  * @param {Object} filter
  * @return {Object} confirmation of delete
  */
-exports.deleteMany = (filter) => {
+const deleteMany = (filter) => {
   if (filter) return Task.deleteMany(filter).exec();
 };
 
@@ -62,15 +62,15 @@ exports.deleteMany = (filter) => {
  * @desc Function to get collection stats
  * @return {Object} scrap
  */
-exports.stats = () => Task.countDocuments();
+const stats = () => Task.countDocuments();
 
 /**
- * @desc Function to import list of tasks in db
+ * @desc Function to push list of tasks in db
  * @param {[Object]} tasks
  * @param {[String]} filters
  * @return {Object} tasks
  */
-exports.import = (tasks, filters) =>
+const push = (tasks, filters) =>
   Task.bulkWrite(
     tasks.map((task) => {
       const filter = {};
@@ -86,3 +86,14 @@ exports.import = (tasks, filters) =>
       };
     }),
   );
+
+export default {
+  list,
+  create,
+  get,
+  update,
+  remove,
+  deleteMany,
+  stats,
+  push,
+};

@@ -1,16 +1,21 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 /**
  * Module dependencies
  */
-const path = require('path');
-const passport = require('passport');
+import path from 'path';
+import passport from 'passport';
+import * as url from 'url';
 
-const config = require(path.resolve('./config'));
-const UserService = require(path.resolve('modules/users/services/user.service'));
+import config from '../../../config/index.js';
+import UserService from '../../users/services/users.service.js';
+
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 /**
  * Module init function
  */
-module.exports = (app) => {
+export default async (app) => {
   // Serialize identifiable user's information to the session
   // so that it can be pulled back in another request
   passport.serializeUser(({ id }, done) => {
@@ -30,9 +35,10 @@ module.exports = (app) => {
   });
 
   // Initialize strategies
-  config.utils.getGlobbedPaths(path.join(__dirname, './strategies/**/*.js')).forEach((strategy) => {
-    require(path.resolve(strategy))(config);
-  });
+  for (const stratPath of config.utils.getGlobbedPaths(path.join(__dirname, './strategies/**/*.js'))) {
+    const strat = await import(path.resolve(stratPath));
+    strat.default(config);
+  }
 
   // Add passport's middleware
   app.use(passport.initialize());

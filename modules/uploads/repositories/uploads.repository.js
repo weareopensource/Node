@@ -1,11 +1,11 @@
 /**
  * Module dependencies
  */
-const path = require('path');
-const mongoose = require('mongoose');
-const { createModel } = require('mongoose-gridfs');
+import mongoose from 'mongoose';
+import { createModel } from 'mongoose-gridfs';
 
-const AppError = require(path.resolve('./lib/helpers/AppError'));
+import AppError from '../../../lib/helpers/AppError.js';
+
 const Attachment = createModel({ bucketName: 'uploads', model: 'Uploads' });
 const Uploads = mongoose.model('Uploads');
 
@@ -14,21 +14,21 @@ const Uploads = mongoose.model('Uploads');
  * @param {Object} Filter
  * @return {Array} uploads
  */
-exports.list = (filter) => Uploads.find(filter).select('filename uploadDate contentType').sort('-createdAt').exec();
+const list = (filter) => Uploads.find(filter).select('filename uploadDate contentType').sort('-createdAt').exec();
 
 /**
  * @desc Function to get an upload from db
  * @param {String} uploadName
  * @return {Stream} upload
  */
-exports.get = (uploadName) => Uploads.findOne({ filename: uploadName }).exec();
+const get = (uploadName) => Uploads.findOne({ filename: uploadName }).exec();
 
 /**
  * @desc Function to get an upload stream from db
  * @param {Object} Upload
  * @return {Stream} upload
  */
-exports.getStream = (upload) => Attachment.read(upload);
+const getStream = (upload) => Attachment.read(upload);
 
 /**
  * @desc Function to update an upload in db
@@ -36,14 +36,14 @@ exports.getStream = (upload) => Attachment.read(upload);
  * @param {Object} update
  * @return {Object} upload updated
  */
-exports.update = (id, update) => Uploads.findOneAndUpdate({ _id: id }, update, { new: true }).exec();
+const update = (id, update) => Uploads.findOneAndUpdate({ _id: id }, update, { new: true }).exec();
 
 /**
- * @desc Function to delete an upload from db
+ * @desc Function to remove an upload from db
  * @param {Object} upload
  * @return {Object} confirmation of delete
  */
-exports.delete = async (upload) => {
+const remove = async (upload) => {
   if (!upload._id) upload = await Uploads.findOne({ filename: upload.filename }).exec();
   if (upload) {
     Attachment.unlink(upload._id, (err, unlinked) => {
@@ -54,12 +54,12 @@ exports.delete = async (upload) => {
 };
 
 /**
- * @desc Function to delete uploads of one user in db
+ * @desc Function to remove uploads of one user in db
  * @param {Object} filter
  * @return {Object} confirmation of delete
  */
-exports.deleteMany = async (filter) => {
-  const uploads = await this.list(filter);
+const deleteMany = async (filter) => {
+  const uploads = await list(filter);
   uploads.forEach((upload) => {
     Attachment.unlink(upload._id, (err, unlinked) => {
       if (err) throw new AppError('Upload: delete error', { code: 'REPOSITORY_ERROR', details: err });
@@ -76,7 +76,7 @@ exports.deleteMany = async (filter) => {
  * @param {String} key - name of the key to check id
  * @return {Object} confirmation of delete
  */
-exports.purge = async (kind, collection, key) => {
+const purge = async (kind, collection, key) => {
   const toDelete = await Uploads.aggregate([
     { $match: { 'metadata.kind': kind } },
     {
@@ -99,12 +99,12 @@ exports.purge = async (kind, collection, key) => {
 };
 
 /**
- * @desc Function to import list of uploads in db
+ * @desc Function to push list of uploads in db
  * @param {[Object]} uploads
  * @param {[String]} filters
  * @return {Object} uploads
  */
-exports.import = (uploads, filters, collection) => {
+const push = (uploads, filters, collection) => {
   const _schema = new mongoose.Schema({}, { collection, strict: false });
   let model;
   try {
@@ -127,4 +127,15 @@ exports.import = (uploads, filters, collection) => {
       };
     }),
   );
+};
+
+export default {
+  list,
+  get,
+  getStream,
+  update,
+  remove,
+  deleteMany,
+  purge,
+  push,
 };

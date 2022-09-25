@@ -1,18 +1,21 @@
 /**
  * Module dependencies.
  */
-const _ = require('lodash');
-// const glob = require('glob');
-const gulp = require('gulp');
-const gulpLoadPlugins = require('gulp-load-plugins');
-const path = require('path');
-const { runCLI } = require('@jest/core');
-const inquirer = require('inquirer');
+import _ from 'lodash';
+// import glob from "glob";
+import gulp from 'gulp';
+import gulpLoadPlugins from 'gulp-load-plugins';
+import path from 'path';
+import { runCLI } from '@jest/core';
+import inquirer from 'inquirer';
+import mongooseService from './lib/services/mongoose.js';
 
-const plugins = gulpLoadPlugins();
-const defaultAssets = require('./config/assets');
+import defaultAssets from './config/assets.js';
+import config from './config/index.js';
 
-const config = require(path.resolve('./config'));
+const plugins = gulpLoadPlugins({
+  config: process.env.npm_package_json,
+});
 
 // default node env if not define
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
@@ -28,7 +31,6 @@ const nodemon = (done) => {
   });
   done();
 };
-exports.nodemon = nodemon;
 
 // Nodemon (task without verbosity or debugging)
 const nodemonDebug = (done) => {
@@ -40,7 +42,6 @@ const nodemonDebug = (done) => {
   });
   done();
 };
-exports.nodemonDebug = nodemonDebug;
 
 // Watch (files For Changes)
 const watch = (done) => {
@@ -52,7 +53,6 @@ const watch = (done) => {
   gulp.watch(defaultAssets.gulpConfig);
   done();
 };
-exports.watch = watch;
 
 // Jest UT
 const jest = (done) => {
@@ -65,14 +65,12 @@ const jest = (done) => {
       console.log(e);
     });
 };
-exports.jest = jest;
 
 // Jest Watch
 const jestWatch = (done) => {
   runCLI({ watch: true }, ['.']);
   done();
 };
-exports.jestWatch = jestWatch;
 
 // Jest UT
 const jestCoverage = (done) => {
@@ -93,11 +91,9 @@ const jestCoverage = (done) => {
       console.log(e);
     });
 };
-exports.jestCoverage = jestCoverage;
 
 // Drops the MongoDB database, used in e2e testing by security
-const dropMongo = (done) => {
-  const mongooseService = require(path.resolve('./lib/services/mongoose'));
+const dropMongo = async (done) => {
   mongooseService
     .connect()
     .then((db) => {
@@ -111,7 +107,6 @@ const dropMongo = (done) => {
       console.log(e);
     });
 };
-exports.dropMongo = dropMongo;
 
 // Drop database after confirmation, depends of ENV
 const dropDB = (done) => {
@@ -127,30 +122,28 @@ const dropDB = (done) => {
 
     inquirer.prompt(question).then((answer) => {
       if (!answer.continue) return process.exit(2);
-      this.dropMongo(done);
+      dropMongo(done);
     });
-  } else this.dropMongo(done);
+  } else dropMongo(done);
 };
-exports.dropDB = dropDB;
 
 // Connects to Mongoose based on environment settings and seeds the database
 const seedMongoose = async () => {
   try {
-    const mongooseService = require(path.resolve('./lib/services/mongoose'));
     await mongooseService.connect();
     await mongooseService.loadModels();
-    const AuthService = require(path.resolve('./modules/auth/services/auth.service'));
-    const UserService = require(path.resolve('./modules/users/services/user.service'));
-    const TaskService = require(path.resolve('./modules/tasks/services/tasks.service'));
-    const seed = require(path.resolve('./lib/services/seed'));
-    await seed
+    const AuthService = await import(path.resolve('./modules/auth/services/auth.service.js'));
+    const UserService = await import(path.resolve('./modules/users/services/users.service.js'));
+    const TaskService = await import(path.resolve('./modules/tasks/services/tasks.service.js'));
+    const seed = await import(path.resolve('./lib/services/seed.js'));
+    await seed.default
       .start(
         {
           logResults: true,
         },
-        UserService,
-        AuthService,
-        TaskService,
+        UserService.default,
+        AuthService.default,
+        TaskService.default,
       )
       .catch((e) => {
         console.log(e);
@@ -164,13 +157,12 @@ const seedMongoose = async () => {
 // Connects to Mongoose based on environment settings and seeds the database
 const seedMongooseUser = async () => {
   try {
-    const mongooseService = require(path.resolve('./lib/services/mongoose'));
     await mongooseService.connect();
     await mongooseService.loadModels();
-    const AuthService = require(path.resolve('./modules/auth/services/auth.service'));
-    const UserService = require(path.resolve('./modules/users/services/user.service'));
-    const seed = require(path.resolve('./lib/services/seed'));
-    await seed.user(config.seedDB.options.seedUser, UserService, AuthService).catch((e) => {
+    const AuthService = await import(path.resolve('./modules/auth/services/auth.service.js'));
+    const UserService = await import(path.resolve('./modules/users/services/users.service.js'));
+    const seed = await import(path.resolve('./lib/services/seed.js'));
+    await seed.default.user(config.seedDB.options.seedUser, UserService.default, AuthService.default).catch((e) => {
       console.log(e);
     });
     await mongooseService.disconnect();
@@ -191,77 +183,29 @@ const seedMongooseUser = async () => {
 
 // Run project tests
 const test = gulp.series(dropDB, jest);
-exports.test = test;
 
 // Run project tests with coverage
 const testWatch = gulp.series(dropDB, jestWatch);
-exports.testWatch = testWatch;
 
 // Run project tests with coverage
 const testCoverage = gulp.series(dropDB, jestCoverage);
-exports.testCoverage = testCoverage;
 
 // Run Mongoose Seed
 const seed = gulp.series(dropDB, seedMongoose);
-exports.seed = seed;
 
 // Run Mongoose Seed
 const seedUser = gulp.series(seedMongooseUser);
-exports.seedUser = seedUser;
 
 // Run Mongoose drop
 const drop = gulp.series(dropDB);
-exports.drop = drop;
 
 // Run project in development mode
 const dev = gulp.series(gulp.parallel(nodemon, watch));
-exports.default = dev;
 
 // Run project in debug mode
 const debug = gulp.series(gulp.parallel(nodemonDebug, watch));
-exports.debug = debug;
 
 // Run project in production mode
 const prod = gulp.series(gulp.parallel(nodemonDebug, watch));
-exports.prod = prod;
 
-/**
- * Examples for Mocha TODO : switch in readme
- */
-
-// Example Mocha example
-// const changedTestFiles = [];
-// const mocha = () => {
-//   const testSuites = changedTestFiles.length ? changedTestFiles : defaultAssets.tests;
-//   return gulp.src(testSuites)
-//     .pipe(plugins.mocha({
-//       reporter: 'spec',
-//       timeout: 10000,
-//     }))
-//     .on('error', (err) => {
-//     // If an error occurs, save it
-//       console.log(err);
-//     });
-// };
-// exports.mocha = mocha;
-
-// Example Watch server test files
-// const watchMocha = (done) => {
-//   // Start livereload
-//   plugins.refresh.listen();
-
-//   // Add Server Test file rules
-//   gulp.watch(_.union(defaultAssets.tests, defaultAssets.allJS), gulp.series(mocha)).on('change', plugins.refresh.changed);
-//   done();
-// };
-// exports.watchMocha = watchMocha;
-
-// Example Bootstrap the server instance
-// Common use case is to run API tests on real instantiated models and db
-// const bootstrap = (done) => {
-//   const app = require('./lib/app');
-//   app.start().then(() => {
-//     done();
-//   });
-// };
-// exports.bootstrap = bootstrap;
+export { test, testWatch, testCoverage, seed, seedUser, drop, dev, debug, prod };

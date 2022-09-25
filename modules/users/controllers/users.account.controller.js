@@ -1,18 +1,16 @@
 /**
  * Module dependencies
  */
-const path = require('path');
-
-const errors = require(path.resolve('./lib/helpers/errors'));
-const responses = require(path.resolve('./lib/helpers/responses'));
-const UserService = require('../../services/user.service');
+import errors from '../../../lib/helpers/errors.js';
+import responses from '../../../lib/helpers/responses.js';
+import UserService from '../services/users.service.js';
 
 /**
  * @desc Endpoint to ask the service to update a user
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.update = async (req, res) => {
+const update = async (req, res) => {
   try {
     const user = await UserService.update(req.user, req.body);
     // reset login
@@ -30,7 +28,7 @@ exports.update = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.terms = async (req, res) => {
+const terms = async (req, res) => {
   try {
     const user = await UserService.terms(req.user);
     responses.success(res, 'user terms signed')(user);
@@ -40,13 +38,13 @@ exports.terms = async (req, res) => {
 };
 
 /**
- * @desc Endpoint to ask the service to delete the user connected
+ * @desc Endpoint to ask the service to remove the user connected
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.delete = async (req, res) => {
+const remove = async (req, res) => {
   try {
-    const result = await UserService.delete(req.user);
+    const result = await UserService.remove(req.user);
     responses.success(res, 'user deleted')({ id: req.user.id, ...result });
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
@@ -58,7 +56,7 @@ exports.delete = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.me = (req, res) => {
+const me = (req, res) => {
   // Sanitize the user - short term solution. Copied from core.controller.js
   // TODO create proper passport mock: See https://gist.github.com/mweibel/5219403
   let user = null;
@@ -81,4 +79,26 @@ exports.me = (req, res) => {
     if (req.user.terms) user.terms = req.user.terms;
   }
   return responses.success(res, 'user get')(user);
+};
+
+/**
+ * @desc Endpoint to get stats of users and return data
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+const stats = async (req, res) => {
+  const data = await UserService.stats();
+  if (!data.err) {
+    responses.success(res, 'users stats')(data);
+  } else {
+    responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(data.err))(data.err);
+  }
+};
+
+export default {
+  update,
+  terms,
+  remove,
+  me,
+  stats,
 };

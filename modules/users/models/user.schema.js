@@ -1,12 +1,12 @@
 /**
  * Module dependencies
  */
-const PlainJoi = require('@hapi/joi');
-const path = require('path');
+import PlainJoi from '@hapi/joi';
 
-const joiHelpers = require(path.resolve('./lib/helpers/joi'));
+import config from '../../../config/index.js';
+import joiHelpers from '../../../lib/helpers/joi.js';
+
 const Joi = PlainJoi.extend(joiHelpers.joiZxcvbn(PlainJoi));
-const config = require(path.resolve('./config'));
 const names = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
 
 /**
@@ -36,6 +36,6 @@ const UserSchema = Joi.object().keys({
   complementary: Joi.object({}).unknown().allow(null).optional(),
 });
 
-module.exports = {
+export default {
   User: UserSchema,
 };

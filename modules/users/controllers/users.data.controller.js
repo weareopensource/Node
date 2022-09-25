@@ -1,31 +1,29 @@
 /**
  * Module dependencies
  */
-const path = require('path');
-
-const errors = require(path.resolve('./lib/helpers/errors'));
-const responses = require(path.resolve('./lib/helpers/responses'));
-const mails = require(path.resolve('./lib/helpers/mails'));
-const config = require(path.resolve('./config'));
-const UserService = require('../services/user.service');
-
-const TaskDataService = require(path.resolve('./modules/tasks/services/tasks.data.service'));
-const UploadDataService = require(path.resolve('./modules/uploads/services/uploads.data.service'));
+import errors from '../../../lib/helpers/errors.js';
+import responses from '../../../lib/helpers/responses.js';
+import mails from '../../../lib/helpers/mails.js';
+import config from '../../../config/index.js';
+import UserService from '../services/users.service.js';
+import TaskDataService from '../../tasks/services/tasks.data.service.js';
+import UploadDataService from '../../uploads/services/uploads.data.service.js';
 
 /**
- * @desc Endpoint to ask the service to delete the user connected and all his data
+ * @desc Endpoint to ask the service to remove the user connected and all his data
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.delete = async (req, res) => {
+const remove = async (req, res) => {
   try {
     const result = {
-      user: await UserService.delete(req.user),
-      tasks: await TaskDataService.delete(req.user),
-      uploads: await UploadDataService.delete(req.user),
+      user: await UserService.remove(req.user),
+      tasks: await TaskDataService.remove(req.user),
+      uploads: await UploadDataService.remove(req.user),
     };
     responses.success(res, 'user and his data were deleted')({ id: req.user.id, ...result });
   } catch (err) {
+    console.log('err', err);
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
 };
@@ -35,7 +33,7 @@ exports.delete = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.get = async (req, res) => {
+const get = async (req, res) => {
   try {
     const result = {
       user: await UserService.get(req.user),
@@ -53,7 +51,7 @@ exports.get = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-exports.getMail = async (req, res) => {
+const getMail = async (req, res) => {
   try {
     const result = {
       user: await UserService.get(req.user),
@@ -80,4 +78,10 @@ exports.getMail = async (req, res) => {
   } catch (err) {
     responses.error(res, 422, 'Unprocessable Entity', errors.getMessage(err))(err);
   }
+};
+
+export default {
+  remove,
+  get,
+  getMail,
 };

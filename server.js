@@ -2,8 +2,10 @@
  * Module dependencies.
  */
 
-const chalk = require('chalk');
-const app = require('./lib/app');
+import chalk from 'chalk';
+import path from 'path';
+
+const app = await import(path.resolve('./lib/app.js'));
 
 const server = app.start().catch((e) => {
   console.log(`server failed: ${e.message}`);
