@@ -22,8 +22,6 @@ jobs:
               --health-interval 10s
               --health-timeout 5s
               --health-retries 5
-            ports:
-              - 27017:27017
 
     steps:
       - uses: actions/checkout@v3
@@ -35,4 +33,4 @@ jobs:
         run: |
           npm i
           npm run test:lint
-          WAOS_NODE_db_uri='mongodb://mongo:27017/WaosNodeTest' npm run test
+          npm run test
