@@ -9,12 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    services:
-      mongodb:
-        image: mongo
-        ports:
-          - 27017:27017
           
     strategy:
       matrix:
@@ -26,7 +20,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: npm install, build, and test
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.8.0
+      - name: Run tests
         run: |
           npm i
           npm run test:lint
