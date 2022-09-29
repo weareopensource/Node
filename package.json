@@ -66,7 +66,7 @@
     "glob": "~8.0.3",
     "handlebars": "^4.7.7",
     "helmet": "~6.0.0",
-    "jest-environment-jsdom": "^29.0.3",
+    "jest-environment-jsdom": "^29.1.1",
     "js-base64": "^3.7.2",
     "js-yaml": "^4.1.0",
     "jsonwebtoken": "^8.5.1",
