@@ -20,9 +20,7 @@
     "url": "https://github.com/weareopensource/Node.git"
   },
   "engines": {
-    "node": ">=14.16",
-    "npm": ">=6.14",
-    "yarn": ">=1.22"
+    "node": ">=18.13.0"
   },
   "scripts": {
     "start": "node server.js",
