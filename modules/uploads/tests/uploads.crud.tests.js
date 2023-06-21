@@ -6,7 +6,6 @@ import path from 'path';
 
 import express from '../../../lib/services/express.js';
 import mongooseService from '../../../lib/services/mongoose.js';
-import multerService from '../../../lib/services/multer.js';
 
 /**
  * Unit tests
@@ -24,8 +23,8 @@ describe('Uploads CRUD Tests :', () => {
   beforeAll(async () => {
     try {
       await mongooseService.loadModels();
-      await mongooseService.connect();
-      await multerService.storage();
+      const connection = await mongooseService.connect();
+      mongooseService.getStorage(connection);
       UserService = (await import(path.resolve('./modules/users/services/users.service.js'))).default;
       app = await express.init();
       agent = request.agent(app);

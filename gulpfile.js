@@ -93,23 +93,20 @@ const jestCoverage = (done) => {
 };
 
 // Drops the MongoDB database, used in e2e testing by security
-const dropMongo = async (done) => {
-  mongooseService
-    .connect()
-    .then((db) => {
-      db.connection.dropDatabase((err) => {
-        if (err) console.error(err);
-        else console.log('Successfully dropped db: ', db.connections[0].name);
-        mongooseService.disconnect(done());
-      });
-    })
-    .catch((e) => {
-      console.log(e);
-    });
+const dropMongo = async () => {
+  try {
+    const db = await mongooseService.connect();
+    const drop = await db.connection.dropDatabase();
+    if (drop) console.log('Successfully dropped db: ', db.connections[0].name);
+    else console.log('DB drop failed');
+    await mongooseService.disconnect();
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 // Drop database after confirmation, depends of ENV
-const dropDB = (done) => {
+const dropDB = async () => {
   if (process.env.NODE_ENV !== 'test') {
     const question = [
       {
@@ -120,11 +117,11 @@ const dropDB = (done) => {
       },
     ];
 
-    inquirer.prompt(question).then((answer) => {
+    inquirer.prompt(question).then(async (answer) => {
       if (!answer.continue) return process.exit(2);
-      dropMongo(done);
+      await dropMongo();
     });
-  } else dropMongo(done);
+  } else await dropMongo();
 };
 
 // Connects to Mongoose based on environment settings and seeds the database

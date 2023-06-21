@@ -5,7 +5,6 @@ import request from 'supertest';
 
 import express from '../../../lib/services/express.js';
 import mongooseService from '../../../lib/services/mongoose.js';
-import multerService from '../../../lib/services/multer.js';
 /**
  * Unit tests
  */
@@ -18,7 +17,6 @@ describe('Home CRUD Tests :', () => {
     try {
       await mongooseService.loadModels();
       await mongooseService.connect();
-      await multerService.storage();
       app = await express.init();
       agent = request.agent(app);
     } catch (err) {

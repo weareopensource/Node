@@ -144,6 +144,7 @@ const config = {
       blur: 8,
     },
     avatar: {
+      kind: 'avatar',
       formats: ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'],
       limits: {
         fileSize: 1 * 1024 * 1024, // Max file size in bytes (1 MB)

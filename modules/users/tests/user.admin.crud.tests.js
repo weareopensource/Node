@@ -7,7 +7,6 @@ import _ from 'lodash';
 
 import express from '../../../lib/services/express.js';
 import mongooseService from '../../../lib/services/mongoose.js';
-import multerService from '../../../lib/services/multer.js';
 
 /**
  * Unit tests
@@ -27,7 +26,6 @@ describe('User admin CRUD Tests :', () => {
     try {
       await mongooseService.loadModels();
       await mongooseService.connect();
-      await multerService.storage();
       UserService = (await import(path.resolve('./modules/users/services/users.service.js'))).default;
       app = await express.init();
       agent = request.agent(app);

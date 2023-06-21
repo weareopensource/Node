@@ -7,7 +7,6 @@ import _ from 'lodash';
 
 import express from '../../../lib/services/express.js';
 import mongooseService from '../../../lib/services/mongoose.js';
-import multerService from '../../../lib/services/multer.js';
 
 /**
  * Unit tests
@@ -26,8 +25,9 @@ describe('User account CRUD Tests :', () => {
   beforeAll(async () => {
     try {
       await mongooseService.loadModels();
-      await mongooseService.connect();
-      await multerService.storage();
+      const connection = await mongooseService.connect();
+      mongooseService.getStorage(connection);
+      await import(path.resolve('./modules/users/services/users.service.js'));
       UserService = (await import(path.resolve('./modules/users/services/users.service.js'))).default;
       app = await express.init();
       agent = request.agent(app);
@@ -80,14 +80,13 @@ describe('User account CRUD Tests :', () => {
         const result = await agent
           .post('/api/users/password')
           .send({
-            newPassword: 'WeAreOpenSource$&2',
-            verifyPassword: 'WeAreOpenSource$&2',
+            newPassword: 'Waos.azs@^:SA3$&2',
+            verifyPassword: 'Waos.azs@^:SA3$&2',
             currentPassword: credentials[0].password,
           })
           .expect(200);
         expect(result.body.message).toBe('Password changed successfully');
       } catch (err) {
-        console.log(err);
         expect(err).toBeFalsy();
       }
     });
@@ -244,7 +243,7 @@ describe('User account CRUD Tests :', () => {
 
         const result = await agent.put('/api/users').send(userUpdate).expect(422);
         expect(result.body.message).toEqual('Unprocessable Entity');
-        expect(result.body.description).toBe('Path `email` (account@test.com) is not unique. .');
+        expect(result.body.description).toBe('Email already exists.');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -364,7 +363,6 @@ describe('User account CRUD Tests :', () => {
         expect(typeof result.body.data.avatar).toBe('string');
         expect(result.body.data.id).toBe(String(user.id));
       } catch (err) {
-        console.log(err);
         expect(err).toBeFalsy();
       }
     });
@@ -383,9 +381,8 @@ describe('User account CRUD Tests :', () => {
       try {
         const result = await agent.post('/api/users/avatar').attach('img', './modules/users/tests/img/text-file.txt').expect(422);
         expect(result.body.message).toEqual('Unprocessable Entity');
-        expect(result.body.description).toEqual('Only image/png,image/jpeg,image/jpg,image/gif images allowed.');
+        expect(result.body.description).toEqual('Only image/png,image/jpeg,image/jpg,image/gif files allowed.');
       } catch (err) {
-        console.log(err);
         expect(err).toBeFalsy();
       }
     });
@@ -393,11 +390,10 @@ describe('User account CRUD Tests :', () => {
     test('should not be able to change profile avatar to too big of a file', async () => {
       try {
         const result = await agent.post('/api/users/avatar').attach('img', './modules/users/tests/img/too-big-file.png').expect(422);
-
         expect(result.body.message).toEqual('Unprocessable Entity');
-        expect(result.body.description).toEqual('File too large.');
+        expect(result.body.description).toEqual('Only files lower than 1mo are allowed.');
       } catch (err) {
-        console.log(err);
+        console.log('toto', err);
         expect(err).toBeFalsy();
       }
     });
@@ -417,8 +413,8 @@ describe('User account CRUD Tests :', () => {
       try {
         await agent.get('/api/users/terms').expect(401);
       } catch (err) {
-        expect(err).toBeFalsy();
         console.log(err);
+        expect(err).toBeFalsy();
       }
     });
 

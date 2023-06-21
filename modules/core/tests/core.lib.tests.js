@@ -7,7 +7,6 @@ import path from 'path';
 import config from '../../../config/index.js';
 import logger from '../../../lib/services/logger.js';
 import mongooseService from '../../../lib/services/mongoose.js';
-import multerService from '../../../lib/services/multer.js';
 import seed from '../../../lib/services/seed.js';
 import errors from '../../../lib/helpers/errors.js';
 
@@ -23,7 +22,6 @@ describe('Configuration Tests:', () => {
     try {
       await mongooseService.loadModels();
       await mongooseService.connect();
-      await multerService.storage();
       AuthService = (await import(path.resolve('./modules/auth/services/auth.service.js'))).default;
       UserService = (await import(path.resolve('./modules/users/services/users.service.js'))).default;
       TaskService = (await import(path.resolve('./modules/tasks/services/tasks.service.js'))).default;
@@ -387,11 +385,6 @@ describe('Configuration Tests:', () => {
       expect(userAvatarConfig).toBeDefined();
       expect(userAvatarConfig.formats).toBeInstanceOf(Array);
       expect(userAvatarConfig.limits.fileSize).toBe(1048576);
-    });
-
-    test('should be able to generate 32 bytes file name', async () => {
-      const filename = await multerService.generateFileName('filename.png');
-      expect(filename).toHaveLength(68);
     });
   });
 
