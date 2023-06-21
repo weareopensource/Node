@@ -7,7 +7,6 @@ import _ from 'lodash';
 
 import express from '../../../lib/services/express.js';
 import mongooseService from '../../../lib/services/mongoose.js';
-import multerService from '../../../lib/services/multer.js';
 
 /**
  * Unit tests

@@ -7,7 +7,6 @@ import path from 'path';
 import config from '../../../config/index.js';
 import logger from '../../../lib/services/logger.js';
 import mongooseService from '../../../lib/services/mongoose.js';
-import multerService from '../../../lib/services/multer.js';
 import seed from '../../../lib/services/seed.js';
 import errors from '../../../lib/helpers/errors.js';
 
