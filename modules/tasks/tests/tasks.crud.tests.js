@@ -27,7 +27,6 @@ describe('Tasks CRUD Tests :', () => {
     try {
       await mongooseService.loadModels();
       await mongooseService.connect();
-      await multerService.storage();
       UserService = (await import(path.resolve('./modules/users/services/users.service.js'))).default;
       app = await express.init();
       agent = request.agent(app);

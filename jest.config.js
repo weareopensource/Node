@@ -59,7 +59,7 @@ export default {
 
   // A set of global variables that need to be available in all test environments
   globals: {
-    "ts-jest": {
+    'ts-jest': {
       useESM: true,
     },
   },
@@ -90,7 +90,7 @@ export default {
   // notifyMode: "always",
 
   // A preset that is used as a base for Jest's configuration
-  preset: "ts-jest/presets/default-esm",
+  preset: 'ts-jest/presets/default-esm',
 
   // Run tests from one or more projects
   // projects: null,
@@ -105,7 +105,7 @@ export default {
   // resetModules: false,
 
   // A path to a custom resolver
-  resolver: "./resolver.cjs",
+  resolver: './resolver.cjs',
 
   // Automatically restore mock state between every test
   // restoreMocks: false,

@@ -24,8 +24,8 @@ describe('Uploads CRUD Tests :', () => {
   beforeAll(async () => {
     try {
       await mongooseService.loadModels();
-      await mongooseService.connect();
-      await multerService.storage();
+      const connection = await mongooseService.connect();
+      mongooseService.getStorage(connection);
       UserService = (await import(path.resolve('./modules/users/services/users.service.js'))).default;
       app = await express.init();
       agent = request.agent(app);

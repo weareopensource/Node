@@ -27,7 +27,6 @@ describe('Auth CRUD Tests :', () => {
     try {
       await mongooseService.loadModels();
       await mongooseService.connect();
-      await multerService.storage();
       UserService = (await import(path.resolve('./modules/users/services/users.service.js'))).default;
       app = await express.init();
       agent = request.agent(app);
@@ -156,9 +155,8 @@ describe('Auth CRUD Tests :', () => {
         const result = await agent.post('/api/auth/signup').send(_userEdited).expect(422);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toEqual('Unprocessable Entity');
-        expect(result.body.description).toBe('Path `email` (register_new_user_@test.com) is not unique. .');
+        expect(result.body.description).toBe('Email already exists.');
       } catch (err) {
-        console.log(err);
         expect(err).toBeFalsy();
       }
 

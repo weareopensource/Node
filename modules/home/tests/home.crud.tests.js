@@ -18,7 +18,6 @@ describe('Home CRUD Tests :', () => {
     try {
       await mongooseService.loadModels();
       await mongooseService.connect();
-      await multerService.storage();
       app = await express.init();
       agent = request.agent(app);
     } catch (err) {

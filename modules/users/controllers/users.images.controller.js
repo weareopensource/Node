@@ -18,10 +18,8 @@ const updateAvatar = async (req, res) => {
     if (req.multerErr) throw new AppError(req.multerErr.message, { code: 'SERVICE_ERROR', details: req.multerErr });
     // delete old image
     if (req.user.avatar) await UploadsService.remove({ filename: req.user.avatar });
-    // update document uploaded (metadata ...)
-    const result = await UploadsService.update(req.file, req.user, 'avatar');
     // update user
-    const user = await UserService.update(req.user, { avatar: result.filename });
+    const user = await UserService.update(req.user, { avatar: req.file.filename });
     // reload playload
     req.login(user, { session: false }, (errLogin) => {
       if (errLogin) return responses.error(res, 400, 'Bad Request', errors.getMessage(errLogin))(errLogin);

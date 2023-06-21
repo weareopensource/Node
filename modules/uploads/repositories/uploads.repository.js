@@ -2,12 +2,15 @@
  * Module dependencies
  */
 import mongoose from 'mongoose';
-import { createModel } from 'mongoose-gridfs';
+import mongodb from 'mongodb';
 
 import AppError from '../../../lib/helpers/AppError.js';
 
-const Attachment = createModel({ bucketName: 'uploads', model: 'Uploads' });
 const Uploads = mongoose.model('Uploads');
+
+const bucket = new mongodb.GridFSBucket(mongoose.connection.db, {
+  bucketName: 'uploads',
+});
 
 /**
  * @desc Function to get all upload in db with filter or not
@@ -28,7 +31,13 @@ const get = (uploadName) => Uploads.findOne({ filename: uploadName }).exec();
  * @param {Object} Upload
  * @return {Stream} upload
  */
-const getStream = (upload) => Attachment.read(upload);
+const getStream = (upload) => {
+  try {
+    return bucket.openDownloadStream(upload._id);
+  } catch (err) {
+    throw new AppError('Uppload: read error', { code: 'REPOSITORY_ERROR', details: err });
+  }
+};
 
 /**
  * @desc Function to update an upload in db
@@ -44,12 +53,12 @@ const update = (id, update) => Uploads.findOneAndUpdate({ _id: id }, update, { n
  * @return {Object} confirmation of delete
  */
 const remove = async (upload) => {
-  if (!upload._id) upload = await Uploads.findOne({ filename: upload.filename }).exec();
-  if (upload) {
-    Attachment.unlink(upload._id, (err, unlinked) => {
-      if (err) throw new AppError('Upload: delete error', { code: 'REPOSITORY_ERROR', details: err });
-      return unlinked;
-    });
+  if (!upload || !upload._id) upload = await Uploads.findOne({ filename: upload.filename }).exec();
+  try {
+    const unlinked = await bucket.delete(upload._id);
+    return unlinked;
+  } catch (err) {
+    throw new AppError('Upload: delete error', { code: 'REPOSITORY_ERROR', details: err });
   }
 };
 
@@ -60,11 +69,13 @@ const remove = async (upload) => {
  */
 const deleteMany = async (filter) => {
   const uploads = await list(filter);
-  uploads.forEach((upload) => {
-    Attachment.unlink(upload._id, (err, unlinked) => {
-      if (err) throw new AppError('Upload: delete error', { code: 'REPOSITORY_ERROR', details: err });
+  uploads.forEach(async (upload) => {
+    try {
+      const unlinked = await bucket.delete(upload._id);
       return unlinked;
-    });
+    } catch (err) {
+      throw new AppError('Upload: delete error', { code: 'REPOSITORY_ERROR', details: err });
+    }
   });
   return { deletedCount: uploads.length };
 };
@@ -90,10 +101,12 @@ const purge = async (kind, collection, key) => {
     { $match: { references: [] } },
   ]);
   toDelete.forEach(async (id) => {
-    Attachment.unlink(id, (err, unlinked) => {
-      if (err) throw new AppError('Upload: delete error', { code: 'REPOSITORY_ERROR', details: err });
+    try {
+      const unlinked = await bucket.delete(id);
       return unlinked;
-    });
+    } catch (err) {
+      throw new AppError('Upload: delete error', { code: 'REPOSITORY_ERROR', details: err });
+    }
   });
   return { deletedCount: toDelete.length };
 };
