@@ -3,7 +3,7 @@
  */
 import _ from 'lodash';
 import chalk from 'chalk';
-import glob from 'glob';
+import { glob } from 'glob';
 import fs, { readFileSync } from 'fs';
 import path from 'path';
 import objectPath from 'object-path';
