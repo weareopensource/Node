@@ -12,21 +12,21 @@ import assets from './assets.js';
 /**
  * Get files by glob patterns
  */
-const getGlobbedPaths = (globPatterns, excludes) => {
+const getGlobbedPaths = async (globPatterns, excludes) => {
   // URL paths regex
   /* eslint no-useless-escape:0 */
   const urlRegex = /^(?:[a-z]+:)?\/\//i;
   let output = [];
   // If glob pattern is array then we use each pattern in a recursive way, otherwise we use glob
   if (_.isArray(globPatterns)) {
-    globPatterns.forEach((globPattern) => {
-      output = _.union(output, getGlobbedPaths(globPattern, excludes));
+    globPatterns.forEach(async (globPattern) => {
+      output = _.union(output, await getGlobbedPaths(globPattern, excludes));
     });
   } else if (_.isString(globPatterns)) {
     if (urlRegex.test(globPatterns)) {
       output.push(globPatterns);
     } else {
-      let files = glob.sync(globPatterns.replace(/\\/g, '/'));
+      let files = await glob.sync(globPatterns.replace(/\\/g, '/'));
       if (excludes) {
         files = files.map((file) => {
           if (_.isArray(excludes)) {
@@ -79,15 +79,15 @@ const initSecureMode = (config) => {
 /**
  * Initialize global configuration files
  */
-const initGlobalConfigFiles = (assets) => {
+const initGlobalConfigFiles = async (assets) => {
   const files = {}; // Appending files
-  files.swagger = getGlobbedPaths(assets.allYaml); // Setting Globbed module yaml files
-  files.mongooseModels = getGlobbedPaths(assets.mongooseModels); // Setting Globbed mongoose model files
-  files.sequelizeModels = getGlobbedPaths(assets.sequelizeModels); // Setting Globbed sequelize model files
-  files.routes = getGlobbedPaths(assets.routes); // Setting Globbed route files
-  files.configs = getGlobbedPaths(assets.config); // Setting Globbed config files
+  files.swagger = await getGlobbedPaths(assets.allYaml); // Setting Globbed module yaml files
+  files.mongooseModels = await getGlobbedPaths(assets.mongooseModels); // Setting Globbed mongoose model files
+  files.sequelizeModels = await getGlobbedPaths(assets.sequelizeModels); // Setting Globbed sequelize model files
+  files.routes = await getGlobbedPaths(assets.routes); // Setting Globbed route files
+  files.configs = await getGlobbedPaths(assets.config); // Setting Globbed config files
   // files.sockets = getGlobbedPaths(assets.sockets); // Setting Globbed socket files
-  files.policies = getGlobbedPaths(assets.policies); // Setting Globbed policies files
+  files.policies = await getGlobbedPaths(assets.policies); // Setting Globbed policies files
   return files;
 };
 
@@ -124,7 +124,7 @@ const initGlobalConfig = async () => {
   const packageJSON = JSON.parse(readFileSync(path.resolve('./package.json')));
   _.merge(config, { package: packageJSON });
   // Initialize global globbed files
-  _.merge(config, { files: initGlobalConfigFiles(assets) });
+  _.merge(config, { files: await initGlobalConfigFiles(assets) });
   // Init Secure SSL if can be used
   initSecureMode(config);
   // Print a warning if config.domain is not set
