@@ -35,7 +35,7 @@ export default async (app) => {
   });
 
   // Initialize strategies
-  for (const stratPath of config.utils.getGlobbedPaths(path.join(__dirname, './strategies/**/*.js'))) {
+  for (const stratPath of await config.utils.getGlobbedPaths(path.join(__dirname, './strategies/**/*.js'))) {
     const strat = await import(path.resolve(stratPath));
     strat.default(config);
   }

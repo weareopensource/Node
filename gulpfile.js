@@ -2,7 +2,6 @@
  * Module dependencies.
  */
 import _ from 'lodash';
-// import glob from "glob";
 import gulp from 'gulp';
 import gulpLoadPlugins from 'gulp-load-plugins';
 import path from 'path';

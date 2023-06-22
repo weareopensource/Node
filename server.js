@@ -8,7 +8,8 @@ import path from 'path';
 const app = await import(path.resolve('./lib/app.js'));
 
 const server = app.start().catch((e) => {
-  console.log(`server failed: ${e.message}`);
+  console.log(chalk.red(`Server failed`));
+  console.log(JSON.stringify(e.message));
   throw e;
 });
 
