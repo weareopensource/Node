@@ -88,7 +88,7 @@
     "sharp": "^0.32.1",
     "snyk": "^1.1187.0",
     "supertest": "^6.3.3",
-    "swagger-ui-express": "^4.6.3",
+    "swagger-ui-express": "^5.0.0",
     "swig": "^1.4.2",
     "ts-jest": "^29.1.1",
     "winston": "3.9.0",
