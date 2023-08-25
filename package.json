@@ -116,7 +116,7 @@
     "inquirer": "^9.2.10",
     "jest-cli": "29.6.4",
     "prettier": "^3.0.2",
-    "semantic-release": "^21.1.0",
+    "semantic-release": "^21.1.1",
     "standard-version": "^9.5.0"
   },
   "release": {
