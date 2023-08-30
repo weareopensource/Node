@@ -5,7 +5,7 @@ import request from 'supertest';
 import path from 'path';
 import _ from 'lodash';
 
-import express from '../../../lib/services/express.js';
+import { bootstrap } from '../../../lib/app.js';
 import mongooseService from '../../../lib/services/mongoose.js';
 
 /**
@@ -13,7 +13,6 @@ import mongooseService from '../../../lib/services/mongoose.js';
  */
 describe('User admin CRUD Tests :', () => {
   let UserService = null;
-  let app;
   let agent;
   let credentials;
   let user;
@@ -24,11 +23,9 @@ describe('User admin CRUD Tests :', () => {
   //  init
   beforeAll(async () => {
     try {
-      await mongooseService.loadModels();
-      await mongooseService.connect();
+      const init = await bootstrap();
       UserService = (await import(path.resolve('./modules/users/services/users.service.js'))).default;
-      app = await express.init();
-      agent = request.agent(app);
+      agent = request.agent(init.app);
     } catch (err) {
       console.log(err);
     }

@@ -3,22 +3,19 @@
  */
 import request from 'supertest';
 
-import express from '../../../lib/services/express.js';
+import { bootstrap } from '../../../lib/app.js';
 import mongooseService from '../../../lib/services/mongoose.js';
 /**
  * Unit tests
  */
 describe('Home CRUD Tests :', () => {
-  let app;
   let agent;
 
   //  init
   beforeAll(async () => {
     try {
-      await mongooseService.loadModels();
-      await mongooseService.connect();
-      app = await express.init();
-      agent = request.agent(app);
+      const init = await bootstrap();
+      agent = request.agent(init.app);
     } catch (err) {
       console.log(err);
     }
