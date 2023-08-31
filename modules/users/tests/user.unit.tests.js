@@ -8,15 +8,12 @@ import schema from '../models/user.schema.js';
 
 const options = _.clone(config.joi.validationOptions);
 
-// Globals
-let user;
-// let user2;
-// let user3;
-
 /**
  * Unit tests
  */
-describe('User Schema Tests :', () => {
+describe('User unit tests:', () => {
+  let user;
+
   beforeEach(() => {
     user = {
       firstName: 'Full',
@@ -25,15 +22,6 @@ describe('User Schema Tests :', () => {
       password: 'M3@n.jsI$Aw3$0m3',
       provider: 'local',
     };
-    // user2 is a clone of user
-    // user2 = user;
-    // user3 = {
-    //   firstName: 'Different',
-    //   lastName: 'User',
-    //   email: 'test3@test.com',
-    //   password: 'Different_Password1!',
-    //   provider: 'local',
-    // };
   });
 
   describe('Schema', () => {
@@ -43,21 +31,6 @@ describe('User Schema Tests :', () => {
       expect(result.error).toBeFalsy();
       done();
     });
-
-    // it('should fail to save an existing user again', (done) => {
-    //   const user = new User(user);
-    //   const user2 = new User(user2);
-
-    //   user.save(() => {
-    //     user2.save((err) => {
-    //       should.exist(err);
-    //       user.remove((err) => {
-    //         should.not.exist(err);
-    //         done();
-    //       });
-    //     });
-    //   });
-    // });
 
     test('should be able to show an error when trying a schema without first name', (done) => {
       user.firstName = '';
@@ -94,89 +67,6 @@ describe('User Schema Tests :', () => {
       expect(result.error).toBeDefined();
       done();
     });
-
-    //   it('should confirm that saving user model doesnt change the password', (done) => {
-    //     const user = new User(user);
-
-    //     user.save((err) => {
-    //       should.not.exist(err);
-    //       const passwordBefore = user.password;
-    //       user.firstName = 'test';
-    //       user.save(() => {
-    //         const passwordAfter = user.password;
-    //         passwordBefore.should.equal(passwordAfter);
-    //         user.remove((err) => {
-    //           should.not.exist(err);
-    //           done();
-    //         });
-    //       });
-    //     });
-    //   });
-
-    //   it('should be able to save 2 different users', (done) => {
-    //     const user = new User(user);
-    //     const user3 = new User(user3);
-
-    //     user.save((err) => {
-    //       should.not.exist(err);
-    //       user3.save((err) => {
-    //         should.not.exist(err);
-    //         user3.remove((err) => {
-    //           should.not.exist(err);
-    //           user.remove((err) => {
-    //             should.not.exist(err);
-    //             done();
-    //           });
-    //         });
-    //       });
-    //     });
-    //   });
-
-    //   it('should not be able to save another user with the same email address', (done) => {
-    //   // Test may take some time to complete due to db operations
-
-    //     const user = new User(user);
-    //     const user3 = new User(user3);
-
-    //     user.save((err) => {
-    //       should.not.exist(err);
-    //       user3.email = user.email;
-    //       user3.save((err) => {
-    //         should.exist(err);
-    //         user.remove((err) => {
-    //           should.not.exist(err);
-    //           done();
-    //         });
-    //       });
-    //     });
-    //   });
-
-    //   it('should not save the password in plain text', (done) => {
-    //     const user = new User(user);
-    //     const passwordBeforeSave = user.password;
-    //     user.save((err) => {
-    //       should.not.exist(err);
-    //       user.password.should.not.equal(passwordBeforeSave);
-    //       user.remove((err) => {
-    //         should.not.exist(err);
-    //         done();
-    //       });
-    //     });
-    //   });
-
-    //   it('should not save the passphrase in plain text', (done) => {
-    //     const user = new User(user);
-    //     user.password = 'Open-Source Full-Stack Solution for MEAN';
-    //     const passwordBeforeSave = user.password;
-    //     user.save((err) => {
-    //       should.not.exist(err);
-    //       user.password.should.not.equal(passwordBeforeSave);
-    //       user.remove((err) => {
-    //         should.not.exist(err);
-    //         done();
-    //       });
-    //     });
-    //   });
   });
 
   describe('Password Validation Tests', () => {

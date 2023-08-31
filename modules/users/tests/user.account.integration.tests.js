@@ -11,7 +11,7 @@ import mongooseService from '../../../lib/services/mongoose.js';
 /**
  * Unit tests
  */
-describe('User account CRUD Tests :', () => {
+describe('User integration tests:', () => {
   let UserService = null;
   let agent;
   let credentials;

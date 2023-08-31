@@ -8,7 +8,7 @@ import mongooseService from '../../../lib/services/mongoose.js';
 /**
  * Unit tests
  */
-describe('Home CRUD Tests :', () => {
+describe('Home integration tests:', () => {
   let agent;
 
   //  init

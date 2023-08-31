@@ -11,7 +11,7 @@ import mongooseService from '../../../lib/services/mongoose.js';
 /**
  * Unit tests
  */
-describe('Auth CRUD Tests :', () => {
+describe('Auth integration tests:', () => {
   let UserService = null;
   let agent;
   let credentials;
@@ -70,7 +70,7 @@ describe('Auth CRUD Tests :', () => {
       }
     });
 
-    test('should not be able to register a new user with weak password', async () => {
+    test('should reject registration with weak password', async () => {
       // Init user edited
       _userEdited.email = 'register_new_user_@test.com';
       _userEdited.password = 'azerty';
@@ -86,7 +86,7 @@ describe('Auth CRUD Tests :', () => {
       }
     });
 
-    test('if should not be able to register, should not return sensible data', async () => {
+    test('should not return sensitive data on registration failure', async () => {
       // Init user edited
       _userEdited.email = 'register_new_user_@test.com';
       _userEdited.password = 'azerty';
@@ -104,7 +104,7 @@ describe('Auth CRUD Tests :', () => {
       }
     });
 
-    test('should be able to register a new user ', async () => {
+    test('should successfully register a new user', async () => {
       // Init user edited
       _userEdited.email = 'register_new_user_@test.com';
 
@@ -131,7 +131,7 @@ describe('Auth CRUD Tests :', () => {
       }
     });
 
-    test('should not be able to register a user with same email', async () => {
+    test('should reject registration with duplicate email', async () => {
       // Init user edited
       _userEdited.email = 'register_new_user_@test.com';
 
@@ -164,7 +164,7 @@ describe('Auth CRUD Tests :', () => {
       }
     });
 
-    test('should not be able to login with wrong email', async () => {
+    test('should reject login with incorrect email', async () => {
       try {
         const result = await agent
           .post('/api/auth/signin')
@@ -180,7 +180,7 @@ describe('Auth CRUD Tests :', () => {
       }
     });
 
-    test('should be able to login with email successfully', async () => {
+    test('should successfully login with correct email', async () => {
       try {
         await agent.post('/api/auth/signin').send(credentials[0]).expect(200);
       } catch (err) {
@@ -189,7 +189,7 @@ describe('Auth CRUD Tests :', () => {
       }
     });
 
-    test('forgot password should return 400 for non-existent mail', async () => {
+    test('forgot password request should return 400 for non-existent email', async () => {
       try {
         const result = await agent
           .post('/api/auth/forgot')
@@ -206,7 +206,7 @@ describe('Auth CRUD Tests :', () => {
       }
     });
 
-    test('forgot password should return 422 for no email provided', async () => {
+    test('forgot password request should return 422 for empty email', async () => {
       _userEdited.provider = 'facebook';
 
       try {
@@ -239,7 +239,7 @@ describe('Auth CRUD Tests :', () => {
       }
     });
 
-    test('forgot password should return 400 for non-local provider set for the user object', async () => {
+    test('forgot password request should return 400 for non-local provider', async () => {
       _userEdited.provider = 'facebook';
 
       try {
@@ -272,7 +272,7 @@ describe('Auth CRUD Tests :', () => {
       }
     });
 
-    test('forgot password should be able to reset password for user password reset request', async () => {
+    test('should initiate password reset for valid email', async () => {
       try {
         const result = await agent
           .post('/api/auth/forgot')
@@ -300,7 +300,7 @@ describe('Auth CRUD Tests :', () => {
       }
     });
 
-    test('forgot password should be able to reset the password using reset token', async () => {
+    test('should allow password reset using valid reset token', async () => {
       try {
         const result = await agent
           .post('/api/auth/forgot')
@@ -337,7 +337,7 @@ describe('Auth CRUD Tests :', () => {
       }
     });
 
-    test('forgot password should return error when using invalid reset token', async () => {
+    test('should reject password reset using invalid reset token', async () => {
       try {
         const result = await agent
           .post('/api/auth/forgot')
