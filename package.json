@@ -47,6 +47,7 @@
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "@jest/core": "^29.6.4",
+    "@jest/globals": "^29.6.4",
     "acl": "~0.4.11",
     "axios": "^1.5.0",
     "bcrypt": "^5.1.1",

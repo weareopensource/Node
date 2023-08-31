@@ -8,13 +8,12 @@ import schema from '../models/tasks.schema.js';
 
 const options = _.clone(config.joi.validationOptions);
 
-// Globals
-let task;
-
 /**
  * Unit tests
  */
-describe('Tasks Schema Tests :', () => {
+describe('Tasks unit tests:', () => {
+  let task;
+
   beforeEach(() => {
     task = {
       title: 'title',
