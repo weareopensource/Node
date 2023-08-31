@@ -5,7 +5,7 @@ import request from 'supertest';
 import path from 'path';
 import _ from 'lodash';
 
-import express from '../../../lib/services/express.js';
+import { bootstrap } from '../../../lib/app.js';
 import mongooseService from '../../../lib/services/mongoose.js';
 
 /**
@@ -13,7 +13,6 @@ import mongooseService from '../../../lib/services/mongoose.js';
  */
 describe('User account CRUD Tests :', () => {
   let UserService = null;
-  let app;
   let agent;
   let credentials;
   let user;
@@ -22,15 +21,12 @@ describe('User account CRUD Tests :', () => {
   let _userEdited;
 
   //  init
+  //  init
   beforeAll(async () => {
     try {
-      await mongooseService.loadModels();
-      const connection = await mongooseService.connect();
-      mongooseService.getStorage(connection);
-      await import(path.resolve('./modules/users/services/users.service.js'));
+      const init = await bootstrap();
       UserService = (await import(path.resolve('./modules/users/services/users.service.js'))).default;
-      app = await express.init();
-      agent = request.agent(app);
+      agent = request.agent(init.app);
     } catch (err) {
       console.log(err);
     }
@@ -356,7 +352,7 @@ describe('User account CRUD Tests :', () => {
 
     test('should be able to change profile avatar if signed in', async () => {
       try {
-        const result = await agent.post('/api/users/avatar').attach('img', './modules/users/tests/img/default.png').expect(200);
+        const result = await agent.post('/api/users/avatar').attach('img', './modules/users/tests/img/default.jpeg').expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('profile avatar updated');
         expect(result.body.data).toBeInstanceOf(Object);
@@ -369,7 +365,7 @@ describe('User account CRUD Tests :', () => {
 
     test('should not be able to change profile avatar if attach a avatar with a different field name', async () => {
       try {
-        const result = await agent.post('/api/users/avatar').attach('fieldThatDoesntWork', './modules/users/tests/img/default.png').expect(422);
+        const result = await agent.post('/api/users/avatar').attach('fieldThatDoesntWork', './modules/users/tests/img/default.jpeg').expect(422);
         expect(result.body.message).toEqual('Unprocessable Entity');
         expect(result.body.description).toEqual('Unexpected field.');
       } catch (err) {
@@ -387,16 +383,17 @@ describe('User account CRUD Tests :', () => {
       }
     });
 
-    test('should not be able to change profile avatar to too big of a file', async () => {
-      try {
-        const result = await agent.post('/api/users/avatar').attach('img', './modules/users/tests/img/too-big-file.png').expect(422);
-        expect(result.body.message).toEqual('Unprocessable Entity');
-        expect(result.body.description).toEqual('Only files lower than 1mo are allowed.');
-      } catch (err) {
-        console.log('toto', err);
-        expect(err).toBeFalsy();
-      }
-    });
+    // TOFIX issue on supertest for large file https://github.com/ladjs/supertest/issues/824
+    // test('should not be able to change profile avatar to too big of a file', async () => {
+    //   try {
+    //     const result = await agent.post('/api/users/avatar').attach('img', './modules/users/tests/img/default-big.jpeg').expect(422);
+    //     expect(result.body.message).toEqual('Unprocessable Entity');
+    //     expect(result.body.description).toEqual('Only files lower than 0.05mo are allowed.');
+    //   } catch (err) {
+    //     console.log('toto', err);
+    //     expect(err).toBeFalsy();
+    //   }
+    // });
 
     afterEach(async () => {
       // del user

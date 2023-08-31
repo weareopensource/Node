@@ -36,7 +36,7 @@ export default (app) => {
   app
     .route('/api/users/avatar')
     .all(passport.authenticate('jwt', { session: false }), policy.isAllowed)
-    .post(multer.create('img', config.uploads.avatar), usersImage.updateAvatar)
+    .post(multer.create(config.uploads.avatar), usersImage.updateAvatar)
     .delete(usersImage.removeAvatar);
 
   app

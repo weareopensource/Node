@@ -4,7 +4,7 @@
 import chalk from 'chalk';
 import path from 'path';
 
-import mongooseService from '../../lib/services/mongoose';
+import mongooseService from '../../lib/services/mongoose.js';
 
 /**
  * Work
@@ -15,7 +15,7 @@ const purge = async () => {
     await mongooseService.connect();
     await mongooseService.loadModels();
 
-    const uploadRepository = await import(path.resolve('./modules/uploads/repositories/uploads.repository.js'));
+    const uploadRepository = (await import(path.resolve('./modules/uploads/repositories/uploads.repository.js'))).default;
     const result = await uploadRepository.purge('avatar', 'users', 'avatar');
     console.log(chalk.bold.blue(`Uploads purged ${result.deletedCount} avatar`));
   } catch (err) {

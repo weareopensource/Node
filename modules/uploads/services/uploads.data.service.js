@@ -23,19 +23,7 @@ const remove = async (user) => {
   return Promise.resolve(result);
 };
 
-/**
- * @desc Function to ask repository to push a list of uploads
- * @param {[Object]} uploads
- * @param {[String]} filters
- * @return {Promise} uploads
- */
-const push = (uploads, filters, collection) => {
-  const result = UploadRepository.push(uploads, filters, collection);
-  return result;
-};
-
 export default {
   list,
   remove,
-  push,
 };

@@ -8,5 +8,4 @@ export default {
   routes: 'modules/*/routes/*.js',
   config: 'modules/*/config/*.js',
   policies: 'modules/*/policies/*.js',
-  tests: 'modules/*/tests/*.js',
 };

@@ -11,7 +11,7 @@ export default _.merge(config.default, {
     port: 4200,
   },
   db: {
-    uri: 'mongodb://localhost/WaosNode',
+    uri: 'mongodb://127.0.0.1:27017/WaosNode',
     debug: false,
   },
   secure: {
@@ -25,5 +25,4 @@ export default _.merge(config.default, {
     pattern:
       ':id :email :remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"', // only for custom format
   },
-  livereload: false,
 });

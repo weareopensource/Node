@@ -2,13 +2,13 @@
  * Module dependencies
  */
 import mongoose from 'mongoose';
-import mongodb from 'mongodb';
+import { GridFSBucket } from 'mongodb';
 
 import AppError from '../../../lib/helpers/AppError.js';
 
 const Uploads = mongoose.model('Uploads');
 
-const bucket = new mongodb.GridFSBucket(mongoose.connection.db, {
+const bucket = new GridFSBucket(mongoose.connection.db, {
   bucketName: 'uploads',
 });
 
@@ -100,46 +100,15 @@ const purge = async (kind, collection, key) => {
     },
     { $match: { references: [] } },
   ]);
-  toDelete.forEach(async (id) => {
+  toDelete.forEach(async (upload) => {
     try {
-      const unlinked = await bucket.delete(id);
+      const unlinked = await bucket.delete(upload._id);
       return unlinked;
     } catch (err) {
       throw new AppError('Upload: delete error', { code: 'REPOSITORY_ERROR', details: err });
     }
   });
   return { deletedCount: toDelete.length };
-};
-
-/**
- * @desc Function to push list of uploads in db
- * @param {[Object]} uploads
- * @param {[String]} filters
- * @return {Object} uploads
- */
-const push = (uploads, filters, collection) => {
-  const _schema = new mongoose.Schema({}, { collection, strict: false });
-  let model;
-  try {
-    model = mongoose.model(collection);
-  } catch (error) {
-    model = mongoose.model(collection, _schema);
-  }
-  return model.bulkWrite(
-    uploads.map((upload) => {
-      const filter = {};
-      filters.forEach((value) => {
-        filter[value] = upload[value];
-      });
-      return {
-        updateOne: {
-          filter,
-          update: upload,
-          upsert: true,
-        },
-      };
-    }),
-  );
 };
 
 export default {
@@ -150,5 +119,4 @@ export default {
   remove,
   deleteMany,
   purge,
-  push,
 };

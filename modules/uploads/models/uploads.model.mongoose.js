@@ -28,3 +28,4 @@ const UploadsMongoose = new Schema(
 );
 
 mongoose.model('Uploads', UploadsMongoose, 'uploads.files');
+mongoose.model('UploadsChunks', new Schema(), 'uploads.chunks');

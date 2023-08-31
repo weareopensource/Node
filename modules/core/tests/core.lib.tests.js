@@ -10,6 +10,8 @@ import mongooseService from '../../../lib/services/mongoose.js';
 import seed from '../../../lib/services/seed.js';
 import errors from '../../../lib/helpers/errors.js';
 
+import { bootstrap } from '../../../lib/app.js';
+
 /**
  * Unit tests
  */
@@ -20,8 +22,7 @@ describe('Configuration Tests:', () => {
 
   beforeAll(async () => {
     try {
-      await mongooseService.loadModels();
-      await mongooseService.connect();
+      await bootstrap();
       AuthService = (await import(path.resolve('./modules/auth/services/auth.service.js'))).default;
       UserService = (await import(path.resolve('./modules/users/services/users.service.js'))).default;
       TaskService = (await import(path.resolve('./modules/tasks/services/tasks.service.js'))).default;
@@ -384,7 +385,7 @@ describe('Configuration Tests:', () => {
       const userAvatarConfig = config.uploads.avatar;
       expect(userAvatarConfig).toBeDefined();
       expect(userAvatarConfig.formats).toBeInstanceOf(Array);
-      expect(userAvatarConfig.limits.fileSize).toBe(1048576);
+      expect(userAvatarConfig.limits.fileSize).toBe(52428.8);
     });
   });
 

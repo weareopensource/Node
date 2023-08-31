@@ -16,12 +16,12 @@ const config = {
   api: {
     protocol: 'http',
     port: 3000,
-    host: 'localhost',
+    host: '127.0.0.1',
     base: 'api',
     timeout: 2 * 60 * 1000,
   },
   db: {
-    uri: 'mongodb://localhost/WaosNodeDev',
+    uri: 'mongodb://127.0.0.1:27017/WaosNodeDev',
     debug: true,
     options: {
       user: '',
@@ -61,7 +61,6 @@ const config = {
       json: false,
     },
   },
-  livereload: true,
   // orm: {
   //    dbname: 'WaosNodeDev',
   //    user: '',

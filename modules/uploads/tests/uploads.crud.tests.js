@@ -4,7 +4,7 @@
 import request from 'supertest';
 import path from 'path';
 
-import express from '../../../lib/services/express.js';
+import { bootstrap } from '../../../lib/app.js';
 import mongooseService from '../../../lib/services/mongoose.js';
 
 /**
@@ -12,7 +12,6 @@ import mongooseService from '../../../lib/services/mongoose.js';
  */
 describe('Uploads CRUD Tests :', () => {
   let UserService;
-  let app;
   let agent;
   let credentials;
   let user;
@@ -22,12 +21,9 @@ describe('Uploads CRUD Tests :', () => {
   //  init
   beforeAll(async () => {
     try {
-      await mongooseService.loadModels();
-      const connection = await mongooseService.connect();
-      mongooseService.getStorage(connection);
+      const init = await bootstrap();
       UserService = (await import(path.resolve('./modules/users/services/users.service.js'))).default;
-      app = await express.init();
-      agent = request.agent(app);
+      agent = request.agent(init.app);
     } catch (err) {
       console.log(err);
     }
@@ -61,7 +57,7 @@ describe('Uploads CRUD Tests :', () => {
 
       // add a upload
       try {
-        const result = await agent.post('/api/users/avatar').attach('img', './modules/users/tests/img/default.png').expect(200);
+        const result = await agent.post('/api/users/avatar').attach('img', './modules/users/tests/img/default.jpeg').expect(200);
         upload1 = result.body.data.avatar;
       } catch (err) {
         console.log(err);
@@ -82,7 +78,7 @@ describe('Uploads CRUD Tests :', () => {
 
     test('should not be able to read old upload if we update it', async () => {
       try {
-        const result = await agent.post('/api/users/avatar').attach('img', './modules/users/tests/img/default.png').expect(200);
+        const result = await agent.post('/api/users/avatar').attach('img', './modules/users/tests/img/default.jpeg').expect(200);
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('profile avatar updated');
         expect(result.body.data).toBeInstanceOf(Object);
