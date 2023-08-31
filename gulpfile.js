@@ -16,6 +16,10 @@ const plugins = gulpLoadPlugins({
   config: process.env.npm_package_json,
 });
 
+const jestConfig = {
+  testEnvironment: 'node',
+};
+
 // default node env if not define
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
@@ -55,7 +59,7 @@ const watch = (done) => {
 
 // Jest UT
 const jest = (done) => {
-  runCLI({}, ['.'])
+  runCLI(jestConfig, ['.'])
     .then((result) => {
       if (result.results && result.results.numFailedTests > 0) process.exit();
       done();
@@ -67,7 +71,7 @@ const jest = (done) => {
 
 // Jest Watch
 const jestWatch = (done) => {
-  runCLI({ watch: true }, ['.']);
+  runCLI({ ...jestConfig, watch: true }, ['.']);
   done();
 };
 
@@ -75,10 +79,12 @@ const jestWatch = (done) => {
 const jestCoverage = (done) => {
   runCLI(
     {
+      ...jestConfig,
       collectCoverage: true,
       collectCoverageFrom: defaultAssets.allJS,
       coverageDirectory: 'coverage',
       coverageReporters: ['json', 'lcov', 'text'],
+      coveragePathIgnorePatterns: ['./server.js', './config/assets.js'],
     },
     ['.'],
   )
