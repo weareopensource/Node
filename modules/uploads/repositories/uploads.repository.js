@@ -2,13 +2,12 @@
  * Module dependencies
  */
 import mongoose from 'mongoose';
-import { GridFSBucket } from 'mongodb';
 
 import AppError from '../../../lib/helpers/AppError.js';
 
 const Uploads = mongoose.model('Uploads');
 
-const bucket = new GridFSBucket(mongoose.connection.db, {
+const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
   bucketName: 'uploads',
 });
 
