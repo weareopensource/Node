@@ -4,6 +4,7 @@
 import request from 'supertest';
 import path from 'path';
 
+import { afterAll, beforeAll } from '@jest/globals';
 import { bootstrap } from '../../../lib/app.js';
 import mongooseService from '../../../lib/services/mongoose.js';
 
@@ -12,8 +13,8 @@ import mongooseService from '../../../lib/services/mongoose.js';
  */
 describe('Tasks integration tests:', () => {
   let UserService;
+  let tasksDataService;
   let agent;
-  let credentials;
   let user;
   let _user;
   let _tasks;
@@ -25,6 +26,7 @@ describe('Tasks integration tests:', () => {
     try {
       const init = await bootstrap();
       UserService = (await import(path.resolve('./modules/users/services/users.service.js'))).default;
+      tasksDataService = (await import(path.resolve('./modules/tasks/services/tasks.data.service.js'))).default;
       agent = request.agent(init.app);
     } catch (err) {
       console.log(err);
@@ -33,18 +35,12 @@ describe('Tasks integration tests:', () => {
 
   describe('Logged', () => {
     beforeEach(async () => {
-      // user credentials
-      credentials = {
-        email: 'task@test.com',
-        password: 'W@os.jsI$Aw3$0m3',
-      };
-
       // user
       _user = {
         firstName: 'Full',
         lastName: 'Name',
-        email: credentials.email,
-        password: credentials.password,
+        email: 'task@test.com',
+        password: 'W@os.jsI$Aw3$0m3',
         provider: 'local',
       };
 
@@ -65,6 +61,10 @@ describe('Tasks integration tests:', () => {
         },
         {
           title: 'title2',
+          description: 'do something about something else',
+        },
+        {
+          title: 'title3',
           description: 'do something about something else',
         },
       ];
@@ -155,15 +155,38 @@ describe('Tasks integration tests:', () => {
       }
     });
 
-    test('should be able to update a task', async () => {
+    test('should be able to create, update, and delete his own task', async () => {
       // edit task
       try {
-        const result = await agent.put(`/api/tasks/${task2.id}`).send(_tasks[0]).expect(200);
+        const resultCreate = await agent.post('/api/tasks').send(_tasks[2]).expect(200);
+
+        const task3 = resultCreate.body.data;
+        expect(resultCreate.body.type).toBe('success');
+        expect(resultCreate.body.message).toBe('task created');
+        task3.title = 'taskUpdated';
+
+        const resultUpdate = await agent.put(`/api/tasks/${task3.id}`).send({ title: task3.title, description: task3.description }).expect(200);
+        expect(resultUpdate.body.type).toBe('success');
+        expect(resultUpdate.body.message).toBe('task updated');
+        expect(resultUpdate.body.data.id).toBe(task3.id);
+        expect(resultUpdate.body.data.title).toBe('taskUpdated');
+
+        const result = await agent.delete(`/api/tasks/${task3.id}`).expect(200);
         expect(result.body.type).toBe('success');
-        expect(result.body.message).toBe('task updated');
-        expect(result.body.data.id).toBe(task2.id);
-        expect(result.body.data.title).toBe(_tasks[0].title);
-        expect(result.body.data.description).toBe(_tasks[0].description);
+        expect(result.body.message).toBe('task deleted');
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+
+    test('should not be able to update a task if it is not a user task', async () => {
+      // edit task
+      try {
+        const result = await agent.put(`/api/tasks/${task2.id}`).send(_tasks[0]).expect(403);
+        expect(result.body.type).toBe('error');
+        expect(result.body.message).toBe('Unauthorized');
+        expect(result.body.description).toBe('User is not authorized');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -183,20 +206,13 @@ describe('Tasks integration tests:', () => {
       }
     });
 
-    test('should be able to remove a task', async () => {
-      // delete task
+    test('should not be able to remove a task if it is not a user task', async () => {
+      // edit task
       try {
-        const result = await agent.delete(`/api/tasks/${task2.id}`).expect(200);
-        expect(result.body.type).toBe('success');
-        expect(result.body.message).toBe('task deleted');
-        expect(result.body.data.id).toBe(task2.id);
-        expect(result.body.data.deletedCount).toBe(1);
-      } catch (err) {
-        expect(err).toBeFalsy();
-      }
-      // check delete
-      try {
-        await agent.get(`/api/tasks/${task2.id}`).expect(404);
+        const result = await agent.delete(`/api/tasks/${task2.id}`).send(_tasks[0]).expect(403);
+        expect(result.body.type).toBe('error');
+        expect(result.body.message).toBe('Unauthorized');
+        expect(result.body.description).toBe('User is not authorized');
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -206,7 +222,7 @@ describe('Tasks integration tests:', () => {
     test('should not be able to remove a task with a bad id', async () => {
       // edit task
       try {
-        const result = await agent.delete(`/api/tasks/${task2.id}`).send(_tasks[0]).expect(404);
+        const result = await agent.delete(`/api/tasks/test`).send(_tasks[0]).expect(404);
         expect(result.body.type).toBe('error');
         expect(result.body.message).toBe('Not Found');
         expect(result.body.description).toBe('No Task with that identifier has been found');
@@ -223,7 +239,7 @@ describe('Tasks integration tests:', () => {
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('task list');
         expect(result.body.data).toBeInstanceOf(Array);
-        expect(result.body.data).toHaveLength(1);
+        expect(result.body.data).toHaveLength(2);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -265,7 +281,7 @@ describe('Tasks integration tests:', () => {
         expect(result.body.type).toBe('success');
         expect(result.body.message).toBe('task list');
         expect(result.body.data).toBeInstanceOf(Array);
-        expect(result.body.data).toHaveLength(0);
+        expect(result.body.data).toHaveLength(1);
       } catch (err) {
         console.log(err);
         expect(err).toBeFalsy();
@@ -284,6 +300,96 @@ describe('Tasks integration tests:', () => {
     });
   });
 
+  describe('Data service', () => {
+    beforeAll(async () => {
+      // user
+      _user = {
+        firstName: 'Full',
+        lastName: 'Name',
+        email: 'task@test.com',
+        password: 'W@os.jsI$Aw3$0m3',
+        provider: 'local',
+      };
+
+      // add user
+      try {
+        const result = await agent.post('/api/auth/signup').send(_user).expect(200);
+        user = result.body.user;
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+
+      // tasks
+      _tasks = [
+        {
+          title: 'title1',
+          description: 'do something about something else',
+          user: user.id,
+          _id: '64f1f177cb9cf84ed815acec',
+        },
+        {
+          title: 'title2',
+          description: 'do something about something else',
+          user: user.id,
+          _id: '64f1f177cb9cf84ed815aced',
+        },
+      ];
+    });
+
+    test('should be able to push a list of user data', async () => {
+      try {
+        const result = await tasksDataService.push(_tasks, ['_id']);
+        expect(result).toBeInstanceOf(Object);
+        expect(result.upsertedCount).toBe(2);
+      } catch (err) {
+        expect(err).toBeFalsy();
+        console.log(err);
+      }
+    });
+
+    test('should be able to list user data', async () => {
+      try {
+        const result = await tasksDataService.list(user);
+        expect(result).toBeInstanceOf(Array);
+        expect(result).toHaveLength(2);
+      } catch (err) {
+        expect(err).toBeFalsy();
+        console.log(err);
+      }
+    });
+
+    test('should be able to list user data', async () => {
+      try {
+        const result = await tasksDataService.list(user);
+        expect(result).toBeInstanceOf(Array);
+        expect(result).toHaveLength(2);
+      } catch (err) {
+        expect(err).toBeFalsy();
+        console.log(err);
+      }
+    });
+
+    test('should be able to remove user data', async () => {
+      try {
+        const result = await tasksDataService.remove(user);
+        expect(result).toBeInstanceOf(Object);
+        expect(result.deletedCount).toBe(2);
+      } catch (err) {
+        expect(err).toBeFalsy();
+        console.log(err);
+      }
+    });
+
+    afterAll(async () => {
+      // del user
+      try {
+        await UserService.remove(user);
+      } catch (err) {
+        console.log(err);
+      }
+    });
+  });
   // Mongoose disconnect
   afterAll(async () => {
     try {

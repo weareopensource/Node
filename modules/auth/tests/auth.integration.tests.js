@@ -7,6 +7,7 @@ import _ from 'lodash';
 
 import { bootstrap } from '../../../lib/app.js';
 import mongooseService from '../../../lib/services/mongoose.js';
+import config from '../../../config/index.js';
 
 /**
  * Unit tests
@@ -70,7 +71,23 @@ describe('Auth integration tests:', () => {
       }
     });
 
-    test('should reject registration with weak password', async () => {
+    test('should reject signup when signup configuration is disabled', async () => {
+      // Init user edited
+      _userEdited.email = 'register_new_user_@test.com';
+      config.sign.up = false;
+      try {
+        const result = await agent.post('/api/auth/signup').send(_userEdited).expect(404);
+        expect(result.body.type).toBe('error');
+        expect(result.body.message).toBe('Signup error');
+        expect(result.body.description).toBe('Registration is currently deactivated');
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+      config.sign.up = true;
+    });
+
+    test('should reject registration when password is weak', async () => {
       // Init user edited
       _userEdited.email = 'register_new_user_@test.com';
       _userEdited.password = 'azerty';
@@ -86,7 +103,7 @@ describe('Auth integration tests:', () => {
       }
     });
 
-    test('should not return sensitive data on registration failure', async () => {
+    test('should not expose sensitive data when registration fails', async () => {
       // Init user edited
       _userEdited.email = 'register_new_user_@test.com';
       _userEdited.password = 'azerty';
@@ -104,7 +121,7 @@ describe('Auth integration tests:', () => {
       }
     });
 
-    test('should successfully register a new user', async () => {
+    test('should register a new user successfully', async () => {
       // Init user edited
       _userEdited.email = 'register_new_user_@test.com';
 
@@ -131,7 +148,7 @@ describe('Auth integration tests:', () => {
       }
     });
 
-    test('should reject registration with duplicate email', async () => {
+    test('should reject registration when email is already in use', async () => {
       // Init user edited
       _userEdited.email = 'register_new_user_@test.com';
 
@@ -164,7 +181,23 @@ describe('Auth integration tests:', () => {
       }
     });
 
-    test('should reject login with incorrect email', async () => {
+    test('should reject login when login configuration is disabled', async () => {
+      // Init user edited
+      _userEdited.email = 'register_new_user_@test.com';
+      config.sign.in = false;
+      try {
+        const result = await agent.post('/api/auth/signin').send(credentials[0]).expect(404);
+        expect(result.body.type).toBe('error');
+        expect(result.body.message).toBe('Signin error');
+        expect(result.body.description).toBe('Login is currently deactivated');
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+      config.sign.in = true;
+    });
+
+    test('should reject login when email is incorrect', async () => {
       try {
         const result = await agent
           .post('/api/auth/signin')
@@ -180,7 +213,7 @@ describe('Auth integration tests:', () => {
       }
     });
 
-    test('should successfully login with correct email', async () => {
+    test('should login successfully with correct email', async () => {
       try {
         await agent.post('/api/auth/signin').send(credentials[0]).expect(200);
       } catch (err) {
@@ -189,7 +222,20 @@ describe('Auth integration tests:', () => {
       }
     });
 
-    test('forgot password request should return 400 for non-existent email', async () => {
+    test('should refresh token successfully', async () => {
+      try {
+        const signinResult = await agent.post('/api/auth/signin').send(credentials[0]).expect(200);
+        const oldExpiration = signinResult.body.tokenExpiresIn;
+        const refreshResult = await agent.get('/api/auth/token').expect(200);
+        const newExpiration = refreshResult.body.tokenExpiresIn;
+        expect(oldExpiration).not.toBe(newExpiration);
+      } catch (err) {
+        console.log(err);
+        expect(err).toBeFalsy();
+      }
+    });
+
+    test('forgot password request for non-existent email should return 400', async () => {
       try {
         const result = await agent
           .post('/api/auth/forgot')
@@ -206,7 +252,7 @@ describe('Auth integration tests:', () => {
       }
     });
 
-    test('forgot password request should return 422 for empty email', async () => {
+    test('forgot password request with empty email should return 422', async () => {
       _userEdited.provider = 'facebook';
 
       try {
@@ -239,7 +285,7 @@ describe('Auth integration tests:', () => {
       }
     });
 
-    test('forgot password request should return 400 for non-local provider', async () => {
+    test('forgot password request for non-local provider should return 400', async () => {
       _userEdited.provider = 'facebook';
 
       try {
@@ -272,7 +318,7 @@ describe('Auth integration tests:', () => {
       }
     });
 
-    test('should initiate password reset for valid email', async () => {
+    test('should initiate password reset process for valid email', async () => {
       try {
         const result = await agent
           .post('/api/auth/forgot')
@@ -300,7 +346,7 @@ describe('Auth integration tests:', () => {
       }
     });
 
-    test('should allow password reset using valid reset token', async () => {
+    test('should allow password reset with valid reset token', async () => {
       try {
         const result = await agent
           .post('/api/auth/forgot')
@@ -337,7 +383,7 @@ describe('Auth integration tests:', () => {
       }
     });
 
-    test('should reject password reset using invalid reset token', async () => {
+    test('should reject password reset with invalid reset token', async () => {
       try {
         const result = await agent
           .post('/api/auth/forgot')

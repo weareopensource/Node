@@ -24,10 +24,10 @@ export default (app) => {
   // classic crud
   app
     .route('/api/tasks/:taskId')
-    .all(passport.authenticate('jwt', { session: false }), policy.isAllowed) // policy.isOwner available (require set in middleWare)
+    .all(passport.authenticate('jwt', { session: false }), policy.isAllowed) // policy.isOwner (require set in middleWare)
     .get(tasks.get) // get
-    .put(model.isValid(tasksSchema.Task), tasks.update) // update
-    .delete(model.isValid(tasksSchema.Task), tasks.remove); // delete
+    .put(model.isValid(tasksSchema.Task), policy.isOwner, tasks.update) // update
+    .delete(model.isValid(tasksSchema.Task), policy.isOwner, tasks.remove); // delete
 
   // Finish by binding the task middleware
   app.param('taskId', tasks.taskByID);

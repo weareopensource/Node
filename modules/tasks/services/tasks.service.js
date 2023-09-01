@@ -4,8 +4,9 @@
 import TasksRepository from '../repositories/tasks.repository.js';
 
 /**
- * @desc Function to get all task in db
- * @return {Promise} All tasks
+ * @function list
+ * @description Service to retrieve all tasks in the database
+ * @return {Promise} A promise that resolves to the list of all tasks
  */
 const list = async () => {
   const result = await TasksRepository.list();
@@ -13,11 +14,16 @@ const list = async () => {
 };
 
 /**
- * @desc Function to ask repository to create a task
- * @param {Object} task
- * @return {Promise} task
+ * @function create
+ * @description Service to create a new task.
+ * @param {Object} body - The object containing task details such as title and description.
+ * @param {Object} user - The user creating the task.
+ * @returns {Promise} A promise resolving to the newly created task.
  */
-const create = async (task, user) => {
+const create = async (body, user) => {
+  const task = {};
+  task.title = body.title;
+  task.description = body.description;
   task.user = user.id;
 
   const result = await TasksRepository.create(task);
@@ -25,9 +31,10 @@ const create = async (task, user) => {
 };
 
 /**
- * @desc Function to ask repository to get a task
- * @param {String} id
- * @return {Promise} task
+ * @function get
+ * @description Service to fetch a single task by its ID.
+ * @param {String} id - The ID of the task to fetch.
+ * @returns {Promise} A promise resolving to the retrieved task.
  */
 const get = async (id) => {
   const result = await TasksRepository.get(id);
@@ -35,10 +42,11 @@ const get = async (id) => {
 };
 
 /**
- * @desc Functio to ask repository to update a task
- * @param {Object} task - original task
- * @param {Object} body - task edited
- * @return {Promise} task
+ * @function update
+ * @description Service to update an existing task.
+ * @param {Object} task - The existing task object.
+ * @param {Object} body - The object containing updated task details.
+ * @returns {Promise} A promise resolving to the updated task.
  */
 const update = async (task, body) => {
   task.title = body.title;
@@ -49,9 +57,10 @@ const update = async (task, body) => {
 };
 
 /**
- * @desc Function to ask repository to remove a task
- * @param {Object} task
- * @return {Promise} confirmation of delete
+ * @function remove
+ * @description Service to delete a task.
+ * @param {Object} task - The task to delete.
+ * @returns {Promise} A promise resolving to a confirmation of the deletion.
  */
 const remove = async (task) => {
   const result = await TasksRepository.remove(task);
@@ -59,8 +68,9 @@ const remove = async (task) => {
 };
 
 /**
- * @desc Function to get all stats of db
- * @return {Promise} All stats
+ * @function stats
+ * @description Service to fetch statistical data about tasks in the database.
+ * @returns {Promise} A promise resolving to the statistical data.
  */
 const stats = async () => {
   const result = await TasksRepository.stats();
