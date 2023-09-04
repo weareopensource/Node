@@ -68,15 +68,18 @@ const remove = async (upload) => {
  */
 const deleteMany = async (filter) => {
   const uploads = await list(filter);
-  uploads.forEach(async (upload) => {
+  let deletedCount = 0;
+  // eslint-disable-next-line no-restricted-syntax
+  for (const upload of uploads) {
     try {
-      const unlinked = await bucket.delete(upload._id);
-      return unlinked;
+      // eslint-disable-next-line no-await-in-loop
+      await bucket.delete(upload._id);
+      deletedCount += 1;
     } catch (err) {
       throw new AppError('Upload: delete error', { code: 'REPOSITORY_ERROR', details: err });
     }
-  });
-  return { deletedCount: uploads.length };
+  }
+  return { deletedCount };
 };
 
 /**
@@ -99,15 +102,18 @@ const purge = async (kind, collection, key) => {
     },
     { $match: { references: [] } },
   ]);
-  toDelete.forEach(async (upload) => {
+  let deletedCount = 0;
+  // eslint-disable-next-line no-restricted-syntax
+  for (const upload of toDelete) {
     try {
-      const unlinked = await bucket.delete(upload._id);
-      return unlinked;
+      // eslint-disable-next-line no-await-in-loop
+      await bucket.delete(upload._id);
+      deletedCount += 1;
     } catch (err) {
       throw new AppError('Upload: delete error', { code: 'REPOSITORY_ERROR', details: err });
     }
-  });
-  return { deletedCount: toDelete.length };
+  }
+  return { deletedCount };
 };
 
 export default {

@@ -13,7 +13,7 @@ import mongooseService from '../../../lib/services/mongoose.js';
  */
 describe('Tasks integration tests:', () => {
   let UserService;
-  let tasksDataService;
+  let TasksDataService;
   let agent;
   let user;
   let _user;
@@ -26,7 +26,7 @@ describe('Tasks integration tests:', () => {
     try {
       const init = await bootstrap();
       UserService = (await import(path.resolve('./modules/users/services/users.service.js'))).default;
-      tasksDataService = (await import(path.resolve('./modules/tasks/services/tasks.data.service.js'))).default;
+      TasksDataService = (await import(path.resolve('./modules/tasks/services/tasks.data.service.js'))).default;
       agent = request.agent(init.app);
     } catch (err) {
       console.log(err);
@@ -300,7 +300,7 @@ describe('Tasks integration tests:', () => {
     });
   });
 
-  describe('Data service', () => {
+  describe('Data', () => {
     beforeAll(async () => {
       // user
       _user = {
@@ -337,9 +337,9 @@ describe('Tasks integration tests:', () => {
       ];
     });
 
-    test('should be able to push a list of user data', async () => {
+    test('should be able to push a list of user tasks data', async () => {
       try {
-        const result = await tasksDataService.push(_tasks, ['_id']);
+        const result = await TasksDataService.push(_tasks, ['_id']);
         expect(result).toBeInstanceOf(Object);
         expect(result.upsertedCount).toBe(2);
       } catch (err) {
@@ -348,9 +348,9 @@ describe('Tasks integration tests:', () => {
       }
     });
 
-    test('should be able to list user data', async () => {
+    test('should be able to list user tasks data', async () => {
       try {
-        const result = await tasksDataService.list(user);
+        const result = await TasksDataService.list(user);
         expect(result).toBeInstanceOf(Array);
         expect(result).toHaveLength(2);
       } catch (err) {
@@ -359,20 +359,9 @@ describe('Tasks integration tests:', () => {
       }
     });
 
-    test('should be able to list user data', async () => {
+    test('should be able to remove user tasks data', async () => {
       try {
-        const result = await tasksDataService.list(user);
-        expect(result).toBeInstanceOf(Array);
-        expect(result).toHaveLength(2);
-      } catch (err) {
-        expect(err).toBeFalsy();
-        console.log(err);
-      }
-    });
-
-    test('should be able to remove user data', async () => {
-      try {
-        const result = await tasksDataService.remove(user);
+        const result = await TasksDataService.remove(user);
         expect(result).toBeInstanceOf(Object);
         expect(result.deletedCount).toBe(2);
       } catch (err) {
@@ -390,6 +379,7 @@ describe('Tasks integration tests:', () => {
       }
     });
   });
+
   // Mongoose disconnect
   afterAll(async () => {
     try {
