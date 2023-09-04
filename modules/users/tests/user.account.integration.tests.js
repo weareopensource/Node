@@ -358,6 +358,8 @@ describe('User integration tests:', () => {
         expect(result.body.data).toBeInstanceOf(Object);
         expect(typeof result.body.data.avatar).toBe('string');
         expect(result.body.data.id).toBe(String(user.id));
+
+        await agent.delete(`/api/uploads/${result.body.data.avatar}`).expect(200);
       } catch (err) {
         expect(err).toBeFalsy();
       }
