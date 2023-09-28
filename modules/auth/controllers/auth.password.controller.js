@@ -36,7 +36,6 @@ const forgot = async (req, res) => {
   // send mail
   const mail = await mails.sendMail({
     template: 'reset-password-email',
-    from: config.mailer.from,
     to: user.email,
     subject: 'Password Reset',
     params: {
@@ -99,7 +98,6 @@ const reset = async (req, res) => {
   // send mail
   const mail = await mails.sendMail({
     template: 'reset-password-confirm-email',
-    from: config.mailer.from,
     to: user.email,
     subject: 'Your password has been changed',
     params: {

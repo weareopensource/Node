@@ -62,7 +62,6 @@ const getMail = async (req, res) => {
     // send mail
     const mail = await mails.sendMail({
       template: 'data-privacy-email',
-      from: config.mailer.from,
       to: req.user.email,
       subject: `${config.app.title}: your data`,
       params: {
