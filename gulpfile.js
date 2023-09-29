@@ -167,6 +167,9 @@ const seedMongooseUser = async () => {
     await seed.default.user(config.seedDB.options.seedUser, UserService.default, AuthService.default).catch((e) => {
       console.log(e);
     });
+    await seed.default.user(config.seedDB.options.seedAdmin, UserService.default, AuthService.default).catch((e) => {
+      console.log(e);
+    });
     await mongooseService.disconnect();
   } catch (err) {
     console.log(err);
