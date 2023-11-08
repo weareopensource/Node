@@ -64,7 +64,7 @@
     "generate-password": "~1.7.1",
     "glob": "^10.3.10",
     "handlebars": "^4.7.8",
-    "helmet": "~7.0.0",
+    "helmet": "~7.1.0",
     "jest-environment-jsdom": "^29.7.0",
     "js-base64": "^3.7.5",
     "js-yaml": "^4.1.0",
