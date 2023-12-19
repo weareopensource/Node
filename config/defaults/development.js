@@ -234,7 +234,6 @@ const config = {
         roles: ['user', 'admin'],
       },
     },
-    restoreExceptions: [], // collections exceptions for db restore : npm run seed:mongorestore
   },
 };
 
