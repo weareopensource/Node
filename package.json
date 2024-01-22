@@ -66,7 +66,7 @@
     "handlebars": "^4.7.8",
     "helmet": "~7.1.0",
     "jest-environment-jsdom": "^29.7.0",
-    "js-base64": "^3.7.5",
+    "js-base64": "^3.7.6",
     "js-yaml": "^4.1.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
