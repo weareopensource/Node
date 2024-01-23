@@ -89,7 +89,7 @@
     "supertest": "^6.3.3",
     "swagger-ui-express": "^5.0.0",
     "swig": "^1.4.2",
-    "ts-jest": "^29.1.1",
+    "ts-jest": "^29.1.2",
     "winston": "3.11.0",
     "zxcvbn": "^4.4.2"
   },
