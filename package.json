@@ -111,7 +111,7 @@
     "gulp-load-plugins": "^2.0.8",
     "gulp-nodemon": "~2.5.0",
     "gulp-refresh": "~1.1.0",
-    "husky": "^8.0.3",
+    "husky": "^9.0.6",
     "inquirer": "^9.2.12",
     "jest-cli": "29.7.0",
     "prettier": "^3.2.4",
