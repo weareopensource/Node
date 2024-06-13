@@ -26,8 +26,6 @@ const config = {
     options: {
       user: '',
       pass: '',
-      useUnifiedTopology: true,
-      useNewUrlParser: true,
       /**
         * Uncomment to enable ssl certificate based authentication to mongodb
         * servers. Adjust the settings below for your specific certificate
