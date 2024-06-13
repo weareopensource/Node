@@ -6,8 +6,8 @@ module.exports = {
     browser: true,
     jest: true,
   },
-  extends: ['airbnb-base', 'plugin:markdown/recommended', 'plugin:prettier/recommended'],
-  plugins: ['prettier', 'markdown'],
+  extends: ['airbnb-base', 'plugin:prettier/recommended'],
+  plugins: ['prettier'],
   rules: {
     'prettier/prettier': 'error',
     'no-console': 0,
