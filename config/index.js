@@ -21,6 +21,19 @@ const initGlobalConfig = async () => {
     console.error(chalk.red(`+ Error: No configuration file found for "${process.env.NODE_ENV}" environment using development instead. (${_path})`));
     defaultConfig = await import(path.join(process.cwd(), './config', 'defaults', 'development.js'));
   }
+  // import and merge modules congig
+  const assetsPaths = await configHelper.initGlobalConfigFiles(assets);
+  _.merge(defaultConfig.default, { files: assetsPaths.configs });
+  _.forEach(assetsPaths.configs, async (moduleConfigPath) => {
+    console.log(moduleConfigPath);
+
+    const moduleConfig = await import(path.join(process.cwd(), moduleConfigPath));
+    console.log(moduleConfig.default);
+    defaultConfig.default = _.merge(defaultConfig.default, moduleConfig.default);
+  });
+  // read package.json for project information
+  const packageJSON = JSON.parse(readFileSync(path.resolve('./package.json')));
+  _.merge(defaultConfig.default, { package: packageJSON });
   // Get the config from  process.env.WAOS_NODE_*
   let environmentVars = _.mapKeys(
     _.pickBy(process.env, (_value, key) => key.startsWith('WAOS_NODE_')),
@@ -37,11 +50,6 @@ const initGlobalConfig = async () => {
   });
   // Merge config files
   const config = _.merge(defaultConfig.default, environmentConfigVars);
-  // read package.json for project information
-  const packageJSON = JSON.parse(readFileSync(path.resolve('./package.json')));
-  _.merge(config, { package: packageJSON });
-  // Initialize global globbed files
-  _.merge(config, { files: await configHelper.initGlobalConfigFiles(assets) });
   // Init Secure SSL if can be used
   configHelper.initSecureMode(config);
   // Print a warning if config.domain is not set
