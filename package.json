@@ -60,7 +60,7 @@
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "enhanced-resolve": "^5.17.1",
-    "express": "^4.19.2",
+    "express": "^4.20.0",
     "generate-password": "^1.7.1",
     "glob": "^11.0.0",
     "handlebars": "^4.7.8",
