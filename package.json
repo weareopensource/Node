@@ -111,7 +111,7 @@
     "gulp-nodemon": "~2.5.0",
     "gulp-refresh": "~1.1.0",
     "husky": "^9.1.7",
-    "inquirer": "^12.3.2",
+    "inquirer": "^12.3.3",
     "jest-cli": "29.7.0",
     "prettier": "^3.4.2",
     "semantic-release": "^24.2.1",
