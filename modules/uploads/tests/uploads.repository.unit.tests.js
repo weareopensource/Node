@@ -282,6 +282,28 @@ describe('UploadRepository unit tests:', () => {
       );
     });
 
+    test('a blob deleted concurrently mid-sweep (GridFS file not found) is treated as already gone: no error log, sweep completes', async () => {
+      const now = Date.now();
+      setReferences([]);
+      setCandidates([
+        { _id: 'gone1', filename: 'gone.png', uploadDate: new Date(now - 120_000) },
+        { _id: 'live1', filename: 'live.png', uploadDate: new Date(now - 120_000) },
+      ]);
+      const notFound = new Error('File not found for id gone1');
+      notFound.name = 'MongoRuntimeError';
+      mockBucket.delete.mockRejectedValueOnce(notFound);
+
+      const counters = await UploadRepository.purgeUnreferenced(kind, collection, ['snapshot'], 60_000);
+
+      expect(mockBucket.delete).toHaveBeenCalledTimes(2);
+      expect(counters).toMatchObject({ scanned: 2, orphaned: 2, deleted: 2, deleteFailed: 0 });
+      expect(mockLogger.error).not.toHaveBeenCalled();
+      expect(mockLogger.debug).toHaveBeenCalledWith(
+        'Upload: purgeUnreferenced - blob already gone, treating as deleted',
+        expect.objectContaining({ filename: 'gone.png', kind }),
+      );
+    });
+
     test('respects the grace window: an unreferenced-but-young blob is skipped, not deleted', async () => {
       const now = Date.now();
       setCandidates([{ _id: 'young1', filename: 'young.png', uploadDate: new Date(now - 1000) }]);

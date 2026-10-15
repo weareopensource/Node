@@ -46,6 +46,17 @@ const getStream = (upload) => {
 };
 
 /**
+ * @desc True when `err` is the GridFS driver's "file not found" failure from
+ * `bucket.delete()`. The mongodb driver (7.x) throws a plain
+ * `MongoRuntimeError('File not found for id <id>')` for it (no dedicated
+ * class yet, NODE-3483), so identity = driver error name + that exact message
+ * prefix — any other bucket failure does not match and still surfaces.
+ * @param {Error} err
+ * @return {Boolean}
+ */
+const isFileNotFound = (err) => err?.name === 'MongoRuntimeError' && typeof err.message === 'string' && err.message.startsWith('File not found for id ');
+
+/**
  * @desc Function to update an upload in db
  * @param {ObjectID} upload ID
  * @param {Object} update
@@ -331,6 +342,14 @@ const purgeUnreferenced = async (kind, collection, paths, graceMs) => {
       await bucket.delete(candidate._id);
       deleted += 1;
     } catch (err) {
+      // Deleted concurrently (e.g. an independent retention job) between the
+      // scan and this delete: already gone is the desired end state, same
+      // no-op treatment as remove(). Counted as deleted, no error log.
+      if (isFileNotFound(err)) {
+        logger.debug('Upload: purgeUnreferenced - blob already gone, treating as deleted', { filename: candidate.filename, kind });
+        deleted += 1;
+        continue;
+      }
       // Logged (not just counted): a caught delete failure that a caller
       // never inspects the counters for would otherwise vanish with no
       // record of which file failed. `deleteFailed` lets a caller detect a
