@@ -5,6 +5,7 @@ import { jest, describe, test, beforeEach, afterEach, expect } from '@jest/globa
 // REAL (unmocked) — uploads.repository.js never imports responses.js itself,
 // so nothing in this file's beforeEach mocks it; used only by the item-5
 // describe block below to prove curation's actual purpose end to end.
+import { MongoRuntimeError } from 'mongodb';
 import responses from '../../../lib/helpers/responses.js';
 
 /**
@@ -279,6 +280,45 @@ describe('UploadRepository unit tests:', () => {
       expect(mockLogger.error).toHaveBeenCalledWith(
         'Upload: purgeUnreferenced - delete failed',
         expect.objectContaining({ filename: 'flaky.png', kind }),
+      );
+    });
+
+    test('a blob deleted concurrently mid-sweep (GridFS file not found) is treated as already gone: no error log, sweep completes', async () => {
+      const now = Date.now();
+      setReferences([]);
+      setCandidates([
+        { _id: 'gone1', filename: 'gone.png', uploadDate: new Date(now - 120_000) },
+        { _id: 'live1', filename: 'live.png', uploadDate: new Date(now - 120_000) },
+      ]);
+      mockBucket.delete.mockRejectedValueOnce(new MongoRuntimeError('File not found for id gone1'));
+
+      const counters = await UploadRepository.purgeUnreferenced(kind, collection, ['snapshot'], 60_000);
+
+      expect(mockBucket.delete).toHaveBeenCalledTimes(2);
+      expect(counters).toMatchObject({ scanned: 2, orphaned: 2, deleted: 2, deleteFailed: 0 });
+      expect(mockLogger.error).not.toHaveBeenCalled();
+      expect(mockLogger.debug).toHaveBeenCalledWith(
+        'Upload: purgeUnreferenced - blob already gone, treating as deleted',
+        expect.objectContaining({ filename: 'gone.png', kind }),
+      );
+    });
+
+    test('a MongoRuntimeError with a different message (e.g. chunks failure) is NOT treated as already gone: counted as deleteFailed, sweep continues', async () => {
+      const now = Date.now();
+      setReferences([]);
+      setCandidates([
+        { _id: 'bad1', filename: 'bad.png', uploadDate: new Date(now - 120_000) },
+        { _id: 'live1', filename: 'live.png', uploadDate: new Date(now - 120_000) },
+      ]);
+      mockBucket.delete.mockRejectedValueOnce(new MongoRuntimeError('Cannot read chunks for id bad1'));
+
+      const counters = await UploadRepository.purgeUnreferenced(kind, collection, ['snapshot'], 60_000);
+
+      expect(mockBucket.delete).toHaveBeenCalledTimes(2);
+      expect(counters).toMatchObject({ scanned: 2, orphaned: 2, deleted: 1, deleteFailed: 1 });
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        'Upload: purgeUnreferenced - delete failed',
+        expect.objectContaining({ filename: 'bad.png', kind }),
       );
     });
 
