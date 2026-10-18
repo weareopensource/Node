@@ -156,7 +156,11 @@ const SignupUser = z.object({
   referredBy: z.string().optional(),
   // Shareable referral link (#4212): the referrer's encoded id. Resolved server-side
   // by the signup service (never trusted as a referrer id) and stripped before create.
-  ref: z.string().trim().max(64).optional(),
+  // A malformed or over-long value is treated as absent (never a 422): attribution is best-effort.
+  ref: z.preprocess(
+    (value) => (typeof value === 'string' && value.trim().length <= 64 ? value : undefined),
+    z.string().trim().max(64).optional(),
+  ),
   // First-touch attribution (#4002/#4003) — optional, client-provided at signup
   // time only. The controller decides whether to persist it (analytics enabled)
   // or strip it before create (analytics disabled); see auth.controller.js.

@@ -187,5 +187,5 @@ the former "coming soon" placeholder was removed once the grant path shipped (#4
 With `billing.referral.enabled`, `GET /api/users/me` returns `referralCode` — the user id encoded
 (base64url, derived, nothing stored). An email/password signup may send it as `ref`; the server decodes it,
 checks the referrer exists and sets `referredBy`. An unknown or malformed code, a disabled flag, or an honored
-invite (which wins) means no attribution and never a 4xx. A link referral grants no billing reward (grants stay
+invite (which wins) means no link attribution (the honored invite keeps its own attribution to its inviter) and never a 4xx. A link referral grants no billing reward (grants stay
 keyed on an accepted invitation); `user_signed_up` carries `referralSource: 'invite' | 'link' | null`.
