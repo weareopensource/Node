@@ -73,6 +73,7 @@ question:
 | Collision prompt (any `y/N` row of the table above) | Emit `SKIP: collision — <detail>` and stop |
 | `gh` command failure (step 1) or `state == closed` | Emit `STOP: claim — <error>` and stop |
 | Aged-scope drift confirmation (step 4) | Emit `STOP: freshness — <drift summary>` and stop |
+| Phase 0 step 1b: no red command for a bug | Emit `STOP: repro — <what was tried>` and stop |
 | Phase 0 "Present plan & wait for validation" | Satisfied by the issue body when the brief states the scope was validated upstream; insufficient scope → emit `STOP: scope — <gap>` and stop |
 
 Never wait on a prompt in a non-interactive run. If the stop happens after
@@ -94,6 +95,17 @@ Continue to scope analysis below.
 - Read `ERRORS.md` for known bugs and non-obvious pitfalls to avoid before coding.
 - Which module? Default to **ONE** unless justified.
 - **If the module doesn't exist** → run `/create-module` to scaffold it first, then continue.
+
+### 1b. Bug fix? Prove it before you fix it
+
+When the issue is a bug (broken, throwing, wrong output, slow), do this before the plan — a theory built before a red command is the failure this step prevents:
+
+1. **One red command.** Build one command that drives the real code path and fails on the user's exact symptom — a failing test at the closest seam (`npm run test:unit`), else a curl against the dev server, else a small script. Run it and keep the output. No red command → no theory: list what you tried and ask for an artifact (log, payload, steps).
+2. **Shrink it.** Cut inputs, config and steps one at a time, re-running after each cut, while it stays red. What is left becomes the regression test.
+3. **3–5 guesses, each testable** — "if X is the cause, changing Y makes it pass". Show them ranked (don't wait for an answer), then test one variable at a time. Tag temporary logs with one prefix (`[DEBUG-xxxx]`) and grep them out before the PR.
+4. **Fix behind the test.** The regression test fails first, then passes; re-run the original red command. Name the confirmed cause in the PR body; a non-obvious one also goes to `ERRORS.md`.
+
+Skip only for a trivial fix whose cause is already proven (typo, wrong constant seen in the code).
 
 ### 2. Module boundaries
 
