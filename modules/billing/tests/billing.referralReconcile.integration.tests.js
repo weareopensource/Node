@@ -26,7 +26,6 @@ describe('Billing referral reconcile cron — link signups (#4214):', () => {
   let UserService;
   let BillingExtraBalanceRepository;
   let referrerId;
-  let referrerOrgId;
   let originalReferral;
 
   const PASSWORD = 'W@os.jsI$Aw3$0m3';
@@ -40,8 +39,6 @@ describe('Billing referral reconcile cron — link signups (#4214):', () => {
   const signup = (email, extra = {}) => request(app).post('/api/auth/signup').send({
     firstName: 'Ref', lastName: 'Cron', email, password: PASSWORD, provider: 'local', ...extra,
   });
-
-  const orgOf = (user) => String(user.currentOrganization?._id || user.currentOrganization);
 
   /**
    * Run the real reconcile script with the link flag on and the given cap.
@@ -87,7 +84,6 @@ describe('Billing referral reconcile cron — link signups (#4214):', () => {
     await signup(emails.referrer).expect(200);
     const referrer = await UserService.getBrut({ email: emails.referrer });
     referrerId = String(referrer._id);
-    referrerOrgId = orgOf(referrer);
     for (const key of ['one', 'two', 'three']) {
       await signup(emails[key], { ref: encodeReferralCode(referrerId) }).expect(200);
     }
