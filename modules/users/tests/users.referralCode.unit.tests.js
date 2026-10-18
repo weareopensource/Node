@@ -26,9 +26,9 @@ describe('referralCode', () => {
     expect(decodeReferralCode(bad)).toBeNull();
   });
 
-  test('decode rejects a non-canonical encoding of the same bytes', () => {
-    const code = encodeReferralCode(id);
-    // base64url of 12 bytes has no padding bits, so any other 16-char string decodes to other bytes
-    expect(decodeReferralCode(code.replace(/.$/, code.endsWith('A') ? 'B' : 'A'))).not.toBe(id);
+  test('every well-formed code round-trips (no padding bits, so one id has one code)', () => {
+    for (const code of ['AAAAAAAAAAAAAAAA', 'zzzzzzzzzzzzzzzz', '-_-_-_-_-_-_-_-_']) {
+      expect(encodeReferralCode(decodeReferralCode(code))).toBe(code);
+    }
   });
 });

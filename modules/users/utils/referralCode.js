@@ -24,9 +24,9 @@ export const encodeReferralCode = (id) => {
  */
 export const decodeReferralCode = (code) => {
   if (typeof code !== 'string' || !CODE_PATTERN.test(code)) return null;
-  const hex = Buffer.from(code, 'base64url').toString('hex');
-  // Reject non-canonical encodings (trailing bits) so one id has exactly one code.
-  return encodeReferralCode(hex) === code ? hex : null;
+  // 12 bytes = exactly 16 base64url chars with no padding bits, so every code that
+  // matches CODE_PATTERN is canonical: one id, one code.
+  return Buffer.from(code, 'base64url').toString('hex');
 };
 
 export default { encodeReferralCode, decodeReferralCode };

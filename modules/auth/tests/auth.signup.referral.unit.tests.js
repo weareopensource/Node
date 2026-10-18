@@ -111,6 +111,20 @@ describe('auth.signup.service — referral link (#4212)', () => {
     expect(signedUpProps(capture)).toMatchObject({ invited: true, referralSource: 'invite' });
   });
 
+  test('a presented but NOT claimed invite does not beat ref (unclaimed = not attributed, #3983)', async () => {
+    const finalize = jest.fn().mockResolvedValue({});
+    const eligibility = {
+      assertSignupEligible: jest.fn().mockResolvedValue({
+        invite: { id: 'inv1', email: 'new@test.com', invitedBy: 'inviter1' }, claimed: false, finalize, release: jest.fn(),
+      }),
+    };
+    const { SignupService, create, capture } = await load({ eligibility });
+    await SignupService.signup({ body: body({ ref: encodeReferralCode(REFERRER_ID) }), query: {} });
+    expect(createdWith(create).referredBy).toBe(REFERRER_ID);
+    expect(finalize).not.toHaveBeenCalled();
+    expect(signedUpProps(capture)).toMatchObject({ invited: false, invitationId: null, referralSource: 'link' });
+  });
+
   test('referral disabled: ref is ignored and stripped', async () => {
     const { SignupService, create, getBrut, capture } = await load({ enabled: false });
     await SignupService.signup({ body: body({ ref: encodeReferralCode(REFERRER_ID) }), query: {} });

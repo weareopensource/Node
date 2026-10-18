@@ -3,7 +3,7 @@
  */
 import request from 'supertest';
 import path from 'path';
-import { jest } from '@jest/globals';
+import { jest, afterEach } from '@jest/globals';
 
 import { bootstrap } from '../../../lib/app.js';
 import config from '../../../config/index.js';
@@ -61,6 +61,12 @@ describe('Auth signup referral link integration tests:', () => {
     const signedIn = await referrerAgent.post('/api/auth/signin').send({ email: emails.referrer, password });
     expect(signedIn.status).toBe(200);
     referrerId = String((await UserService.getBrut({ email: emails.referrer })).id);
+  });
+
+  // A test that flips the flag and then fails mid-way must not leak `enabled:false`
+  // into the next test.
+  afterEach(() => {
+    config.billing.referral = { ...previousReferral, enabled: true };
   });
 
   afterAll(async () => {
