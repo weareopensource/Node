@@ -666,8 +666,9 @@ const findExistingRefIds = async (refIds) => {
  *              Cost: the `ledger.refId` multikey index narrows the first $match by the
  *              literal `referral:link:` prefix; the `[^:]+` segment is then filtered on
  *              the matched index keys / entries, so it scans link-grant entries only,
- *              not every ledger. Concurrent grants can overshoot the cap by one
- *              (read-then-credit, no reservation — accepted). Only referrer entries are
+ *              not every ledger. Read-then-credit, no reservation: concurrent grants
+ *              for one referrer can each pass the cap check, so overshoot is bounded by
+ *              concurrency (same accepted trade-off as quota admission). Only referrer entries are
  *              counted: with `referrerUnits` = 0 there are none, so the cap cannot bind
  *              (referee-only rewards carry the same exposure as the signup grant).
  * @param {string} referrerId - The referrer user ObjectId (24-hex string).

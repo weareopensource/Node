@@ -195,6 +195,15 @@ describe('Billing referral link grant (#4214):', () => {
     await new Promise((resolve) => { setTimeout(resolve, 300); });
     expect(await BillingReferralService.grantForLink({ userId: String(user._id), referredBy: referrerId })).toEqual({ skipped: 'cap_reached' });
     expect(await BillingExtraBalanceRepository.findExistingRefIds([`referral:link:${String(user._id)}:referee`])).toEqual([]);
+
+    // A replay after the switch never credits a key already landed in the OLD organization.
+    const off = await UserService.getBrut({ email: emails.off });
+    const used = await BillingExtraBalanceRepository.countLinkReferrerGrants(referrerId);
+    const replay = await BillingReferralService.grantForLink({ userId: String(off._id), referredBy: referrerId });
+    expect(replay.referrer).toEqual({ applied: false, reason: 'duplicate_grant' });
+    expect(replay.referee).toEqual({ applied: false, reason: 'duplicate_grant' });
+    expect(await countEntries(orgOf(referrer), `referral:link:${String(off._id)}:referrer:${referrerId}`)).toBe(0);
+    expect(await BillingExtraBalanceRepository.countLinkReferrerGrants(referrerId)).toBe(used);
   }, 30000);
 
   test('no usable invitations.maxLifetime → no link grant (fails closed)', async () => {

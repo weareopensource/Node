@@ -135,8 +135,8 @@ try {
       };
 
       // Each referrer's remaining link budget (cap - grants already on their ledger) is
-      // computed ONCE per run; candidates beyond it are skipped with no further query and
-      // are not pending. A user whose own referrer grant already landed is free (finishing
+      // read once per run and spent in-run; candidates beyond it are skipped before
+      // grantForLink (which re-checks the cap itself) and are not pending. A user whose own referrer grant already landed is free (finishing
       // the referee side never spends budget).
       const budgets = new Map();
       for (const { link, expected, referrerKey } of linkCandidates) {

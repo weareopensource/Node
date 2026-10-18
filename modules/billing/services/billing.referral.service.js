@@ -245,17 +245,24 @@ const grantRecord = async (record, referrerId, refereeId, cfg) => {
     ? new Date(Date.now() + cfg.expiryDays * 24 * 60 * 60 * 1000)
     : null;
   const result = {};
+  // A key already credited in ANY ledger is never granted again: `creditGrant` only dedups
+  // within the target organization, so an org switch between two attempts would otherwise
+  // credit the same key twice (once per organization).
+  const landed = new Set(await BillingExtraBalanceRepository.findExistingRefIds([...expected.values()]));
+  const grantOnce = (params) => (landed.has(params.key)
+    ? { applied: false, reason: 'duplicate_grant' }
+    : grantSide(params));
 
   // Referee side — the referred user's workspace doubles its welcome.
   if (expected.has('referee')) {
-    result.referee = await grantSide({ userId: refereeId, units: cfg.refereeUnits, key: expected.get('referee'), expiresAt });
+    result.referee = await grantOnce({ userId: refereeId, units: cfg.refereeUnits, key: expected.get('referee'), expiresAt });
   } else {
     result.referee = { applied: false, reason: refereeId ? 'zero_units' : (isLink ? 'no_referee' : 'no_accepted_user') };
   }
 
   // Referrer side — skip referrer-less records and trivial self-referrals (#3833 owns the full guard).
   if (expected.has('referrer')) {
-    result.referrer = await grantSide({ userId: referrerId, units: cfg.referrerUnits, key: expected.get('referrer'), expiresAt });
+    result.referrer = await grantOnce({ userId: referrerId, units: cfg.referrerUnits, key: expected.get('referrer'), expiresAt });
     // #3945: notify ONLY on a freshly applied grant — never on an idempotent replay
     // (grantSide's atomic dedup guard means `applied:true` fires exactly once).
     if (result.referrer.applied) {
@@ -315,7 +322,7 @@ const getLinkCap = () => {
  *              referrer id is in the key), so neither deleting referred users nor creating
  *              or switching to another organization resets it. Infinity when `referrerUnits` is 0 — no referrer
  *              entry is ever written, so the cap cannot bind (referee-only rewards carry the
- *              same exposure as the signup grant). Concurrent grants can overshoot by one.
+ *              same exposure as the signup grant). Not atomic: concurrent grants for one referrer can each pass the check.
  * @param {string} referredBy - The referrer user id.
  * @param {number} cap - The positive-integer cap (see getLinkCap).
  * @returns {Promise<{remaining?: number, skipped?: string}>} `skipped:'referrer_no_organization'`
