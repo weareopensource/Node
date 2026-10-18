@@ -656,6 +656,38 @@ const findExistingRefIds = async (refIds) => {
 };
 
 /**
+ * @function countLinkReferrerGrants
+ * @description Count the referral LINK referrer grants (#4214) credited for one referrer
+ *              ACROSS ALL ledgers: entries whose refId matches the anchored pattern
+ *              `^referral:link:[^:]+:referrer:<referrerId>$` (the referrer id is part of the
+ *              key). This is the per-referrer cap's counter (`invitations.maxLifetime`):
+ *              the ledger is the source of truth, so neither deleting referred users nor
+ *              the referrer creating / switching to another organization resets it.
+ *              Cost: the `ledger.refId` multikey index narrows the first $match by the
+ *              literal `referral:link:` prefix; the `[^:]+` segment is then filtered on
+ *              the matched index keys / entries, so it scans link-grant entries only,
+ *              not every ledger. Read-then-credit, no reservation: concurrent grants
+ *              for one referrer can each pass the cap check, so overshoot is bounded by
+ *              concurrency (same accepted trade-off as quota admission). Only referrer entries are
+ *              counted: with `referrerUnits` = 0 there are none, so the cap cannot bind
+ *              (referee-only rewards carry the same exposure as the signup grant).
+ * @param {string} referrerId - The referrer user ObjectId (24-hex string).
+ * @returns {Promise<number>} Number of link referrer grants for that referrer (0 for an invalid id).
+ */
+// biome-ignore lint/correctness/useQwikValidLexicalScope: false positive — Node.js repository, not Qwik
+const countLinkReferrerGrants = async (referrerId) => {
+  if (!/^[0-9a-f]{24}$/i.test(String(referrerId))) return 0;
+  const pattern = new RegExp(`^referral:link:[^:]+:referrer:${String(referrerId)}$`);
+  const [row] = await BillingExtraBalance().aggregate([
+    { $match: { 'ledger.refId': { $regex: pattern } } },
+    { $unwind: '$ledger' },
+    { $match: { 'ledger.refId': { $regex: pattern } } },
+    { $count: 'total' },
+  ]).exec();
+  return row?.total ?? 0;
+};
+
+/**
  * Sum absolute debit entries within a time window using a server-side aggregation.
  * Avoids loading the full ledger into memory — O(1) payload regardless of ledger size.
  *
@@ -705,5 +737,6 @@ export default {
   findOrgsWithExpiringTopups,
   findExistingRefIds,
   findLedgerByOrg,
+  countLinkReferrerGrants,
   sumDebitsByWindow,
 };

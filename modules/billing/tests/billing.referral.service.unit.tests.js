@@ -22,6 +22,7 @@ describe('billing.referral.service unit tests:', () => {
   let mockRepository;
   let mockUserService;
   let mockMembershipRepository;
+  let mockInvitationRepository;
   let mockLogger;
   let mockMailer;
 
@@ -44,6 +45,7 @@ describe('billing.referral.service unit tests:', () => {
     mockRepository = {
       creditGrant: jest.fn().mockResolvedValue({ doc: {}, applied: true }),
       findExistingRefIds: jest.fn().mockResolvedValue([]),
+      countLinkReferrerGrants: jest.fn().mockResolvedValue(0),
     };
 
     // Users keyed by id — getBrut({ id }) resolves from this map.
@@ -53,9 +55,11 @@ describe('billing.referral.service unit tests:', () => {
     };
     mockUserService = {
       getBrut: jest.fn(({ id }) => Promise.resolve(users[id] ?? null)),
+      count: jest.fn().mockResolvedValue(0),
       _users: users,
     };
 
+    mockInvitationRepository = { findByAcceptedUserId: jest.fn().mockResolvedValue(null) };
     mockMembershipRepository = { findOne: jest.fn().mockResolvedValue(null) };
     mockLogger = { info: jest.fn(), warn: jest.fn(), error: jest.fn() };
     // Mailer OFF by default (matches the mailer.isConfigured() gate default in most
@@ -73,6 +77,9 @@ describe('billing.referral.service unit tests:', () => {
     jest.unstable_mockModule('../../users/services/users.service.js', () => ({ default: mockUserService }));
     jest.unstable_mockModule('../../organizations/repositories/organizations.membership.repository.js', () => ({
       default: mockMembershipRepository,
+    }));
+    jest.unstable_mockModule('../../invitations/repositories/invitations.repository.js', () => ({
+      default: mockInvitationRepository,
     }));
     jest.unstable_mockModule('../../organizations/lib/constants.js', () => ({
       MEMBERSHIP_STATUSES: { ACTIVE: 'active', PENDING: 'pending' },
@@ -327,6 +334,147 @@ describe('billing.referral.service unit tests:', () => {
         '[billing.referral] referrer notification failed (non-fatal)',
         expect.objectContaining({ userId: inviterId, message: 'SMTP down' }),
       );
+    });
+  });
+
+  describe('link signups (#4214 — billing.referral.link):', () => {
+    const linkRecord = { kind: 'link', userId: refereeId, referredBy: inviterId };
+    const refereeKey = `referral:link:${refereeId}:referee`;
+    const referrerKey = `referral:link:${refereeId}:referrer:${inviterId}`;
+
+    beforeEach(() => {
+      mockConfig.billing.referral.link = true;
+      mockConfig.invitations = { maxLifetime: 2 };
+    });
+
+    test('expectedGrantKeys: a link record yields the link-rooted keys with the same side rules', () => {
+      const cfg = mockConfig.billing.referral;
+      expect(BillingReferralService.expectedGrantKeys(linkRecord, cfg)).toEqual([
+        { side: 'referee', key: refereeKey },
+        { side: 'referrer', key: referrerKey },
+      ]);
+      expect(BillingReferralService.expectedGrantKeys(linkRecord, { ...cfg, referrerUnits: 0 }))
+        .toEqual([{ side: 'referee', key: refereeKey }]);
+      expect(BillingReferralService.expectedGrantKeys(linkRecord, { ...cfg, refereeUnits: 0 }))
+        .toEqual([{ side: 'referrer', key: referrerKey }]);
+      // self-referral floor and missing referrer drop the referrer side
+      expect(BillingReferralService.expectedGrantKeys({ kind: 'link', userId: refereeId, referredBy: refereeId }, cfg))
+        .toEqual([{ side: 'referee', key: refereeKey }]);
+      expect(BillingReferralService.expectedGrantKeys({ kind: 'link', userId: refereeId }, cfg))
+        .toEqual([{ side: 'referee', key: refereeKey }]);
+    });
+
+    test('expectedGrantKeys: the link flag off (or referral disabled) yields no link keys', () => {
+      const cfg = mockConfig.billing.referral;
+      expect(BillingReferralService.expectedGrantKeys(linkRecord, { ...cfg, link: false })).toEqual([]);
+      expect(BillingReferralService.expectedGrantKeys(linkRecord, { ...cfg, enabled: false })).toEqual([]);
+    });
+
+    test('flag off → skipped disabled, no ledger write', async () => {
+      mockConfig.billing.referral.link = false;
+      expect(await BillingReferralService.grantForLink(linkRecord)).toEqual({ skipped: 'disabled' });
+      expect(mockRepository.creditGrant).not.toHaveBeenCalled();
+    });
+
+    test('flag on → both sides granted to the right organizations with the link keys', async () => {
+      const result = await BillingReferralService.grantForLink(linkRecord);
+
+      expect(result.referee).toMatchObject({ applied: true, organizationId: refereeOrgId });
+      expect(result.referrer).toMatchObject({ applied: true, organizationId: inviterOrgId });
+      const calls = mockRepository.creditGrant.mock.calls;
+      expect(calls).toHaveLength(2);
+      expect(calls.find(([, , , o]) => o.refId === refereeKey)).toEqual([refereeOrgId, 500, 'referral', expect.any(Object)]);
+      expect(calls.find(([, , , o]) => o.refId === referrerKey)).toEqual([inviterOrgId, 1000, 'referral', expect.any(Object)]);
+    });
+
+    test('an accepted invitation wins: no link grant', async () => {
+      mockInvitationRepository.findByAcceptedUserId.mockResolvedValue({ _id: invitationId });
+      expect(await BillingReferralService.grantForLink(linkRecord)).toEqual({ skipped: 'invited' });
+      expect(mockRepository.creditGrant).not.toHaveBeenCalled();
+    });
+
+    test('a record without kind link is never read as a link (identity, not shape)', () => {
+      expect(BillingReferralService.expectedGrantKeys({ userId: refereeId, referredBy: inviterId }, mockConfig.billing.referral)).toEqual([]);
+    });
+
+    test('cap: link grants already on the referrer ledger >= maxLifetime → cap_reached, no grant on either side', async () => {
+      mockRepository.countLinkReferrerGrants.mockResolvedValue(2);
+      expect(await BillingReferralService.grantForLink(linkRecord)).toEqual({ skipped: 'cap_reached' });
+      expect(mockRepository.countLinkReferrerGrants).toHaveBeenCalledWith(inviterId); // by referrer id, not by organization
+      expect(mockRepository.creditGrant).not.toHaveBeenCalled();
+    });
+
+    test('cap: below the cap is granted', async () => {
+      mockRepository.countLinkReferrerGrants.mockResolvedValue(1);
+      expect((await BillingReferralService.grantForLink(linkRecord)).referee).toMatchObject({ applied: true });
+    });
+
+    test('cap reached but this user\'s own referrer grant already landed → still finishes the referee side', async () => {
+      mockRepository.countLinkReferrerGrants.mockResolvedValue(2);
+      mockRepository.findExistingRefIds.mockResolvedValue([referrerKey]);
+      const result = await BillingReferralService.grantForLink(linkRecord);
+      expect(result.referee).toMatchObject({ applied: true });
+    });
+
+    test('fail closed without a cap: null / undefined / 0 / non-integer maxLifetime → no_cap, warn, no grant', async () => {
+      for (const value of [null, undefined, 0, 1.5, '3']) {
+        mockConfig.invitations = { maxLifetime: value };
+        mockLogger.warn.mockClear();
+        expect(await BillingReferralService.grantForLink(linkRecord)).toEqual({ skipped: 'no_cap' });
+        expect(mockLogger.warn).toHaveBeenCalledTimes(1);
+      }
+      delete mockConfig.invitations;
+      expect(await BillingReferralService.grantForLink(linkRecord)).toEqual({ skipped: 'no_cap' });
+      expect(mockRepository.creditGrant).not.toHaveBeenCalled();
+    });
+
+    test('referrer without a workspace yet → skipped referrer_no_organization (fail closed, cron retries)', async () => {
+      mockUserService._users[inviterId] = { _id: inviterId };
+      expect(await BillingReferralService.grantForLink(linkRecord)).toEqual({ skipped: 'referrer_no_organization' });
+      expect(mockRepository.creditGrant).not.toHaveBeenCalled();
+    });
+
+    test('referrerUnits 0 → the cap cannot bind (no referrer entries): no ledger count', async () => {
+      mockConfig.billing.referral.referrerUnits = 0;
+      mockRepository.countLinkReferrerGrants.mockResolvedValue(99);
+      const result = await BillingReferralService.grantForLink(linkRecord);
+      expect(result.referee).toMatchObject({ applied: true });
+      expect(mockRepository.countLinkReferrerGrants).not.toHaveBeenCalled();
+    });
+
+    test('an invitation passed by the caller skips the lookup (null = looked up, none)', async () => {
+      await BillingReferralService.grantForLink({ ...linkRecord, invitation: null });
+      expect(mockInvitationRepository.findByAcceptedUserId).not.toHaveBeenCalled();
+      expect(await BillingReferralService.grantForLink({ ...linkRecord, invitation: { _id: invitationId } })).toEqual({ skipped: 'invited' });
+    });
+
+    test('link-path skip labels are their own (no_referrer / no_referee)', async () => {
+      const noReferrer = await BillingReferralService.grantForLink({ kind: 'link', userId: refereeId, referredBy: refereeId });
+      expect(noReferrer.referrer).toEqual({ applied: false, reason: 'self_referral' });
+      mockConfig.billing.referral.refereeUnits = 0;
+      const zero = await BillingReferralService.grantForLink(linkRecord);
+      expect(zero.referee).toEqual({ applied: false, reason: 'zero_units' });
+    });
+
+    test('replay → duplicate_grant on both sides, never a second referrer email', async () => {
+      mockMailer.isConfigured.mockReturnValue(true);
+      await BillingReferralService.grantForLink(linkRecord);
+      expect(mockMailer.sendMail).toHaveBeenCalledTimes(1);
+
+      mockRepository.creditGrant.mockResolvedValue({ doc: null, applied: false, reason: 'duplicate_grant' });
+      const replay = await BillingReferralService.grantForLink(linkRecord);
+      expect(replay.referee).toMatchObject({ applied: false, reason: 'duplicate_grant' });
+      expect(replay.referrer).toMatchObject({ applied: false, reason: 'duplicate_grant' });
+      expect(mockMailer.sendMail).toHaveBeenCalledTimes(1);
+      expect(mockMailer.sendMail.mock.calls[0][0].to).toBe('inviter@example.com');
+    });
+
+    test('zero referee units → only the referrer side is credited', async () => {
+      mockConfig.billing.referral.refereeUnits = 0;
+      const result = await BillingReferralService.grantForLink(linkRecord);
+      expect(result.referee).toEqual({ applied: false, reason: 'zero_units' });
+      expect(result.referrer).toMatchObject({ applied: true });
+      expect(mockRepository.creditGrant).toHaveBeenCalledTimes(1);
     });
   });
 });

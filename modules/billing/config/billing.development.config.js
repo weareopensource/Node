@@ -159,6 +159,15 @@ const config = {
      * expiryDays    — referral credits expire after N days (same expiry mechanism as
      *                 pack.expiryDays — swept by crons/billing.extrasExpiration.js).
      *                 null = never expire.
+     * link          — (#4214) also reward signups made through a personal referral link
+     *                 (`referredBy` set, NO accepted invitation): same sides, keyed
+     *                 `referral:link:<refereeUserId>:referee` and
+     *                 `referral:link:<refereeUserId>:referrer:<referrerUserId>`. An accepted invitation
+     *                 always wins. REQUIRES `invitations.maxLifetime` (a positive integer): it caps the
+     *                 link rewards per referrer, counted per referrer across all ledgers (a new organization never resets it); without it no
+     *                 link grant happens. With `referrerUnits` 0 the cap cannot bind. Turning it
+     *                 on back-fills past link signups via the cron, bounded by the cap.
+     *                 Default false = link is credit only.
      *
      * Pair with the reconcile cron (crons/billing.referralReconcile.js): the listener
      * is in-process fire-and-forget (latency); the cron back-fills missed grants (truth).
@@ -175,6 +184,7 @@ const config = {
       referrerUnits: 0,
       refereeUnits: 0,
       expiryDays: 365,
+      link: false,
     },
   },
   stripe: {

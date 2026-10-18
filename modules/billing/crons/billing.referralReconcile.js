@@ -8,6 +8,13 @@
  * (`referral:<invitationId>:referrer|referee`) against the BillingExtraBalance ledger,
  * and back-fills misses idempotently via BillingReferralService.grantForInvitation
  * (the atomic `ledger.refId` guard makes overlap with the listener harmless).
+ * With `billing.referral.link` on (#4214) it also sweeps link signups — users with
+ * `referredBy` and no accepted invitation (keys `referral:link:<userId>:referee|referrer:<referrerId>`)
+ * — back-filled via BillingReferralService.grantForLink, which owns the invite-wins
+ * and per-referrer cap rules (a capped user is never a pending miss); each referrer's
+ * remaining budget is computed once per run. Needs `invitations.maxLifetime` (positive
+ * integer), else the link set is skipped. Turning `link` on back-fills past link signups,
+ * bounded by that cap.
  *
  * No-op when config.billing.referral.enabled === false (default).
  * Intended to run as a Kubernetes CronJob — see modules/billing/crons/README.md.
@@ -61,10 +68,12 @@ try {
         { default: BillingReferralService },
         { default: BillingExtraBalanceRepository },
         { default: InvitationRepository },
+        { default: UserService },
       ] = await Promise.all([
         import('../services/billing.referral.service.js'),
         import('../repositories/billing.extraBalance.repository.js'),
         import('../../invitations/repositories/invitations.repository.js'),
+        import('../../users/services/users.service.js'),
       ]);
 
       const cfg = config.billing.referral;
@@ -79,12 +88,77 @@ try {
         if (expected.length > 0) candidates.push({ invite, expected });
       }
 
-      const allKeys = candidates.flatMap((c) => c.expected);
+      // Link signups (#4214): users with `referredBy` and NO accepted invitation. Same
+      // rule source (expectedGrantKeys); the invite-wins and cap rules live in grantForLink.
+      const linkCandidates = [];
+      const linkCap = cfg.link ? BillingReferralService.getLinkCap() : null;
+      if (cfg.link && !linkCap) {
+        logger.warn('[cron.referralReconcile] billing.referral.link needs invitations.maxLifetime (a positive integer) — link signups skipped');
+      } else if (cfg.link) {
+        const invitedIds = new Set(accepted.map((invite) => String(invite.acceptedUserId)));
+        // Lean read: only the ids and the referrer, oldest first (the order the cap spends in).
+        const referred = await UserService.findWithFilter({ referredBy: { $ne: null } }, '_id referredBy');
+        for (const user of referred) {
+          if (invitedIds.has(String(user._id))) continue;
+          const link = { kind: 'link', userId: String(user._id), referredBy: String(user.referredBy) };
+          const expected = BillingReferralService.expectedGrantKeys(link, cfg).map(({ key }) => key);
+          const referrerKey = BillingReferralService.expectedGrantKeys(link, cfg).find(({ side }) => side === 'referrer')?.key;
+          if (expected.length > 0) linkCandidates.push({ link, expected, referrerKey });
+        }
+        linkCandidates.sort((x, y) => (x.link.userId < y.link.userId ? -1 : 1));
+      }
+
+      const allKeys = [...candidates, ...linkCandidates].flatMap((c) => c.expected);
       const existing = new Set(await BillingExtraBalanceRepository.findExistingRefIds(allKeys));
 
       let backfilled = 0;
       let pending = 0;
       let errors = 0;
+
+      /**
+       * Fold one grant result into the run counters.
+       * @param {{referrer?: Object, referee?: Object}} result - Result of a grant call.
+       * @param {Object} logMeta - Identifiers logged on a back-fill.
+       * @returns {void}
+       */
+      const tally = (result, logMeta) => {
+        const sides = [result.referrer, result.referee].filter(Boolean);
+        const applied = sides.filter((s) => s.applied).length;
+        // `no_organization` = the actor has no workspace yet (e.g. email verification
+        // pending) — stays pending, retried on the next run once the org exists.
+        const waiting = sides.filter((s) => s.reason === 'no_organization').length;
+        if (applied > 0) {
+          backfilled += applied;
+          logger.info('[cron.referralReconcile] back-filled', { ...logMeta, applied });
+        }
+        if (waiting > 0) pending += waiting;
+      };
+
+      // Each referrer's remaining link budget (cap - grants already on their ledger) is
+      // read once per run and spent in-run; candidates beyond it are skipped before
+      // grantForLink (which re-checks the cap itself) and are not pending. A user whose own referrer grant already landed is free (finishing
+      // the referee side never spends budget).
+      const budgets = new Map();
+      for (const { link, expected, referrerKey } of linkCandidates) {
+        if (expected.every((key) => existing.has(key))) continue; // fully granted
+        try {
+          if (!budgets.has(link.referredBy)) budgets.set(link.referredBy, await BillingReferralService.linkBudget(link.referredBy, linkCap));
+          const budget = budgets.get(link.referredBy);
+          if (budget.skipped) continue; // referrer has no workspace yet — retried next run
+          if (!existing.has(referrerKey)) {
+            if (budget.remaining <= 0) continue; // cap reached — not a miss
+            budget.remaining -= 1;
+          }
+          tally(await BillingReferralService.grantForLink(link), { userId: link.userId });
+        } catch (err) {
+          errors += 1;
+          logger.error('[cron.referralReconcile] grantForLink failed', {
+            userId: link.userId,
+            err: err?.message,
+            stack: err?.stack,
+          });
+        }
+      }
 
       for (const { invite, expected } of candidates) {
         if (expected.every((key) => existing.has(key))) continue; // fully granted
@@ -94,16 +168,7 @@ try {
             invitedBy: invite.invitedBy ? String(invite.invitedBy) : null,
             acceptedUserId: invite.acceptedUserId ? String(invite.acceptedUserId) : null,
           });
-          const sides = [result.referrer, result.referee].filter(Boolean);
-          const applied = sides.filter((s) => s.applied).length;
-          // `no_organization` = the actor has no workspace yet (e.g. email verification
-          // pending) — stays pending, retried on the next run once the org exists.
-          const waiting = sides.filter((s) => s.reason === 'no_organization').length;
-          if (applied > 0) {
-            backfilled += applied;
-            logger.info('[cron.referralReconcile] back-filled', { invitationId: String(invite._id), applied });
-          }
-          if (waiting > 0) pending += waiting;
+          tally(result, { invitationId: String(invite._id) });
         } catch (err) {
           errors += 1;
           logger.error('[cron.referralReconcile] grantForInvitation failed', {
@@ -116,6 +181,7 @@ try {
 
       logger.info('[cron.referralReconcile] complete', {
         accepted: accepted.length,
+        linkCandidates: linkCandidates.length,
         backfilled,
         pending,
         errors,
