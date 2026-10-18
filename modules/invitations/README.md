@@ -189,7 +189,7 @@ With `billing.referral.enabled`, `GET /api/users/me` returns `referralCode` — 
 checks the referrer exists and sets `referredBy`. An unknown or malformed code, a disabled flag, or an honored
 invite (which wins) means no link attribution (the honored invite keeps its own attribution to its inviter) and never a 4xx. A link referral is **credit only** by default: no billing reward.
 Set `billing.referral.link: true` (with `enabled`) and a link signup with no accepted invitation earns the
-same two sides as an invite, keyed `referral:link:<refereeUserId>:referrer|referee` (granted by the
+same two sides as an invite, keyed `referral:link:<refereeUserId>:referee` and `referral:link:<refereeUserId>:referrer:<referrerUserId>` (granted by the
 `organization.provisioned` listener, back-filled by the reconcile cron). An accepted invitation always wins,
-and `invitations.maxLifetime` (a positive integer, required: without it no link grant happens) caps the link rewards per referrer, counted on the referrer's ledger. Turning `link` on also back-fills past link signups through the cron, bounded by that cap.
+and `invitations.maxLifetime` (a positive integer, required: without it no link grant happens) caps the link rewards per referrer, counted per referrer across all ledgers (creating or switching organization never resets it). Turning `link` on also back-fills past link signups through the cron, bounded by that cap.
 `user_signed_up` carries `referralSource: 'invite' | 'link' | null`.

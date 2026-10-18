@@ -657,25 +657,30 @@ const findExistingRefIds = async (refIds) => {
 
 /**
  * @function countLinkReferrerGrants
- * @description Count the referral LINK referrer grants (#4214) already credited to an
- *              organization's ledger: entries whose refId matches the anchored pattern
- *              `^referral:link:.+:referrer$`. This is the per-referrer cap's counter
- *              (`invitations.maxLifetime`): the ledger is the source of truth, so
- *              deleting referred users never resets it. Scoped to one org document; the
- *              `organization` match narrows the doc set first. Concurrent grants can
- *              overshoot the cap by one (read-then-credit, accepted). It only counts
- *              referrer entries: with `referrerUnits` = 0 there are none, so the cap
- *              cannot bind (referee-only rewards carry the same exposure as the signup grant).
- * @param {string} orgId - The referrer's organization ObjectId (string).
- * @returns {Promise<number>} Number of link referrer grants on that ledger.
+ * @description Count the referral LINK referrer grants (#4214) credited for one referrer
+ *              ACROSS ALL ledgers: entries whose refId matches the anchored pattern
+ *              `^referral:link:[^:]+:referrer:<referrerId>$` (the referrer id is part of the
+ *              key). This is the per-referrer cap's counter (`invitations.maxLifetime`):
+ *              the ledger is the source of truth, so neither deleting referred users nor
+ *              the referrer creating / switching to another organization resets it.
+ *              Cost: the `ledger.refId` multikey index narrows the first $match by the
+ *              literal `referral:link:` prefix; the `[^:]+` segment is then filtered on
+ *              the matched index keys / entries, so it scans link-grant entries only,
+ *              not every ledger. Concurrent grants can overshoot the cap by one
+ *              (read-then-credit, no reservation — accepted). Only referrer entries are
+ *              counted: with `referrerUnits` = 0 there are none, so the cap cannot bind
+ *              (referee-only rewards carry the same exposure as the signup grant).
+ * @param {string} referrerId - The referrer user ObjectId (24-hex string).
+ * @returns {Promise<number>} Number of link referrer grants for that referrer (0 for an invalid id).
  */
 // biome-ignore lint/correctness/useQwikValidLexicalScope: false positive — Node.js repository, not Qwik
-const countLinkReferrerGrants = async (orgId) => {
-  if (!isValidOrgId(orgId)) return 0;
+const countLinkReferrerGrants = async (referrerId) => {
+  if (!/^[0-9a-f]{24}$/i.test(String(referrerId))) return 0;
+  const pattern = new RegExp(`^referral:link:[^:]+:referrer:${String(referrerId)}$`);
   const [row] = await BillingExtraBalance().aggregate([
-    { $match: { organization: new mongoose.Types.ObjectId(orgId) } },
+    { $match: { 'ledger.refId': { $regex: pattern } } },
     { $unwind: '$ledger' },
-    { $match: { 'ledger.refId': { $regex: /^referral:link:.+:referrer$/ } } },
+    { $match: { 'ledger.refId': { $regex: pattern } } },
     { $count: 'total' },
   ]).exec();
   return row?.total ?? 0;

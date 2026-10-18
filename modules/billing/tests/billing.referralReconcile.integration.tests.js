@@ -104,7 +104,7 @@ describe('Billing referral reconcile cron — link signups (#4214):', () => {
     for (const key of ['one', 'two', 'three']) ids.push(String((await UserService.getBrut({ email: emails[key] }))._id));
     ids.sort();
     const referee = (id) => `referral:link:${id}:referee`;
-    const referrer = (id) => `referral:link:${id}:referrer`;
+    const referrer = (id) => `referral:link:${id}:referrer:${referrerId}`;
 
     await runCron(null);
     for (const id of ids) expect(await hasKey(referee(id))).toBe(false);
@@ -116,10 +116,10 @@ describe('Billing referral reconcile cron — link signups (#4214):', () => {
     expect(await hasKey(referrer(ids[1]))).toBe(true);
     expect(await hasKey(referee(ids[2]))).toBe(false);
     expect(await hasKey(referrer(ids[2]))).toBe(false);
-    expect(await BillingExtraBalanceRepository.countLinkReferrerGrants(referrerOrgId)).toBe(2);
+    expect(await BillingExtraBalanceRepository.countLinkReferrerGrants(referrerId)).toBe(2);
 
     await runCron(2);
-    expect(await BillingExtraBalanceRepository.countLinkReferrerGrants(referrerOrgId)).toBe(2);
+    expect(await BillingExtraBalanceRepository.countLinkReferrerGrants(referrerId)).toBe(2);
     expect(await hasKey(referee(ids[2]))).toBe(false);
   }, 120000);
 });

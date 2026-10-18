@@ -9,7 +9,7 @@
  * and back-fills misses idempotently via BillingReferralService.grantForInvitation
  * (the atomic `ledger.refId` guard makes overlap with the listener harmless).
  * With `billing.referral.link` on (#4214) it also sweeps link signups — users with
- * `referredBy` and no accepted invitation (keys `referral:link:<userId>:referrer|referee`)
+ * `referredBy` and no accepted invitation (keys `referral:link:<userId>:referee|referrer:<referrerId>`)
  * — back-filled via BillingReferralService.grantForLink, which owns the invite-wins
  * and per-referrer cap rules (a capped user is never a pending miss); each referrer's
  * remaining budget is computed once per run. Needs `invitations.maxLifetime` (positive
@@ -102,7 +102,8 @@ try {
           if (invitedIds.has(String(user._id))) continue;
           const link = { kind: 'link', userId: String(user._id), referredBy: String(user.referredBy) };
           const expected = BillingReferralService.expectedGrantKeys(link, cfg).map(({ key }) => key);
-          if (expected.length > 0) linkCandidates.push({ link, expected });
+          const referrerKey = BillingReferralService.expectedGrantKeys(link, cfg).find(({ side }) => side === 'referrer')?.key;
+          if (expected.length > 0) linkCandidates.push({ link, expected, referrerKey });
         }
         linkCandidates.sort((x, y) => (x.link.userId < y.link.userId ? -1 : 1));
       }
@@ -138,13 +139,13 @@ try {
       // are not pending. A user whose own referrer grant already landed is free (finishing
       // the referee side never spends budget).
       const budgets = new Map();
-      for (const { link, expected } of linkCandidates) {
+      for (const { link, expected, referrerKey } of linkCandidates) {
         if (expected.every((key) => existing.has(key))) continue; // fully granted
         try {
           if (!budgets.has(link.referredBy)) budgets.set(link.referredBy, await BillingReferralService.linkBudget(link.referredBy, linkCap));
           const budget = budgets.get(link.referredBy);
           if (budget.skipped) continue; // referrer has no workspace yet — retried next run
-          if (!existing.has(`referral:link:${link.userId}:referrer`)) {
+          if (!existing.has(referrerKey)) {
             if (budget.remaining <= 0) continue; // cap reached — not a miss
             budget.remaining -= 1;
           }

@@ -37,6 +37,7 @@ describe('Billing referral link grant (#4214):', () => {
     off: 'ref-link-grant-off@test.com',
     invited: 'ref-link-grant-invited@test.com',
     late: 'ref-link-grant-late@test.com',
+    switched: 'ref-link-grant-switched@test.com',
   };
 
   const signup = (email, extra = {}) => request(app).post('/api/auth/signup').send({
@@ -121,7 +122,7 @@ describe('Billing referral link grant (#4214):', () => {
     const refereeOrgId = orgOf(user);
     await waitForEntry(refereeOrgId, `signup_grant-${refereeOrgId}`);
     await new Promise((resolve) => { setTimeout(resolve, 300); });
-    const keys = [`referral:link:${userId}:referrer`, `referral:link:${userId}:referee`];
+    const keys = [`referral:link:${userId}:referrer:${referrerId}`, `referral:link:${userId}:referee`];
     expect(await BillingExtraBalanceRepository.findExistingRefIds(keys)).toEqual([]);
 
     // What the cron does for a missed link grant: flag on, then grantForLink.
@@ -144,13 +145,13 @@ describe('Billing referral link grant (#4214):', () => {
 
     const refereeEntry = await waitForEntry(refereeOrgId, `referral:link:${userId}:referee`);
     expect(refereeEntry).toMatchObject({ kind: 'topup', source: 'referral', amount: REFEREE_UNITS });
-    const referrerEntry = await waitForEntry(referrerOrgId, `referral:link:${userId}:referrer`);
+    const referrerEntry = await waitForEntry(referrerOrgId, `referral:link:${userId}:referrer:${referrerId}`);
     expect(referrerEntry).toMatchObject({ kind: 'topup', source: 'referral', amount: REFERRER_UNITS });
 
     const replay = await BillingReferralService.grantForLink({ userId, referredBy: referrerId });
     expect(replay.referee).toMatchObject({ applied: false, reason: 'duplicate_grant' });
     expect(await countEntries(refereeOrgId, `referral:link:${userId}:referee`)).toBe(1);
-    expect(await countEntries(referrerOrgId, `referral:link:${userId}:referrer`)).toBe(1);
+    expect(await countEntries(referrerOrgId, `referral:link:${userId}:referrer:${referrerId}`)).toBe(1);
   }, 30000);
 
   test('cap reached → the later referred user gets no grant on either side', async () => {
@@ -165,7 +166,7 @@ describe('Billing referral link grant (#4214):', () => {
 
     expect(await BillingReferralService.grantForLink({ userId, referredBy: referrerId })).toEqual({ skipped: 'cap_reached' });
     expect(await BillingExtraBalanceRepository.findExistingRefIds([
-      `referral:link:${userId}:referrer`,
+      `referral:link:${userId}:referrer:${referrerId}`,
       `referral:link:${userId}:referee`,
     ])).toEqual([]);
   }, 30000);
@@ -178,6 +179,22 @@ describe('Billing referral link grant (#4214):', () => {
     const user = await UserService.getBrut({ email: emails.late });
     await new Promise((resolve) => { setTimeout(resolve, 300); });
     expect(await BillingReferralService.grantForLink({ userId: String(user._id), referredBy: referrerId })).toEqual({ skipped: 'cap_reached' });
+  }, 30000);
+
+  test('the referrer creating and switching to a NEW organization does not reset the cap', async () => {
+    config.invitations = { ...originalInvitations, maxLifetime: 1 };
+    const agent = request.agent(app);
+    await agent.post('/api/auth/signin').send({ email: emails.referrer, password: PASSWORD }).expect(200);
+    const created = await agent.post('/api/organizations').send({ name: 'Second workspace for the referrer' });
+    expect(created.status).toBe(200);
+    const referrer = await UserService.getBrut({ email: emails.referrer });
+    expect(orgOf(referrer)).not.toBe(referrerOrgId); // currentOrganization really moved
+
+    await signup(emails.switched, { ref: encodeReferralCode(referrerId) }).expect(200);
+    const user = await UserService.getBrut({ email: emails.switched });
+    await new Promise((resolve) => { setTimeout(resolve, 300); });
+    expect(await BillingReferralService.grantForLink({ userId: String(user._id), referredBy: referrerId })).toEqual({ skipped: 'cap_reached' });
+    expect(await BillingExtraBalanceRepository.findExistingRefIds([`referral:link:${String(user._id)}:referee`])).toEqual([]);
   }, 30000);
 
   test('no usable invitations.maxLifetime → no link grant (fails closed)', async () => {

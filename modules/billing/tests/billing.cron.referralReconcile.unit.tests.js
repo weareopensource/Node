@@ -74,7 +74,7 @@ describe('billing.referralReconcile cron — logic:', () => {
         if (!budgets.has(link.referredBy)) budgets.set(link.referredBy, await BillingReferralService.linkBudget(link.referredBy, linkCap));
         const budget = budgets.get(link.referredBy);
         if (budget.skipped) continue;
-        if (!existing.has(`referral:link:${link.userId}:referrer`)) {
+        if (!existing.has(`referral:link:${link.userId}:referrer:${link.referredBy}`)) {
           if (budget.remaining <= 0) continue;
           budget.remaining -= 1;
         }
@@ -281,7 +281,7 @@ describe('billing.referralReconcile cron — logic:', () => {
       expect(BillingReferralService.grantForLink).toHaveBeenCalledWith({ kind: 'link', userId: linkUserId, referredBy: inviterId });
       expect(BillingExtraBalanceRepository.findExistingRefIds.mock.calls[0][0]).toEqual([
         `referral:link:${linkUserId}:referee`,
-        `referral:link:${linkUserId}:referrer`,
+        `referral:link:${linkUserId}:referrer:${inviterId}`,
       ]);
       expect(backfilled).toBe(2);
     });
@@ -290,7 +290,7 @@ describe('billing.referralReconcile cron — logic:', () => {
       UserService.findWithFilter.mockResolvedValue([{ _id: linkUserId, referredBy: inviterId }]);
       BillingExtraBalanceRepository.findExistingRefIds.mockResolvedValue([
         `referral:link:${linkUserId}:referee`,
-        `referral:link:${linkUserId}:referrer`,
+        `referral:link:${linkUserId}:referrer:${inviterId}`,
       ]);
       const { grantCalls } = await runReconcilePass();
       expect(grantCalls).toBe(0);
@@ -322,7 +322,7 @@ describe('billing.referralReconcile cron — logic:', () => {
     test('a user whose own referrer grant already landed is free (finishes the referee side with no budget)', async () => {
       UserService.findWithFilter.mockResolvedValue([{ _id: linkUserId, referredBy: inviterId }]);
       BillingReferralService.linkBudget.mockResolvedValue({ remaining: 0 });
-      BillingExtraBalanceRepository.findExistingRefIds.mockResolvedValue([`referral:link:${linkUserId}:referrer`]);
+      BillingExtraBalanceRepository.findExistingRefIds.mockResolvedValue([`referral:link:${linkUserId}:referrer:${inviterId}`]);
       const { grantCalls } = await runReconcilePass();
       expect(grantCalls).toBe(1);
     });

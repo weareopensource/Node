@@ -161,9 +161,10 @@ const config = {
      *                 null = never expire.
      * link          — (#4214) also reward signups made through a personal referral link
      *                 (`referredBy` set, NO accepted invitation): same sides, keyed
-     *                 `referral:link:<refereeUserId>:referrer|referee`. An accepted invitation
+     *                 `referral:link:<refereeUserId>:referee` and
+     *                 `referral:link:<refereeUserId>:referrer:<referrerUserId>`. An accepted invitation
      *                 always wins. REQUIRES `invitations.maxLifetime` (a positive integer): it caps the
-     *                 link rewards per referrer, counted on the referrer's ledger; without it no
+     *                 link rewards per referrer, counted per referrer across all ledgers (a new organization never resets it); without it no
      *                 link grant happens. With `referrerUnits` 0 the cap cannot bind. Turning it
      *                 on back-fills past link signups via the cron, bounded by the cap.
      *                 Default false = link is credit only.

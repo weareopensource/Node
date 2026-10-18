@@ -340,7 +340,7 @@ describe('billing.referral.service unit tests:', () => {
   describe('link signups (#4214 — billing.referral.link):', () => {
     const linkRecord = { kind: 'link', userId: refereeId, referredBy: inviterId };
     const refereeKey = `referral:link:${refereeId}:referee`;
-    const referrerKey = `referral:link:${refereeId}:referrer`;
+    const referrerKey = `referral:link:${refereeId}:referrer:${inviterId}`;
 
     beforeEach(() => {
       mockConfig.billing.referral.link = true;
@@ -400,7 +400,7 @@ describe('billing.referral.service unit tests:', () => {
     test('cap: link grants already on the referrer ledger >= maxLifetime → cap_reached, no grant on either side', async () => {
       mockRepository.countLinkReferrerGrants.mockResolvedValue(2);
       expect(await BillingReferralService.grantForLink(linkRecord)).toEqual({ skipped: 'cap_reached' });
-      expect(mockRepository.countLinkReferrerGrants).toHaveBeenCalledWith(inviterOrgId);
+      expect(mockRepository.countLinkReferrerGrants).toHaveBeenCalledWith(inviterId); // by referrer id, not by organization
       expect(mockRepository.creditGrant).not.toHaveBeenCalled();
     });
 
