@@ -162,8 +162,11 @@ const config = {
      * link          — (#4214) also reward signups made through a personal referral link
      *                 (`referredBy` set, NO accepted invitation): same sides, keyed
      *                 `referral:link:<refereeUserId>:referrer|referee`. An accepted invitation
-     *                 always wins. Capped per referrer by `invitations.maxLifetime` (first N
-     *                 referred users by id; null = uncapped). Default false = link is credit only.
+     *                 always wins. REQUIRES `invitations.maxLifetime` (a positive integer): it caps the
+     *                 link rewards per referrer, counted on the referrer's ledger; without it no
+     *                 link grant happens. With `referrerUnits` 0 the cap cannot bind. Turning it
+     *                 on back-fills past link signups via the cron, bounded by the cap.
+     *                 Default false = link is credit only.
      *
      * Pair with the reconcile cron (crons/billing.referralReconcile.js): the listener
      * is in-process fire-and-forget (latency); the cron back-fills missed grants (truth).

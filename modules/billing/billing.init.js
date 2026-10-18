@@ -120,7 +120,7 @@ export default async (app) => {
       if (!invitation) {
         // referredBy without a finalized invite = a link signup (#4214): grantForLink is a
         // no-op unless `billing.referral.link` is on; the reconcile cron is the safety net.
-        await BillingReferralService.grantForLink({ userId, referredBy: String(user.referredBy) });
+        await BillingReferralService.grantForLink({ userId, referredBy: String(user.referredBy), invitation: null });
         return;
       }
       await BillingReferralService.grantForInvitation({

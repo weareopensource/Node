@@ -101,7 +101,7 @@ describe('Billing referral link grant (#4214):', () => {
 
   beforeEach(() => {
     config.billing.referral = { enabled: true, link: true, referrerUnits: REFERRER_UNITS, refereeUnits: REFEREE_UNITS, expiryDays: 365 };
-    config.invitations = { ...originalInvitations, maxLifetime: null };
+    config.invitations = { ...originalInvitations, maxLifetime: 100 };
   });
 
   afterEach(() => {
@@ -154,7 +154,7 @@ describe('Billing referral link grant (#4214):', () => {
   }, 30000);
 
   test('cap reached → the later referred user gets no grant on either side', async () => {
-    // emails.a (created above) is rank 0 for this referrer; with a cap of 1, the next one is rank >= 1.
+    // emails.a's referrer grant is already on the referrer's ledger; with a cap of 1 the next user is capped.
     config.invitations = { ...originalInvitations, maxLifetime: 1 };
     await signup(emails.b, { ref: encodeReferralCode(referrerId) }).expect(200);
     const user = await UserService.getBrut({ email: emails.b });
@@ -168,6 +168,28 @@ describe('Billing referral link grant (#4214):', () => {
       `referral:link:${userId}:referrer`,
       `referral:link:${userId}:referee`,
     ])).toEqual([]);
+  }, 30000);
+
+  test('deleting referred users never resets the cap (the ledger is the counter)', async () => {
+    config.invitations = { ...originalInvitations, maxLifetime: 1 };
+    const a = await UserService.getBrut({ email: emails.a });
+    await UserService.remove(a);
+    await signup(emails.late, { ref: encodeReferralCode(referrerId) }).expect(200);
+    const user = await UserService.getBrut({ email: emails.late });
+    await new Promise((resolve) => { setTimeout(resolve, 300); });
+    expect(await BillingReferralService.grantForLink({ userId: String(user._id), referredBy: referrerId })).toEqual({ skipped: 'cap_reached' });
+  }, 30000);
+
+  test('no usable invitations.maxLifetime → no link grant (fails closed)', async () => {
+    config.invitations = { ...originalInvitations, maxLifetime: null };
+    const user = await UserService.getBrut({ email: emails.late });
+    expect(await BillingReferralService.grantForLink({ userId: String(user._id), referredBy: referrerId })).toEqual({ skipped: 'no_cap' });
+  }, 30000);
+
+  test('invite after link has no producer: inviting an already-registered (link) user is rejected 422', async () => {
+    const { default: InvitationsService } = await import(path.resolve('./modules/invitations/services/invitations.service.js'));
+    await expect(InvitationsService.create(emails.late, { id: referrerId, email: emails.referrer }))
+      .rejects.toMatchObject({ status: 422 });
   }, 30000);
 
   test('an accepted invitation wins over the link: no link grant', async () => {

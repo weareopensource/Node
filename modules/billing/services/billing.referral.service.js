@@ -25,11 +25,14 @@ import BillingExtraBalanceRepository from '../repositories/billing.extraBalance.
  *       Link signups (#4214): with `billing.referral.link` on, a user whose `referredBy`
  *       was set by a personal referral link (and who has NO accepted invitation) earns the
  *       same sides, keyed `referral:link:<refereeUserId>:referrer|referee`. An accepted
- *       invitation always wins; `invitations.maxLifetime` caps the link rewards per referrer.
+ *       invitation always wins; `invitations.maxLifetime` caps the link rewards per referrer
+ *       (counted on the referrer's ledger) and is REQUIRED: without a positive integer cap
+ *       no link grant happens (`no_cap`).
  *
- *       Callers: the `invitation.accepted` listener in billing.init.js (latency) and the
- *       reconcile cron crons/billing.referralReconcile.js (truth — back-fills missed
- *       events; EventEmitter is in-process fire-and-forget).
+ *       Callers: the `invitation.accepted` and `organization.provisioned` listeners in
+ *       billing.init.js (latency; the latter also grants link signups) and the reconcile
+ *       cron crons/billing.referralReconcile.js (truth — back-fills missed invitation AND
+ *       link grants; EventEmitter is in-process fire-and-forget).
  */
 
 /**
@@ -48,15 +51,15 @@ const referralKeys = (invitationId) => ({
  * @function describeRecord
  * @description Normalize a referral record into its idempotency root and actors. Two shapes:
  *              an invitation (doc with `_id` or accepted payload with `invitationId`, plus
- *              `invitedBy` / `acceptedUserId`) or a link signup (`{ userId, referredBy }`,
- *              #4214). Pure — no I/O.
- * @param {Object} record - Invitation doc / accepted payload, or link `{ userId, referredBy }`.
+ *              `invitedBy` / `acceptedUserId`) or a link signup (explicit
+ *              `{ kind: 'link', userId, referredBy }`, #4214). Pure — no I/O.
+ * @param {Object} record - Invitation doc / accepted payload, or link `{ kind: 'link', userId, referredBy }`.
  * @param {Object} cfg - The `config.billing.referral` block.
  * @returns {{root: string, referrerId: *, refereeId: *}|null} null when the record has no id or the link flag is off.
  */
 // biome-ignore lint/correctness/useQwikValidLexicalScope: false positive — Node.js service, not Qwik
 const describeRecord = (record, cfg) => {
-  if (record?.userId) {
+  if (record?.kind === 'link') {
     if (!cfg?.link) return null;
     return { root: `link:${record.userId}`, referrerId: record.referredBy, refereeId: record.userId };
   }
@@ -69,14 +72,14 @@ const describeRecord = (record, cfg) => {
  * @function expectedGrantKeys
  * @description THE single source of the grant side-rules (#3842, #4214): given an invitation
  *              (doc with `_id` or `invitation.accepted` payload with `invitationId`) or a
- *              link signup (`{ userId, referredBy }`, only when `cfg.link`) and the referral
+ *              link signup (`{ kind: 'link', userId, referredBy }`, only when `cfg.link`) and the referral
  *              config, return the grant sides the record implies as `[{ side, key }]`.
  *              A side with 0 configured units, a referrer-less record, and the cheap
  *              self-referral floor (referrer === referee; the full guard is #3833) produce
  *              NO entry. Pure — no I/O. `grantRecord` (grants) and
  *              crons/billing.referralReconcile.js (candidate diff) derive from it, so a
  *              new guard lands in ONE place and the callers can never drift.
- * @param {Object} record - Invitation doc / accepted payload, or link `{ userId, referredBy }`.
+ * @param {Object} record - Invitation doc / accepted payload, or link `{ kind: 'link', userId, referredBy }`.
  * @param {Object} cfg - The `config.billing.referral` block.
  * @returns {Array<{side: 'referrer'|'referee', key: string}>} The implied grant sides.
  */
@@ -231,6 +234,7 @@ const notifyReferrer = async (userId, units) => {
  */
 // biome-ignore lint/correctness/useQwikValidLexicalScope: false positive — Node.js service, not Qwik
 const grantRecord = async (record, referrerId, refereeId, cfg) => {
+  const isLink = record?.kind === 'link';
   const expected = new Map(expectedGrantKeys(record, cfg).map(({ side, key }) => [side, key]));
   if (cfg.expiryDays !== null && cfg.expiryDays !== undefined && cfg.expiryDays <= 0) {
     throw new Error('billing.referral.expiryDays must be > 0 or null (use null for no expiry)');
@@ -244,7 +248,7 @@ const grantRecord = async (record, referrerId, refereeId, cfg) => {
   if (expected.has('referee')) {
     result.referee = await grantSide({ userId: refereeId, units: cfg.refereeUnits, key: expected.get('referee'), expiresAt });
   } else {
-    result.referee = { applied: false, reason: refereeId ? 'zero_units' : 'no_accepted_user' };
+    result.referee = { applied: false, reason: refereeId ? 'zero_units' : (isLink ? 'no_referee' : 'no_accepted_user') };
   }
 
   // Referrer side — skip referrer-less records and trivial self-referrals (#3833 owns the full guard).
@@ -256,7 +260,7 @@ const grantRecord = async (record, referrerId, refereeId, cfg) => {
       await notifyReferrer(referrerId, cfg.referrerUnits);
     }
   } else if (!referrerId) {
-    result.referrer = { applied: false, reason: 'no_inviter' };
+    result.referrer = { applied: false, reason: isLink ? 'no_referrer' : 'no_inviter' };
   } else if (String(referrerId) === String(refereeId)) {
     result.referrer = { applied: false, reason: 'self_referral' };
   } else {
@@ -283,27 +287,44 @@ const grantForInvitation = async ({ invitationId, invitedBy, acceptedUserId } = 
   const cfg = config.billing?.referral;
   if (!cfg?.enabled) return { skipped: 'disabled' };
   if (!invitationId) return { skipped: 'no_invitation_id' };
+  // No guard against a link grant already made for acceptedUserId: invitation.accepted only
+  // fires from signup finalize for a just-created account (invitations.service accept via
+  // auth), and invitations.create rejects (422) an email that already has a user.
   return grantRecord({ invitationId, invitedBy, acceptedUserId }, invitedBy, acceptedUserId, cfg);
 };
 
 /**
- * @function isLinkCapped
- * @description Whether a link-referred user falls beyond the per-referrer cap (#4214).
- *              Reuses `config.invitations.maxLifetime` (null/undefined = uncapped). The rank
- *              is the number of users with the same `referredBy` and a lower `_id`, so the
- *              first N referred users (by id) earn the reward and the answer is the same
- *              every time the listener or the cron asks. No stored field.
- * @param {string} userId - The referred user id.
- * @param {string} referredBy - The referrer user id.
- * @returns {Promise<boolean>} true when the user ranks at or beyond the cap.
+ * @function getLinkCap
+ * @description The per-referrer cap for link rewards (#4214): `invitations.maxLifetime`
+ *              when it is a positive integer, else null. Link rewards fail closed without
+ *              a cap (a null / undefined / 0 / non-integer value means NO link grant).
+ * @returns {number|null} The cap, or null when none is configured.
  */
 // biome-ignore lint/correctness/useQwikValidLexicalScope: false positive — Node.js service, not Qwik
-const isLinkCapped = async (userId, referredBy) => {
-  const maxLifetime = config.invitations?.maxLifetime;
-  if (typeof maxLifetime !== 'number') return false;
-  const { default: UserService } = await import('../../users/services/users.service.js');
-  const rank = await UserService.count({ referredBy, _id: { $lt: userId } });
-  return rank >= maxLifetime;
+const getLinkCap = () => {
+  const cap = config.invitations?.maxLifetime;
+  return Number.isInteger(cap) && cap > 0 ? cap : null;
+};
+
+/**
+ * @function linkBudget
+ * @description How many more link rewards a referrer can earn: the cap minus the link
+ *              referrer grants already on THEIR organization's ledger (so deleting referred
+ *              users never resets it). Infinity when `referrerUnits` is 0 — no referrer
+ *              entry is ever written, so the cap cannot bind (referee-only rewards carry the
+ *              same exposure as the signup grant). Concurrent grants can overshoot by one.
+ * @param {string} referredBy - The referrer user id.
+ * @param {number} cap - The positive-integer cap (see getLinkCap).
+ * @returns {Promise<{remaining?: number, skipped?: string}>} `skipped:'referrer_no_organization'`
+ *          when the referrer has no workspace yet (fail closed; the cron retries).
+ */
+// biome-ignore lint/correctness/useQwikValidLexicalScope: false positive — Node.js service, not Qwik
+const linkBudget = async (referredBy, cap) => {
+  if (!(config.billing?.referral?.referrerUnits > 0)) return { remaining: Infinity };
+  const organizationId = await resolveGrantOrganization(referredBy);
+  if (!organizationId) return { skipped: 'referrer_no_organization' };
+  const used = await BillingExtraBalanceRepository.countLinkReferrerGrants(organizationId);
+  return { remaining: cap - used };
 };
 
 /**
@@ -311,24 +332,43 @@ const isLinkCapped = async (userId, referredBy) => {
  * @description Apply the referral grant for a signup made through a personal referral link
  *              (#4214): same sides as an invitation, keyed
  *              `referral:link:<userId>:referrer|referee`. Skipped (labelled) when the link
- *              reward is off (`disabled`), when the user has an accepted invitation (the
- *              invite always wins, `invited`), or when the referrer's cap is reached
- *              (`cap_reached`). May reject on infrastructure errors — callers own their
- *              failure handling.
+ *              reward is off (`disabled`), when `invitations.maxLifetime` is not a positive
+ *              integer (`no_cap`, logged at warn), when the user has an accepted invitation
+ *              (the invite always wins, `invited`), when the referrer has no workspace yet
+ *              (`referrer_no_organization`) or when the referrer's cap is reached
+ *              (`cap_reached`; a user whose own referrer grant already landed is never
+ *              locked out of finishing their referee side). May reject on infrastructure
+ *              errors — callers own their failure handling.
  * @param {Object} payload
  * @param {string} payload.userId - The referred (just-signed-up) user id.
  * @param {string} payload.referredBy - The referrer user id.
+ * @param {Object|null} [payload.invitation] - The caller's already-fetched accepted
+ *        invitation for this user (null = looked up, none). Omit to look it up here.
  * @returns {Promise<{skipped?: string, referrer?: Object, referee?: Object}>}
  */
 // biome-ignore lint/correctness/useQwikValidLexicalScope: false positive — Node.js service, not Qwik
-const grantForLink = async ({ userId, referredBy } = {}) => {
+const grantForLink = async ({ userId, referredBy, invitation } = {}) => {
   const cfg = config.billing?.referral;
   if (!cfg?.enabled || !cfg.link) return { skipped: 'disabled' };
   if (!userId || !referredBy) return { skipped: 'no_link' };
-  const { default: InvitationRepository } = await import('../../invitations/repositories/invitations.repository.js');
-  if (await InvitationRepository.findByAcceptedUserId(String(userId))) return { skipped: 'invited' };
-  if (await isLinkCapped(String(userId), String(referredBy))) return { skipped: 'cap_reached' };
-  return grantRecord({ userId, referredBy }, referredBy, userId, cfg);
+  const cap = getLinkCap();
+  if (!cap) {
+    logger.warn('[billing.referral] billing.referral.link needs invitations.maxLifetime (a positive integer) — no link grant', { userId: String(userId) });
+    return { skipped: 'no_cap' };
+  }
+  let accepted = invitation;
+  if (accepted === undefined) {
+    const { default: InvitationRepository } = await import('../../invitations/repositories/invitations.repository.js');
+    accepted = await InvitationRepository.findByAcceptedUserId(String(userId));
+  }
+  if (accepted) return { skipped: 'invited' };
+  const budget = await linkBudget(String(referredBy), cap);
+  if (budget.skipped) return { skipped: budget.skipped };
+  if (budget.remaining <= 0) {
+    const { referrer } = referralKeys(`link:${userId}`);
+    if ((await BillingExtraBalanceRepository.findExistingRefIds([referrer])).length === 0) return { skipped: 'cap_reached' };
+  }
+  return grantRecord({ kind: 'link', userId, referredBy }, referredBy, userId, cfg);
 };
 
 export default {
@@ -337,4 +377,6 @@ export default {
   resolveGrantOrganization,
   grantForInvitation,
   grantForLink,
+  getLinkCap,
+  linkBudget,
 };

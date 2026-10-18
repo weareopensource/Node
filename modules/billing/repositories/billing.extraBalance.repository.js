@@ -656,6 +656,32 @@ const findExistingRefIds = async (refIds) => {
 };
 
 /**
+ * @function countLinkReferrerGrants
+ * @description Count the referral LINK referrer grants (#4214) already credited to an
+ *              organization's ledger: entries whose refId matches the anchored pattern
+ *              `^referral:link:.+:referrer$`. This is the per-referrer cap's counter
+ *              (`invitations.maxLifetime`): the ledger is the source of truth, so
+ *              deleting referred users never resets it. Scoped to one org document; the
+ *              `organization` match narrows the doc set first. Concurrent grants can
+ *              overshoot the cap by one (read-then-credit, accepted). It only counts
+ *              referrer entries: with `referrerUnits` = 0 there are none, so the cap
+ *              cannot bind (referee-only rewards carry the same exposure as the signup grant).
+ * @param {string} orgId - The referrer's organization ObjectId (string).
+ * @returns {Promise<number>} Number of link referrer grants on that ledger.
+ */
+// biome-ignore lint/correctness/useQwikValidLexicalScope: false positive — Node.js repository, not Qwik
+const countLinkReferrerGrants = async (orgId) => {
+  if (!isValidOrgId(orgId)) return 0;
+  const [row] = await BillingExtraBalance().aggregate([
+    { $match: { organization: new mongoose.Types.ObjectId(orgId) } },
+    { $unwind: '$ledger' },
+    { $match: { 'ledger.refId': { $regex: /^referral:link:.+:referrer$/ } } },
+    { $count: 'total' },
+  ]).exec();
+  return row?.total ?? 0;
+};
+
+/**
  * Sum absolute debit entries within a time window using a server-side aggregation.
  * Avoids loading the full ledger into memory — O(1) payload regardless of ledger size.
  *
@@ -705,5 +731,6 @@ export default {
   findOrgsWithExpiringTopups,
   findExistingRefIds,
   findLedgerByOrg,
+  countLinkReferrerGrants,
   sumDebitsByWindow,
 };

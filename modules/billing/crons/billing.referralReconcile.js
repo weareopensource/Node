@@ -11,7 +11,10 @@
  * With `billing.referral.link` on (#4214) it also sweeps link signups — users with
  * `referredBy` and no accepted invitation (keys `referral:link:<userId>:referrer|referee`)
  * — back-filled via BillingReferralService.grantForLink, which owns the invite-wins
- * and per-referrer cap rules (a capped user is never a pending miss).
+ * and per-referrer cap rules (a capped user is never a pending miss); each referrer's
+ * remaining budget is computed once per run. Needs `invitations.maxLifetime` (positive
+ * integer), else the link set is skipped. Turning `link` on back-fills past link signups,
+ * bounded by that cap.
  *
  * No-op when config.billing.referral.enabled === false (default).
  * Intended to run as a Kubernetes CronJob — see modules/billing/crons/README.md.
@@ -88,15 +91,20 @@ try {
       // Link signups (#4214): users with `referredBy` and NO accepted invitation. Same
       // rule source (expectedGrantKeys); the invite-wins and cap rules live in grantForLink.
       const linkCandidates = [];
-      if (cfg.link) {
+      const linkCap = cfg.link ? BillingReferralService.getLinkCap() : null;
+      if (cfg.link && !linkCap) {
+        logger.warn('[cron.referralReconcile] billing.referral.link needs invitations.maxLifetime (a positive integer) — link signups skipped');
+      } else if (cfg.link) {
         const invitedIds = new Set(accepted.map((invite) => String(invite.acceptedUserId)));
-        const referred = await UserService.findWithFilter({ referredBy: { $ne: null } }, 'referredBy');
+        // Lean read: only the ids and the referrer, oldest first (the order the cap spends in).
+        const referred = await UserService.findWithFilter({ referredBy: { $ne: null } }, '_id referredBy');
         for (const user of referred) {
           if (invitedIds.has(String(user._id))) continue;
-          const link = { userId: String(user._id), referredBy: String(user.referredBy) };
+          const link = { kind: 'link', userId: String(user._id), referredBy: String(user.referredBy) };
           const expected = BillingReferralService.expectedGrantKeys(link, cfg).map(({ key }) => key);
           if (expected.length > 0) linkCandidates.push({ link, expected });
         }
+        linkCandidates.sort((x, y) => (x.link.userId < y.link.userId ? -1 : 1));
       }
 
       const allKeys = [...candidates, ...linkCandidates].flatMap((c) => c.expected);
@@ -125,9 +133,21 @@ try {
         if (waiting > 0) pending += waiting;
       };
 
+      // Each referrer's remaining link budget (cap - grants already on their ledger) is
+      // computed ONCE per run; candidates beyond it are skipped with no further query and
+      // are not pending. A user whose own referrer grant already landed is free (finishing
+      // the referee side never spends budget).
+      const budgets = new Map();
       for (const { link, expected } of linkCandidates) {
         if (expected.every((key) => existing.has(key))) continue; // fully granted
         try {
+          if (!budgets.has(link.referredBy)) budgets.set(link.referredBy, await BillingReferralService.linkBudget(link.referredBy, linkCap));
+          const budget = budgets.get(link.referredBy);
+          if (budget.skipped) continue; // referrer has no workspace yet — retried next run
+          if (!existing.has(`referral:link:${link.userId}:referrer`)) {
+            if (budget.remaining <= 0) continue; // cap reached — not a miss
+            budget.remaining -= 1;
+          }
           tally(await BillingReferralService.grantForLink(link), { userId: link.userId });
         } catch (err) {
           errors += 1;

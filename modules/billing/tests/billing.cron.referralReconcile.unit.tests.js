@@ -46,15 +46,17 @@ describe('billing.referralReconcile cron — logic:', () => {
     }
 
     const linkCandidates = [];
-    if (cfg.link) {
+    const linkCap = cfg.link ? BillingReferralService.getLinkCap() : null;
+    if (cfg.link && linkCap) {
       const invitedIds = new Set(accepted.map((invite) => String(invite.acceptedUserId)));
-      const referred = await UserService.findWithFilter({ referredBy: { $ne: null } }, 'referredBy');
+      const referred = await UserService.findWithFilter({ referredBy: { $ne: null } }, '_id referredBy');
       for (const user of referred) {
         if (invitedIds.has(String(user._id))) continue;
-        const link = { userId: String(user._id), referredBy: String(user.referredBy) };
+        const link = { kind: 'link', userId: String(user._id), referredBy: String(user.referredBy) };
         const expected = BillingReferralService.expectedGrantKeys(link, cfg).map(({ key }) => key);
         if (expected.length > 0) linkCandidates.push({ link, expected });
       }
+      linkCandidates.sort((x, y) => (x.link.userId < y.link.userId ? -1 : 1));
     }
 
     const allKeys = [...candidates, ...linkCandidates].flatMap((c) => c.expected);
@@ -65,9 +67,17 @@ describe('billing.referralReconcile cron — logic:', () => {
     let errors = 0;
     let grantCalls = 0;
 
+    const budgets = new Map();
     for (const { link, expected } of linkCandidates) {
       if (expected.every((key) => existing.has(key))) continue;
       try {
+        if (!budgets.has(link.referredBy)) budgets.set(link.referredBy, await BillingReferralService.linkBudget(link.referredBy, linkCap));
+        const budget = budgets.get(link.referredBy);
+        if (budget.skipped) continue;
+        if (!existing.has(`referral:link:${link.userId}:referrer`)) {
+          if (budget.remaining <= 0) continue;
+          budget.remaining -= 1;
+        }
         grantCalls += 1;
         const result = await BillingReferralService.grantForLink(link);
         const sides = [result.referrer, result.referee].filter(Boolean);
@@ -103,6 +113,7 @@ describe('billing.referralReconcile cron — logic:', () => {
 
     mockConfig = {
       billing: { referral: { enabled: true, referrerUnits: 1000, refereeUnits: 500, expiryDays: 365 } },
+      invitations: { maxLifetime: 2 },
     };
 
     jest.unstable_mockModule('../../../config/index.js', () => ({ default: mockConfig }));
@@ -114,6 +125,7 @@ describe('billing.referralReconcile cron — logic:', () => {
       default: {
         findExistingRefIds: jest.fn().mockResolvedValue([]),
         creditGrant: jest.fn(),
+        countLinkReferrerGrants: jest.fn().mockResolvedValue(0),
       },
     }));
 
@@ -124,7 +136,7 @@ describe('billing.referralReconcile cron — logic:', () => {
     }));
 
     jest.unstable_mockModule('../../users/services/users.service.js', () => ({
-      default: { findWithFilter: jest.fn().mockResolvedValue([]) },
+      default: { findWithFilter: jest.fn().mockResolvedValue([]), getBrut: jest.fn() },
     }));
 
     // REAL referral service (its static deps — config/logger/repo — are mocked above):
@@ -142,6 +154,7 @@ describe('billing.referralReconcile cron — logic:', () => {
     InvitationRepository = invitationMod.default;
     jest.spyOn(BillingReferralService, 'grantForInvitation').mockResolvedValue({});
     jest.spyOn(BillingReferralService, 'grantForLink').mockResolvedValue({});
+    jest.spyOn(BillingReferralService, 'linkBudget').mockResolvedValue({ remaining: 2 });
   });
 
   afterEach(() => {
@@ -265,7 +278,7 @@ describe('billing.referralReconcile cron — logic:', () => {
       const { backfilled, grantCalls } = await runReconcilePass();
 
       expect(grantCalls).toBe(1);
-      expect(BillingReferralService.grantForLink).toHaveBeenCalledWith({ userId: linkUserId, referredBy: inviterId });
+      expect(BillingReferralService.grantForLink).toHaveBeenCalledWith({ kind: 'link', userId: linkUserId, referredBy: inviterId });
       expect(BillingExtraBalanceRepository.findExistingRefIds.mock.calls[0][0]).toEqual([
         `referral:link:${linkUserId}:referee`,
         `referral:link:${linkUserId}:referrer`,
@@ -291,13 +304,35 @@ describe('billing.referralReconcile cron — logic:', () => {
       expect(BillingReferralService.grantForInvitation).toHaveBeenCalledTimes(1);
     });
 
-    test('a capped user (cap_reached skip) is neither back-filled nor pending', async () => {
-      UserService.findWithFilter.mockResolvedValue([{ _id: linkUserId, referredBy: inviterId }]);
-      BillingReferralService.grantForLink.mockResolvedValue({ skipped: 'cap_reached' });
-      const { backfilled, pending, errors } = await runReconcilePass();
-      expect(backfilled).toBe(0);
+    test('budget is computed ONCE per referrer; candidates beyond it are skipped with no per-user call and are not pending', async () => {
+      const ids = ['64b2f0000000000000000031', '64b2f0000000000000000032', '64b2f0000000000000000033'];
+      UserService.findWithFilter.mockResolvedValue(ids.map((id) => ({ _id: id, referredBy: inviterId })));
+      BillingReferralService.linkBudget.mockResolvedValue({ remaining: 2 });
+      BillingReferralService.grantForLink.mockResolvedValue({ referrer: { applied: true }, referee: { applied: true } });
+
+      const { grantCalls, pending, errors } = await runReconcilePass();
+
+      expect(BillingReferralService.linkBudget).toHaveBeenCalledTimes(1);
+      expect(grantCalls).toBe(2);
+      expect(BillingReferralService.grantForLink.mock.calls.map(([l]) => l.userId)).toEqual(ids.slice(0, 2));
       expect(pending).toBe(0);
       expect(errors).toBe(0);
+    });
+
+    test('a user whose own referrer grant already landed is free (finishes the referee side with no budget)', async () => {
+      UserService.findWithFilter.mockResolvedValue([{ _id: linkUserId, referredBy: inviterId }]);
+      BillingReferralService.linkBudget.mockResolvedValue({ remaining: 0 });
+      BillingExtraBalanceRepository.findExistingRefIds.mockResolvedValue([`referral:link:${linkUserId}:referrer`]);
+      const { grantCalls } = await runReconcilePass();
+      expect(grantCalls).toBe(1);
+    });
+
+    test('no valid cap → the link set is not scanned at all', async () => {
+      mockConfig.invitations = { maxLifetime: null };
+      UserService.findWithFilter.mockResolvedValue([{ _id: linkUserId, referredBy: inviterId }]);
+      const { grantCalls } = await runReconcilePass();
+      expect(grantCalls).toBe(0);
+      expect(UserService.findWithFilter).not.toHaveBeenCalled();
     });
   });
 });

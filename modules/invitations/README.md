@@ -191,5 +191,5 @@ invite (which wins) means no link attribution (the honored invite keeps its own 
 Set `billing.referral.link: true` (with `enabled`) and a link signup with no accepted invitation earns the
 same two sides as an invite, keyed `referral:link:<refereeUserId>:referrer|referee` (granted by the
 `organization.provisioned` listener, back-filled by the reconcile cron). An accepted invitation always wins,
-and `invitations.maxLifetime` caps the link rewards per referrer (the first N referred users by id; null = uncapped).
+and `invitations.maxLifetime` (a positive integer, required: without it no link grant happens) caps the link rewards per referrer, counted on the referrer's ledger. Turning `link` on also back-fills past link signups through the cron, bounded by that cap.
 `user_signed_up` carries `referralSource: 'invite' | 'link' | null`.
