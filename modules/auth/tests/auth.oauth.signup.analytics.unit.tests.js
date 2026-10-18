@@ -187,13 +187,12 @@ describe('auth.controller checkOAuthUserProfile analytics (#4002/#4003):', () =>
     expect(Object.prototype.hasOwnProperty.call(mockCapture.mock.calls[0][0].properties, 'plan')).toBe(true);
   });
 
-  test.each([
-    ['claimed', true, true, 'inv1', 'inviter1'],
-    ['presented but NOT claimed', false, false, null, null],
-  ])('branch 4 (create), closed signup, invite %s: invited/invitationId/invitedBy follow the claim (#3983)', async (_label, claimed, invited, invitationId, invitedBy) => {
+  test('branch 4 (create), closed signup: a resolved OAuth invite is attributed even though the checker never claims it (#3983)', async () => {
+    // Mirrors invitations.init.js: OAuth has no token, so `claimed` is always false,
+    // and the controller finalizes every resolved OAuth invite.
     const eligibility = {
       invite: { id: 'inv1', email: 'newoauth@test.com', invitedBy: 'inviter1' },
-      claimed,
+      claimed: false,
       finalize: jest.fn().mockResolvedValue({}),
       release: jest.fn(),
     };
@@ -206,8 +205,9 @@ describe('auth.controller checkOAuthUserProfile analytics (#4002/#4003):', () =>
 
     expect(mockCapture).toHaveBeenCalledWith(expect.objectContaining({
       event: 'user_signed_up',
-      properties: expect.objectContaining({ invited, invitationId, invitedBy }),
+      properties: expect.objectContaining({ invited: true, invitationId: 'inv1', invitedBy: 'inviter1' }),
     }));
+    expect(eligibility.finalize).toHaveBeenCalled();
   });
 
   test('branch 1 (existing primary identity match): does NOT fire analytics', async () => {

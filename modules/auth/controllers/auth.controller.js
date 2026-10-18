@@ -413,7 +413,6 @@ const checkOAuthUserProfile = async (profil, key, provider) => {
       });
     }
     const oauthInvite = oauthEligibility?.invite || null;
-    const oauthInviteClaimed = !!(oauthInvite && oauthEligibility?.claimed);
     if (capReached || (!config.sign.up && !oauthInvite)) {
       // Mirror the local signup endpoint's error shape so clients see the same
       // `message`/`description` regardless of signup method (see `signup` above).
@@ -462,10 +461,12 @@ const checkOAuthUserProfile = async (profil, key, provider) => {
           plan: createdUser.plan,
           createdAt: createdUser.createdAt,
           provider: createdUser.provider,
-          // #3983: "invited" = the invite was actually claimed, not just resolved.
-          invited: oauthInviteClaimed,
-          invitationId: oauthInviteClaimed ? String(oauthInvite.id) : null,
-          invitedBy: oauthInviteClaimed && oauthInvite.invitedBy ? String(oauthInvite.invitedBy) : null,
+          // #3983: "invited" = the invite was attributed. OAuth has no token to
+          // claim (the checker's `claimed` is always false here) and a resolved
+          // OAuth invite is always finalized below, so resolved = attributed.
+          invited: Boolean(oauthInvite),
+          invitationId: oauthInvite ? String(oauthInvite.id) : null,
+          invitedBy: oauthInvite?.invitedBy ? String(oauthInvite.invitedBy) : null,
         },
       });
     } catch (_) { /* analytics must not break auth */ }
