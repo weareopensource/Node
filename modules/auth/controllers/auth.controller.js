@@ -461,6 +461,9 @@ const checkOAuthUserProfile = async (profil, key, provider) => {
           plan: createdUser.plan,
           createdAt: createdUser.createdAt,
           provider: createdUser.provider,
+          // #3983: "invited" = the invite was attributed. OAuth has no token to
+          // claim (the checker's `claimed` is always false here) and a resolved
+          // OAuth invite is always finalized below, so resolved = attributed.
           invited: Boolean(oauthInvite),
           invitationId: oauthInvite ? String(oauthInvite.id) : null,
           invitedBy: oauthInvite?.invitedBy ? String(oauthInvite.invitedBy) : null,
