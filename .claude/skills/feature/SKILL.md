@@ -98,7 +98,7 @@ Continue to scope analysis below.
 
 ### 1b. Bug fix? Prove it before you fix it
 
-When the issue is a bug (broken, throwing, wrong output, slow), do this before the plan — a theory built before a red command is the failure this step prevents. The repro (a test or a script) is not feature code: writing it before the plan is validated is allowed.
+When the issue is a bug (broken, throwing, wrong output, slow), do this before the plan — a theory built before a red command is the failure this step prevents. The repro (a test or a script) and temporary probes (tagged logs, a value changed to test a guess) are not feature code: they are allowed before the plan is validated, and probes are reverted before Phase 1.
 
 1. **One red command.** Build one command that drives the real code path and fails on the user's exact symptom — a failing test at the closest seam (`npm run test:unit`), else a curl against the dev server, else a small script. Run it and keep the output. No red command → no theory: list what you tried and ask for an artifact (log, payload, steps).
 2. **Shrink it.** Cut inputs, config and steps one at a time, re-running after each cut, while it stays red. What is left becomes the regression test.
