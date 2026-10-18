@@ -13,6 +13,7 @@ import AuthOrganizationService from '../../organizations/services/organizations.
 import AnalyticsService from '../../../lib/services/analytics.js';
 import logger from '../../../lib/services/logger.js';
 import getBaseUrl from '../../../lib/helpers/getBaseUrl.js';
+import { decodeReferralCode } from '../../users/utils/referralCode.js';
 
 /**
  * @desc Check whether the mailer is configured with a real sender address.
@@ -210,6 +211,22 @@ const signup = async (req) => {
   // unique-email index (email_ci_unique, collation strength-2) a reliable single-use backstop — concurrent case-variant
   // signups on the same invite collide on the index instead of creating two accounts.
   if (invite) safeBody.email = invite.email;
+  // #4212: shareable referral link. `ref` names the referrer by an encoded user id;
+  // it is never persisted (stripped) and never trusted as an id: it is decoded, the
+  // referrer must exist, and only then does the SERVER set `referredBy` (the client
+  // `referredBy` was deleted above). Credit only — billing grants stay invitation-only.
+  // An honored invite wins (its finalize seam sets referredBy), referral disabled or
+  // any unresolvable code simply means no attribution, never a signup failure.
+  const ref = safeBody.ref;
+  delete safeBody.ref;
+  if (ref && !inviteHonored && config.billing?.referral?.enabled) {
+    try {
+      const referrerId = decodeReferralCode(ref);
+      if (referrerId && await UserService.getBrut({ id: referrerId })) safeBody.referredBy = referrerId;
+    } catch (refErr) {
+      logger.warn('[signup] referral code lookup failed (no attribution)', { err: refErr?.message });
+    }
+  }
   // E2: the invite was atomically CLAIMED (consumingAt stamped) before we got here,
   // so a throw FROM create itself must release the claim too — otherwise the invite
   // stays locked until the 15-min sweep. The most realistic throw is an E11000 from
@@ -298,6 +315,8 @@ const signup = async (req) => {
         invited: inviteHonored,
         invitationId: inviteHonored && invite ? String(invite.id) : null,
         invitedBy: inviteHonored && invite?.invitedBy ? String(invite.invitedBy) : null,
+        // #4212: how the referral arrived, without touching `invited` (invite-only).
+        referralSource: inviteHonored ? 'invite' : (safeBody.referredBy ? 'link' : null),
         // #4002/#4003: first-touch attribution, flattened PostHog-style. Read
         // from `safeBody` (the object actually handed to UserService.create),
         // NOT the sanitized `user` response — `attribution` is deliberately

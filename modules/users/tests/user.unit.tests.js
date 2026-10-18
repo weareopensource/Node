@@ -443,6 +443,18 @@ describe('Attribution (signup) unit tests:', () => {
       done();
     });
 
+    test('should treat an over-long or non-string ref as absent, never a 422', (done) => {
+      const long = schema.SignupUser.safeParse({ email: 'a@b.com', ref: 'a'.repeat(65) });
+      expect(long.error).toBeFalsy();
+      expect(long.data.ref).toBeUndefined();
+      const num = schema.SignupUser.safeParse({ email: 'a@b.com', ref: 42 });
+      expect(num.error).toBeFalsy();
+      expect(num.data.ref).toBeUndefined();
+      const ok = schema.SignupUser.safeParse({ email: 'a@b.com', ref: ' abc ' });
+      expect(ok.data.ref).toBe('abc');
+      done();
+    });
+
     test('should reject a signup whose attribution has an over-length field', (done) => {
       const result = schema.SignupUser.safeParse({ email: 'a@b.com', attribution: { utmSource: 'a'.repeat(257) } });
       expect(result.error).toBeDefined();
