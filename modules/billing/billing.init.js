@@ -116,8 +116,13 @@ export default async (app) => {
       if (!user?.referredBy) return; // not an invited signup — nothing to grant
       const { default: InvitationRepository } = await import('../invitations/repositories/invitations.repository.js');
       const invitation = await InvitationRepository.findByAcceptedUserId(userId);
-      if (!invitation) return; // referredBy without a finalized invite — the reconcile cron owns the edge
       const { default: BillingReferralService } = await import('./services/billing.referral.service.js');
+      if (!invitation) {
+        // referredBy without a finalized invite = a link signup (#4214): grantForLink is a
+        // no-op unless `billing.referral.link` is on; the reconcile cron is the safety net.
+        await BillingReferralService.grantForLink({ userId, referredBy: String(user.referredBy) });
+        return;
+      }
       await BillingReferralService.grantForInvitation({
         invitationId: String(invitation._id),
         invitedBy: invitation.invitedBy ? String(invitation.invitedBy) : null,

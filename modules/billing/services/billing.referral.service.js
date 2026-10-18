@@ -22,6 +22,11 @@ import BillingExtraBalanceRepository from '../repositories/billing.extraBalance.
  *       creditPack / creditGrant / debit — the ledger is an embedded array, so a unique
  *       index cannot enforce within-document uniqueness; the atomic guard does.
  *
+ *       Link signups (#4214): with `billing.referral.link` on, a user whose `referredBy`
+ *       was set by a personal referral link (and who has NO accepted invitation) earns the
+ *       same sides, keyed `referral:link:<refereeUserId>:referrer|referee`. An accepted
+ *       invitation always wins; `invitations.maxLifetime` caps the link rewards per referrer.
+ *
  *       Callers: the `invitation.accepted` listener in billing.init.js (latency) and the
  *       reconcile cron crons/billing.referralReconcile.js (truth — back-fills missed
  *       events; EventEmitter is in-process fire-and-forget).
@@ -40,33 +45,53 @@ const referralKeys = (invitationId) => ({
 });
 
 /**
+ * @function describeRecord
+ * @description Normalize a referral record into its idempotency root and actors. Two shapes:
+ *              an invitation (doc with `_id` or accepted payload with `invitationId`, plus
+ *              `invitedBy` / `acceptedUserId`) or a link signup (`{ userId, referredBy }`,
+ *              #4214). Pure — no I/O.
+ * @param {Object} record - Invitation doc / accepted payload, or link `{ userId, referredBy }`.
+ * @param {Object} cfg - The `config.billing.referral` block.
+ * @returns {{root: string, referrerId: *, refereeId: *}|null} null when the record has no id or the link flag is off.
+ */
+// biome-ignore lint/correctness/useQwikValidLexicalScope: false positive — Node.js service, not Qwik
+const describeRecord = (record, cfg) => {
+  if (record?.userId) {
+    if (!cfg?.link) return null;
+    return { root: `link:${record.userId}`, referrerId: record.referredBy, refereeId: record.userId };
+  }
+  const invitationId = record?._id ?? record?.invitationId;
+  if (!invitationId) return null;
+  return { root: String(invitationId), referrerId: record.invitedBy, refereeId: record.acceptedUserId };
+};
+
+/**
  * @function expectedGrantKeys
- * @description THE single source of the grant side-rules (#3842): given an invitation
- *              (doc with `_id` or `invitation.accepted` payload with `invitationId`)
- *              and the referral config, return the grant sides the pair implies as
- *              `[{ side, key }]`. A side with 0 configured units, an actor-less invite
- *              (`invitedBy` null), and the cheap self-referral floor
- *              (`invitedBy === acceptedUserId`; the full guard is #3833) produce NO
- *              entry. Pure — no I/O. Both `grantForInvitation` (grants) and
+ * @description THE single source of the grant side-rules (#3842, #4214): given an invitation
+ *              (doc with `_id` or `invitation.accepted` payload with `invitationId`) or a
+ *              link signup (`{ userId, referredBy }`, only when `cfg.link`) and the referral
+ *              config, return the grant sides the record implies as `[{ side, key }]`.
+ *              A side with 0 configured units, a referrer-less record, and the cheap
+ *              self-referral floor (referrer === referee; the full guard is #3833) produce
+ *              NO entry. Pure — no I/O. `grantRecord` (grants) and
  *              crons/billing.referralReconcile.js (candidate diff) derive from it, so a
- *              new guard (e.g. #3833) lands in ONE place and the two callers can never
- *              drift.
- * @param {Object} invite - Invitation doc (`_id`) or accepted payload (`invitationId`).
+ *              new guard lands in ONE place and the callers can never drift.
+ * @param {Object} record - Invitation doc / accepted payload, or link `{ userId, referredBy }`.
  * @param {Object} cfg - The `config.billing.referral` block.
  * @returns {Array<{side: 'referrer'|'referee', key: string}>} The implied grant sides.
  */
 // biome-ignore lint/correctness/useQwikValidLexicalScope: false positive — Node.js service, not Qwik
-const expectedGrantKeys = (invite, cfg) => {
+const expectedGrantKeys = (record, cfg) => {
   if (!cfg?.enabled) return [];
-  const invitationId = invite?._id ?? invite?.invitationId;
-  if (!invitationId) return [];
-  const keys = referralKeys(String(invitationId));
-  const { invitedBy, acceptedUserId } = invite;
+  const described = describeRecord(record, cfg);
+  if (!described) return [];
+  const { root, referrerId, refereeId } = described;
+  const keys = referralKeys(root);
   const expected = [];
   // Referee side — needs configured units and a referee user (legacy rows may have none).
-  if (cfg.refereeUnits > 0 && acceptedUserId) expected.push({ side: 'referee', key: keys.referee });
-  // Referrer side — skip zero units, actor-less invites, and trivial self-referrals.
-  if (cfg.referrerUnits > 0 && invitedBy && String(invitedBy) !== String(acceptedUserId)) {
+  if (cfg.refereeUnits > 0 && refereeId) expected.push({ side: 'referee', key: keys.referee });
+  // Referrer side — skip zero units, referrer-less records, and trivial self-referrals.
+  if (cfg.referrerUnits > 0 && referrerId && String(referrerId) !== String(refereeId)) {
     expected.push({ side: 'referrer', key: keys.referrer });
   }
   return expected;
@@ -187,24 +212,66 @@ const notifyReferrer = async (userId, units) => {
 };
 
 /**
+ * @function grantRecord
+ * @description Apply the grant sides one referral record implies (invitation or link):
+ *              - referee grant → the referee's organization (`refereeUnits`),
+ *              - referrer grant → the referrer's organization (`referrerUnits`), skipped
+ *                when there is no referrer or on the self-referral floor.
+ *              WHICH sides to grant is derived from `expectedGrantKeys` (the single rule
+ *              source shared with the reconcile cron) — the branches below only label WHY
+ *              an absent side was skipped (observability). A freshly APPLIED referrer grant
+ *              also triggers a best-effort referrer email (#3945, notifyReferrer) — never on
+ *              a duplicate/idempotent replay. May reject on infrastructure errors — callers
+ *              own their failure handling (listener self-guards, cron counts errors).
+ * @param {Object} record - Record accepted by `expectedGrantKeys`.
+ * @param {string|null} referrerId - The referrer user id, or null.
+ * @param {string|null} refereeId - The referee user id, or null.
+ * @param {Object} cfg - The `config.billing.referral` block (enabled).
+ * @returns {Promise<{referrer: Object, referee: Object}>}
+ */
+// biome-ignore lint/correctness/useQwikValidLexicalScope: false positive — Node.js service, not Qwik
+const grantRecord = async (record, referrerId, refereeId, cfg) => {
+  const expected = new Map(expectedGrantKeys(record, cfg).map(({ side, key }) => [side, key]));
+  if (cfg.expiryDays !== null && cfg.expiryDays !== undefined && cfg.expiryDays <= 0) {
+    throw new Error('billing.referral.expiryDays must be > 0 or null (use null for no expiry)');
+  }
+  const expiresAt = cfg.expiryDays != null
+    ? new Date(Date.now() + cfg.expiryDays * 24 * 60 * 60 * 1000)
+    : null;
+  const result = {};
+
+  // Referee side — the referred user's workspace doubles its welcome.
+  if (expected.has('referee')) {
+    result.referee = await grantSide({ userId: refereeId, units: cfg.refereeUnits, key: expected.get('referee'), expiresAt });
+  } else {
+    result.referee = { applied: false, reason: refereeId ? 'zero_units' : 'no_accepted_user' };
+  }
+
+  // Referrer side — skip referrer-less records and trivial self-referrals (#3833 owns the full guard).
+  if (expected.has('referrer')) {
+    result.referrer = await grantSide({ userId: referrerId, units: cfg.referrerUnits, key: expected.get('referrer'), expiresAt });
+    // #3945: notify ONLY on a freshly applied grant — never on an idempotent replay
+    // (grantSide's atomic dedup guard means `applied:true` fires exactly once).
+    if (result.referrer.applied) {
+      await notifyReferrer(referrerId, cfg.referrerUnits);
+    }
+  } else if (!referrerId) {
+    result.referrer = { applied: false, reason: 'no_inviter' };
+  } else if (String(referrerId) === String(refereeId)) {
+    result.referrer = { applied: false, reason: 'self_referral' };
+  } else {
+    result.referrer = { applied: false, reason: 'zero_units' };
+  }
+
+  return result;
+};
+
+/**
  * @function grantForInvitation
- * @description Apply the standard referral grant for one accepted invitation:
- *              - referee grant → the accepted user's organization (`refereeUnits`),
- *              - referrer grant → the inviter's organization (`referrerUnits`),
- *                skipped when `invitedBy` is null (actor-less invite) or when
- *                `invitedBy === acceptedUserId` (cheap self-referral floor — the full
- *                guard is #3833).
- *              No-op (`skipped:'disabled'`) when `config.billing.referral.enabled` is
- *              false; a side with 0 configured units is skipped. WHICH sides to grant is
- *              derived from `expectedGrantKeys` (the single rule source shared with the
- *              reconcile cron) — the branches below only label WHY an absent side was
- *              skipped (observability). Each side is keyed
+ * @description Apply the standard referral grant for one accepted invitation (see
+ *              `grantRecord`). No-op (`skipped:'disabled'`) when
+ *              `config.billing.referral.enabled` is false. Each side is keyed
  *              `referral:<invitationId>:<side>` so replays can never double-credit.
- *              A freshly APPLIED referrer grant (first successful credit for this
- *              invitation) also triggers a best-effort referrer notification email
- *              (#3945, notifyReferrer) — never on a duplicate/idempotent replay.
- *              May reject on infrastructure errors — callers own their failure handling
- *              (the listener self-guards, the cron counts errors).
  * @param {Object} payload - The `invitation.accepted` payload (or its cron reconstruction).
  * @param {string} payload.invitationId - The accepted invitation id (idempotency root).
  * @param {string|null} payload.invitedBy - The inviter user id, or null.
@@ -216,43 +283,52 @@ const grantForInvitation = async ({ invitationId, invitedBy, acceptedUserId } = 
   const cfg = config.billing?.referral;
   if (!cfg?.enabled) return { skipped: 'disabled' };
   if (!invitationId) return { skipped: 'no_invitation_id' };
+  return grantRecord({ invitationId, invitedBy, acceptedUserId }, invitedBy, acceptedUserId, cfg);
+};
 
-  // Single rule source: expectedGrantKeys decides WHICH sides to grant.
-  const expected = new Map(
-    expectedGrantKeys({ invitationId, invitedBy, acceptedUserId }, cfg).map(({ side, key }) => [side, key]),
-  );
-  if (cfg.expiryDays !== null && cfg.expiryDays !== undefined && cfg.expiryDays <= 0) {
-    throw new Error('billing.referral.expiryDays must be > 0 or null (use null for no expiry)');
-  }
-  const expiresAt = cfg.expiryDays != null
-    ? new Date(Date.now() + cfg.expiryDays * 24 * 60 * 60 * 1000)
-    : null;
-  const result = {};
+/**
+ * @function isLinkCapped
+ * @description Whether a link-referred user falls beyond the per-referrer cap (#4214).
+ *              Reuses `config.invitations.maxLifetime` (null/undefined = uncapped). The rank
+ *              is the number of users with the same `referredBy` and a lower `_id`, so the
+ *              first N referred users (by id) earn the reward and the answer is the same
+ *              every time the listener or the cron asks. No stored field.
+ * @param {string} userId - The referred user id.
+ * @param {string} referredBy - The referrer user id.
+ * @returns {Promise<boolean>} true when the user ranks at or beyond the cap.
+ */
+// biome-ignore lint/correctness/useQwikValidLexicalScope: false positive — Node.js service, not Qwik
+const isLinkCapped = async (userId, referredBy) => {
+  const maxLifetime = config.invitations?.maxLifetime;
+  if (typeof maxLifetime !== 'number') return false;
+  const { default: UserService } = await import('../../users/services/users.service.js');
+  const rank = await UserService.count({ referredBy, _id: { $lt: userId } });
+  return rank >= maxLifetime;
+};
 
-  // Referee side — the accepted user's workspace doubles its welcome.
-  if (expected.has('referee')) {
-    result.referee = await grantSide({ userId: acceptedUserId, units: cfg.refereeUnits, key: expected.get('referee'), expiresAt });
-  } else {
-    result.referee = { applied: false, reason: acceptedUserId ? 'zero_units' : 'no_accepted_user' };
-  }
-
-  // Referrer side — skip actor-less invites and trivial self-referrals (#3833 owns the full guard).
-  if (expected.has('referrer')) {
-    result.referrer = await grantSide({ userId: invitedBy, units: cfg.referrerUnits, key: expected.get('referrer'), expiresAt });
-    // #3945: notify ONLY on a freshly applied grant — never on an idempotent replay
-    // (grantSide's atomic dedup guard means `applied:true` fires exactly once).
-    if (result.referrer.applied) {
-      await notifyReferrer(invitedBy, cfg.referrerUnits);
-    }
-  } else if (!invitedBy) {
-    result.referrer = { applied: false, reason: 'no_inviter' };
-  } else if (String(invitedBy) === String(acceptedUserId)) {
-    result.referrer = { applied: false, reason: 'self_referral' };
-  } else {
-    result.referrer = { applied: false, reason: 'zero_units' };
-  }
-
-  return result;
+/**
+ * @function grantForLink
+ * @description Apply the referral grant for a signup made through a personal referral link
+ *              (#4214): same sides as an invitation, keyed
+ *              `referral:link:<userId>:referrer|referee`. Skipped (labelled) when the link
+ *              reward is off (`disabled`), when the user has an accepted invitation (the
+ *              invite always wins, `invited`), or when the referrer's cap is reached
+ *              (`cap_reached`). May reject on infrastructure errors — callers own their
+ *              failure handling.
+ * @param {Object} payload
+ * @param {string} payload.userId - The referred (just-signed-up) user id.
+ * @param {string} payload.referredBy - The referrer user id.
+ * @returns {Promise<{skipped?: string, referrer?: Object, referee?: Object}>}
+ */
+// biome-ignore lint/correctness/useQwikValidLexicalScope: false positive — Node.js service, not Qwik
+const grantForLink = async ({ userId, referredBy } = {}) => {
+  const cfg = config.billing?.referral;
+  if (!cfg?.enabled || !cfg.link) return { skipped: 'disabled' };
+  if (!userId || !referredBy) return { skipped: 'no_link' };
+  const { default: InvitationRepository } = await import('../../invitations/repositories/invitations.repository.js');
+  if (await InvitationRepository.findByAcceptedUserId(String(userId))) return { skipped: 'invited' };
+  if (await isLinkCapped(String(userId), String(referredBy))) return { skipped: 'cap_reached' };
+  return grantRecord({ userId, referredBy }, referredBy, userId, cfg);
 };
 
 export default {
@@ -260,4 +336,5 @@ export default {
   expectedGrantKeys,
   resolveGrantOrganization,
   grantForInvitation,
+  grantForLink,
 };
