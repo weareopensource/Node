@@ -1,10 +1,12 @@
 /**
  * Module dependencies
  */
+import config from '../../../config/index.js';
 import errors from '../../../lib/helpers/errors.js';
 import responses from '../../../lib/helpers/responses.js';
 import UserService from '../services/users.service.js';
 import { verifyUnsubscribeToken } from '../utils/unsubscribeToken.js';
+import { encodeReferralCode } from '../utils/referralCode.js';
 
 /**
  * @desc Endpoint to ask the service to update a user
@@ -82,6 +84,9 @@ const me = (req, res) => {
     if (req.user.position) user.position = req.user.position;
     // startup requirement
     if (req.user.terms) user.terms = req.user.terms;
+    // #4212 — personal referral code (the id, encoded; derived, not stored), only
+    // when the referral feature is enabled.
+    if (config.billing?.referral?.enabled) user.referralCode = encodeReferralCode(req.user.id);
   }
   return responses.success(res, 'user get')(user);
 };

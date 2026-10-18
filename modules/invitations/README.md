@@ -181,3 +181,11 @@ The Vue module (`src/modules/invitations/` in Devkit Vue) ships the admin beta-g
 the account **Referrals** tab (invite a contact, my invites + status chips, and a referral
 summary). Reward grants happen server-side (#3842) with no client-visible balance UI —
 the former "coming soon" placeholder was removed once the grant path shipped (#4504).
+
+## Shareable referral link (credit only)
+
+With `billing.referral.enabled`, `GET /api/users/me` returns `referralCode` — the user id encoded
+(base64url, derived, nothing stored). An email/password signup may send it as `ref`; the server decodes it,
+checks the referrer exists and sets `referredBy`. An unknown or malformed code, a disabled flag, or an honored
+invite (which wins) means no attribution and never a 4xx. A link referral grants no billing reward (grants stay
+keyed on an accepted invitation); `user_signed_up` carries `referralSource: 'invite' | 'link' | null`.
