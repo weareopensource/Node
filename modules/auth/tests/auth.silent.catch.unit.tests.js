@@ -338,7 +338,10 @@ describe('auth.controller signup analytics: invite/referral attribution (#3945):
     }));
   });
 
-  test('user_signed_up carries invited:true + invitationId + invitedBy when the eligibility registry resolved an invite', async () => {
+  test.each([
+    ['claimed', true, { invited: true, invitationId: 'inv1', invitedBy: 'inviter1' }],
+    ['presented but NOT claimed (#3983)', false, { invited: false, invitationId: null, invitedBy: null }],
+  ])('user_signed_up attribution follows the claim — invite %s', async (_label, claimed, expected) => {
     const mockCreate = jest.fn().mockResolvedValue({
       id: 'u1', email: 'invitee@y.com', firstName: 'A', lastName: 'B', provider: 'local',
     });
@@ -362,7 +365,7 @@ describe('auth.controller signup analytics: invite/referral attribution (#3945):
           invite: { id: 'inv1', email: 'invitee@y.com', invitedBy: 'inviter1' },
           // closed signup ⇒ the checker claimed it (#3981: auth.controller trusts this
           // flag verbatim rather than re-deriving it from config).
-          claimed: true,
+          claimed,
           finalize: jest.fn().mockResolvedValue({ id: 'inv1', status: 'accepted' }),
           release: jest.fn(),
         }),
@@ -466,11 +469,7 @@ describe('auth.controller signup analytics: invite/referral attribution (#3945):
     expect(mockCapture).toHaveBeenCalledWith(expect.objectContaining({
       distinctId: 'u1',
       event: 'user_signed_up',
-      properties: expect.objectContaining({
-        invited: true,
-        invitationId: 'inv1',
-        invitedBy: 'inviter1',
-      }),
+      properties: expect.objectContaining(expected),
     }));
   });
 

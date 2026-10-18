@@ -19,6 +19,8 @@ import { jest, describe, test, expect, beforeEach } from '@jest/globals';
  * @param {Array<Array>} searchResults - successive UserService.search() results
  * @param {Object} [options] - optional overrides
  * @param {Object|null} [options.linkProviderByEmailResult] - branch-3 linkProviderByEmail() resolution
+ * @param {Boolean} [options.signUp] - config.sign.up (false = closed, the eligibility hook runs)
+ * @param {Object} [options.eligibility] - assertSignupEligible() resolution
  * @returns {Promise<{AuthController: Object, mockCreate: Function, mockIdentify: Function, mockCapture: Function, mockSearch: Function}>}
  */
 const loadController = async (searchResults, options = {}) => {
@@ -48,7 +50,7 @@ const loadController = async (searchResults, options = {}) => {
   jest.unstable_mockModule('../../../modules/auth/services/auth.eligibility.js', () => ({
     default: {
       registerSignupEligibility: jest.fn(),
-      assertSignupEligible: jest.fn().mockResolvedValue(undefined),
+      assertSignupEligible: jest.fn().mockResolvedValue(options.eligibility),
       _reset: jest.fn(),
     },
   }));
@@ -71,7 +73,7 @@ const loadController = async (searchResults, options = {}) => {
 
   jest.unstable_mockModule('../../../config/index.js', () => ({
     default: {
-      sign: { up: true, in: true }, // open signup — the invite hook is skipped entirely
+      sign: { up: options.signUp ?? true, in: true }, // open signup (default) — the invite hook is skipped entirely
       jwt: { secret: 'test-secret', expiresIn: 3600 },
       cookie: { secure: false, sameSite: 'lax' },
       organizations: { enabled: false },
@@ -183,6 +185,29 @@ describe('auth.controller checkOAuthUserProfile analytics (#4002/#4003):', () =>
     }));
     // plan is present as a key (even though undefined on this stack — no billing module)
     expect(Object.prototype.hasOwnProperty.call(mockCapture.mock.calls[0][0].properties, 'plan')).toBe(true);
+  });
+
+  test.each([
+    ['claimed', true, true, 'inv1', 'inviter1'],
+    ['presented but NOT claimed', false, false, null, null],
+  ])('branch 4 (create), closed signup, invite %s: invited/invitationId/invitedBy follow the claim (#3983)', async (_label, claimed, invited, invitationId, invitedBy) => {
+    const eligibility = {
+      invite: { id: 'inv1', email: 'newoauth@test.com', invitedBy: 'inviter1' },
+      claimed,
+      finalize: jest.fn().mockResolvedValue({}),
+      release: jest.fn(),
+    };
+    const { AuthController, mockCapture } = await loadController([[], []], { signUp: false, eligibility });
+
+    await AuthController.checkOAuthUserProfile({
+      firstName: 'New', lastName: 'OAuth', email: 'newoauth@test.com', avatar: '',
+      emailVerifiedByProvider: true, providerData: { id: 'google-id-123' },
+    }, 'id', 'google');
+
+    expect(mockCapture).toHaveBeenCalledWith(expect.objectContaining({
+      event: 'user_signed_up',
+      properties: expect.objectContaining({ invited, invitationId, invitedBy }),
+    }));
   });
 
   test('branch 1 (existing primary identity match): does NOT fire analytics', async () => {

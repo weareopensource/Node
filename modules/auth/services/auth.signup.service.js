@@ -291,12 +291,13 @@ const signup = async (req) => {
         email: user.email,
         plan: user.plan,
         createdAt: user.createdAt,
-        // #3945: carry invite/referral attribution on the signup event so the
-        // referral funnel is measurable. `invite` is the resolved (opaque) result
-        // from the eligibility registry — already in scope, no invitations import.
-        invited: Boolean(invite),
-        invitationId: invite ? String(invite.id) : null,
-        invitedBy: invite?.invitedBy ? String(invite.invitedBy) : null,
+        // #3945/#3983: carry invite/referral attribution on the signup event so the
+        // referral funnel is measurable. "invited" means the invite was actually
+        // CLAIMED (`inviteHonored`), not merely presented/resolved — an open-signup
+        // visitor holding an unclaimed invite is not an invited signup.
+        invited: inviteHonored,
+        invitationId: inviteHonored && invite ? String(invite.id) : null,
+        invitedBy: inviteHonored && invite?.invitedBy ? String(invite.invitedBy) : null,
         // #4002/#4003: first-touch attribution, flattened PostHog-style. Read
         // from `safeBody` (the object actually handed to UserService.create),
         // NOT the sanitized `user` response — `attribution` is deliberately
