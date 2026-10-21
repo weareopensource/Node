@@ -1,0 +1,60 @@
+name: Monthly Release
+
+on:
+  # Automatic release on the 1st of each month at 09:00 UTC
+  schedule:
+    - cron: '0 9 1 * *'
+
+  # Can also be triggered manually from the GitHub Actions UI
+  workflow_dispatch:
+
+# The release pushes with the GH_TOKEN PAT (an admin, so it bypasses the
+# "CI required" ruleset); the generated token stays read-only.
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: Semantic Release
+    runs-on: ${{ vars.RUNNER || 'ubuntu-latest' }}
+
+    services:
+      mongo:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongosh --quiet --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      NODE_ENV: ${{ vars.APP_ENV || 'test' }}
+      DEVKIT_NODE_db_uri: ${{ secrets.MONGO_URI || vars.MONGO_URI || 'mongodb://localhost:27017/NodeTest' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: |
+          npm run lint
+          npm run test:all
+
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: npx semantic-release
