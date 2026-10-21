@@ -8,10 +8,10 @@ on:
   # Can also be triggered manually from the GitHub Actions UI
   workflow_dispatch:
 
+# The release pushes with the GH_TOKEN PAT (an admin, so it bypasses the
+# "CI required" ruleset); the generated token stays read-only.
 permissions:
-  contents: write
-  issues: write
-  pull-requests: write
+  contents: read
 
 jobs:
   release:
@@ -56,5 +56,5 @@ jobs:
 
       - name: Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: npx semantic-release
