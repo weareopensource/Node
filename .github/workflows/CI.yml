@@ -9,10 +9,6 @@ on:
       - '.claude/**'
   pull_request:
     branches: [master, main]
-    paths-ignore:
-      - '**/*.md'
-      - 'documentation/**'
-      - '.claude/**'
 
 concurrency:
   group: ci-${{ github.ref }}
